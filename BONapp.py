@@ -37,3 +37,5 @@ def index():
         return render_template("index.html", games=games, user=user)
     else:
         return render_template("index.html", games=games)
+
+        
