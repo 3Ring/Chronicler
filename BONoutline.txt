@@ -25,7 +25,9 @@ databases
 
     CREATE TABLE games(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name TEXT NOT NULL
+        name TEXT NOT NULL,
+        imglink TEXT NOT NULL,
+        secret INTEGER DEFAULT 0
     );
 
     CREATE TABLE characters(
