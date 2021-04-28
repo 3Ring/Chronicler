@@ -26,8 +26,11 @@ databases
     CREATE TABLE games(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT NOT NULL,
+        dm_id INTEGER NOT NULL,
         imglink TEXT NOT NULL,
-        secret INTEGER DEFAULT 0
+        sessions integer NOT NULL,
+        secret INTEGER DEFAULT 0,
+        FOREIGN KEY(dm_id) REFERENCES users(id)
     );
 
     CREATE TABLE characters(

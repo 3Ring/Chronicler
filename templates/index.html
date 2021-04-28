@@ -46,7 +46,12 @@
                 <div class="todo">
                     <a href="/{{ game.name }}"><img src='{{ game.imglink }}'></a>
                 </div>
+            {% elif game.secret == user %}
+                <div class="todo">
+                    <a href="/{{ game.name }}"><img src='{{ game.imglink }}'></a>
+                </div>                
             {% endif %}
+
             {% endfor %}
         </main>
     </body>
