@@ -1,59 +1,17 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block content %}
 
-<html lang="en">
+{% for message  in get_flashed_messages() %}
 
-    <head>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width">
-
-        <link href="/static/BONstyles.css" rel="stylesheet">
-
-        <title>Bunch O Nerds</title>
-
-    </head>
-
-    <body>
-
-        <nav>
-            <a href="/">Bunch O Nerds</a>
-            <div>  
-                {% if session.user_id %}
-                    <ul>
-                        <li><a href="/logout">Log Out</a></li>
-                    </ul>
-                {% else %}
-                    <ul>
-                        <li><a href="/register">Register</a></li>
-                        <li><a href="/login">Log In</a></li>
-                    </ul>
-                {% endif %}
-            </div>
-        </nav>
-
-        {% if get_flashed_messages() %}
-            <header>
-                <div role="alert">
-                    {{ get_flashed_messages() | join(" ") }}
-                </div>
-            </header>
-        {% endif %}
+{% endfor %}
 
         <main>
-            
-            {% for game in games %}
-            {% if game.secret == 0 %}
-                <div class="todo">
-                    <a href="/{{ game.name }}"><img src='{{ game.imglink }}'></a>
-                </div>
-            {% elif game.secret == user %}
-                <div class="todo">
-                    <a href="/{{ game.name }}"><img src='{{ game.imglink }}'></a>
-                </div>                
-            {% endif %}
-
-            {% endfor %}
+            <h2>test</h2>
         </main>
-    </body>
 
-</html>
+{% endblock %} 
