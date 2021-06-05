@@ -211,7 +211,7 @@ def register():
                 # # clear form data for next potential use and set variable to feed to render
                 # form.username.data = ''
                 # form.email.data = ''
-    else:\
+    else:
         return render_template("register.html", 
             form=form,
             name=name,
