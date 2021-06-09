@@ -202,15 +202,13 @@ def register():
                 flash("Welcome to the table %s!" % form.realname.data)
                 return redirect ('/')
             else:
+                # if email is already in db alert user
                 flash("%s is already in use!" % form.email.data)
                 return render_template('register.html',
                     form = form,
                     name = name,
                     our_users=list_users,
                 )
-                # # clear form data for next potential use and set variable to feed to render
-                # form.username.data = ''
-                # form.email.data = ''
     else:
         return render_template("register.html", 
             form=form,
