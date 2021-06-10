@@ -3,16 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask import Flask
 
-# # Configure application
-# app = Flask(__name__)
-
-# # Setting up MYSQL database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/BON'
-# # Secret Key
-# app.config['SECRET_KEY'] = 'is it secret?'
-# # Initialize the database
-# db = SQLAlchemy(app)
-
 # Configure application
 app = Flask(__name__)
 
