@@ -25,14 +25,6 @@ app.config['SECRET_KEY'] = 'is it secret?'
 db = SQLAlchemy(app)
 
 
-# Create form model
-class UserForm(FlaskForm):
-    username = StringField("Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    hash = StringField("Hash", validators=[DataRequired ()])
-    realname = StringField("Real Name")
-    submit = SubmitField("Submit")
-
 @app.route("/")
 def index():
     # Show page listing all games
