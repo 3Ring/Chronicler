@@ -33,6 +33,14 @@ class Users(db.Model):
 
     characters = db.relationship('Characters', backref='user', lazy=True)
 
+    head =[
+        'ID', 
+        'User Name', 
+        'Email', 
+        'Hash', 
+        'Real Name', 
+        'Date Added']
+
     # Create A String
     def __repr__(self):
         return '<User %r>' % self.username
@@ -56,6 +64,14 @@ class Games(db.Model):
     players = db.relationship('Users', secondary=players, lazy='subquery',
         backref=db.backref('games', lazy=True))
 
+    head = [
+        'ID', 
+        'Name', 
+        'Imglink', 
+        'Sessions', 
+        'Secret', 
+        'Date Added', 
+        'DM ID']
     # Create A String
     def __repr__(self):
         return '<Game %r>' % self.name
@@ -85,6 +101,27 @@ class Characters(db.Model):
 
     # items = db.relationship('Loot', backref='character', lazy=True)
 
+    head = [
+    'ID', 
+    'Name', 
+    'ImgLink', 
+    'Bio', 
+    'PP', 
+    'GP', 
+    'EP', 
+    'SP', 
+    'CP', 
+    'XP', 
+    'STR', 
+    'DEX', 
+    'CON', 
+    'INT', 
+    'WIS', 
+    'CHA', 
+    'Date Added', 
+    'User ID', 
+    'Game ID']
+
     # Create A String
     def __repr__(self):
         return '<Character %r>' % self.name
@@ -103,6 +140,17 @@ class NPCs(db.Model):
 
     # loot = db.relationship('Loot', backref='NPC', lazy=True)
 
+    head = [
+        'ID',
+        'Name',
+        'Secret Name',
+        'Bio',
+        'Secret Bio',
+        'Date Added',
+        'Game ID',
+        'Place ID'
+    ]
+
     # Create A String
     def __repr__(self):
         return '<NPC %r>' % self.name
@@ -118,12 +166,22 @@ class Places(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     NPCs = db.relationship('NPCs', backref='place', lazy=True)
 
+    head = [
+        'ID',
+        'Name',
+        'Bio',
+        'Secret Bio',
+        'Date Added',
+        'Game ID',
+        'NPCs'
+    ]
+
     # Create A String
     def __repr__(self):
         return '<Place %r>' % self.name
 
 # loot
-class loot(db.Model):
+class Loot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
     bio = db.Column(db.Text, default='An item shrouded in mystery')
@@ -132,6 +190,14 @@ class loot(db.Model):
 
     owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
 
+    head = [
+        'ID',
+        'Name',
+        'Bio',
+        'Value(CP)',
+        'Date Added',
+        'Owner ID'
+    ]
     # Create A String
     def __repr__(self):
         return '<Loot %r>' % self.name

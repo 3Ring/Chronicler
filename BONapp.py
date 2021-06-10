@@ -78,9 +78,21 @@ def register():
             name=name,
             our_users=list_users)
 
-@app.route('/test_user')
-# @login_required
-def test_user():
+@app.route('/test_tables')
+def test_tables():
+    userheads = Users().head
+    gameheads = Games().head
+    charheads = Characters().head
+    npcheads = NPCs().head
+    placeheads = Places().head
+    lootheads = Loot().head
     users = Users.query.all()
-    return render_template('test_user.html', users=users)
+    return render_template('test_tables.html',
+         userheads = userheads,
+         gameheads = gameheads,
+         charheads = charheads,
+         npcheads = npcheads,
+         placeheads = placeheads,
+         lootheads = lootheads,
+         users=users)
 
