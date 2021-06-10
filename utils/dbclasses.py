@@ -1,6 +1,7 @@
 from sqlalchemy.orm import backref
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask import Flask
 
 # # Configure application
 # app = Flask(__name__)
@@ -12,7 +13,25 @@ from datetime import datetime
 # # Initialize the database
 # db = SQLAlchemy(app)
 
-# Create Models
+# Configure application
+app = Flask(__name__)
+
+# old SQLitedb
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///liteBON.db'
+# Setting up MYSQL database
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/BON'
+# Secret Key
+app.config['SECRET_KEY'] = 'is it secret?'
+# Initialize the database
+db = SQLAlchemy(app)
+
+# Create Models for db
+# Players
+players = db.Table('players',
+    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
+    db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
+)
+
 # Users
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,11 +42,10 @@ class Users(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     characters = db.relationship('Characters', backref='user', lazy=True)
-    games = db.relationship('Games', backref='user', lazy=True)
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.name
+        return '<User %r>' % self.username
 
 # Games
 class Games(db.Model):
@@ -38,24 +56,19 @@ class Games(db.Model):
     secret = db.Column(db.Integer, default=0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
-    dm_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
-
+    dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     places = db.relationship('Places', backref='game', lazy=True)
     NPCs = db.relationship('NPCs', backref='game', lazy=True)
-    PCs = db.relationship('Characers', backref='game', lazy=True)
+    # PCs = db.relationship('Characers', backref='game', lazy=True)
 
     players = db.relationship('Users', secondary=players, lazy='subquery',
         backref=db.backref('games', lazy=True))
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.title
-
-# Players
-players = db.Table('players',
-    game_id = db.Column(db.Integer, db.ForeignKey('Games.id'), nullable=False, primary_key=True),
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False, primary_key=True)
-)
+        return '<Game %r>' % self.name
 
 # Characters
 class Characters(db.Model):
@@ -77,14 +90,14 @@ class Characters(db.Model):
     charisma = db.Column(db.Integer, default=0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
-    game_id = db.Column(db.Integer, db.ForeignKey('Games.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
-    items = db.relationship('Loot', backref='character', lazy=True)
+    # items = db.relationship('Loot', backref='character', lazy=True)
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.name
+        return '<Character %r>' % self.name
 
 # NPCs
 class NPCs(db.Model):
@@ -95,14 +108,14 @@ class NPCs(db.Model):
     secret_bio = db.Column(db.Text)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
-    game_id = db.Column(db.Integer, db.ForeignKey('Games.id'), nullable=False)
-    place_id = db.Column(db.Integer, db.ForeignKey('Places.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
 
-    loot = db.relationship('Loot', backref='NPC', lazy=True)
+    # loot = db.relationship('Loot', backref='NPC', lazy=True)
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.name
+        return '<NPC %r>' % self.name
 
 # Places
 class Places(db.Model):
@@ -112,12 +125,12 @@ class Places(db.Model):
     secret_bio = db.Column(db.Text)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
-    game_id = db.Column(db.Integer, db.ForeignKey('Games.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     NPCs = db.relationship('NPCs', backref='place', lazy=True)
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.title
+        return '<Place %r>' % self.name
 
 # loot
 class loot(db.Model):
@@ -127,9 +140,8 @@ class loot(db.Model):
     copper_value = db.Column(db.Integer, default=0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
-    owner_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
 
     # Create A String
     def __repr__(self):
-        return '<Name %r>' % self.name
-
+        return '<Loot %r>' % self.name
