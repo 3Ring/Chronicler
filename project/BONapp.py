@@ -1,8 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, session
 # from flask_session import Session
-from sqlalchemy.orm import backref
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
