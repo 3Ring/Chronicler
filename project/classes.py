@@ -1,7 +1,7 @@
 from sqlalchemy.orm import backref
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from . import db
@@ -19,6 +19,10 @@ class LoginForm(FlaskForm):
     password = StringField("Password", validators=[DataRequired ()])
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
+    submit = SubmitField("Submit")
+
+class DeleteForm(FlaskForm):
+    group_id = SelectField(u'Users', coerce=int)
     submit = SubmitField("Submit")
 # Create Models for db
 # Players

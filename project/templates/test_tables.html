@@ -20,8 +20,12 @@
             <td>{{ user.date_added }}</td>
         </tr>
     {% endfor %}
-    {% endif %}
     </table>
+        {{ form.group_id }}
+    </br>
+    {{ form.submit(class="btn btn-secondary") }}
+    {% endif %}
+
 
 </br>
 

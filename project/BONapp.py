@@ -39,6 +39,10 @@ def test_tables():
     placeheads = Places().head
     lootheads = Loot().head
     users = Users.query.all()
+
+    form = DeleteForm()
+    form.group_id.choices = [(g.id, g.username) for g in Users.query.order_by('username')]
+
     return render_template('test_tables.html',
          userheads = userheads,
          gameheads = gameheads,
@@ -46,5 +50,6 @@ def test_tables():
          npcheads = npcheads,
          placeheads = placeheads,
          lootheads = lootheads,
-         users=users)
+         users = users,
+         form = form)
 
