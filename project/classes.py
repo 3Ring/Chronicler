@@ -24,6 +24,12 @@ class LoginForm(FlaskForm):
 class DeleteForm(FlaskForm):
     group_id = SelectField(u'Users', coerce=int)
     submit = SubmitField("Submit")
+
+class ConForm(FlaskForm):
+    todelete = StringField("UserName to Delete", validators=[DataRequired()])
+    confirm = SubmitField("Confirm")
+    cancel = SubmitField("Cancel")
+
 # Create Models for db
 # Players
 players = db.Table('players',

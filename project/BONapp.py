@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, session
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 # from flask_session import Session
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -31,6 +31,7 @@ def profile():
     return render_template('profile.html', name=current_user.username)
 
 @main.route('/test_tables')
+@login_required
 def test_tables():
     userheads = Users().head
     gameheads = Games().head
@@ -41,7 +42,7 @@ def test_tables():
     users = Users.query.all()
 
     form = DeleteForm()
-    form.group_id.choices = [(g.id, g.username) for g in Users.query.order_by('username')]
+    form.group_id.choices = [(g.id) for g in Users.query.order_by('id')]
 
     return render_template('test_tables.html',
          userheads = userheads,
@@ -52,4 +53,38 @@ def test_tables():
          lootheads = lootheads,
          users = users,
          form = form)
+
+@main.route('/test_tables', methods = ['POST'])
+@login_required
+def post_test_tables():
+    delform = DeleteForm()
+    delete_id = delform.group_id.data
+    deleted = Users.query.filter_by(id = delete_id).first()
+    session['idtodelete'] = delete_id
+    session['nametodelete'] = deleted.username
+    flash("Are you sure you want to delete %s?" % session['nametodelete'])
+    form = ConForm()
+    return render_template('confirm.html',
+    form = form,
+    name = deleted.username)
+
+@main.route('/confirm', methods = ['GET', 'POST'])
+@login_required
+def confirm():
+    if request.method == 'POST':
+        form = ConForm()
+        usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
+        name = usertodelete.username
+        if form.todelete.data == usertodelete.username:
+            # delete user
+            flash("%s has been successfully deleted" % session['nametodelete'])
+            db.session.delete(usertodelete)
+            db.session.commit()
+            return redirect('/test_tables')
+        else:
+            flash("names do not match, check to make sure you are deleting the correct user")
+            deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
+            return render_template('confirm.html',
+            form = form,
+            name = deleted.username)
 
