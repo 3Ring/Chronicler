@@ -24,6 +24,8 @@ def profile():
 @main.route('/test_tables')
 @login_required
 def test_tables():
+    if not current_user.id == 1:
+        return redirect(url_for('main.profile'))
     userheads = Users().head
     gameheads = Games().head
     charheads = Characters().head
@@ -36,14 +38,14 @@ def test_tables():
     form.group_id.choices = [(g.id) for g in Users.query.order_by('id')]
 
     return render_template('test_tables.html',
-         userheads = userheads,
-         gameheads = gameheads,
-         charheads = charheads,
-         npcheads = npcheads,
-         placeheads = placeheads,
-         lootheads = lootheads,
-         users = users,
-         form = form)
+        userheads = userheads,
+        gameheads = gameheads,
+        charheads = charheads,
+        npcheads = npcheads,
+        placeheads = placeheads,
+        lootheads = lootheads,
+        users = users,
+        form = form)
 
 @main.route('/test_tables', methods = ['POST'])
 @login_required
