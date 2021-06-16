@@ -26,7 +26,7 @@ class DeleteForm(FlaskForm):
     submit = SubmitField("Submit")
 
 class ConForm(FlaskForm):
-    todelete = StringField("UserName to Delete:", validators=[DataRequired()])
+    todelete = StringField("UserName to Delete:")
     confirm = SubmitField("Confirm")
     cancel = SubmitField("Cancel")
 

@@ -75,7 +75,9 @@ def confirm():
         form = ConForm()
         usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
         name = usertodelete.username
-        if form.todelete.data == usertodelete.username:
+        if form.cancel.data:
+            return redirect(url_for('main.test_tables'))
+        elif form.todelete.data == usertodelete.username:
             # delete user
             flash("%s has been successfully deleted" % session['nametodelete'])
             db.session.delete(usertodelete)
