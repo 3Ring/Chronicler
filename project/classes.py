@@ -10,7 +10,7 @@ from . import db
 class UserForm(FlaskForm):
     username = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
-    hash = StringField("Hash", validators=[DataRequired ()])
+    hash = StringField("Password", validators=[DataRequired ()])
     realname = StringField("Real Name")
     submit = SubmitField("Submit")
 
