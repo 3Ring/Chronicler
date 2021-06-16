@@ -80,7 +80,7 @@ def confirm():
             flash("%s has been successfully deleted" % session['nametodelete'])
             db.session.delete(usertodelete)
             db.session.commit()
-            return redirect('/test_tables')
+            return redirect(url_for('main.test_tables'))
         else:
             flash("names do not match, check to make sure you are deleting the correct user")
             deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
