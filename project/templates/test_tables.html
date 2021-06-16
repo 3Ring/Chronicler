@@ -28,11 +28,28 @@
     {% endfor %}
     </table>
     <h3>Delete?</h3>
-    <form method='POST'>
-        {{ form.group_id }}
+    <form method='POST' action='/confirming'>
+        {{ delform.group_id }}
     </br>
-    {{ form.submit(class="btn btn-secondary") }}
+    {{ delform.submit(class="btn btn-secondary") }}
     </form>
+</br>
+    <h3>Add</h3>
+        <form  method='POST'>
+            {{ userform.username.label }}
+            {{ userform.username }}
+            <br/>
+            {{ userform.email.label }}
+            {{ userform.email }}
+            <br/>
+            {{ userform.hash.label }}
+            {{ userform.hash }}
+            <br/>
+            {{ userform.realname.label }}
+            {{ userform.realname }}
+            <br/>
+            {{ userform.submit }}
+        </form>
     {% endif %}
 
 

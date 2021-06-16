@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 # from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-# from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 
 from .classes import *
 from flask_login import login_required, current_user
@@ -21,22 +21,35 @@ def index():
 def profile():
     return render_template('profile.html', name=current_user.username)
 
-@main.route('/test_tables')
+@main.route('/test_tables', methods = ['GET', 'POST'])
 @login_required
 def test_tables():
+
+    # make sure that only the admin can access this site
     if not current_user.id == 1:
         return redirect(url_for('main.profile'))
+    
+    # set variable so Flask can build the site
     userheads = Users().head
+    users = Users.query.all()
     gameheads = Games().head
     charheads = Characters().head
     npcheads = NPCs().head
     placeheads = Places().head
     lootheads = Loot().head
-    users = Users.query.all()
 
-    form = DeleteForm()
-    form.group_id.choices = [(g.id) for g in Users.query.order_by('id')]
 
+    userform = UserForm()
+    delform = DeleteForm()
+    delform.group_id.choices = [(g.id) for g in Users.query.order_by('id')]
+    if request.method == 'POST':
+        try:
+            user = Users(username=userform.username.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.hash.data, method='sha256'))
+            db.session.add(user)
+            db.session.commit()
+            return redirect (url_for('main.test_tables'))
+        except:
+            return redirect (url_for('main.test_tables'))
     return render_template('test_tables.html',
         userheads = userheads,
         gameheads = gameheads,
@@ -45,9 +58,10 @@ def test_tables():
         placeheads = placeheads,
         lootheads = lootheads,
         users = users,
-        form = form)
+        delform = delform,
+        userform = userform)
 
-@main.route('/test_tables', methods = ['POST'])
+@main.route('/confirming', methods = ['POST'])
 @login_required
 def post_test_tables():
     delform = DeleteForm()
@@ -61,24 +75,23 @@ def post_test_tables():
     form = form,
     name = deleted.username)
 
-@main.route('/confirm', methods = ['GET', 'POST'])
+@main.route('/confirm', methods = ['POST'])
 @login_required
 def confirm():
-    if request.method == 'POST':
-        form = ConForm()
-        usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
-        if form.cancel.data:
-            return redirect(url_for('main.test_tables'))
-        elif form.todelete.data == usertodelete.username:
-            # delete user
-            flash("%s has been successfully deleted" % session['nametodelete'])
-            db.session.delete(usertodelete)
-            db.session.commit()
-            return redirect(url_for('main.test_tables'))
-        else:
-            flash("names do not match, check to make sure you are deleting the correct user")
-            deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
-            return render_template('confirm.html',
-            form = form,
-            name = deleted.username)
+    form = ConForm()
+    usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
+    if form.cancel.data:
+        return redirect(url_for('main.test_tables'))
+    elif form.todelete.data == usertodelete.username:
+        # delete user
+        flash("%s has been successfully deleted" % session['nametodelete'])
+        db.session.delete(usertodelete)
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
+    else:
+        flash("names do not match, check to make sure you are deleting the correct user")
+        deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
+        return render_template('confirm.html',
+        form = form,
+        name = deleted.username)
 
