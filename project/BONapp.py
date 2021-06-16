@@ -14,15 +14,6 @@ main = Blueprint('main', __name__)
 
 @main.route("/")
 def index():
-    # Show page listing all games
-    # get list of games from db
-    # games = db.execute('SELECT * FROM games')
-    # games = Games.query.all()
-    # check to see if the user is logged in
-    # if session.get('user_id'):
-    #     user = session.get('user_id')
-    #     return render_template("index.html", games=games, user=user)
-    # else:
     return render_template("index.html")
 
 @main.route('/profile')
