@@ -5,11 +5,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
-      {% if current_user. %}
+      {% if current_user.id == 1 %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('main.test_tables') }}">Test Tables</a>
         </li>
-
+      {% endif %}
       </ul>
       {% if current_user.is_authenticated %}
       <span class="navbar-text">
