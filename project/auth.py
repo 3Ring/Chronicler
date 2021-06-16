@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from .classes import *
@@ -9,7 +9,13 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login')
 def login():
     form = LoginForm()
-    return render_template('login.html', form=form)
+    if session['login_fail'] == True:
+        fail = 'alert-warning'
+    else:
+        fail = 'alert-success'
+    return render_template('login.html',
+        form=form,
+        fail=fail)
 
 @auth.route('/login', methods=['POST'])
 def login_post():
@@ -23,10 +29,12 @@ def login_post():
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user or not check_password_hash(user.hash, password):
+        session['login_fail'] = True
         flash('Please check your login details and try again.')
         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
+    session['login_fail'] = False
     login_user(user, remember=remember)
     return redirect(url_for('main.profile'))
 
