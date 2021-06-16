@@ -74,7 +74,6 @@ def confirm():
     if request.method == 'POST':
         form = ConForm()
         usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
-        name = usertodelete.username
         if form.cancel.data:
             return redirect(url_for('main.test_tables'))
         elif form.todelete.data == usertodelete.username:
