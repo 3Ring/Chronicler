@@ -19,7 +19,7 @@ def index():
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.username)
+    return render_template('profile.html', name=current_user.name)
 
 @main.route('/test_tables', methods = ['GET', 'POST'])
 @login_required
@@ -33,6 +33,7 @@ def test_tables():
     userheads = Users().head
     users = Users.query.all()
     gameheads = Games().head
+    games = Games.query.all()
     charheads = Characters().head
     npcheads = NPCs().head
     placeheads = Places().head
@@ -40,16 +41,30 @@ def test_tables():
 
 
     userform = UserForm()
+    gameform = GameForm()
     delform = DeleteForm()
-    delform.group_id.choices = [(g.id) for g in Users.query.order_by('id')]
+
     if request.method == 'POST':
-        try:
-            user = Users(username=userform.username.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.hash.data, method='sha256'))
+        if gameform.gamesubmit.data:
+
+            game = Games(name=gameform.name.data, imglink=gameform.imglink.data, sessions=gameform.sessions.data, secret=gameform.secret.data, dm_id=gameform.dm_id.data)
+            db.session.add(game)
+            db.session.commit()
+            games = Games.query.all()
+        elif userform.usersubmit.data:
+
+            user = Users(name=userform.name.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.hash.data, method='sha256'))
             db.session.add(user)
             db.session.commit()
-            return redirect (url_for('main.test_tables'))
-        except:
-            return redirect (url_for('main.test_tables'))
+            users = Users.query.all()
+            # return redirect (url_for('main.test_tables'))
+
+
+            # return redirect (url_for('main.test_tables'))
+
+            # return redirect (url_for('main.test_tables'))
+    delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
+    delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
     return render_template('test_tables.html',
         userheads = userheads,
         gameheads = gameheads,
@@ -58,40 +73,61 @@ def test_tables():
         placeheads = placeheads,
         lootheads = lootheads,
         users = users,
+        games = games,
         delform = delform,
-        userform = userform)
+        userform = userform,
+        gameform = gameform)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
 def post_test_tables():
-    delform = DeleteForm()
-    delete_id = delform.group_id.data
-    deleted = Users.query.filter_by(id = delete_id).first()
-    session['idtodelete'] = delete_id
-    session['nametodelete'] = deleted.username
-    flash("Are you sure you want to delete %s?" % session['nametodelete'])
+    delete = DeleteForm()
+    if delete.user_group_id.data:
+        delete_id = delete.user_group_id.data
+        deleted = Users.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'Users'
+    elif delete.game_group_id.data:
+        delete_id = delete.game_group_id.data
+        deleted = Games.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'Games'
+    session['name_to_delete'] = deleted.name
+    session['id_to_delete'] = delete_id
+    flash("Are you sure you want to delete %s?" % session['name_to_delete'])
     form = ConForm()
     return render_template('confirm.html',
     form = form,
-    name = deleted.username)
+    name = session['name_to_delete'])
 
 @main.route('/confirm', methods = ['POST'])
 @login_required
 def confirm():
     form = ConForm()
-    usertodelete = Users.query.filter_by(id = session.get('idtodelete')).first()
+    if session['table_to_edit'] == 'Users':
+        row_to_delete = Users.query.filter_by(id = session.get('id_to_delete')).first()
+    elif session['table_to_edit'] == 'Games':
+        row_to_delete = Games.query.filter_by(id = session.get('id_to_delete')).first()
+    # if the cancel button is pressed
     if form.cancel.data:
         return redirect(url_for('main.test_tables'))
-    elif form.todelete.data == usertodelete.username:
+    # if data is submitted correctly and matches
+    elif form.todelete.data == row_to_delete.name:
         # delete user
-        flash("%s has been successfully deleted" % session['nametodelete'])
-        db.session.delete(usertodelete)
+        flash("%s has been successfully deleted" % session['name_to_delete'])
+        db.session.delete(row_to_delete)
         db.session.commit()
         return redirect(url_for('main.test_tables'))
+    # if data is entered incorrectly
     else:
         flash("names do not match, check to make sure you are deleting the correct user")
         deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
         return render_template('confirm.html',
         form = form,
-        name = deleted.username)
+        name = deleted.name)
 
+@main.route('/test', methods = ['POST', 'GET'])
+def test():
+    form = TableForm()
+    form.group_id.choices = ['Users', 'Games']
+    if request.method == 'GET':
+        return render_template('test.html',
+            form=form)

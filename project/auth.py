@@ -51,10 +51,10 @@ def register():
     if request.method == 'POST':
         user = Users.query.filter_by(email=form.email.data).first()
         if form.validate_on_submit():
-            name = form.username.data
+            name = form.name.data
             # if email is unique add information to db
             if user is None:
-                user = Users(username=form.username.data, email=form.email.data, realname=form.realname.data, hash=generate_password_hash(form.hash.data, method='sha256'))
+                user = Users(name=form.name.data, email=form.email.data, realname=form.realname.data, hash=generate_password_hash(form.hash.data, method='sha256'))
                 db.session.add(user)
                 db.session.commit()
                 flash("Welcome to the table %s!" % form.realname.data)

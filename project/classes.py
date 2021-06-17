@@ -1,34 +1,49 @@
 from sqlalchemy.orm import backref
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from . import db
 
 # Create form model
 class UserForm(FlaskForm):
-    username = StringField("Name", validators=[DataRequired()])
+    name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     hash = StringField("Password", validators=[DataRequired ()])
     realname = StringField("Real Name")
-    submit = SubmitField("Submit")
+    usersubmit = SubmitField("Submit")
 
 class LoginForm(FlaskForm):
-    username = StringField("Name", validators=[DataRequired()])
+    name = StringField("Name", validators=[DataRequired()])
     password = StringField("Password", validators=[DataRequired ()])
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
 
+class TableForm(FlaskForm):
+    group_id = SelectField(u'Tables')
+    submit = SubmitField("Submit")
+
+# class DeleteUserForm(FlaskForm):
+#     group_id = SelectField(u'Users', coerce=int)
+#     submit = SubmitField("Submit")
+
 class DeleteForm(FlaskForm):
-    group_id = SelectField(u'Users', coerce=int)
+    user_group_id = SelectField(u'Users', coerce=int)
+    game_group_id = SelectField(u'Games', coerce=int)
+    character_group_id = SelectField(u'Characters', coerce=int)
+    npc_group_id = SelectField(u'NPCs', coerce=int)
+    place_group_id = SelectField(u'Places', coerce=int)
+    loot_group_id = SelectField(u'Loot', coerce=int)
     submit = SubmitField("Submit")
 
 class ConForm(FlaskForm):
-    todelete = StringField("UserName to Delete:")
+    todelete = StringField("Item to Delete:")
     confirm = SubmitField("Confirm")
     cancel = SubmitField("Cancel")
+
+
 
 # Create Models for db
 # Players
@@ -40,7 +55,7 @@ players = db.Table('players',
 # Users
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     hash = db.Column(db.String(120), nullable=False)
     realname = db.Column(db.String(20))
@@ -58,7 +73,15 @@ class Users(UserMixin, db.Model):
 
     # Create A String
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.name
+
+class GameForm(FlaskForm):
+    name = StringField("Name")
+    imglink = TextAreaField("Image Link")
+    sessions = IntegerField("Number of Sessions")
+    secret = IntegerField("User who this game is attached to '0' if published")
+    dm_id = IntegerField("User_id who this game is attached to")
+    gamesubmit = SubmitField("Submit")
 
 # Games
 class Games(db.Model):
@@ -216,3 +239,6 @@ class Loot(db.Model):
     # Create A String
     def __repr__(self):
         return '<Loot %r>' % self.name
+
+
+# test forms

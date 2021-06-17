@@ -8,6 +8,7 @@
 </div>
 
 {% endfor %}
+<div class="border table-reponsive">
 <h2>Users</h2>
 <table class="table table-hover table-bordered table-striped">
     <tr>
@@ -19,25 +20,24 @@
     {% for user in users %}
         <tr>
             <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
+            <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.hash }}</td>
             <td>{{ user.realname }}</td>
             <td>{{ user.date_added }}</td>
         </tr>
     {% endfor %}
-    </table>
+</table>
     <h3>Delete?</h3>
     <form method='POST' action='/confirming'>
-        {{ delform.group_id }}
-    </br>
+        {{ delform.user_group_id }}
     {{ delform.submit(class="btn btn-secondary") }}
     </form>
-</br>
     <h3>Add</h3>
         <form  method='POST'>
-            {{ userform.username.label }}
-            {{ userform.username }}
+            {{ userform.hidden_tag() }}
+            {{ userform.name.label }}
+            {{ userform.name }}
             <br/>
             {{ userform.email.label }}
             {{ userform.email }}
@@ -48,15 +48,10 @@
             {{ userform.realname.label }}
             {{ userform.realname }}
             <br/>
-            {{ userform.submit }}
+            {{ userform.usersubmit }}
         </form>
     {% endif %}
-
-
-    </br>
-</br>
-</br>
-
+</div>
     <h2>Games</h2>
 <table class="table table-hover table-bordered table-striped">
     <tr>
@@ -64,9 +59,47 @@
         <th> {{ head }} </th>
         {% endfor %}
     </tr>
-{% if games %}
-{% endif %}
+    {% if games %}
+    {% for game in games %}
+        <tr>
+            <td>{{ game.id }}</td>
+            <td>{{ game.name }}</td>
+            <td>{{ game.imglink }}</td>
+            <td>{{ game.sessions }}</td>
+            <td>{{ game.secret }}</td>
+            <td>{{ game.date_added }}</td>
+            <td>{{ game.dm_id }}</td>
+        </tr>
+    {% endfor %}
+    {% endif %}
 </table>
+<h3>Delete?</h3>
+    <form method='POST' action='/confirming'>
+        {{ delform.game_group_id }}
+    {{ delform.submit(class="btn btn-secondary") }}
+    </form>
+    <h3>Add</h3>
+        <form  method='POST'>
+            {{ gameform.hidden_tag() }}
+            {{ gameform.name.label }}
+            {{ gameform.name }}
+            <br/>
+            {{ gameform.imglink.label }}
+            {{ gameform.imglink }}
+            <br/>
+            {{ gameform.sessions.label }}
+            {{ gameform.sessions }}
+            <br/>
+            {{ gameform.secret.label }}
+            {{ gameform.secret }}
+            <br/>
+            {{ gameform.dm_id.label }}
+            {{ gameform.dm_id }}
+            <br/>
+            {{ gameform.gamesubmit }}
+        </form>
+    
+
 
 </br>
 
