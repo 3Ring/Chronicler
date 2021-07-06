@@ -19,8 +19,8 @@
     <form method='POST'>
         {{ form.hidden_tag() }}
 
-        {{ form.username.label(class="form-label") }}
-        {{ form.username(class="form-control") }}
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
         <br/>
         {{ form.email.label(class="form-label") }}
         {{ form.email(class="form-control") }}
@@ -31,7 +31,7 @@
         {{ form.realname.label(class="form-label") }}
         {{ form.realname(class="form-control") }}
         <br/>
-        {{ form.submit(class="btn btn-secondary") }}
+        {{ form.usersubmit(class="btn btn-secondary") }}
 
     </form>
     </div>

@@ -9,13 +9,18 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login')
 def login():
     form = LoginForm()
-    if session['login_fail'] == True:
-        fail = 'alert-warning'
-    else:
-        fail = 'alert-success'
-    return render_template('login.html',
-        form=form,
-        fail=fail)
+    try:
+        if session['login_fail'] == True:
+            fail = 'alert-warning'
+        else:
+            fail = 'alert-success'
+        return render_template('login.html',
+            form=form,
+            fail=fail)
+    except:
+        return render_template('login.html',
+            form=form)
+
 
 @auth.route('/login', methods=['POST'])
 def login_post():
