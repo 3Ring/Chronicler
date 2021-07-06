@@ -216,6 +216,16 @@ class NPCs(db.Model):
     def __repr__(self):
         return '<NPC %r>' % self.name
 
+class NPCForm(FlaskForm):
+    name = StringField("Name")
+    secret_name = StringField("Secret Name")
+    bio = TextAreaField("Bio")
+    secret_bio = TextAreaField("Secret Bio")
+    game_id = IntegerField("GameID")
+    place_id = IntegerField("PlaceID")
+    npcsubmit = SubmitField("Submit")
+
+
 # Places
 class Places(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -241,6 +251,13 @@ class Places(db.Model):
     def __repr__(self):
         return '<Place %r>' % self.name
 
+class PlaceForm(FlaskForm):
+    name = StringField("Name")
+    bio = TextAreaField("Bio")
+    secret_bio = TextAreaField("Secret Bio")
+    game_id = IntegerField("GameID")
+    placesubmit = SubmitField("Submit")
+
 # loot
 class Loot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -263,5 +280,11 @@ class Loot(db.Model):
     def __repr__(self):
         return '<Loot %r>' % self.name
 
+class LootForm(FlaskForm):
+    name = StringField("Name")
+    bio = TextAreaField("Bio")
+    copper_value = IntegerField("Copper Value")
+    owner_id = IntegerField("Character OwnerID")
+    lootsubmit = SubmitField("Submit")
 
 # test forms

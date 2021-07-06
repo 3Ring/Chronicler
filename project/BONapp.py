@@ -37,13 +37,19 @@ def test_tables():
     charheads = Characters().head
     characters = Characters.query.all()
     npcheads = NPCs().head
+    npcs = NPCs.query.all()
     placeheads = Places().head
+    places = Places.query.all()
     lootheads = Loot().head
+    loots = Loot().query.all()
 
 
     userform = UserForm()
     gameform = GameForm()
     charform = CharForm()
+    npcform = NPCForm()
+    placeform = PlaceForm()
+    lootform = LootForm()
     delform = DeleteForm()
 
     if request.method == 'POST':
@@ -66,11 +72,31 @@ def test_tables():
             db.session.commit()
             characters = Characters.query.all()
 
+        elif npcform.npcsubmit.data:
+            npc = NPCs(name=npcform.name.data, secret_name=npcform.secret_name.data, bio=npcform.bio.data, secret_bio=npcform.secret_bio.data, game_id=npcform.game_id.data, place_id=npcform.place_id.data)
+            db.session.add(npc)
+            db.session.commit()
+            npcs = NPCs.query.all()
 
+        elif placeform.placesubmit.data:
+            place = Places(name=placeform.name.data, bio=placeform.bio.data, secret_bio=placeform.secret_bio.data, game_id=placeform.game_id.data)
+            db.session.add(place)
+            db.session.commit()
+            places = Places.query.all()
+
+        elif lootform.lootsubmit.data:
+            loot = Loot(name=lootform.name.data, bio=lootform.bio.data, copper_value=lootform.copper_value.data, owner_id=lootform.owner_id.data)
+            db.session.add(loot)
+            db.session.commit()
+            loots = Loot.query.all()
 
     delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
     delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
     delform.character_group_id.choices = [(g.id) for g in Characters.query.order_by('id')]
+    delform.npc_group_id.choices = [(g.id) for g in NPCs.query.order_by('id')]
+    delform.place_group_id.choices = [(g.id) for g in Places.query.order_by('id')]
+    delform.loot_group_id.choices = [(g.id) for g in Loot.query.order_by('id')]
+
     return render_template('test_tables.html',
         userheads = userheads,
         gameheads = gameheads,
@@ -81,10 +107,16 @@ def test_tables():
         users = users,
         games = games,
         characters = characters,
+        npcs = npcs,
+        places = places,
+        loots = loots,
         delform = delform,
         userform = userform,
         gameform = gameform,
-        charform=charform)
+        charform=charform,
+        npcform=npcform,
+        placeform=placeform,
+        lootform=lootform)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
@@ -102,6 +134,18 @@ def post_test_tables():
         delete_id = delete.character_group_id.data
         deleted = Characters.query.filter_by(id = delete_id).first()
         session['table_to_edit'] = 'Characters'
+    elif delete.npc_group_id.data:
+        delete_id = delete.npc_group_id.data
+        deleted = NPCs.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'NPCs'
+    elif delete.place_group_id.data:
+        delete_id = delete.place_group_id.data
+        deleted = Places.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'Places'
+    elif delete.loot_group_id.data:
+        delete_id = delete.loot_group_id.data
+        deleted = Loot.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'Loot'
     session['name_to_delete'] = deleted.name
     session['id_to_delete'] = delete_id
     flash("Are you sure you want to delete %s?" % session['name_to_delete'])
@@ -120,6 +164,12 @@ def confirm():
         row_to_delete = Games.query.filter_by(id = session.get('id_to_delete')).first()
     elif session['table_to_edit'] == 'Characters':
         row_to_delete = Characters.query.filter_by(id = session.get('id_to_delete')).first()
+    elif session['table_to_edit'] == 'NPCs':
+        row_to_delete = NPCs.query.filter_by(id = session.get('id_to_delete')).first()
+    elif session['table_to_edit'] == 'Places':
+        row_to_delete = Places.query.filter_by(id = session.get('id_to_delete')).first()
+    elif session['table_to_edit'] == 'Loot':
+        row_to_delete = Loot.query.filter_by(id = session.get('id_to_delete')).first()
     # if the cancel button is pressed
     if form.cancel.data:
         return redirect(url_for('main.test_tables'))

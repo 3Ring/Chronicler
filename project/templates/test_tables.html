@@ -137,13 +137,13 @@
     <td>{{ char.game_id }}</td>
 </tr>
 {% endfor %}
+{% endif %}
+</table>
 <h3>Delete?</h3>
 <form method='POST' action='/confirming'>
     {{ delform.character_group_id }}
 {{ delform.submit(class="btn btn-secondary") }}
 </form>
-{% endif %}
-</table>
 <h3>Add</h3>
 <form  method='POST'>
     {{ charform.hidden_tag() }}
@@ -209,8 +209,48 @@
         {% endfor %}
     </tr>
 {% if npcs %}
+{% for npc in npcs %}
+    <tr>
+        <td>{{ npc.id }}</td>
+        <td>{{ npc.name }}</td>
+        <td>{{ npc.secret_name }}</td>
+        <td>{{ npc.bio }}</td>
+        <td>{{ npc.secret_bio }}</td>
+        <td>{{ npc.date_added }}</td>
+        <td>{{ npc.game_id }}</td>
+        <td>{{ npc.place_id }}</td>
+    </tr>
+{% endfor %}
 {% endif %}
 </table>
+<h3>Delete?</h3>
+<form method='POST' action='/confirming'>
+    {{ delform.npc_group_id }}
+{{ delform.submit(class="btn btn-secondary") }}
+</form>
+<h3>Add</h3>
+<form  method='POST'>
+    {{ npcform.hidden_tag() }}
+    {{ npcform.name.label }}
+    {{ npcform.name }}
+    <br/>
+    {{ npcform.secret_name.label }}
+    {{ npcform.secret_name }}
+    <br/>
+    {{ npcform.bio.label }}
+    {{ npcform.bio }}
+    <br/>
+    {{ npcform.secret_bio.label }}
+    {{ npcform.secret_bio }}
+    <br/>
+    {{ npcform.game_id.label }}
+    {{ npcform.game_id }}
+    <br/>
+    {{ npcform.place_id.label }}
+    {{ npcform.place_id }}
+    <br/>
+    {{ npcform.npcsubmit }}
+</form>
 </div>
 
 <h2>Places</h2>
@@ -222,21 +262,85 @@
         {% endfor %}
     </tr>
 {% if places %}
+{% for place in places %}
+<tr>
+    <td>{{ place.id }}</td>
+    <td>{{ place.name }}</td>
+    <td>{{ place.bio }}</td>
+    <td>{{ place.secret_bio }}</td>
+    <td>{{ place.date_added }}</td>
+    <td>{{ place.game_id }}</td>
+    <td>{{ place.NPCs }}</td>
+</tr>
+{% endfor %}
 {% endif %}
 </table>
+<h3>Delete?</h3>
+<form method='POST' action='/confirming'>
+    {{ delform.place_group_id }}
+{{ delform.submit(class="btn btn-secondary") }}
+</form>
+<h3>Add</h3>
+<form  method='POST'>
+    {{ placeform.hidden_tag() }}
+    {{ placeform.name.label }}
+    {{ placeform.name }}
+    <br/>
+    {{ placeform.bio.label }}
+    {{ placeform.bio }}
+    <br/>
+    {{ placeform.secret_bio.label }}
+    {{ placeform.secret_bio }}
+    <br/>
+    {{ placeform.game_id.label }}
+    {{ placeform.game_id }}
+    <br/>
+    {{ placeform.placesubmit }}
+</form>
 </div>
 
 <h2>Loot</h2>
 <div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
-<table class="table table-hover table-bordered table-striped">
+    <table class="table table-hover table-bordered table-striped">
+        <tr>
+            {% for head in lootheads %}
+            <th> {{ head }} </th>
+            {% endfor %}
+        </tr>
+    {% if loots %}
+    {% for loot in loots %}
     <tr>
-        {% for head in lootheads %}
-        <th> {{ head }} </th>
-        {% endfor %}
+        <td>{{ loot.id }}</td>
+        <td>{{ loot.name }}</td>
+        <td>{{ loot.bio }}</td>
+        <td>{{ loot.copper_value }}</td>
+        <td>{{ loot.date_added }}</td>
+        <td>{{ loot.owner_id }}</td>
     </tr>
-{% if loot %}
-{% endif %}
-</table>
-
+    {% endfor %}
+    {% endif %}
+    </table>
+    <h3>Delete?</h3>
+    <form method='POST' action='/confirming'>
+        {{ delform.loot_group_id }}
+    {{ delform.submit(class="btn btn-secondary") }}
+    </form>
+    <h3>Add</h3>
+    <form  method='POST'>
+        {{ lootform.hidden_tag() }}
+        {{ lootform.name.label }}
+        {{ lootform.name }}
+        <br/>
+        {{ lootform.bio.label }}
+        {{ lootform.bio }}
+        <br/>
+        {{ lootform.copper_value.label }}
+        {{ lootform.copper_value }}
+        <br/>
+        {{ lootform.owner_id.label }}
+        {{ lootform.owner_id }}
+        <br/>
+        {{ lootform.lootsubmit }}
+    </form>
 </div>
 {% endblock %}
