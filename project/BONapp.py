@@ -57,12 +57,7 @@ def test_tables():
             db.session.add(user)
             db.session.commit()
             users = Users.query.all()
-            # return redirect (url_for('main.test_tables'))
 
-
-            # return redirect (url_for('main.test_tables'))
-
-            # return redirect (url_for('main.test_tables'))
     delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
     delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
     return render_template('test_tables.html',
