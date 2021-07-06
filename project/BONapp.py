@@ -35,6 +35,7 @@ def test_tables():
     gameheads = Games().head
     games = Games.query.all()
     charheads = Characters().head
+    characters = Characters.query.all()
     npcheads = NPCs().head
     placeheads = Places().head
     lootheads = Loot().head
@@ -42,6 +43,7 @@ def test_tables():
 
     userform = UserForm()
     gameform = GameForm()
+    charform = CharForm()
     delform = DeleteForm()
 
     if request.method == 'POST':
@@ -58,8 +60,17 @@ def test_tables():
             db.session.commit()
             users = Users.query.all()
 
+        elif charform.charsubmit.data:
+            char = Characters(name=charform.name.data, imglink=charform.imglink.data, bio=charform.bio.data, platinum=charform.platinum.data, gold=charform.gold.data, silver=charform.silver.data, copper=charform.copper.data, experience=charform.experience.data, strength=charform.strength.data, dexterity=charform.dexterity.data, constitution=charform.constitution.data, wisdom=charform.wisdom.data, intelligence=charform.intelligence.data, charisma=charform.charisma.data, user_id=charform.user_id.data, game_id=charform.game_id.data)
+            db.session.add(char)
+            db.session.commit()
+            characters = Characters.query.all()
+
+
+
     delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
     delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
+    delform.character_group_id.choices = [(g.id) for g in Characters.query.order_by('id')]
     return render_template('test_tables.html',
         userheads = userheads,
         gameheads = gameheads,
@@ -69,9 +80,11 @@ def test_tables():
         lootheads = lootheads,
         users = users,
         games = games,
+        characters = characters,
         delform = delform,
         userform = userform,
-        gameform = gameform)
+        gameform = gameform,
+        charform=charform)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
@@ -85,6 +98,10 @@ def post_test_tables():
         delete_id = delete.game_group_id.data
         deleted = Games.query.filter_by(id = delete_id).first()
         session['table_to_edit'] = 'Games'
+    elif delete.character_group_id.data:
+        delete_id = delete.character_group_id.data
+        deleted = Characters.query.filter_by(id = delete_id).first()
+        session['table_to_edit'] = 'Characters'
     session['name_to_delete'] = deleted.name
     session['id_to_delete'] = delete_id
     flash("Are you sure you want to delete %s?" % session['name_to_delete'])
@@ -101,6 +118,8 @@ def confirm():
         row_to_delete = Users.query.filter_by(id = session.get('id_to_delete')).first()
     elif session['table_to_edit'] == 'Games':
         row_to_delete = Games.query.filter_by(id = session.get('id_to_delete')).first()
+    elif session['table_to_edit'] == 'Characters':
+        row_to_delete = Characters.query.filter_by(id = session.get('id_to_delete')).first()
     # if the cancel button is pressed
     if form.cancel.data:
         return redirect(url_for('main.test_tables'))
@@ -113,11 +132,11 @@ def confirm():
         return redirect(url_for('main.test_tables'))
     # if data is entered incorrectly
     else:
-        flash("names do not match, check to make sure you are deleting the correct user")
-        deleted = Users.query.filter_by(id = session.get('idtodelete')).first()
+        form = ConForm()
+        flash("names do not match, check to make sure you are deleting the correct thing")
         return render_template('confirm.html',
-        form = form,
-        name = deleted.name)
+            form = form,
+            name = session['name_to_delete'])
 
 @main.route('/test', methods = ['POST', 'GET'])
 def test():

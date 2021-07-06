@@ -114,8 +114,89 @@
         {% endfor %}
     </tr>
 {% if characters %}
+{% for char in characters %}
+<tr>
+    <td>{{ char.id }}</td>
+    <td>{{ char.name }}</td>
+    <td>{{ char.imglink }}</td>
+    <td>{{ char.bio }}</td>
+    <td>{{ char.platinum }}</td>
+    <td>{{ char.gold }}</td>
+    <td>{{ char.electrum }}</td>
+    <td>{{ char.silver }}</td>
+    <td>{{ char.copper }}</td>
+    <td>{{ char.experience }}</td>
+    <td>{{ char.strength }}</td>
+    <td>{{ char.dexterity }}</td>
+    <td>{{ char.contitution }}</td>
+    <td>{{ char.intelligence }}</td>
+    <td>{{ char.wisdom }}</td>
+    <td>{{ char.charisma }}</td>
+    <td>{{ char.date_added }}</td>
+    <td>{{ char.user_id }}</td>
+    <td>{{ char.game_id }}</td>
+</tr>
+{% endfor %}
+<h3>Delete?</h3>
+<form method='POST' action='/confirming'>
+    {{ delform.character_group_id }}
+{{ delform.submit(class="btn btn-secondary") }}
+</form>
 {% endif %}
 </table>
+<h3>Add</h3>
+<form  method='POST'>
+    {{ charform.hidden_tag() }}
+    {{ charform.name.label }}
+    {{ charform.name }}
+    <br/>
+    {{ charform.imglink.label }}
+    {{ charform.imglink }}
+    <br/>
+    {{ charform.bio.label }}
+    {{ charform.bio }}
+    <br/>
+    {{ charform.platinum.label }}
+    {{ charform.platinum }}
+    <br/>
+    {{ charform.gold.label }}
+    {{ charform.gold }}
+    <br/>
+    {{ charform.silver.label }}
+    {{ charform.silver }}
+    <br/>
+    {{ charform.copper.label }}
+    {{ charform.copper }}
+    <br/>
+    {{ charform.experience.label }}
+    {{ charform.experience }}
+    <br/>
+    {{ charform.strength.label }}
+    {{ charform.strength }}
+    <br/>
+    {{ charform.dexterity.label }}
+    {{ charform.dexterity }}
+    <br/>
+    {{ charform.constitution.label }}
+    {{ charform.constitution }}
+    <br/>
+    {{ charform.wisdom.label }}
+    {{ charform.wisdom }}
+    <br/>
+    {{ charform.intelligence.label }}
+    {{ charform.intelligence }}
+    <br/>
+    {{ charform.charisma.label }}
+    {{ charform.charisma }}
+    <br/>
+    {{ charform.user_id.label }}
+    {{ charform.user_id }}
+    <br/>
+    {{ charform.game_id.label }}
+    {{ charform.game_id }}
+    <br/>
+    {{ charform.charsubmit }}
+</form>
 </div>
 
 

@@ -83,6 +83,9 @@ class GameForm(FlaskForm):
     dm_id = IntegerField("User_id who this game is attached to")
     gamesubmit = SubmitField("Submit")
 
+
+
+
 # Games
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -123,7 +126,7 @@ class Characters(db.Model):
     platinum = db.Column(db.Integer, default=0)
     gold = db.Column(db.Integer, default=0)
     electrum = db.Column(db.Integer, default=0)
-    siver = db.Column(db.Integer, default=0)
+    silver = db.Column(db.Integer, default=0)
     copper = db.Column(db.Integer, default=0)
     experience = db.Column(db.Integer, default=0)
     strength = db.Column(db.Integer, default=0)
@@ -163,6 +166,26 @@ class Characters(db.Model):
     # Create A String
     def __repr__(self):
         return '<Character %r>' % self.name
+
+class CharForm(FlaskForm):
+    name = StringField("Name")
+    imglink = TextAreaField("Image Link")
+    bio = TextAreaField("Bio")
+    platinum = IntegerField("Platinum Pieces")
+    gold = IntegerField("Gold Pieces")
+    electrum = IntegerField("Electrum Pieces")
+    silver = IntegerField("Silver Pieces")
+    copper = IntegerField("Copper Pieces")
+    experience = IntegerField("experience")
+    strength = IntegerField("Strength")
+    dexterity = IntegerField("Dexterity")
+    constitution = IntegerField("Constitution")
+    wisdom = IntegerField("Wisdom")
+    intelligence = IntegerField("Intelligence")
+    charisma = IntegerField("Charisma")
+    user_id = IntegerField("UserID")
+    game_id = IntegerField("GameID")
+    charsubmit = SubmitField("Submit")
 
 # NPCs
 class NPCs(db.Model):
