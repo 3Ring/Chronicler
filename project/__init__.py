@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 # Initialize the database
 db = SQLAlchemy()
@@ -12,7 +13,8 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'is it secret?'
+    db_password = os.environ.get('DB_PASS')
+    app.config['SECRET_KEY'] = db_password
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///liteBON.db'
 
     db.init_app(app)
