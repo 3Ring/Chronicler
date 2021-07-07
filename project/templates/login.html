@@ -6,9 +6,9 @@
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <div class="alert {{ fail }} alert-dismissible fade show" role="alert">
-        <div>
-            {{ messages[0] }}
-        </div>
+    <div>
+        {{ messages[0] }}
+    </div>
 </div>
 {% endif %}
 {% endwith %}
@@ -16,18 +16,17 @@
 <div class="shadow p-3 mb-5 bg-body rounded">
     <form method="POST" action="/login">
         {{ form.hidden_tag() }}
-    </br>
-    {{ form.email.label(class="form-label") }}
-    {{ form.email(class="form-control") }}
-    </br>
-    {{ form.password.label(class="form-label") }}
-    {{ form.password(class="form-control") }}
-    </br>
-    {{ form.remember.label(class="form-label") }}
-    {{ form.remember }}
-    </br>
-    {{ form.submit(class="btn btn-secondary") }}
-
+        </br>
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        </br>
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        </br>
+        {{ form.remember.label(class="form-label") }}
+        {{ form.remember }}
+        </br>
+        {{ form.submit(class="btn btn-secondary") }}
     </form>
 </div>
 
