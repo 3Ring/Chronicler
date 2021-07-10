@@ -6,6 +6,8 @@ from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from . import db
 
+
+
 # Create form model
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
