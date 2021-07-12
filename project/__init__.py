@@ -18,8 +18,8 @@ def create_app():
 
     db_password = os.environ.get('DB_PASS')
     app.config['SECRET_KEY'] = db_password
-    # MySQL config:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://bb4f352d53006d:9a096e7c@us-cdbr-east-04.cleardb.com/heroku_30786eaa3324bca?reconnect=true' or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+    # PostGres config:
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['DATABASE_URL'] or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
     migrate = Migrate(app, db)
 
