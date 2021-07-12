@@ -11,6 +11,12 @@ db = SQLAlchemy()
 # Setting up MYSQL database 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/BON'
 
+def postfix(string):
+        if string[0:9] == 'postgres:':
+                new = 'postgresql' + string[8:]
+                return new
+        else:
+                return string
 
 def create_app():
     app = Flask(__name__)
@@ -19,7 +25,7 @@ def create_app():
     db_password = os.environ.get('DB_PASS')
     app.config['SECRET_KEY'] = db_password or 'so-secret-I-have-no-idea-what-it-is'
     # PostGres config:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+    app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL')) or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
     migrate = Migrate(app, db)
 
