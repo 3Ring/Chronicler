@@ -17,7 +17,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db_password = os.environ.get('DB_PASS')
-    app.config['SECRET_KEY'] = db_password
+    app.config['SECRET_KEY'] = db_password or 'so-secret-I-have-no-idea-what-it-is'
     # PostGres config:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
