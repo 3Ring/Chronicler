@@ -19,7 +19,7 @@ def create_app():
     db_password = os.environ.get('DB_PASS')
     app.config['SECRET_KEY'] = db_password
     # PostGres config:
-    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['DATABASE_URL'] or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
     migrate = Migrate(app, db)
 
