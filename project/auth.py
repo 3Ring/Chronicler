@@ -52,7 +52,6 @@ def register():
     # clear variables and set wtforms
     name = None
     form = UserForm()
-    list_users = Users.query.order_by(Users.date_added)
     if request.method == 'POST':
         user = Users.query.filter_by(email=form.email.data).first()
         if user == None:
@@ -69,13 +68,12 @@ def register():
             return render_template('register.html',
                 form = form,
                 name = name,
-                our_users=list_users,
                 )
     else:
         return render_template("register.html", 
             form=form,
             name=name,
-            our_users=list_users)
+            )
 
 @auth.route('/logout')
 @login_required
