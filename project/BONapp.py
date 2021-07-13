@@ -188,3 +188,13 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
+@main.route('/notes', methods = ['POST', 'GET'])
+@login_required
+def notes():
+    if request.method == 'POST':
+        return
+    else:
+        form = NoteForm()
+        
+        return render_template('notes.html',
+            form=form)
