@@ -17,6 +17,6 @@ db_password = os.environ.get('DB_PASS')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = db_password or 'so-secret-I-have-no-idea-what-it-is'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or db_password
 app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL')) or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 db = SQLAlchemy(app)
