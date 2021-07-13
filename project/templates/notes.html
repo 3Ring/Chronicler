@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+{% for note in log %}
+    {{note.date_added}} || {{note.character}}: {{note.note}}
+    </br>
+{% endfor %}
+<form  method='POST'>
+    {{ noteform.hidden_tag() }}
+    {{ noteform.note.label }}
+    {{ noteform.note }}
+    <br/>
+    {{ noteform.private.label }}
+    {{ noteform.private }}
+    <br/>
+    {{ noteform.in_character.label }}
+    {{ noteform.in_character }}
+    <br/>
+    {{ noteform.session.label }}
+    {{ noteform.session }}
+    <br/>
+    {{ noteform.character.label }}
+    {{ noteform.character }}
+    <br/>
+    {{ noteform.game.label }}
+    {{ noteform.game }}
+    <br/>
+    {{ noteform.notesubmit }}
+</form>
 {% endblock %}

@@ -5,6 +5,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 # from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import generate_password_hash
+from sqlalchemy import and_
 
 from .classes import *
 from flask_login import login_required, current_user
@@ -190,6 +191,7 @@ def confirm():
         row_to_delete = Places.query.filter_by(id = session.get('id_to_delete')).first()
     elif session['table_to_edit'] == 'Loot':
         row_to_delete = Loot.query.filter_by(id = session.get('id_to_delete')).first()
+
     # if the cancel button is pressed
     if form.cancel.data:
         return redirect(url_for('main.test_tables'))
@@ -212,11 +214,17 @@ def confirm():
 @login_required
 def notes():
     # this needs to be changed to be dynamic (todo)
-    # Notes.query.order_by(date_added).filter_by(game_id = 1).
+    form = NoteForm()
+    log = Notes.query.order_by(and_(Notes.session_id, Notes.date_added))
     if request.method == 'POST':
-        return
-    else:
-        form = NoteForm()
-        
+        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_characater=form.in_characer.data, characater=form.character.data, game_id=form.game.data)
+        db.session.add(note)
+        db.session.commit()
+        log = Notes.query.order_by(and_(Notes.session_id, Notes.date_added))
         return render_template('notes.html',
+            log=log,
             form=form)
+    else:
+        return render_template('notes.html',
+            log=log,
+            noteform=form)
