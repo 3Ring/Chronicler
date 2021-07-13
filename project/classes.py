@@ -209,6 +209,7 @@ class DeleteForm(FlaskForm):
     npc_group_id = SelectField(u'NPCs', coerce=int)
     place_group_id = SelectField(u'Places', coerce=int)
     loot_group_id = SelectField(u'Loot', coerce=int)
+    note_group_id = SelectField(u'Notes', coerce=int)
     submit = SubmitField("Submit")
 
 class ConForm(FlaskForm):
@@ -280,9 +281,22 @@ class Notes(db.Model):
     character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-
+    head = [
+        'ID',
+        'Note',
+        'session_id',
+        'Private',
+        'In Character',
+        'date_added',
+        'character',
+        'game_id'
+    ]
 
 class NoteForm(FlaskForm):
     note = TextAreaField("Live Note")
     private = BooleanField("Private?")
     in_character = BooleanField("In character note?")
+    session = IntegerField('session?')
+    character = IntegerField('character id')
+    game = IntegerField('game id')
+    notesubmit = SubmitField("Submit")
