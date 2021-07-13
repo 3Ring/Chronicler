@@ -43,11 +43,10 @@ class Games(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    
-    # game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+
     places = db.relationship('Places', backref='game', lazy=True)
     NPCs = db.relationship('NPCs', backref='game', lazy=True)
-    # PCs = db.relationship('Characers', backref='game', lazy=True)
+
 
     players = db.relationship('Users', secondary=players, lazy='subquery',
         backref=db.backref('games', lazy=True))
@@ -267,3 +266,23 @@ class LootForm(FlaskForm):
     copper_value = IntegerField("Copper Value")
     owner_id = IntegerField("Character OwnerID")
     lootsubmit = SubmitField("Submit")
+
+# working on the live note feature here:
+
+class Notes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.Text)
+    session_id = db.Column(db.Integer)
+    private = db.Column(db.Boolean)
+    in_character = db.Column(db.Boolean)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
+
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+
+
+class NoteForm(FlaskForm):
+    note = TextAreaField("Live Note")
+    private = BooleanField("Private?")
+    in_character = BooleanField("In character note?")
