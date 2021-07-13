@@ -188,10 +188,3 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-@main.route('/test', methods = ['POST', 'GET'])
-def test():
-    form = TableForm()
-    form.group_id.choices = ['Users', 'Games']
-    if request.method == 'GET':
-        return render_template('test.html',
-            form=form)

@@ -8,7 +8,7 @@ from .__init__ import db
 
 
 
-# Create form model
+# Form models
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
@@ -22,14 +22,6 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
-
-class TableForm(FlaskForm):
-    group_id = SelectField(u'Tables')
-    submit = SubmitField("Submit")
-
-# class DeleteUserForm(FlaskForm):
-#     group_id = SelectField(u'Users', coerce=int)
-#     submit = SubmitField("Submit")
 
 class DeleteForm(FlaskForm):
     user_group_id = SelectField(u'Users', coerce=int)
