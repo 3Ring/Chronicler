@@ -7,46 +7,12 @@ from flask_login import UserMixin
 from .__init__ import db
 
 
-
-# Form models
-class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    hash = StringField("Password", validators=[DataRequired ()])
-    realname = StringField("Real Name")
-    usersubmit = SubmitField("Submit")
-
-class LoginForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    password = StringField("Password", validators=[DataRequired ()])
-    email = StringField("Email", validators=[DataRequired()])
-    remember = BooleanField("Remember Me")
-    submit = SubmitField("Submit")
-
-class DeleteForm(FlaskForm):
-    user_group_id = SelectField(u'Users', coerce=int)
-    game_group_id = SelectField(u'Games', coerce=int)
-    character_group_id = SelectField(u'Characters', coerce=int)
-    npc_group_id = SelectField(u'NPCs', coerce=int)
-    place_group_id = SelectField(u'Places', coerce=int)
-    loot_group_id = SelectField(u'Loot', coerce=int)
-    submit = SubmitField("Submit")
-
-class ConForm(FlaskForm):
-    todelete = StringField("Item to Delete:")
-    confirm = SubmitField("Confirm")
-    cancel = SubmitField("Cancel")
-
-
-
 # Create Models for db
-# Players
 players = db.Table('players',
     db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
     db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
 )
 
-# Users
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
@@ -65,22 +31,9 @@ class Users(UserMixin, db.Model):
         'Real Name', 
         'Date Added']
 
-    # Create A String
     def __repr__(self):
         return '<User %r>' % self.name
 
-class GameForm(FlaskForm):
-    name = StringField("Name")
-    imglink = TextAreaField("Image Link")
-    sessions = IntegerField("Number of Sessions")
-    secret = IntegerField("User who this game is attached to '0' if published")
-    dm_id = IntegerField("User_id who this game is attached to")
-    gamesubmit = SubmitField("Submit")
-
-
-
-
-# Games
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -107,11 +60,10 @@ class Games(db.Model):
         'Secret', 
         'Date Added', 
         'DM ID']
-    # Create A String
+
     def __repr__(self):
         return '<Game %r>' % self.name
 
-# Characters
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -157,31 +109,9 @@ class Characters(db.Model):
     'User ID', 
     'Game ID']
 
-    # Create A String
     def __repr__(self):
         return '<Character %r>' % self.name
 
-class CharForm(FlaskForm):
-    name = StringField("Name")
-    imglink = TextAreaField("Image Link")
-    bio = TextAreaField("Bio")
-    platinum = IntegerField("Platinum Pieces")
-    gold = IntegerField("Gold Pieces")
-    electrum = IntegerField("Electrum Pieces")
-    silver = IntegerField("Silver Pieces")
-    copper = IntegerField("Copper Pieces")
-    experience = IntegerField("experience")
-    strength = IntegerField("Strength")
-    dexterity = IntegerField("Dexterity")
-    constitution = IntegerField("Constitution")
-    wisdom = IntegerField("Wisdom")
-    intelligence = IntegerField("Intelligence")
-    charisma = IntegerField("Charisma")
-    user_id = IntegerField("UserID")
-    game_id = IntegerField("GameID")
-    charsubmit = SubmitField("Submit")
-
-# NPCs
 class NPCs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
@@ -206,21 +136,9 @@ class NPCs(db.Model):
         'Place ID'
     ]
 
-    # Create A String
     def __repr__(self):
         return '<NPC %r>' % self.name
 
-class NPCForm(FlaskForm):
-    name = StringField("Name")
-    secret_name = StringField("Secret Name")
-    bio = TextAreaField("Bio")
-    secret_bio = TextAreaField("Secret Bio")
-    game_id = IntegerField("GameID")
-    place_id = IntegerField("PlaceID")
-    npcsubmit = SubmitField("Submit")
-
-
-# Places
 class Places(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
@@ -241,18 +159,9 @@ class Places(db.Model):
         'NPCs'
     ]
 
-    # Create A String
     def __repr__(self):
         return '<Place %r>' % self.name
 
-class PlaceForm(FlaskForm):
-    name = StringField("Name")
-    bio = TextAreaField("Bio")
-    secret_bio = TextAreaField("Secret Bio")
-    game_id = IntegerField("GameID")
-    placesubmit = SubmitField("Submit")
-
-# loot
 class Loot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
@@ -270,9 +179,87 @@ class Loot(db.Model):
         'Date Added',
         'Owner ID'
     ]
-    # Create A String
+
     def __repr__(self):
         return '<Loot %r>' % self.name
+
+
+
+
+
+
+# Form models
+class UserForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
+    hash = StringField("Password", validators=[DataRequired ()])
+    realname = StringField("Real Name")
+    usersubmit = SubmitField("Submit")
+
+class LoginForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    password = StringField("Password", validators=[DataRequired ()])
+    email = StringField("Email", validators=[DataRequired()])
+    remember = BooleanField("Remember Me")
+    submit = SubmitField("Submit")
+
+class DeleteForm(FlaskForm):
+    user_group_id = SelectField(u'Users', coerce=int)
+    game_group_id = SelectField(u'Games', coerce=int)
+    character_group_id = SelectField(u'Characters', coerce=int)
+    npc_group_id = SelectField(u'NPCs', coerce=int)
+    place_group_id = SelectField(u'Places', coerce=int)
+    loot_group_id = SelectField(u'Loot', coerce=int)
+    submit = SubmitField("Submit")
+
+class ConForm(FlaskForm):
+    todelete = StringField("Item to Delete:")
+    confirm = SubmitField("Confirm")
+    cancel = SubmitField("Cancel")
+
+class GameForm(FlaskForm):
+    name = StringField("Name")
+    imglink = TextAreaField("Image Link")
+    sessions = IntegerField("Number of Sessions")
+    secret = IntegerField("User who this game is attached to '0' if published")
+    dm_id = IntegerField("User_id who this game is attached to")
+    gamesubmit = SubmitField("Submit")
+
+class NPCForm(FlaskForm):
+    name = StringField("Name")
+    secret_name = StringField("Secret Name")
+    bio = TextAreaField("Bio")
+    secret_bio = TextAreaField("Secret Bio")
+    game_id = IntegerField("GameID")
+    place_id = IntegerField("PlaceID")
+    npcsubmit = SubmitField("Submit")
+
+class CharForm(FlaskForm):
+    name = StringField("Name")
+    imglink = TextAreaField("Image Link")
+    bio = TextAreaField("Bio")
+    platinum = IntegerField("Platinum Pieces")
+    gold = IntegerField("Gold Pieces")
+    electrum = IntegerField("Electrum Pieces")
+    silver = IntegerField("Silver Pieces")
+    copper = IntegerField("Copper Pieces")
+    experience = IntegerField("experience")
+    strength = IntegerField("Strength")
+    dexterity = IntegerField("Dexterity")
+    constitution = IntegerField("Constitution")
+    wisdom = IntegerField("Wisdom")
+    intelligence = IntegerField("Intelligence")
+    charisma = IntegerField("Charisma")
+    user_id = IntegerField("UserID")
+    game_id = IntegerField("GameID")
+    charsubmit = SubmitField("Submit")
+
+class PlaceForm(FlaskForm):
+    name = StringField("Name")
+    bio = TextAreaField("Bio")
+    secret_bio = TextAreaField("Secret Bio")
+    game_id = IntegerField("GameID")
+    placesubmit = SubmitField("Submit")
 
 class LootForm(FlaskForm):
     name = StringField("Name")
@@ -280,5 +267,3 @@ class LootForm(FlaskForm):
     copper_value = IntegerField("Copper Value")
     owner_id = IntegerField("Character OwnerID")
     lootsubmit = SubmitField("Submit")
-
-# test forms
