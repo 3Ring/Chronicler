@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from settings import db
+from .settings import db
 import os
 
 
@@ -26,7 +26,7 @@ def create_app():
     # SQLite address
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///liteBON.db'
 
-    from classes import Users
+    from .classes import Users
 
     db.init_app(app)
 
@@ -40,11 +40,11 @@ def create_app():
         return Users.query.get(int(user_id))
 
     # blueprint for auth routes in our app
-    from auth import auth as auth_blueprint
+    from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
     # blueprint for non-auth parts of app
-    from BONapp import main as main_blueprint
+    from .BONapp import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     return app
