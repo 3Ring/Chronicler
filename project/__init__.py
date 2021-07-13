@@ -1,15 +1,9 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+from settings import db
 import os
 
-# Initialize the database
-db = SQLAlchemy()
-
-# Setting up MYSQL database 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/BON'
 
 def postfix(string):
         if string[0:9] == 'postgres:':
@@ -32,7 +26,7 @@ def create_app():
     # SQLite address
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///liteBON.db'
 
-    from .classes import Users
+    from classes import Users
 
     db.init_app(app)
 
@@ -46,11 +40,11 @@ def create_app():
         return Users.query.get(int(user_id))
 
     # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
+    from auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
     # blueprint for non-auth parts of app
-    from .BONapp import main as main_blueprint
+    from BONapp import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     return app
