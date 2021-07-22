@@ -241,9 +241,6 @@ def notes():
     # this needs to be changed to be dynamic (todo)
     form = NoteForm()
     log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
-    print(log)
-    for note in log:
-        print(note)
     if request.method == 'POST':
         note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_characater=form.in_characer.data, characater=form.character.data, game_id=form.game.data)
         db.session.add(note)

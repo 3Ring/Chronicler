@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+{%  %}
 {% for note in log %}
-    {{note.date_added}} || {{note.character}}: {{note.note}}
+    {{note.date_added}} || {{note.character}}: "{{note.note}}"
     </br>
 {% endfor %}
 <form  method='POST'>
