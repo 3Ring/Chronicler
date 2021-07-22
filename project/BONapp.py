@@ -5,7 +5,6 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 # from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import generate_password_hash
-from sqlalchemy import and_, desc
 
 from .classes import *
 from flask_login import login_required, current_user
@@ -241,12 +240,15 @@ def confirm():
 def notes():
     # this needs to be changed to be dynamic (todo)
     form = NoteForm()
-    log = Notes.query.order_by(and_(Notes.session_id, Notes.date_added))
+    log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
+    print(log)
+    for note in log:
+        print(note)
     if request.method == 'POST':
         note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_characater=form.in_characer.data, characater=form.character.data, game_id=form.game.data)
         db.session.add(note)
         db.session.commit()
-        log = Notes.query.order_by(and_(Notes.session_id, Notes.date_added))
+        log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
         return render_template('notes.html',
             log=log,
             form=form)
