@@ -14,6 +14,7 @@ main = Blueprint('main', __name__)
 
 @main.route("/")
 def index():
+    
     return render_template("index.html")
 
 @main.route('/profile')
@@ -45,23 +46,6 @@ def test_tables():
     noteheads = Notes().head
     notes = Notes.query.all()
     players = Players.query.all()
-
-    # list = None
-    # from sqlalchemy import create_engine
-    # import os
-    # from sqlalchemy.orm import sessionmaker
-    # db_password = os.environ.get('DB_PASS')
-    # engine = create_engine('mysql+pymysql://root:' + db_password + '@localhost/BON', echo=True)
-    # # players = db.Table('players',
-    # #     db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
-    # #     db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
-    # # )
-    # Session = sessionmaker(bind=engine)
-    # with engine.connect() as connection:
-    #     with Session(bind=connection) as session:
-    #         list = session.query(players).all()
-    # playerlist = players.query.all()
-
 
     userform = UserForm()
     gameform = GameForm()
