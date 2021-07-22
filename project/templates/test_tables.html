@@ -53,6 +53,42 @@
     {% endif %}
 </div>
 
+<h2>playerlist</h2>
+<div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
+<table class="table table-hover table-bordered table-striped">
+    <tr>
+
+       <th> users_id </th>
+       <th> games_id </th>
+    </tr>
+    {% if players %}
+    {% for player in players %}
+        <tr>
+            <td>{{ player.users_id }}</td>
+            <td>{{ player.games_id }}</td>
+        </tr>
+    {% endfor %}
+</table>
+    <h3>Delete?</h3>
+    <form method='POST' action='/confirming'>
+        {{ delform.player_group_id }}
+    {{ delform.submit(class="btn btn-secondary") }}
+    </form>
+    {% endif %}
+    <h3>Add</h3>
+        <form  method='POST'>
+            {{ playerform.hidden_tag() }}
+            {{ playerform.users_id.label }}
+            {{ playerform.users_id }}
+            <br/>
+            {{ playerform.games_id.label }}
+            {{ playerform.games_id }}
+
+            <br/>
+            {{ playerform.playersubmit }}
+        </form>
+</div>
+
     <h2>Games</h2>
 <div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
 <table class="table table-hover table-bordered table-striped">
@@ -71,6 +107,7 @@
             <td>{{ game.secret }}</td>
             <td>{{ game.date_added }}</td>
             <td>{{ game.dm_id }}</td>
+            <td>{{ game.players }}</td>
         </tr>
     {% endfor %}
     {% endif %}

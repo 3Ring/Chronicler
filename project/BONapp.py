@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 # from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import generate_password_hash
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 
 from .classes import *
 from flask_login import login_required, current_user
@@ -45,6 +45,23 @@ def test_tables():
     loots = Loot.query.all()
     noteheads = Notes().head
     notes = Notes.query.all()
+    players = Players.query.all()
+
+    # list = None
+    # from sqlalchemy import create_engine
+    # import os
+    # from sqlalchemy.orm import sessionmaker
+    # db_password = os.environ.get('DB_PASS')
+    # engine = create_engine('mysql+pymysql://root:' + db_password + '@localhost/BON', echo=True)
+    # # players = db.Table('players',
+    # #     db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
+    # #     db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
+    # # )
+    # Session = sessionmaker(bind=engine)
+    # with engine.connect() as connection:
+    #     with Session(bind=connection) as session:
+    #         list = session.query(players).all()
+    # playerlist = players.query.all()
 
 
     userform = UserForm()
@@ -53,6 +70,7 @@ def test_tables():
     npcform = NPCForm()
     placeform = PlaceForm()
     lootform = LootForm()
+    playerform = PlayerForm()
     noteform = NoteForm()
     delform = DeleteForm()
 
@@ -98,7 +116,13 @@ def test_tables():
             note = Notes(note=noteform.note.data, private=noteform.private.data, in_character=noteform.in_character.data, session_id=noteform.session.data, character=noteform.character.data, game_id=noteform.game.data)
             db.session.add(note)
             db.session.commit()
-            notes =Notes.query.all()
+            notes = Notes.query.all()
+
+        elif playerform.playersubmit.data:
+            player = Players(users_id=playerform.users_id.data, games_id=playerform.games_id.data)
+            db.session.add(player)
+            db.session.commit()
+            players = Players.query.all()
 
     delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
     delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
@@ -118,6 +142,7 @@ def test_tables():
         noteheads=noteheads,
         users = users,
         games = games,
+        players=players,
         characters = characters,
         npcs = npcs,
         places = places,
@@ -130,7 +155,8 @@ def test_tables():
         npcform=npcform,
         placeform=placeform,
         lootform=lootform,
-        noteform=noteform)
+        noteform=noteform,
+        playerform=playerform)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required

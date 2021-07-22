@@ -4,15 +4,24 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
+from sqlalchemy import MetaData
 from .__init__ import db
+from sqlalchemy.ext.automap import automap_base
 
+# metadata = MetaData()
 
-# Create Models for db
+# # Create Models for db
 players = db.Table('players',
     db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
     db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
 )
+# not a real thing.
+class Players(db.Model):
+    players
 
+# Players = Base.classes.players
+
+# Create Models for db
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
@@ -58,7 +67,8 @@ class Games(db.Model):
         'Sessions', 
         'Secret', 
         'Date Added', 
-        'DM ID']
+        'DM ID',
+        'Players']
 
     def __repr__(self):
         return '<Game %r>' % self.name
@@ -268,6 +278,11 @@ class LootForm(FlaskForm):
     owner_id = IntegerField("Character OwnerID")
     lootsubmit = SubmitField("Submit")
 
+class PlayerForm(FlaskForm):
+    users_id = IntegerField("users_id")
+    games_id = IntegerField("games_id")
+    playersubmit = SubmitField("Submit")
+
 # working on the live note feature here:
 
 class Notes(db.Model):
@@ -300,3 +315,4 @@ class NoteForm(FlaskForm):
     character = IntegerField('character id')
     game = IntegerField('game id')
     notesubmit = SubmitField("Submit")
+
