@@ -54,28 +54,30 @@
     {% endif %}
 </div>
 
-<h2>playerlist</h2>
+<h2>players</h2>
 <div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
 <table class="table table-hover table-bordered table-striped">
     <tr>
-
-       <th> users_id </th>
-       <th> games_id </th>
-    </tr>
+        {% for head in playersheads %}
+        <th> {{ head }} </th>
+        {% endfor %}
+     </tr>
     {% if players %}
     {% for player in players %}
         <tr>
+            <td>{{ player.id }}</td>
             <td>{{ player.users_id }}</td>
             <td>{{ player.games_id }}</td>
         </tr>
     {% endfor %}
+    {% endif %}
 </table>
     <h3>Delete?</h3>
     <form method='POST' action='/confirming'>
         {{ delform.player_group_id }}
     {{ delform.submit(class="btn btn-secondary") }}
     </form>
-    {% endif %}
+    
     <h3>Add</h3>
         <form  method='POST'>
             {{ playerform.hidden_tag() }}

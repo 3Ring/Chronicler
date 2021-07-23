@@ -62,7 +62,9 @@ def test_tables():
     loots = Loot.query.all()
     noteheads = Notes().head
     notes = Notes.query.all()
+    playersheads=Players().head
     players = Players.query.all()
+
 
     userform = UserForm()
     gameform = GameForm()
@@ -156,7 +158,8 @@ def test_tables():
         placeform=placeform,
         lootform=lootform,
         noteform=noteform,
-        playerform=playerform)
+        playerform=playerform,
+        playersheads=playersheads)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
@@ -243,13 +246,13 @@ def notes():
     form = NoteForm()
     log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
     if request.method == 'POST':
-        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_characater=form.in_characer.data, characater=form.character.data, game_id=form.game.data)
+        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=form.character.data, game_id=form.game.data)
         db.session.add(note)
         db.session.commit()
         log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
         return render_template('notes.html',
             log=log,
-            form=form)
+            noteform=form)
     else:
         return render_template('notes.html',
             log=log,

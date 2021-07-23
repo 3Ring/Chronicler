@@ -7,14 +7,23 @@ from flask_login import UserMixin
 from .__init__ import db
 
 
-# # Create Models for db
-players = db.Table('players',
-    db.Column('users_id', db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True),
-    db.Column('games_id', db.Integer, db.ForeignKey('games.id'), nullable=False, primary_key=True)
-)
-# not a real thing.
+
 class Players(db.Model):
-    players
+    __tablename__ = 'players'
+    id = db.Column(db.Integer, primary_key=True)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+
+    head = [
+        'id',
+        'users_id',
+        'games_id'
+    ]
+    
+    def __repr__(self):
+        return '< Player: %r >' % self
+
+
 
 # Create Models for db
 class Users(UserMixin, db.Model):
@@ -38,6 +47,8 @@ class Users(UserMixin, db.Model):
     def __repr__(self):
         return '< User.id: %r >' % self.id
 
+
+
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -52,7 +63,7 @@ class Games(db.Model):
     NPCs = db.relationship('NPCs', backref='game', lazy=True)
 
 
-    players = db.relationship('Users', secondary=players, lazy='subquery',
+    players = db.relationship('Users', secondary='players', lazy='subquery',
         backref=db.backref('games', lazy=True))
 
     head = [
@@ -67,6 +78,7 @@ class Games(db.Model):
 
     def __repr__(self):
         return '<Game %r>' % self.name
+
 
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
