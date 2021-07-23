@@ -4,11 +4,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
-from sqlalchemy import MetaData
 from .__init__ import db
-from sqlalchemy.ext.automap import automap_base
 
-# metadata = MetaData()
 
 # # Create Models for db
 players = db.Table('players',
@@ -18,8 +15,6 @@ players = db.Table('players',
 # not a real thing.
 class Players(db.Model):
     players
-
-# Players = Base.classes.players
 
 # Create Models for db
 class Users(UserMixin, db.Model):
@@ -41,7 +36,7 @@ class Users(UserMixin, db.Model):
         'Date Added']
 
     def __repr__(self):
-        return '< User.id: %r, User.name: %r, User.email: %r, User.hash: %r, User.realname: %r, User.date_added: %r, User.characters: %r >' % (self.id, self.name, self.email, self.hash, self.realname, self.date_added, self.characters)
+        return '< User.id: %r >' % self.id
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)

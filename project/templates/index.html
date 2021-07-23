@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% for message  in get_flashed_messages() %}
+{% for message in get_flashed_messages() %}
 
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
     {{ message }}
@@ -10,8 +10,10 @@
 
 {% endfor %}
 
-<main>
-    <h2>test</h2>
-</main>
+{% for game in games %}
+<div>{{game}}</div>
+<img src={{game.imglink}}>
+<div>{{game.name}}</div>
+{% endfor %}
 
 {% endblock %} 

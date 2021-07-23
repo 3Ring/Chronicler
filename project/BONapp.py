@@ -14,7 +14,24 @@ main = Blueprint('main', __name__)
 
 @main.route("/")
 def index():
-    
+    if current_user.is_authenticated:
+        # test=Users.query.filter_by(email='zack@zack.com')
+        # test=Games.query.filter_by(id=1)
+        # stepone=Users.query.filter_by(id=current_user.id)
+        # test=Players.query.(users_id=stepone)
+        # test=Games.query.filter(Games.id.in_(Players.query.filter(Users.id.in_(Users.query.with_entities(Users.id).filter_by(id=current_user.id))))).all()
+        games=Games.query.filter(
+            Games.id.in_(
+                Players.query.with_entities(Players.games_id).
+                    filter(Players.users_id.in_(
+                        Users.query.with_entities(
+                            Users.id).filter_by(
+                                id=current_user.id)))))
+        # SELECT * FROM games WHERE id IN(SELECT games_id FROM players WHERE users_id IN(SELECT id FROM users WHERE id LIKE '%1%'))
+        # test=Games.query.filter_by(id=1)
+        # games=Games.query.filter_by(id=Players.query.filter_by(games_id=1))
+        return render_template("index.html", games=games)
+
     return render_template("index.html")
 
 @main.route('/profile')

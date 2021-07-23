@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or db_password
 app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL')) or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 
