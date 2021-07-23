@@ -41,7 +41,7 @@ class Users(UserMixin, db.Model):
         'Date Added']
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '< User.id: %r, User.name: %r, User.email: %r, User.hash: %r, User.realname: %r, User.date_added: %r, User.characters: %r >' % (self.id, self.name, self.email, self.hash, self.realname, self.date_added, self.characters)
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
