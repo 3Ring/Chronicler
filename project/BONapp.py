@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 # from flask_session import Session
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import SubmitField
 from wtforms.validators import DataRequired
 # from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import generate_password_hash
@@ -27,6 +27,9 @@ def index():
                         Users.query.with_entities(
                             Users.id).filter_by(
                                 id=current_user.id)))))
+        
+
+
         # SELECT * FROM games WHERE id IN(SELECT games_id FROM players WHERE users_id IN(SELECT id FROM users WHERE id LIKE '%1%'))
         # test=Games.query.filter_by(id=1)
         # games=Games.query.filter_by(id=Players.query.filter_by(games_id=1))
@@ -239,21 +242,24 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-@main.route('/notes', methods = ['POST', 'GET'])
+@main.route('/notes/<id>', methods = ['POST', 'GET'])
 @login_required
-def notes():
+def notes(id):
     # this needs to be changed to be dynamic (todo)
     form = NoteForm()
-    log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
+    log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())
     if request.method == 'POST':
         note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=form.character.data, game_id=form.game.data)
         db.session.add(note)
         db.session.commit()
-        log = Notes.query.order_by(Notes.session_id.desc(), Notes.date_added.desc())
+        log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())
         return render_template('notes.html',
             log=log,
-            noteform=form)
+            noteform=form,
+            id=id)
     else:
+
         return render_template('notes.html',
             log=log,
-            noteform=form)
+            noteform=form,
+            id=id)

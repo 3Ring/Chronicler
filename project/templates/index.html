@@ -10,10 +10,13 @@
 
 {% endfor %}
 
+{% if games %}
+<form action=''>
 {% for game in games %}
 <div>{{game}}</div>
-<img src={{game.imglink}}>
+<a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
 <div>{{game.name}}</div>
 {% endfor %}
-
+</form>
+{% endif %}
 {% endblock %} 
