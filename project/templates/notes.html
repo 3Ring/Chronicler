@@ -3,7 +3,12 @@
 {% block content %}
 
 {% for note in log %}
-    {{note.date_added}} || {{note.character}}: "{{note.note}}"
+    <p>
+        ||ID: "{{note.id}}"||NOTE: "{{note.note}}"||SESSION_ID: "{{note.session_id}}"||PRIVATE: "{{note.private}}"||IN_CHARACTER: "{{note.in_character}}"||CHARACTER: "{{note.character}}"||GAME_ID: "{{note.game_id}}"||DATE_ADDED: "{{note.date_added}}"
+    </p>
+    <p>
+        {{note.charname}}:"{{note.note}}"
+    </p>
     </br>
 {% endfor %}
 <form  method='POST'>
@@ -19,12 +24,6 @@
     <br/>
     {{ noteform.session.label }}
     {{ noteform.session }}
-    <br/>
-    {{ noteform.character.label }}
-    {{ noteform.character }}
-    <br/>
-    {{ noteform.game.label }}
-    {{ noteform.game }}
     <br/>
     {{ noteform.notesubmit }}
 </form>

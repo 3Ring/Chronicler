@@ -245,11 +245,15 @@ def confirm():
 @main.route('/notes/<id>', methods = ['POST', 'GET'])
 @login_required
 def notes(id):
-    # this needs to be changed to be dynamic (todo)
+
     form = NoteForm()
     log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())
+    
     if request.method == 'POST':
-        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=form.character.data, game_id=form.game.data)
+
+        character=Characters.query.with_entities(Characters.id).filter_by(user_id=current_user.id, game_id=id)
+        charname=Characters.query.with_entities(Characters.name).filter_by(id=character)
+        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=character, charname=charname, game_id=id)
         db.session.add(note)
         db.session.commit()
         log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())

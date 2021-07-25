@@ -19,7 +19,7 @@ class Players(db.Model):
         'users_id',
         'games_id'
     ]
-    
+
     def __repr__(self):
         return '< Player: %r >' % self
 
@@ -294,6 +294,7 @@ class PlayerForm(FlaskForm):
 
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    charname=db.Column(db.String(50))
     note = db.Column(db.Text)
     session_id = db.Column(db.Integer)
     private = db.Column(db.Boolean)
