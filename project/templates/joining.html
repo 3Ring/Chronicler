@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<img src={{game.imglink}}>
+<h3>Add Your character!</h3>
+<form  method='POST' action='/joining/{{game.id}}'>
+    {{ charform.hidden_tag() }}
+    {{ charform.name.label }}
+    {{ charform.name }}
+    <br/>
+    {{ charform.imglink.label }}
+    {{ charform.imglink }}
+    <br/>
+    {{ charform.bio.label }}
+    {{ charform.bio }}
+    <br/>
+    {{ charform.charsubmit }}
+</form>
+
+{% endblock %}

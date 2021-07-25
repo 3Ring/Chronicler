@@ -252,7 +252,7 @@ class NPCForm(FlaskForm):
     npcsubmit = SubmitField("Submit")
 
 class CharForm(FlaskForm):
-    name = StringField("Name")
+    name = StringField("Name", validators=[DataRequired()])
     imglink = TextAreaField("Image Link")
     bio = TextAreaField("Bio")
     platinum = IntegerField("Platinum Pieces")

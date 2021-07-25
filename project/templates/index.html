@@ -1,22 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
 
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% endfor %}
-
+            <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    
+        {% endfor %}
+    {% endif %}
+{% endwith%}
+{% if current_user.is_anonymous %}
+<h2>Welcome to my collaborative note taking app for dnd and other tabletop games!</br>Please Log in or Register to get started</h2>
+{% endif %}
+{% if current_user.is_authenticated%}
 {% if games %}
-<form action=''>
+
 {% for game in games %}
 <div>{{game}}</div>
 <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
 <div>{{game.name}}</div>
 {% endfor %}
-</form>
 {% endif %}
-{% endblock %} 
+{% endif %}
+<h2>Find a Game:</h2>
+<a href="{{ url_for('main.join', id=0) }}">
+    <img src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
+</a>
+
+{% endblock %}

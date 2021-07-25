@@ -1,15 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{% for note in log %}
-    <p>
-        ||ID: "{{note.id}}"||NOTE: "{{note.note}}"||SESSION_ID: "{{note.session_id}}"||PRIVATE: "{{note.private}}"||IN_CHARACTER: "{{note.in_character}}"||CHARACTER: "{{note.character}}"||GAME_ID: "{{note.game_id}}"||DATE_ADDED: "{{note.date_added}}"
-    </p>
-    <p>
-        {{note.charname}}:"{{note.note}}"
-    </p>
-    </br>
+{% for session in session_ints %}
+    <h1>Session: {{session}}</h1>
+        {% for note in logs[session - 1]%}
+            <p><b>{{ note.charname }} {{ note.session_id }}</b>: {{ note.note }} ... {{ note.date_added }}</p>
+        {% endfor %}
 {% endfor %}
 <form  method='POST'>
     {{ noteform.hidden_tag() }}

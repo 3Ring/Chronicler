@@ -13,13 +13,10 @@ from . import db
 main = Blueprint('main', __name__)
 
 @main.route("/")
+
 def index():
+
     if current_user.is_authenticated:
-        # test=Users.query.filter_by(email='zack@zack.com')
-        # test=Games.query.filter_by(id=1)
-        # stepone=Users.query.filter_by(id=current_user.id)
-        # test=Players.query.(users_id=stepone)
-        # test=Games.query.filter(Games.id.in_(Players.query.filter(Users.id.in_(Users.query.with_entities(Users.id).filter_by(id=current_user.id))))).all()
         games=Games.query.filter(
             Games.id.in_(
                 Players.query.with_entities(Players.games_id).
@@ -28,14 +25,95 @@ def index():
                             Users.id).filter_by(
                                 id=current_user.id)))))
         
-
-
-        # SELECT * FROM games WHERE id IN(SELECT games_id FROM players WHERE users_id IN(SELECT id FROM users WHERE id LIKE '%1%'))
-        # test=Games.query.filter_by(id=1)
-        # games=Games.query.filter_by(id=Players.query.filter_by(games_id=1))
         return render_template("index.html", games=games)
 
     return render_template("index.html")
+
+@main.route('/join/<int:id>', methods = ['POST', 'GET'])
+@login_required
+def join(id):
+    if id == 0:
+        games=Games.query.all()
+        return render_template("join.html",
+        games=games)
+    else:
+        return redirect(url_for('main.joining', id=id))
+
+
+@main.route('/joining/<int:id>', methods = ['GET', 'POST'])
+@login_required
+def joining(id):
+    
+    charform=CharForm()
+    game=Games.query.filter_by(id=id).first()
+    if request.method=='GET':
+        return render_template('joining.html',
+            charform=charform,
+            game=game)
+    if charform.charsubmit.data:
+        character=Characters(name=charform.name.data, imglink=charform.imglink.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+        db.session.add(character)
+        db.session.commit()
+        flash("{0} has joined the {1}!!".format(charform.name.data, game.name), "alert-success")
+        return redirect(url_for('main.index'))
+
+
+@main.route('/notes/<id>', methods = ['POST', 'GET'])
+@login_required
+def notes(id):
+
+    # figure out how many sessions there are and if they have any notes attached to them
+    form = NoteForm()
+    sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
+    session_ints = []
+    logs = []
+    for session in sessions:
+        session_ints.append(int(str(session)[1]))
+    # query the notes and organize them by session
+    for i in range(session_ints[-1]):
+        if i == 0:
+            j=0
+        if i == (session_ints[j]-1):
+            logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
+            j+=1
+        else:
+            logs.append('No Session data')
+    session_ints.reverse()
+
+    if request.method == 'POST':
+    
+        character=Characters.query.with_entities(Characters.id).filter_by(user_id=current_user.id, game_id=id).first()
+        print('\n\n\n\n', character[0], '\n\n\n\n')
+        charname=Characters.query.with_entities(Characters.name).filter_by(id=character[0])
+        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=character[0], charname=charname, game_id=id)
+        db.session.add(note)
+        db.session.commit()
+        sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
+        session_ints = []
+        logs = []
+        for session in sessions:
+            session_ints.append(int(str(session)[1]))
+        # query the notes and organize them by session
+        for i in range(session_ints[-1]):
+            if i == 0:
+                j=0
+            if i == (session_ints[j]-1):
+                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
+                j+=1
+            else:
+                logs.append('No Session data')
+        session_ints.reverse()
+        return render_template('notes.html',
+            logs=logs,
+            noteform=form,
+            id=id,
+            session_ints=session_ints)
+    else:
+        return render_template('notes.html',
+            logs=logs,
+            noteform=form,
+            id=id,
+            session_ints=session_ints)
 
 @main.route('/profile')
 @login_required
@@ -242,28 +320,4 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-@main.route('/notes/<id>', methods = ['POST', 'GET'])
-@login_required
-def notes(id):
 
-    form = NoteForm()
-    log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())
-    
-    if request.method == 'POST':
-
-        character=Characters.query.with_entities(Characters.id).filter_by(user_id=current_user.id, game_id=id)
-        charname=Characters.query.with_entities(Characters.name).filter_by(id=character)
-        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=character, charname=charname, game_id=id)
-        db.session.add(note)
-        db.session.commit()
-        log = Notes.query.filter_by(game_id=id).order_by(Notes.session_id.desc(), Notes.date_added.desc())
-        return render_template('notes.html',
-            log=log,
-            noteform=form,
-            id=id)
-    else:
-
-        return render_template('notes.html',
-            log=log,
-            noteform=form,
-            id=id)
