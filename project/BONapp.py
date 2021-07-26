@@ -57,12 +57,21 @@ def joining(id):
         flash("{0} has joined the {1}!!".format(charform.name.data, game.name), "alert-success")
         return redirect(url_for('main.index'))
 
-@main.route('/create')
+@main.route('/create', methods=["GET", "POST"])
 @login_required
 def create():
     gameform=GameForm()
-    render_template('create.html',
-        gameform=gameform)
+    if request.method=="GET":
+        return render_template('create.html',
+            gameform=gameform)
+    else:
+        game=Games(name=gameform.name.data, dm_id=current_user.id, imglink=gameform.imglink.data, sessions=gameform.sessions.data, published=gameform.published.data)
+        db.session.add(game)
+        db.session.flush()
+        id=game.id
+        db.session.commit()
+        print("\n\n\n\n","Test2: ", game.id, id, "\n\n\n\n")
+        return redirect(url_for('main.notes', id=id))
 
 @main.route('/notes/<id>', methods = ['POST', 'GET'])
 @login_required
@@ -76,15 +85,16 @@ def notes(id):
     for session in sessions:
         session_ints.append(int(str(session)[1]))
     # query the notes and organize them by session
-    for i in range(session_ints[-1]):
-        if i == 0:
-            j=0
-        if i == (session_ints[j]-1):
-            logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
-            j+=1
-        else:
-            logs.append('No Session data')
-    session_ints.reverse()
+    if len(session_ints) > 0:
+        for i in range(session_ints[-1]):
+            if i == 0:
+                j=0
+            if i == (session_ints[j]-1):
+                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
+                j+=1
+            else:
+                logs.append('No Session data')
+        session_ints.reverse()
 
     if request.method == 'POST':
     
@@ -100,15 +110,16 @@ def notes(id):
         for session in sessions:
             session_ints.append(int(str(session)[1]))
         # query the notes and organize them by session
-        for i in range(session_ints[-1]):
-            if i == 0:
-                j=0
-            if i == (session_ints[j]-1):
-                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
-                j+=1
-            else:
-                logs.append('No Session data')
-        session_ints.reverse()
+        if len(session_ints) > 0:
+            for i in range(session_ints[-1]):
+                if i == 0:
+                    j=0
+                if i == (session_ints[j]-1):
+                    logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
+                    j+=1
+                else:
+                    logs.append('No Session data')
+            session_ints.reverse()
         return render_template('notes.html',
             logs=logs,
             noteform=form,
