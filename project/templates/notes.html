@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% for session in session_ints %}
-    <h1>Session: {{session}}</h1>
-        {% for note in logs[session - 1]%}
-            <p><b>{{ note.charname }} {{ note.session_id }}</b>: {{ note.note }} ... {{ note.date_added }}</p>
-        {% endfor %}
-{% endfor %}
 <form  method='POST'>
     {{ noteform.hidden_tag() }}
     {{ noteform.note.label }}
@@ -23,4 +17,37 @@
     <br/>
     {{ noteform.notesubmit }}
 </form>
+{% if dmid == current_user.id %}
+    {% if sessionform %}
+    <form  method='POST'>
+        {{ sessionform.hidden_tag() }}
+        {{ sessionform.number.label }}
+        {{ sessionform.number }}<p>
+            {% if lastsession == 0 %}
+                This is your first session on file!
+            {% else %}
+                Your last recorded session was: Session {{ lastsession.number }}: {{ lastsession.title }}
+            {% endif %}</p>
+        <br/>
+        {{ sessionform.title.label }}
+        {{ sessionform.title }}
+        <br/>
+        {{ sessionform.synopsis.label }}
+        {{ sessionform.synopsis }}
+        <br/>
+        {{ sessionform.sessionsubmit }}
+    </form>
+    {% else %}
+        <form  method='POST'>
+            {{ noteform.hidden_tag() }}
+            {{ newsessionform.newsessionsubmit }}
+        </form>
+    {% endif %}
+{% endif %}
+{% for session in sessions2 %}
+    <h1><b>Session{{session.number}}:</b> <i>{{session.title}}</i> </h1>
+        {% for note in logs[session.number - 1]%}
+            <p><b>{{ note.charname }} {{ note.session_id }}</b>: {{ note.note }} ... {{ note.date_added }}</p>
+        {% endfor %}
+{% endfor %}
 {% endblock %}

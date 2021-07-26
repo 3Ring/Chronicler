@@ -79,14 +79,18 @@ def create():
 @login_required
 def notes(id):
 
+
+    noteform = NoteForm()
+    newsessionform = NewSessionForm()
+    sessionform=SessionForm()
     # figure out how many sessions there are and if they have any notes attached to them
-    form = NoteForm()
+    sessions2=Sessions.query.filter_by(games_id=id).all()
     sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
     session_ints = []
     logs = []
     for session in sessions:
         session_ints.append(int(str(session)[1]))
-    # query the notes and organize them by session
+    # query the notes and organize them by session in reverse order
     if len(session_ints) > 0:
         for i in range(session_ints[-1]):
             if i == 0:
@@ -97,21 +101,50 @@ def notes(id):
             else:
                 logs.append('No Session data')
         session_ints.reverse()
-
+    dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     if request.method == 'POST':
-    
+        session_ints = []
+        for session in sessions:
+            session_ints.append(int(str(session)[1]))
+        if newsessionform.newsessionsubmit.data:
+
+            if len(session_ints) == 0:
+                lastsession=0
+            else:
+                lastsession = session_ints[-1]
+            return render_template('notes.html',
+                logs=logs,
+                newsessionform=newsessionform,
+                noteform=noteform,
+                id=id,
+                dmid=dmid,
+                session_ints=session_ints,
+                sessionform=sessionform,
+                sessions2=sessions2,
+                lastsession=lastsession)
+        elif sessionform.sessionsubmit.data:
+            session=Sessions(number=sessionform.number.data, title=sessionform.title.data, synopsis=sessionform.synopsis.data, games_id=id)
+            db.session.add(session)
+            db.session.commit()
+            return render_template('notes.html',
+                logs=logs,
+                newsessionform=newsessionform,
+                noteform=noteform,
+                id=id,
+                sessions2=sessions2,
+                dmid=dmid,
+                session_ints=session_ints)
+
+
         character=Characters.query.with_entities(Characters.id).filter_by(user_id=current_user.id, game_id=id).first()
-        print('\n\n\n\n', character[0], '\n\n\n\n')
         charname=Characters.query.with_entities(Characters.name).filter_by(id=character[0])
-        note = Notes(note=form.note.data, session_id=form.session.data, private=form.private.data, in_character=form.in_character.data, character=character[0], charname=charname, game_id=id)
+        note = Notes(note=noteform.note.data, session_id=noteform.session.data, private=noteform.private.data, in_character=noteform.in_character.data, character=character[0], charname=charname, game_id=id)
         db.session.add(note)
         db.session.commit()
         sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
-        session_ints = []
-        logs = []
-        for session in sessions:
-            session_ints.append(int(str(session)[1]))
+
         # query the notes and organize them by session
+        logs = []
         if len(session_ints) > 0:
             for i in range(session_ints[-1]):
                 if i == 0:
@@ -122,16 +155,25 @@ def notes(id):
                 else:
                     logs.append('No Session data')
             session_ints.reverse()
-        return render_template('notes.html',
-            logs=logs,
-            noteform=form,
-            id=id,
-            session_ints=session_ints)
+
+        else:
+            return render_template('notes.html',
+                logs=logs,
+                newsessionform=newsessionform,
+                noteform=noteform,
+                id=id,
+                sessions2=sessions2,
+                dmid=dmid,
+                session_ints=session_ints,
+                        )
     else:
         return render_template('notes.html',
             logs=logs,
-            noteform=form,
+            newsessionform=newsessionform,
+            noteform=noteform,
             id=id,
+            sessions2=sessions2,
+            dmid=dmid,
             session_ints=session_ints)
 
 @main.route('/profile')

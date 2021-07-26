@@ -104,13 +104,6 @@ class Sessions(db.Model):
     def __repr__(self):
         return '<Session %r>' % self.title
 
-class SessionForm(FlaskForm):
-    number = IntegerField("Session Number", validators=[DataRequired()])
-    title = StringField("Session Title", validators=[DataRequired()])
-    synopsis = TextAreaField("Quick synopsis of the session")
-    games_id = IntegerField("Games_id", validators=[DataRequired()])
-    sessionsubmit = SubmitField("Submit")
-
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     charname=db.Column(db.String(50))
@@ -355,4 +348,14 @@ class NoteForm(FlaskForm):
     game = IntegerField('game id')
     remember = BooleanField("Remember Me")
     notesubmit = SubmitField("Submit")
+
+class SessionForm(FlaskForm):
+    number = IntegerField("New Session Number", validators=[DataRequired()])
+    title = StringField("Session Title", validators=[DataRequired()])
+    synopsis = TextAreaField("Quick synopsis of the session")
+    games_id = IntegerField("Games_id", validators=[DataRequired()])
+    sessionsubmit = SubmitField("Submit")
+
+class NewSessionForm(FlaskForm):
+    newsessionsubmit = SubmitField("Start a new Session?")
 
