@@ -89,7 +89,8 @@ class Sessions(db.Model):
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
     head = [
-        'ID', 
+        'ID',
+        'Session Number', 
         'Title',
         "Synopsis", 
         'Date Added',
@@ -280,6 +281,7 @@ class DeleteForm(FlaskForm):
     place_group_id = SelectField(u'Places', coerce=int)
     loot_group_id = SelectField(u'Loot', coerce=int)
     note_group_id = SelectField(u'Notes', coerce=int)
+    session_group_id = SelectField(u'Notes', coerce=int)
     submit = SubmitField("Submit")
 
 class ConForm(FlaskForm):

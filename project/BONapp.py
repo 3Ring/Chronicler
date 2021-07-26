@@ -161,6 +161,8 @@ def test_tables():
     notes = Notes.query.all()
     playersheads=Players().head
     players = Players.query.all()
+    sessionheads=Sessions().head
+    sessions=Sessions.query.all()
 
 
     userform = UserForm()
@@ -172,6 +174,7 @@ def test_tables():
     playerform = PlayerForm()
     noteform = NoteForm()
     delform = DeleteForm()
+    sessionform=SessionForm()
 
     if request.method == 'POST':
         if gameform.gamesubmit.data:
@@ -223,6 +226,12 @@ def test_tables():
             db.session.commit()
             players = Players.query.all()
 
+        elif sessionform.sessionsubmit.data:
+            session = Sessions(number=sessionform.number.data, title=sessionform.title.data, synopsis=sessionform.synopsis.data, games_id=sessionform.games_id.data)
+            db.session.add(session)
+            db.session.commit()
+            sessions = Sessions.query.all()
+
     delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
     delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
     delform.character_group_id.choices = [(g.id) for g in Characters.query.order_by('id')]
@@ -230,6 +239,7 @@ def test_tables():
     delform.place_group_id.choices = [(g.id) for g in Places.query.order_by('id')]
     delform.loot_group_id.choices = [(g.id) for g in Loot.query.order_by('id')]
     delform.note_group_id.choices = [(g.id) for g in Notes.query.order_by('id')]
+    delform.session_group_id.choices = [(g.id) for g in Sessions.query.order_by('id')]
 
     return render_template('test_tables.html',
         userheads = userheads,
@@ -239,6 +249,8 @@ def test_tables():
         placeheads = placeheads,
         lootheads = lootheads,
         noteheads=noteheads,
+        playersheads=playersheads,
+        sessionheads=sessionheads,
         users = users,
         games = games,
         players=players,
@@ -247,6 +259,7 @@ def test_tables():
         places = places,
         loots = loots,
         notes = notes,
+        sessions=sessions,
         delform = delform,
         userform = userform,
         gameform = gameform,
@@ -256,7 +269,7 @@ def test_tables():
         lootform=lootform,
         noteform=noteform,
         playerform=playerform,
-        playersheads=playersheads)
+        sessionform=sessionform,)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
@@ -265,7 +278,14 @@ def post_test_tables():
     if delete.note_group_id.data:
         delete_id = delete.note_group_id.data
         deleted = Notes.query.filter_by(id = delete_id).first()
-        flash("%s has been successfully deleted" % session['name_to_delete'])
+        flash("Note %s: '%s' has been successfully deleted" % (deleted.id, deleted.note))
+        db.session.delete(deleted)
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
+    elif delete.session_group_id.data:
+        delete_id = delete.session_group_id.data
+        deleted = Sessions.query.filter_by(id = delete_id).first()
+        flash("Session %s: '%s' has been successfully deleted" % (deleted.number, deleted.title))
         db.session.delete(deleted)
         db.session.commit()
         return redirect(url_for('main.test_tables'))
