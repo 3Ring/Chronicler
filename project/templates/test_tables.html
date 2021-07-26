@@ -34,6 +34,7 @@
         {{ delform.user_group_id }}
     {{ delform.submit(class="btn btn-secondary") }}
     </form>
+    {% endif %}
     <h3>Add</h3>
         <form  method='POST'>
             {{ userform.hidden_tag() }}
@@ -51,7 +52,7 @@
             <br/>
             {{ userform.usersubmit }}
         </form>
-    {% endif %}
+    
 </div>
 
 <h2>players</h2>

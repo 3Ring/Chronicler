@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Create your game!</h2>
+<form  method='POST'>
+    {{ gameform.hidden_tag() }}
+    {{ gameform.name.label }}
+    {{ gameform.name }}
+    <br/>
+    {{ gameform.imglink.label }}
+    {{ gameform.imglink }}
+    <br/>
+    {{ gameform.sessions.label }}
+    {{ gameform.sessions }}
+    <br/>
+    {{ gameform.secret.label }}
+    {{ gameform.secret }}
+    <br/>
+    {{ gameform.dm_id.label }}
+    {{ gameform.dm_id }}
+    <br/>
+    {{ gameform.gamesubmit }}
+</form>
+
+{% endblock %}

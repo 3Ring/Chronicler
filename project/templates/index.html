@@ -16,9 +16,17 @@
 {% if current_user.is_anonymous %}
 <h2>Welcome to my collaborative note taking app for dnd and other tabletop games!</br>Please Log in or Register to get started</h2>
 {% endif %}
+<h2>Find a Game:</h2>
+<a href="{{ url_for('main.join', id=0) }}">
+    <img src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
+</a>
+<h2>Create a Game:</h2>
+<a href="{{ url_for('main.join', id=0) }}">
+    <img src='https://miro.medium.com/max/970/1*qnbRKYQIx96TWcI8ZPfa2g.jpeg'>
+</a>
 {% if current_user.is_authenticated%}
 {% if games %}
-
+<h2>Your games:</h2>
 {% for game in games %}
 <div>{{game}}</div>
 <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
@@ -26,9 +34,6 @@
 {% endfor %}
 {% endif %}
 {% endif %}
-<h2>Find a Game:</h2>
-<a href="{{ url_for('main.join', id=0) }}">
-    <img src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
-</a>
+
 
 {% endblock %}

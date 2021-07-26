@@ -57,6 +57,12 @@ def joining(id):
         flash("{0} has joined the {1}!!".format(charform.name.data, game.name), "alert-success")
         return redirect(url_for('main.index'))
 
+@main.route('/create')
+@login_required
+def create():
+    gameform=GameForm()
+    render_template('create.html',
+        gameform=gameform)
 
 @main.route('/notes/<id>', methods = ['POST', 'GET'])
 @login_required

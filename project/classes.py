@@ -42,12 +42,11 @@ class Users(UserMixin, db.Model):
         'Email', 
         'Hash', 
         'Real Name', 
-        'Date Added']
+        'Date Added',
+        'Characters']
 
     def __repr__(self):
         return '< User.id: %r >' % self.id
-
-
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,6 +54,7 @@ class Games(db.Model):
     imglink = db.Column(db.String(200), nullable=False)
     sessions = db.Column(db.Integer, nullable=False)
     secret = db.Column(db.Integer, default=0)
+    published = db.Column(db.Boolean, default=False, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -79,6 +79,28 @@ class Games(db.Model):
     def __repr__(self):
         return '<Game %r>' % self.name
 
+class Notes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    charname=db.Column(db.String(50))
+    note = db.Column(db.Text)
+    session_id = db.Column(db.Integer)
+    private = db.Column(db.Boolean)
+    in_character = db.Column(db.Boolean)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
+
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    head = [
+        'ID',
+        'Note',
+        'session_id',
+        'Private',
+        'In Character',
+        'date_added',
+        'character',
+        'game_id'
+    ]
 
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -239,6 +261,7 @@ class GameForm(FlaskForm):
     imglink = TextAreaField("Image Link")
     sessions = IntegerField("Number of Sessions")
     secret = IntegerField("User who this game is attached to '0' if published")
+    published = BooleanField("Publish? (Allow game to be searchable)")
     dm_id = IntegerField("User_id who this game is attached to")
     gamesubmit = SubmitField("Submit")
 
@@ -290,31 +313,6 @@ class PlayerForm(FlaskForm):
     games_id = IntegerField("games_id")
     playersubmit = SubmitField("Submit")
 
-# working on the live note feature here:
-
-class Notes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    charname=db.Column(db.String(50))
-    note = db.Column(db.Text)
-    session_id = db.Column(db.Integer)
-    private = db.Column(db.Boolean)
-    in_character = db.Column(db.Boolean)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
-    character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
-
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    head = [
-        'ID',
-        'Note',
-        'session_id',
-        'Private',
-        'In Character',
-        'date_added',
-        'character',
-        'game_id'
-    ]
-
 class NoteForm(FlaskForm):
     note = TextAreaField("Live Note")
     private = BooleanField("Private?")
@@ -322,5 +320,6 @@ class NoteForm(FlaskForm):
     session = IntegerField('session?')
     character = IntegerField('character id')
     game = IntegerField('game id')
+    remember = BooleanField("Remember Me")
     notesubmit = SubmitField("Submit")
 
