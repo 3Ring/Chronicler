@@ -79,6 +79,37 @@ class Games(db.Model):
     def __repr__(self):
         return '<Game %r>' % self.name
 
+class Sessions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    synopsis = db.Column(db.Text)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+
+    head = [
+        'ID', 
+        'Title',
+        "Synopsis", 
+        'Date Added',
+        "Games ID",
+        "Notes",
+        "Players",
+        "Places",
+        "Loot",
+        ]
+
+    def __repr__(self):
+        return '<Session %r>' % self.title
+
+class SessionForm(FlaskForm):
+    number = IntegerField("Session Number", validators=[DataRequired()])
+    title = StringField("Session Title", validators=[DataRequired()])
+    synopsis = TextAreaField("Quick synopsis of the session")
+    games_id = IntegerField("Games_id", validators=[DataRequired()])
+    sessionsubmit = SubmitField("Submit")
+
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     charname=db.Column(db.String(50))
