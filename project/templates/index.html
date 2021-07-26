@@ -25,14 +25,24 @@
     <img src='https://miro.medium.com/max/970/1*qnbRKYQIx96TWcI8ZPfa2g.jpeg'>
 </a>
 {% if current_user.is_authenticated%}
-{% if games %}
-<h2>Your games:</h2>
-{% for game in games %}
-<div>{{game}}</div>
-<a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
-<div>{{game.name}}</div>
-{% endfor %}
-{% endif %}
+    {% if games or dm_games %}
+        <h2>Your games:</h2>
+        {% if dm_games %}
+            <h3>DM:</h3>
+            {% for game in dm_games %}
+                <div>{{game.name}}</div>
+                <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
+
+            {% endfor %}
+        {% endif %}
+        {% if games %}
+            <h3>Player:</h3>
+            {% for game in games %}
+                <div>{{game.name}}</div>
+                <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endif %}
 
 

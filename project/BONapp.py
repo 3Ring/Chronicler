@@ -24,8 +24,11 @@ def index():
                         Users.query.with_entities(
                             Users.id).filter_by(
                                 id=current_user.id)))))
+        dm_games=Games.query.filter_by(dm_id=current_user.id).all()
         
-        return render_template("index.html", games=games)
+        return render_template("index.html",
+            games=games,
+            dm_games=dm_games)
 
     return render_template("index.html")
 
