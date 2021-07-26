@@ -70,7 +70,6 @@ def create():
         db.session.flush()
         id=game.id
         db.session.commit()
-        print("\n\n\n\n","Test2: ", game.id, id, "\n\n\n\n")
         return redirect(url_for('main.notes', id=id))
 
 @main.route('/notes/<id>', methods = ['POST', 'GET'])
