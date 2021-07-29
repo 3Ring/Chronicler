@@ -359,3 +359,14 @@ class SessionForm(FlaskForm):
 class NewSessionForm(FlaskForm):
     newsessionsubmit = SubmitField("Start a new Session?")
 
+class Test(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    test = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<test %r>' % self.test
+
+
+class TestForm(FlaskForm):
+    test = TextAreaField("test")
+    testsubmit = SubmitField("Submit")

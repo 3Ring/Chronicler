@@ -1,14 +1,11 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
-# from flask_session import Session
-from flask_wtf import FlaskForm
-from wtforms import SubmitField
-from wtforms.validators import DataRequired
-# from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import generate_password_hash
 
+from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
+from .helpers import validate
 
 main = Blueprint('main', __name__)
 
@@ -46,7 +43,7 @@ def join(id):
 @main.route('/joining/<int:id>', methods = ['GET', 'POST'])
 @login_required
 def joining(id):
-    
+     
     charform=CharForm()
     game=Games.query.filter_by(id=id).first()
     if request.method=='GET':
@@ -75,106 +72,39 @@ def create():
         db.session.commit()
         return redirect(url_for('main.notes', id=id))
 
-@main.route('/notes/<id>', methods = ['POST', 'GET'])
+@main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
 
 
-    noteform = NoteForm()
-    newsessionform = NewSessionForm()
-    sessionform=SessionForm()
     # figure out how many sessions there are and if they have any notes attached to them
-    sessions2=Sessions.query.filter_by(games_id=id).all()
-    sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
-    session_ints = []
+    session_titles=Sessions.query.filter_by(games_id=id).all()
+    dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
-    for session in sessions:
-        session_ints.append(int(str(session)[1]))
-    # query the notes and organize them by session in reverse order
-    if len(session_ints) > 0:
-        for i in range(session_ints[-1]):
+    if session_titles != None:
+        # query the notes and organize them by session in reverse order
+        for i in range(session_titles[-1].number):
             if i == 0:
-                j=0
-            if i == (session_ints[j]-1):
+                j=session_titles[0].number
+            if i == (session_titles[j-1].number-1):
                 logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
                 j+=1
             else:
                 logs.append('No Session data')
-        session_ints.reverse()
-    dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
-    if request.method == 'POST':
-        session_ints = []
-        for session in sessions:
-            session_ints.append(int(str(session)[1]))
-        if newsessionform.newsessionsubmit.data:
+        session_titles.reverse()
+        for log in logs:
+            try:
+                if len(log) > 1:
+                    log.reverse()
+            except:
+                continue
 
-            if len(session_ints) == 0:
-                lastsession=0
-            else:
-                lastsession = session_ints[-1]
-            return render_template('notes.html',
-                logs=logs,
-                newsessionform=newsessionform,
-                noteform=noteform,
-                id=id,
-                dmid=dmid,
-                session_ints=session_ints,
-                sessionform=sessionform,
-                sessions2=sessions2,
-                lastsession=lastsession)
-        elif sessionform.sessionsubmit.data:
-            session=Sessions(number=sessionform.number.data, title=sessionform.title.data, synopsis=sessionform.synopsis.data, games_id=id)
-            db.session.add(session)
-            db.session.commit()
-            return render_template('notes.html',
-                logs=logs,
-                newsessionform=newsessionform,
-                noteform=noteform,
-                id=id,
-                sessions2=sessions2,
-                dmid=dmid,
-                session_ints=session_ints)
-
-
-        character=Characters.query.with_entities(Characters.id).filter_by(user_id=current_user.id, game_id=id).first()
-        charname=Characters.query.with_entities(Characters.name).filter_by(id=character[0])
-        note = Notes(note=noteform.note.data, session_id=noteform.session.data, private=noteform.private.data, in_character=noteform.in_character.data, character=character[0], charname=charname, game_id=id)
-        db.session.add(note)
-        db.session.commit()
-        sessions = Notes.query.with_entities(Notes.session_id).filter_by(game_id=id).distinct()
-
-        # query the notes and organize them by session
-        logs = []
-        if len(session_ints) > 0:
-            for i in range(session_ints[-1]):
-                if i == 0:
-                    j=0
-                if i == (session_ints[j]-1):
-                    logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
-                    j+=1
-                else:
-                    logs.append('No Session data')
-            session_ints.reverse()
-
-        else:
-            return render_template('notes.html',
-                logs=logs,
-                newsessionform=newsessionform,
-                noteform=noteform,
-                id=id,
-                sessions2=sessions2,
-                dmid=dmid,
-                session_ints=session_ints,
-                        )
-    else:
-        return render_template('notes.html',
-            logs=logs,
-            newsessionform=newsessionform,
-            noteform=noteform,
-            id=id,
-            sessions2=sessions2,
-            dmid=dmid,
-            session_ints=session_ints)
+    
+    return render_template('notes.html',
+        logs=logs,
+        id=id,
+        session_titles=session_titles,
+        dmid=dmid)
 
 @main.route('/profile')
 @login_required
@@ -208,6 +138,7 @@ def test_tables():
     players = Players.query.all()
     sessionheads=Sessions().head
     sessions=Sessions.query.all()
+    test=Test.query.all()
 
 
     userform = UserForm()
@@ -314,7 +245,8 @@ def test_tables():
         lootform=lootform,
         noteform=noteform,
         playerform=playerform,
-        sessionform=sessionform,)
+        sessionform=sessionform,
+        test=test)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
@@ -401,4 +333,14 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
+
+@main.route('/test', methods = ['GET'])
+def test():
+    testform = TestForm()
+    tests=Test.query.all()
+    array=[]
+    for test in tests:
+        array.append(test)
+    array.reverse()
+    return render_template('test.html', testform=testform, tests=array)
 

@@ -399,7 +399,7 @@
         <td>{{ note.note }}</td>
         <td>{{ note.session_id }}</td>
         <td>{{ note.private }}</td>
-        <td>{{ note.in_characer }}</td>
+        <td>{{ note.in_character }}</td>
         <td>{{ note.date_added }}</td>
         <td>{{ note.character }}</td>
         <td>{{ note.game_id }}</td>
@@ -481,5 +481,18 @@
         <br/>
         {{ sessionform.sessionsubmit }}
     </form>
+</div>
+
+<h2>Tests</h2>
+<div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
+    <table class="table table-hover table-bordered table-striped">
+    {% if test %}
+        {% for test in test %}
+            <tr>
+                <td>{{ test.id }}</td>
+                <td>{{ test.test }}</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
