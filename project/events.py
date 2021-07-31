@@ -17,6 +17,39 @@ def send_new_session(id, number, title, synopsis=None):
     print('\n\n\n\n', str("<div id='session"+str(new.number)+"'></div"), '\n\n\n\n')
     emit('fill_new_session', newsession, broadcast=True)
 
+@socketio.on('send_new_note')
+def send_new_note(user_id, game_id, note, private=False, in_character=False):
+    if in_character == 'true':
+        in_character = True
+    else:
+        in_character = False
+    if private == 'true':
+        private = True
+    else:
+        private = False
+    print('\n\n\n\n', 'send_new_note', user_id, game_id, note, private, in_character, '\n\n\n\n')
+    charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id).first()
+    print('\n\n\n\n', 'charname', charname)
+    session_id=Sessions.query.with_entities(Sessions.id).filter_by(games_id=game_id).order_by(Sessions.id.desc()).first()
+    print('\n\n\n\n', 'session_id:', session_id)
+    # this will cause issues if a player has more than one character for now
+    character=Characters.query.with_entities(Characters.id).filter_by(user_id=user_id).first()
+    print('\n\n\n\n', "character:", character)
+    print('\n\n\n\n', "game_id:", game_id)
+
+    new=Notes(charname=charname[0], note=note, session_id=session_id[0], private=private, in_character=in_character, character=character[0], game_id=game_id)
+    
+    db.session.add(new)
+    db.session.flush()
+    new_note=str("<div id='note"+str(new.id)+"'>"+str(new.charname)+":  "+str(new.note)+"</div>")
+    print('\n\n\n\n', new.session_id)
+    emit('fill_new_note', (new_note, new.private, new.session_id, new.in_character), broadcast=True)
+    db.session.rollback()
+
+
+
+
+# tests below here
 @socketio.on('pushnote')
 def pushtest(test, id):
 

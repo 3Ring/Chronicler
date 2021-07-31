@@ -2,99 +2,108 @@
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
-// function new_session_func() {
-//     let test = document.getElementById("new_session_form_div")
-//     test.innerHTML = "<h2>Session Info</h2><form onsubmit='send_new_session_func()'><input id='new_session_form_hidden' type='hidden' value='{{current_user.id}}'><input id='new_session_form_number' required, type='number', min='{{session_titles[0].number+1}}', placeholder='{{session_titles[0].number+1}}'><input id='new_session_form_title' required, type='text', placeholder='Title of New Session'><input id='new_session_form_sysnopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
-// }
 
-    // function send_new_session_func() {
-    //     socket.emit('send_new_session', form.value, hidden.value)
-    //     console.log('new session function');
-    //     return false
+
+    // function fill_new_session_func(new_card) {
+    //     session_cards = document.getElementById('Session Cards')
+    //     session_cards.insertAdjacentHTML('afterbegin', new_card)
+    //     console.log('new card')
+    //     console.log(new_card)
     // }
-
-    function fill_new_session_func(new_card) {
-        session_cards = document.getElementById('Session Cards')
-        session_cards.insertAdjacentHTML('afterbegin', new_card)
-        console.log('new card')
-        console.log(new_card)
-    }
 
 
 
     document.addEventListener("DOMContentLoaded", function(event) { 
         const socket = io('http://127.0.0.1:5000')
         const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
-        
+        var session_form_deployed = false
         socket.on('fill_new_session', function(new_card) {
-            console.log('fill_new_session')
-            console.log(new_card)
             session_cards = document.getElementById('Session Cards')
             session_cards.insertAdjacentHTML('afterbegin', new_card)
         });
+        socket.on('fill_new_note', function(new_note, private, session_id, in_character) {
+            console.log('fill_new_note', new_note, private, session_id, in_character)
+            this_session = document.getElementById('session_card_'+session_id)
+            console.log('session_'+session_id)
+            this_session.insertAdjacentHTML('afterbegin', new_note)
+        });
         // create form for making new session card
         document.getElementById("new_session_button").onclick = function() {
-            document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, type='number', min='{{session_titles[0].number+1}}', placeholder='{{session_titles[0].number+1}}'><input id='new_session_form_title' required, type='text', placeholder='Title of New Session'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
-            var new_session_form_id = document.getElementById('new_session_form_id')
-            var new_session_form_number = document.getElementById('new_session_form_number')
-            var new_session_form_title = document.getElementById('new_session_form_title')
-            var new_session_form_synopsis = document.getElementById('new_session_form_synopsis')
-            var new_session_form_submit = document.getElementById('new_session_form_submit')
-            console.log(new_session_form_number)
-            document.dispatchEvent(evt);
+            // If new session form has already been deployed then pushing the button again will close it
+            if (session_form_deployed) {
+                document.getElementById("new_session_form_div").innerHTML = ""
+                session_form_deployed = false
+            } else {
+                // Create and deploy new session form
+                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, type='number', min='{{session_titles[0].number+1}}', placeholder='{{session_titles[0].number+1}}'><input id='new_session_form_title' required, type='text', placeholder='Title of New Session'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
+                var new_session_form_id = document.getElementById('new_session_form_id')
+                var new_session_form_number = document.getElementById('new_session_form_number')
+                var new_session_form_title = document.getElementById('new_session_form_title')
+                var new_session_form_synopsis = document.getElementById('new_session_form_synopsis')
+                var new_session_form_submit = document.getElementById('new_session_form_submit')
+                document.dispatchEvent(evt);
+                session_form_deployed = true
+            }
+        }
+        // send new note to server
+        document.getElementById("note_form").onsubmit = function() {
+            var new_note_user_id = document.getElementById('note_user_id')
+            , new_note_note = document.getElementById('note_note')
+            , new_note_private = document.getElementById('note_private')
+            , new_note_in_character = document.getElementById('note_in_character')
+            , new_note_game_id = document.getElementById('note_game_id')
+            console.log(new_note_user_id.value)
+                console.log(new_note_game_id.value)
+                    console.log(new_note_note.value)
+                        console.log(new_note_private.value)
+                            console.log(new_note_in_character.value)
+
+            socket.emit('send_new_note', new_note_user_id.value, new_note_game_id.value, new_note_note.value, new_note_private.value, new_note_in_character.value)
+            return false
         }
 
     })
-
+    // Create on sumbit function for new session card after form for it has been created
     document.addEventListener("NewSessionFormCreated", function(event) {
         const socket = io('http://127.0.0.1:5000')
         document.getElementById('new_session_form').onsubmit = function() {
-            console.log('newsessionform')
-            console.log(new_session_form_number.value)
             socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
-
+            document.getElementById("new_session_form_div").innerHTML = ""
+            session_form_deployed = false
             return false
         }
     })
 
 
-
-
-
-        // list = document.getElementById("notes");
-        // document.getElementById("sessionsubmit").onsubmit = function () {
-
-        // }
-        // var list = document.getElementById("notes")
-        // socket.on('connect', function() {
-        //     console.log('connected log')
-        //     socket.send('I\'m connected!');
-        // });
-        // form.onsubmit = function() {
-        //     console.log('form submit push log');
-        //     socket.emit('push');
-        // };
-    //     socket.on('filltest', function(ob) {
-    //         console.log('fill log');
-    //         console.log(ob);
-    //         list.insertAdjacentHTML('afterbegin', ob);
-        // });
-    
 </script>
 
+<form id="note_form">
+    <input type=hidden id='note_user_id', name='note_user_id', value='{{current_user.id}}'>
+    <input type=hidden id='note_game_id', name='note_game_id', value='{{id}}'>
+    <label for='new_note_text'>Note:</label>
+    <input id='note_note' required type='textarea' placeholder='Collaborative note'>
+    <br/>
+    <label for='note_private'>Note is private(The GM will still be able to see it):</label>
+    <input type='checkbox' id='note_private', name='note_private', value='true'>
+    <br/>
+    <label for='note_in_characer'>Note is written in character:</label>
+    <input type='checkbox' id='note_in_character', name='note_in_character', value='true'><br/>
+    <input id='note_submit' type='submit' value='Submit' name='note_submit'>
 
+</form>
+<br/>
+<br/>
 
 {% if dmid == current_user.id %}
+    
     <button id='new_session_button'>Start a new session?</button>
     <div id='new_session_form_div'></div>
-
-
-
 {% endif %}
+
 <div id="Session Cards">
 {% if session_titles %}
     {% for session in session_titles %}
-        <div>Session{{session.number}}: {{session.title}}</div>
+        <div id="session_card_{{session.id}}">Session{{session.number}}: {{session.title}}</div>
             {% for note in logs[session.number - 1] %}
                 <p><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>
             {% endfor %}
