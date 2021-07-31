@@ -95,11 +95,12 @@ class Sessions(db.Model):
         'Title',
         "Synopsis", 
         'Date Added',
-        "Games ID",
-        "Notes",
-        "Players",
-        "Places",
-        "Loot",
+        "Games ID"
+# potentially things to add in the future
+        # "Notes",
+        # "Players",
+        # "Places",
+        # "Loot",
         ]
 
     def __repr__(self):

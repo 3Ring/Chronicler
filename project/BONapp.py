@@ -221,8 +221,6 @@ def test_tables():
     delform.session_group_id.choices = [(g.id) for g in Sessions.query.order_by('id')]
 
 
-    for user in users:
-        print('\n\n\n\n', user)
     return render_template('test_tables.html',
         uservalues=uservalues,
         userheads = userheads,
