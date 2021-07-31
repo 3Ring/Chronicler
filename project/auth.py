@@ -53,22 +53,29 @@ def register():
     name = None
     form = UserForm()
     if request.method == 'POST':
-        user = Users.query.filter_by(email=form.email.data).first()
-        if user == None:
-            name = form.name.data
-            # if email is unique add information to db
-            user = Users(name=form.name.data, email=form.email.data, realname=form.realname.data, hash=generate_password_hash(form.hash.data, method='sha256'))
-            db.session.add(user)
-            db.session.commit()
-            flash("Welcome to the table %s!" % form.realname.data)
-            return redirect (url_for('auth.login'))
-        else:
-            # if email is already in db alert user
-            flash("%s is already in use!" % form.email.data)
+        if form.hash.data != form.confirm.data:
+            flash("passwords do not match")
             return render_template('register.html',
                 form = form,
                 name = name,
                 )
+        else:
+            user = Users.query.filter_by(email=form.email.data).first()
+            if user == None:
+                name = form.name.data
+                # if email is unique add information to db
+                user = Users(name=form.name.data, email=form.email.data, realname=form.realname.data, hash=generate_password_hash(form.hash.data, method='sha256'))
+                db.session.add(user)
+                db.session.commit()
+                flash("Welcome to the table %s!" % form.realname.data)
+                return redirect (url_for('auth.login'))
+            else:
+                # if email is already in db alert user
+                flash("%s is already in use!" % form.email.data)
+                return render_template('register.html',
+                    form = form,
+                    name = name,
+                    )
     else:
         return render_template("register.html", 
             form=form,
