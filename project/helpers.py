@@ -1,3 +1,5 @@
+from flask import jsonify
+
 def validate(var, name, it=0):
     strit=str(it)
     print((it+1)*5*'{0}'.format(it), '<><><><>', (50-it)*'{0}'.format(it))

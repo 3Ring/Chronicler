@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<script type="text/javascript" charset="utf-8">
+    document.addEventListener("DOMContentLoaded", function(event) {
+        reveal = document.getElementById('reveal')
+        hash = document.getElementById('hash')
+        confirm = document.getElementById('confirm')
+        document.getElementById('reveal').onclick = function () {
+            if (reveal.checked) {
+                hash.type = 'text'
+                confirm.type = 'text'
+            } else {
+                hash.type = 'password'
+                confirm.type = 'password'
+            }
+        }
+    })
+</script>
 
 
     
@@ -22,14 +37,17 @@
         {{ form.name.label(class="form-label") }}
         {{ form.name(class="form-control") }}
         <br/>
+        {{ form.realname.label(class="form-label") }}
+        {{ form.realname(class="form-control") }}
+        <br/>
         {{ form.email.label(class="form-label") }}
         {{ form.email(class="form-control") }}
         <br/>
         {{ form.hash.label(class="form-label") }}
         {{ form.hash(class="form-control") }}
         <br/>
-        {{ form.realname.label(class="form-label") }}
-        {{ form.realname(class="form-control") }}
+        {{ form.confirm.label(class="form-label") }}
+        {{ form.confirm(class="form-control") }}{{ form.reveal }}  {{ form.reveal.label}}
         <br/>
         {{ form.usersubmit(class="btn btn-secondary") }}
 

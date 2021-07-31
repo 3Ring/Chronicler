@@ -1,4 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from werkzeug import datastructures
 from werkzeug.security import generate_password_hash
 
 from .events import *
@@ -6,6 +7,7 @@ from .classes import *
 from flask_login import login_required, current_user
 from . import db
 from .helpers import validate
+import json
 
 main = Blueprint('main', __name__)
 
@@ -120,6 +122,7 @@ def test_tables():
         return redirect(url_for('main.profile'))
     
     # set variable so Flask can build the site
+    uservalues=Users().values
     userheads = Users().head
     users = Users.query.all()
     gameheads = Games().head
@@ -217,7 +220,11 @@ def test_tables():
     delform.note_group_id.choices = [(g.id) for g in Notes.query.order_by('id')]
     delform.session_group_id.choices = [(g.id) for g in Sessions.query.order_by('id')]
 
+
+    for user in users:
+        print('\n\n\n\n', user)
     return render_template('test_tables.html',
+        uservalues=uservalues,
         userheads = userheads,
         gameheads = gameheads,
         charheads = charheads,

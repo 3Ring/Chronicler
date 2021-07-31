@@ -1,5 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
+<script type="text/javascript" charset="utf-8">
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var user_form_deployed = false
+        users=document.getElementById('user_table')
+        
+        document.getElementById("make_user_table").onclick = function () {
+            const user_table = document.getElementById('user_table')
+
+            if (user_form_deployed == false) {
+                {% if users %}
+                    const userlist=[];
+                    {% for user in users %}
+                        var itemlist=[{{user.id|tojson}}, {{user.name|tojson}}, {{user.email|tojson}}, {{user.hash|tojson}}, {{user.realname|tojson}}, {{user.date_added|tojson}}]
+                        userlist[{{loop.index-1}}]=itemlist
+                    {% endfor %}
+                    const rows = [];
+                    var new_row = document.createElement('tr')
+                    new_row.setAttribute("id", "user_heads")
+                    {% for head in userheads %}
+                        var new_cell = document.createElement('td')
+                        var cell_content = document.createTextNode('{{head}}')
+                        new_cell.appendChild(cell_content)
+                        new_row.appendChild(new_cell)
+                    {% endfor %}
+                    rows.push(new_row)
+                    for (let i=0; i<userlist.length; i++) {
+                        new_row = document.createElement('tr')
+                        new_row.setAttribute("id", ("user"+userlist[i][0]))
+                        for (let j=0; j<userlist[i].length; j++) {
+
+                            new_cell = document.createElement('td')
+                            cell_content = document.createTextNode(userlist[i][j])
+                            new_cell.appendChild(cell_content)
+                            new_row.appendChild(new_cell)
+                        }
+                        rows.push(new_row)
+                    }
+                    const rows_reverse = rows.reverse()
+                    for (let i=0;i<rows_reverse.length;i++) {
+                        user_table.insertAdjacentElement('afterbegin', rows_reverse[i])
+                    }
+                    user_form_deployed = true
+
+                {% endif %}
+            } else {
+                user_table.innerHTML = ''
+                user_form_deployed = false
+            }
+        }
+    })
+</script>
 {% for message in get_flashed_messages() %}
 
 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -9,49 +60,11 @@
 
 {% endfor %}
 <h2>Users</h2>
+<button id='make_user_table'>Table</button>
 <div class="border test-table shadow-lg p-3 mb-5 bg-light rounded">
-<table class="table table-hover table-bordered table-striped">
-    <tr>
-       {% for head in userheads %}
-       <th> {{ head }} </th>
-       {% endfor %}
-    </tr>
-    {% if users %}
-    {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.hash }}</td>
-            <td>{{ user.realname }}</td>
-            <td>{{ user.date_added }}</td>
-            <td>{{ user.characters }}</td>
-        </tr>
-    {% endfor %}
+<table id='user_table' class="table table-hover table-bordered table-striped">
+
 </table>
-    <h3>Delete?</h3>
-    <form method='POST' action='/confirming'>
-        {{ delform.user_group_id }}
-    {{ delform.submit(class="btn btn-secondary") }}
-    </form>
-    {% endif %}
-    <h3>Add</h3>
-        <form  method='POST'>
-            {{ userform.hidden_tag() }}
-            {{ userform.name.label }}
-            {{ userform.name }}
-            <br/>
-            {{ userform.email.label }}
-            {{ userform.email }}
-            <br/>
-            {{ userform.hash.label }}
-            {{ userform.hash }}
-            <br/>
-            {{ userform.realname.label }}
-            {{ userform.realname }}
-            <br/>
-            {{ userform.usersubmit }}
-        </form>
     
 </div>
 

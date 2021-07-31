@@ -1,7 +1,7 @@
 from sqlalchemy.orm import backref
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from .__init__ import db
@@ -36,6 +36,7 @@ class Users(UserMixin, db.Model):
 
     characters = db.relationship('Characters', backref='user', lazy=True)
 
+    values =['user.id', 'user.name', 'user.email', 'user.hash', 'user.realname', 'user.date_added', 'user.characters']
     head =[
         'ID', 
         'User Name', 
@@ -255,13 +256,15 @@ class Loot(db.Model):
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
-    hash = StringField("Password", validators=[DataRequired ()])
-    realname = StringField("Real Name")
+    hash = PasswordField("Password", validators=[DataRequired ()])
+    confirm = PasswordField("Confirm Password", validators=[DataRequired ()])
+    realname = StringField("Real Name (Optional)")
+    reveal = BooleanField("Show Passwords")
     usersubmit = SubmitField("Submit")
 
 class LoginForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
-    password = StringField("Password", validators=[DataRequired ()])
+    password = PasswordField("Password", validators=[DataRequired ()])
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
