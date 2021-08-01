@@ -17,6 +17,8 @@
         const socket = io('http://127.0.0.1:5000')
         const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
         var session_form_deployed = false
+        var note_is_private = false
+        var note_is_in_character = false
         socket.on('fill_new_session', function(new_card) {
             session_cards = document.getElementById('Session Cards')
             session_cards.insertAdjacentHTML('afterbegin', new_card)
@@ -29,6 +31,25 @@
         });
 
 
+        // set the values of the checkboxes based on whether they are checked or not
+        document.getElementById('note_in_character').onclick = function () {
+            if (note_is_in_character) {
+                document.getElementById('note_in_character').value = 'n'
+                note_is_in_character = false
+            } else {
+                document.getElementById('note_in_character').value = 'y'
+                note_is_in_character = true
+            }
+        }
+        document.getElementById('note_private').onclick = function () {
+            if (note_is_private) {
+                document.getElementById('note_private').value = 'n'
+                note_is_private = false
+            } else {
+                document.getElementById('note_private').value = 'y'
+                note_is_private = true
+            }
+        }
         // create form for making new session card
         document.getElementById("new_session_button").onclick = function() {
             // If new session form has already been deployed then pushing the button again will close it
@@ -81,10 +102,10 @@
     <input id='note_note' required type='textarea' placeholder='Collaborative note'>
     <br/>
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
-    <input type='checkbox' id='note_private', name='note_private', value='y'>
+    <input type='checkbox' id='note_private', name='note_private', value='n'>
     <br/>
     <label for='note_in_characer'>Note is written in character:</label>
-    <input type='checkbox' id='note_in_character', name='note_in_character', value='y'><br/>
+    <input type='checkbox' id='note_in_character', name='note_in_character', value='n'><br/>
     <input id='note_submit' type='submit' value='Submit' name='note_submit'>
 
 </form>
