@@ -19,17 +19,46 @@
         var session_form_deployed = false
         var note_is_private = false
         var note_is_in_character = false
+
+        // display new session card
         socket.on('fill_new_session', function(new_card) {
             session_cards = document.getElementById('Session Cards')
             session_cards.insertAdjacentHTML('afterbegin', new_card)
         });
-        socket.on('fill_new_note', function(new_note, private, session_id, in_character) {
-            console.log('fill_new_note', new_note, private, session_id, in_character)
-            this_session = document.getElementById('session_card_'+session_id)
-            console.log('session_'+session_id)
+
+
+        // display new note
+        socket.on('fill_new_note', function(new_note, private, session_number, in_character) {
+            console.log('fill_new_note', new_note, private, session_number, in_character)
+            this_session = document.getElementById('session_card_'+session_number)
+            console.log('session_'+session_number)
             this_session.insertAdjacentHTML('afterbegin', new_note)
         });
+        note_ids = []
+        {% if session_titles %}
+            {% for session in session_titles %}
+                {% for note in logs[session.number - 1] %}
+                note_ids.push('{{note.id}}')
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
 
+        // Send delete request to the server
+        // let delete_note = function(index) {
+        //     socket.emit('delete_note_send', (note_ids[index], index))
+        // } 
+
+        // socket.on('delete_note_fill', function() {
+        //     document.getElementById('note_span_'+note_ids[index]).innerHTML = 'Note Removed by user'
+        // })
+        // // add delete button functionality to each note
+        // for (let i=0;i<note_ids.length;i++) {
+        //     document.getElementById('del_'+note_ids[i]).addEventListener('click', (event) => {
+        //         delete_note(i)
+                
+        //     })
+        // }
+       
 
         // set the values of the checkboxes based on whether they are checked or not
         document.getElementById('note_in_character').onclick = function () {
@@ -50,6 +79,12 @@
                 note_is_private = true
             }
         }
+        
+
+
+
+
+
         // create form for making new session card
         document.getElementById("new_session_button").onclick = function() {
             // If new session form has already been deployed then pushing the button again will close it
@@ -58,7 +93,7 @@
                 session_form_deployed = false
             } else {
                 // Create and deploy new session form
-                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, type='number', min='{{session_titles[0].number+1}}', placeholder='{{session_titles[0].number+1}}'><input id='new_session_form_title' required, type='text', placeholder='Title of New Session'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
+                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, type='number'><input id='new_session_form_title' required, type='text', placeholder='Title of New Session'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
                 var new_session_form_id = document.getElementById('new_session_form_id')
                 var new_session_form_number = document.getElementById('new_session_form_number')
                 var new_session_form_title = document.getElementById('new_session_form_title')
@@ -68,6 +103,9 @@
                 session_form_deployed = true
             }
         }
+
+
+
         // capture and send new note to server
         document.getElementById("note_form").onsubmit = function() {
             var new_note_user_id = document.getElementById('note_user_id')
@@ -111,7 +149,9 @@
 </form>
 <br/>
 <br/>
-
+{% if 1 == current_user.id %}
+    <button><a href="{{ url_for('main.nuke') }}">Nuke!!</a></button>
+{% endif %}
 {% if dmid == current_user.id %}
     
     <button id='new_session_button'>Start a new session?</button>
@@ -121,10 +161,16 @@
 <div id="Session Cards">
 {% if session_titles %}
     {% for session in session_titles %}
-        <div id="session_card_{{session.id}}">Session{{session.number}}: {{session.title}}</div>
-            {% for note in logs[session.number - 1] %}
-                <p><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>
-            {% endfor %}
+        <div id="session_header_{{session.id}}">Session{{session.number}}: {{session.title}}
+            <div id="session_card_{{session.id}}">
+                {% for note in logs[session.number - 1] %}
+                    <span id='note_span_{{note.id}}_{{note.user_id}}'>
+                        <p id='note_{{note.id}}_{{note.user_id}}'><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>
+                        <button id='del_{{note.id}}_{{note.user_id}}'>Delete Note</button>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
     {% endfor %}
 {% endif %}
 </div>

@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for, jsonify
 from werkzeug import datastructures
 from werkzeug.security import generate_password_hash
 
@@ -6,7 +6,7 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
-from .helpers import validate
+from .helpers import validate as v
 import json
 
 main = Blueprint('main', __name__)
@@ -83,14 +83,20 @@ def notes(id):
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
-    if session_titles != None:
+    if len(session_titles) > 0:
+        v(session_titles, 'session_titles', deep=True)
         # query the notes and organize them by session in reverse order
-        for i in range(session_titles[-1].number):
+        for i in range(session_titles[-1].number+1):
+            v(session_titles[-1].number+1)
             if i == 0:
                 j=session_titles[0].number
-            if i == (session_titles[j-1].number-1):
-                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_id=(i+1)).all())
+                v(j, 'j')
+            if i == (session_titles[j].number):
+                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
                 j+=1
+                v(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all(), 'logsnegone')
+                v(i, 'i ex: 0')
+                v(id, 'id ex: 15')
             else:
                 logs.append('No Session data')
         session_titles.reverse()
@@ -100,6 +106,8 @@ def notes(id):
                     log.reverse()
             except:
                 continue
+        v(logs, 'logsrev')
+
 
     
     return render_template('notes.html',
@@ -339,6 +347,7 @@ def confirm():
             name = session['name_to_delete'])
 
 
+
 @main.route('/test', methods = ['GET'])
 def test():
     testform = TestForm()
@@ -349,3 +358,22 @@ def test():
     array.reverse()
     return render_template('test.html', testform=testform, tests=array)
 
+@main.route('/nuke')
+def nuke():
+    # print('test')
+    # nuked = Sessions.query.filter_by(games_id=15).all()
+
+    # for bomb in nuked:
+    #     # print('test', bomb.title, bomb.games_id )
+    #     db.session.delete(bomb)
+    #     db.session.commit()
+
+    nuked = Notes.query.filter_by(game_id=15).all()
+
+    for bomb in nuked:
+        # print('test', bomb.title, bomb.games_id )
+        db.session.delete(bomb)
+        db.session.commit()
+
+
+    return redirect(url_for('main.notes', id=15))

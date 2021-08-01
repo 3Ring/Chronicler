@@ -348,7 +348,7 @@
             if (note_form_deployed == false) {
                     var notelist=[];
                     {% for note in notes %}
-                        var itemlist=[{{note.id|tojson}}, {{note.charname|tojson}}, {{note.note|tojson}}, {{note.session_id|tojson}}, {{note.private|tojson}}, {{note.in_character|tojson}}, {{note.date_added|tojson}}, {{note.character|tojson}}, {{note.game_id|tojson}}]
+                        var itemlist=[{{note.id|tojson}}, {{note.charname|tojson}}, {{note.note|tojson}}, {{note.session_number|tojson}}, {{note.private|tojson}}, {{note.in_character|tojson}}, {{note.date_added|tojson}}, {{note.character|tojson}}, {{note.game_id|tojson}}]
                         notelist.push(itemlist)
                     {% endfor %}
                     var rows = [];
@@ -432,6 +432,7 @@
         }
     })
 </script>
+
 {% for message in get_flashed_messages() %}
 
 <div class="alert alert-success alert-dismissible fade show" role="alert">

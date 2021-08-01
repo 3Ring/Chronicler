@@ -110,18 +110,19 @@ class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     charname=db.Column(db.String(50))
     note = db.Column(db.Text)
-    session_id = db.Column(db.Integer)
+    session_number = db.Column(db.Integer)
     private = db.Column(db.Boolean)
     in_character = db.Column(db.Boolean)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     head = [
         'ID',
         'Note',
-        'session_id',
+        'session_number',
         'Private',
         'In Character',
         'date_added',
