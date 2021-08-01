@@ -127,7 +127,7 @@ def test_tables():
     users = Users.query.all()
     gameheads = Games().head
     games = Games.query.all()
-    charheads = Characters().head
+    characterheads = Characters().head
     characters = Characters.query.all()
     npcheads = NPCs().head
     npcs = NPCs.query.all()
@@ -225,7 +225,7 @@ def test_tables():
         uservalues=uservalues,
         userheads = userheads,
         gameheads = gameheads,
-        charheads = charheads,
+        characterheads = characterheads,
         npcheads = npcheads,
         placeheads = placeheads,
         lootheads = lootheads,

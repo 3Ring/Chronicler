@@ -27,6 +27,8 @@
             console.log('session_'+session_id)
             this_session.insertAdjacentHTML('afterbegin', new_note)
         });
+
+
         // create form for making new session card
         document.getElementById("new_session_button").onclick = function() {
             // If new session form has already been deployed then pushing the button again will close it
@@ -45,18 +47,13 @@
                 session_form_deployed = true
             }
         }
-        // send new note to server
+        // capture and send new note to server
         document.getElementById("note_form").onsubmit = function() {
             var new_note_user_id = document.getElementById('note_user_id')
             , new_note_note = document.getElementById('note_note')
             , new_note_private = document.getElementById('note_private')
             , new_note_in_character = document.getElementById('note_in_character')
             , new_note_game_id = document.getElementById('note_game_id')
-            console.log(new_note_user_id.value)
-                console.log(new_note_game_id.value)
-                    console.log(new_note_note.value)
-                        console.log(new_note_private.value)
-                            console.log(new_note_in_character.value)
 
             socket.emit('send_new_note', new_note_user_id.value, new_note_game_id.value, new_note_note.value, new_note_private.value, new_note_in_character.value)
             return false
@@ -84,10 +81,10 @@
     <input id='note_note' required type='textarea' placeholder='Collaborative note'>
     <br/>
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
-    <input type='checkbox' id='note_private', name='note_private', value='true'>
+    <input type='checkbox' id='note_private', name='note_private', value='y'>
     <br/>
     <label for='note_in_characer'>Note is written in character:</label>
-    <input type='checkbox' id='note_in_character', name='note_in_character', value='true'><br/>
+    <input type='checkbox' id='note_in_character', name='note_in_character', value='y'><br/>
     <input id='note_submit' type='submit' value='Submit' name='note_submit'>
 
 </form>

@@ -19,16 +19,16 @@ def send_new_session(id, number, title, synopsis=None):
 
 @socketio.on('send_new_note')
 def send_new_note(user_id, game_id, note, private=False, in_character=False):
-    if in_character == 'true':
+    if in_character == 'y':
         in_character = True
     else:
         in_character = False
-    if private == 'true':
+    if private == 'y':
         private = True
     else:
         private = False
     print('\n\n\n\n', 'send_new_note', user_id, game_id, note, private, in_character, '\n\n\n\n')
-    charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id).first()
+    charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id, game_id=game_id).first()
     print('\n\n\n\n', 'charname', charname)
     session_id=Sessions.query.with_entities(Sessions.id).filter_by(games_id=game_id).order_by(Sessions.id.desc()).first()
     print('\n\n\n\n', 'session_id:', session_id)
