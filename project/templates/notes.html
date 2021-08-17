@@ -14,7 +14,7 @@
 
 
     document.addEventListener("DOMContentLoaded", function(event) { 
-        const socket = io('http://127.0.0.1:5000')
+        const socket = io('127.0.0.1:5000')
         const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
         var session_form_deployed = false
         var note_is_private = false

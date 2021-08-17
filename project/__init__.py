@@ -1,11 +1,16 @@
+
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from .settings import app, db, socketio
+from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
+from .settings import app
+
+db = SQLAlchemy(app)
+socketio = SocketIO(app)
 
 def create_app():
 
     migrate = Migrate(app, db)
-
     from .classes import Users
 
     db.init_app(app)

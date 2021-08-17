@@ -1,8 +1,5 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.automap import automap_base
-from flask_socketio import SocketIO, send
 
 # this function is here because heroku returns "postgres://.." which is depreciated and not accepted by sqlalchemy. it should be 'postgresql://...'
 def postfix(string):
@@ -15,13 +12,24 @@ def postfix(string):
         else:
             return string
 
+app = Flask(__name__)
 db_password = os.environ.get('DB_PASS')
 
-app = Flask(__name__)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or db_password
-app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL')) or 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+app.config['SECRET_KEY'] = db_password
+
+# heroku
+# app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL'))
+
+# local docker on gunicorn
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
+
+# localhost
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+
 app.config['SQLALCHEMY_ECHO'] = False
-db = SQLAlchemy(app)
-socketio = SocketIO(app)
+
+
+
 

@@ -1,20 +1,22 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, jsonify
 from werkzeug import datastructures
 from werkzeug.security import generate_password_hash
-
+import os
 from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
 from .helpers import validate as v
 import json
+import mysql.connector
 
 main = Blueprint('main', __name__)
+db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
-
 def index():
-
+    # refrest test
+    refresh_test = 'no'
     if current_user.is_authenticated:
         games=Games.query.filter(
             Games.id.in_(
@@ -22,14 +24,52 @@ def index():
                     filter(Players.users_id.in_(
                         Users.query.with_entities(
                             Users.id).filter_by(
-                                id=current_user.id)))))
+                                id=current_user.id))))).all()
+        v(games, "games", deep=True)
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
         
         return render_template("index.html",
+            refresh_test=refresh_test,
             games=games,
             dm_games=dm_games)
 
     return render_template("index.html")
+
+
+# @main.route('/initdb')
+# def initdb():
+#     try:
+#         mydb = mysql.connector.connect(
+#             host="bonmysqldb",
+#             user="root",
+#             password=db_password
+#         )
+#         cursor = mydb.cursor()
+
+#         cursor.execute("DROP DATABASE IF EXISTS BON")
+#         cursor.execute("CREATE DATABASE BON")
+
+#         db.create_all()
+#         cursor.execute("SHOW DATABASES")
+#         for table in cursor:
+#             print(table)
+#         return 'init database'
+#     except:
+#         mydb = mysql.connector.connect(
+#             host="localhost",
+#             user="root",
+#             password=db_password
+#         )
+#         cursor = mydb.cursor()
+
+#         cursor.execute("DROP DATABASE IF EXISTS BON")
+#         cursor.execute("CREATE DATABASE BON")
+
+#         db.create_all()
+#         cursor.execute("SHOW DATABASES")
+#         for table in cursor:
+#             print(table)
+#         return 'init database'
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
@@ -56,6 +96,9 @@ def joining(id):
         character=Characters(name=charform.name.data, imglink=charform.imglink.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
         db.session.add(character)
         db.session.commit()
+        player=Players(users_id=current_user.id, games_id=id)
+        db.session.add(player)
+        db.session.commit()
         flash("{0} has joined the {1}!!".format(charform.name.data, game.name), "alert-success")
         return redirect(url_for('main.index'))
 
@@ -78,25 +121,22 @@ def create():
 @login_required
 def notes(id):
 
-
+    if os.environ.get("apptype") == 'local':
+        ip="127.0.0.1"
+    else:
+        ip="localhost"
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
     if len(session_titles) > 0:
-        v(session_titles, 'session_titles', deep=True)
         # query the notes and organize them by session in reverse order
         for i in range(session_titles[-1].number+1):
-            v(session_titles[-1].number+1)
             if i == 0:
                 j=session_titles[0].number
-                v(j, 'j')
             if i == (session_titles[j].number):
                 logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
                 j+=1
-                v(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all(), 'logsnegone')
-                v(i, 'i ex: 0')
-                v(id, 'id ex: 15')
             else:
                 logs.append('No Session data')
         session_titles.reverse()
@@ -106,11 +146,10 @@ def notes(id):
                     log.reverse()
             except:
                 continue
-        v(logs, 'logsrev')
 
 
-    
     return render_template('notes.html',
+        ip=ip,
         logs=logs,
         id=id,
         session_titles=session_titles,

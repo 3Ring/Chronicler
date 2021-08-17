@@ -1,0 +1,34 @@
+version: "3.8"
+
+services: 
+    bonmysqldb:
+        image: mysql
+        container_name: bonmysqldb
+        volumes: 
+            - bonvolume:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        ports:
+            - 3306:3306
+        cap_add:
+        - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
+
+    rest-server:
+        build: 
+            context: .
+        container_name: rest-server
+        environment: 
+            DB_PASS: ${MYSQL_ROOT_PASSWORD}
+        ports:
+            - 5000:5000
+        volumes:
+            - ./:/app
+
+volumes:
+    bonvolume:
+        name: bonvolume
+
+networks: 
+    default:
+        name: bonback
+        driver: bridge
