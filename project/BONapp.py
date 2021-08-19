@@ -1,5 +1,4 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, jsonify
-from werkzeug import datastructures
 from werkzeug.security import generate_password_hash
 import os
 from .events import *
@@ -7,16 +6,17 @@ from .classes import *
 from flask_login import login_required, current_user
 from . import db
 from .helpers import validate as v
-import json
-import mysql.connector
+from flask_cors import CORS
 
 main = Blueprint('main', __name__)
+# CORS(main)
 db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
 def index():
     # refrest test
-    refresh_test = 'no'
+    # refresh_test = 'no'
+    print('\n\n\n\n', 'test index')    
     if current_user.is_authenticated:
         games=Games.query.filter(
             Games.id.in_(
@@ -25,11 +25,10 @@ def index():
                         Users.query.with_entities(
                             Users.id).filter_by(
                                 id=current_user.id))))).all()
-        v(games, "games", deep=True)
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
         
         return render_template("index.html",
-            refresh_test=refresh_test,
+            # refresh_test=refresh_test,
             games=games,
             dm_games=dm_games)
 
@@ -120,7 +119,7 @@ def create():
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
-
+    print('\n\n\n\n', 'test notes')
     if os.environ.get("apptype") == 'local':
         ip="127.0.0.1"
     else:

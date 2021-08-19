@@ -8,9 +8,10 @@ def called():
 
 @socketio.on('send_new_session')
 def send_new_session(id, number, title, synopsis=None):
-
+    print("arrived!!!!!!!!!!!")
     # print('\n\n\n\n', 'send_new_session', id, number, title, '\n\n\n\n')
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=id)
+    # v(new, "new")
     db.session.add(new)
     db.session.flush()
     db.session.commit()

@@ -3,7 +3,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
 
-
+const port = 5000;
+// const socket = io('http://localhost:' + port)
+const socket = io('http://localhost:5000')
     // function fill_new_session_func(new_card) {
     //     session_cards = document.getElementById('Session Cards')
     //     session_cards.insertAdjacentHTML('afterbegin', new_card)
@@ -14,7 +16,6 @@
 
 
     document.addEventListener("DOMContentLoaded", function(event) { 
-        const socket = io('127.0.0.1:5000')
         const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
         var session_form_deployed = false
         var note_is_private = false
@@ -121,9 +122,9 @@
     })
     // Create on sumbit function for new session card after form for it has been created
     document.addEventListener("NewSessionFormCreated", function(event) {
-        const socket = io('http://127.0.0.1:5000')
         document.getElementById('new_session_form').onsubmit = function() {
             socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
+            console.log('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
             document.getElementById("new_session_form_div").innerHTML = ""
             session_form_deployed = false
             return false

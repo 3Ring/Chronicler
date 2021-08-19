@@ -1,6 +1,7 @@
 import os
+import logging
 from flask import Flask
-
+from flask_cors import CORS
 # this function is here because heroku returns "postgres://.." which is depreciated and not accepted by sqlalchemy. it should be 'postgresql://...'
 def postfix(string):
     if string is None:
@@ -13,20 +14,23 @@ def postfix(string):
             return string
 
 app = Flask(__name__)
+CORS(app)
 db_password = os.environ.get('DB_PASS')
+
+# if __name__ != '__main__':
+#     gunicorn_logger = logging.getLogger('gunicorn.error')
+#     app.logger.handlers = gunicorn_logger.handlers
+#     app.logger.setLevel(logging.DEBUG)
+#     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = db_password
 
 # heroku
-app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL'))
-
-# local docker on gunicorn
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
-
-# localhost
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+# app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL'))
 
 app.config['SQLALCHEMY_ECHO'] = False
 
