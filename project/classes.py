@@ -280,6 +280,7 @@ class DeleteForm(FlaskForm):
     loot_group_id = SelectField(u'Loot', coerce=int)
     note_group_id = SelectField(u'Notes', coerce=int)
     session_group_id = SelectField(u'Notes', coerce=int)
+    player_group_id = SelectField(u'Notes', coerce=int)
     submit = SubmitField("Submit")
 
 class ConForm(FlaskForm):
@@ -348,10 +349,11 @@ class NoteForm(FlaskForm):
     note = TextAreaField("Live Note")
     private = BooleanField("Private?")
     in_character = BooleanField("In character note?")
-    session = IntegerField('session?')
+    session_number = IntegerField('session number?')
     character = IntegerField('character id')
-    game = IntegerField('game id')
-    remember = BooleanField("Remember Me")
+    charname = StringField("Character name")
+    game_id = IntegerField('game id')
+    user_id = IntegerField('user_id')
     notesubmit = SubmitField("Submit")
 
 class SessionForm(FlaskForm):

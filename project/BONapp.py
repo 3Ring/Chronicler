@@ -239,7 +239,7 @@ def test_tables():
             loots = Loot.query.all()
 
         elif noteform.notesubmit.data:
-            note = Notes(note=noteform.note.data, private=noteform.private.data, in_character=noteform.in_character.data, session_id=noteform.session.data, character=noteform.character.data, game_id=noteform.game.data)
+            note = Notes(note=noteform.note.data, private=noteform.private.data, in_character=noteform.in_character.data, session_number=noteform.session_number.data, character=noteform.character.data, game_id=noteform.game_id.data, charname=noteform.charname.data, user_id=noteform.user_id.data)
             db.session.add(note)
             db.session.commit()
             notes = Notes.query.all()
@@ -264,6 +264,7 @@ def test_tables():
     delform.loot_group_id.choices = [(g.id) for g in Loot.query.order_by('id')]
     delform.note_group_id.choices = [(g.id) for g in Notes.query.order_by('id')]
     delform.session_group_id.choices = [(g.id) for g in Sessions.query.order_by('id')]
+    delform.player_group_id.choices = [(g.id) for g in Players.query.order_by('id')]
 
 
     return render_template('test_tables.html',
@@ -305,49 +306,73 @@ def post_test_tables():
     if delete.note_group_id.data:
         delete_id = delete.note_group_id.data
         deleted = Notes.query.filter_by(id = delete_id).first()
+        db.session.query(Notes).filter(Notes.id==delete_id).delete()
         flash("Note %s: '%s' has been successfully deleted" % (deleted.id, deleted.note))
-        db.session.delete(deleted)
         db.session.commit()
         return redirect(url_for('main.test_tables'))
     elif delete.session_group_id.data:
         delete_id = delete.session_group_id.data
         deleted = Sessions.query.filter_by(id = delete_id).first()
         db.session.query(Sessions).filter(Sessions.id==delete_id).delete()
-        print(deleted, '\n\n')
         flash("Session %s: '%s' has been successfully deleted" % (deleted.number, deleted.title))
         db.session.commit()
         return redirect(url_for('main.test_tables'))
     elif delete.user_group_id.data:
         delete_id = delete.user_group_id.data
         deleted = Users.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'Users'
+        db.session.query(Users).filter(Users.id==delete_id).delete()
+        flash("User %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
     elif delete.game_group_id.data:
         delete_id = delete.game_group_id.data
         deleted = Games.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'Games'
+        db.session.query(Games).filter(Games.id==delete_id).delete()
+        flash("Game %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
     elif delete.character_group_id.data:
         delete_id = delete.character_group_id.data
         deleted = Characters.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'Characters'
+        db.session.query(Characters).filter(Characters.id==delete_id).delete()
+        flash("Character %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
     elif delete.npc_group_id.data:
         delete_id = delete.npc_group_id.data
         deleted = NPCs.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'NPCs'
+        db.session.query(NPCs).filter(NPCs.id==delete_id).delete()
+        flash("NPC %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
     elif delete.place_group_id.data:
         delete_id = delete.place_group_id.data
         deleted = Places.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'Places'
+        db.session.query(Places).filter(Places.id==delete_id).delete()
+        flash("Place %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
     elif delete.loot_group_id.data:
         delete_id = delete.loot_group_id.data
         deleted = Loot.query.filter_by(id = delete_id).first()
-        session['table_to_edit'] = 'Loot'
-    session['name_to_delete'] = deleted.name
-    session['id_to_delete'] = delete_id
-    flash("Are you sure you want to delete %s?" % session['name_to_delete'])
-    form = ConForm()
-    return render_template('confirm.html',
-    form = form,
-    name = session['name_to_delete'])
+        db.session.query(Loot).filter(Loot.id==delete_id).delete()
+        flash("Loot %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
+    elif delete.player_group_id.data:
+        delete_id = delete.player_group_id.data
+        deleted = Players.query.filter_by(id = delete_id).first()
+        db.session.query(Players).filter(Players.id==delete_id).delete()
+        flash("Player %s: '%s' has been successfully deleted" % (deleted.id, deleted.users_id))
+        db.session.commit()
+        return redirect(url_for('main.test_tables'))
+    # session['name_to_delete'] = deleted.name
+    # session['id_to_delete'] = delete_id
+    # flash("Are you sure you want to delete %s?" % session['name_to_delete'])
+    # form = ConForm()
+    # return render_template('confirm.html',
+    # form = form,
+    # name = session['name_to_delete'])
 
 @main.route('/confirm', methods = ['POST'])
 @login_required
