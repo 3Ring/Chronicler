@@ -5,8 +5,8 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
+from .settings import bound_session
 from .helpers import validate as v
-from flask_cors import CORS
 
 main = Blueprint('main', __name__)
 # CORS(main)
@@ -313,8 +313,9 @@ def post_test_tables():
     elif delete.session_group_id.data:
         delete_id = delete.session_group_id.data
         deleted = Sessions.query.filter_by(id = delete_id).first()
+        db.session.query(Sessions).filter(Sessions.id==delete_id).delete()
+        print(deleted, '\n\n')
         flash("Session %s: '%s' has been successfully deleted" % (deleted.number, deleted.title))
-        db.session.delete(deleted)
         db.session.commit()
         return redirect(url_for('main.test_tables'))
     elif delete.user_group_id.data:
