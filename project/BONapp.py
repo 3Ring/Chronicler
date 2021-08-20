@@ -5,7 +5,6 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
-from .settings import bound_session
 from .helpers import validate as v
 
 main = Blueprint('main', __name__)
