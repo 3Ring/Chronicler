@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 from .settings import app
 
 db = SQLAlchemy(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, logger=True, engineio_logger=True)
 
 def create_app():
 
@@ -25,7 +25,7 @@ def create_app():
     def load_user(user_id):
         return Users.query.get(int(user_id))
 
-    # blueprint for auth routes in our app
+    # blueprint for auth routes of app
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 

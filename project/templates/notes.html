@@ -5,7 +5,7 @@
 
 const port = 5000;
 // const socket = io('http://localhost:' + port)
-const socket = io('http://localhost:5000')
+const socket = io()
     // function fill_new_session_func(new_card) {
     //     session_cards = document.getElementById('Session Cards')
     //     session_cards.insertAdjacentHTML('afterbegin', new_card)
@@ -124,7 +124,7 @@ const socket = io('http://localhost:5000')
     document.addEventListener("NewSessionFormCreated", function(event) {
         document.getElementById('new_session_form').onsubmit = function() {
             socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
-            console.log('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
+            console.log('send_new_session', window.location, new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
             document.getElementById("new_session_form_div").innerHTML = ""
             session_form_deployed = false
             return false
