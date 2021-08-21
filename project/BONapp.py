@@ -111,11 +111,15 @@ def create():
             gameform=gameform)
     else:
         game=Games(name=gameform.name.data, dm_id=current_user.id, imglink=gameform.imglink.data, published=gameform.published.data)
+        
         db.session.add(game)
         db.session.flush()
-        id=game.id
+        dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
+        db.session.add(dm_char)
+        v(dm_char, "dm_char", deep=True)
+        v(game, "game", deep=True)
         db.session.commit()
-        return redirect(url_for('main.notes', id=id))
+        return redirect(url_for('main.notes', id=game.id))
 
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required

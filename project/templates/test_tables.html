@@ -124,7 +124,7 @@
             if (game_form_deployed == false) {
                     var gamelist=[];
                     {% for game in games %}
-                        var itemlist=[{{game.id|tojson}}, {{game.name|tojson}}, {{game.imglink|tojson}}, {{game.sessions|tojson}}, {{game.secret|tojson}}, {{game.date_added|tojson}}, {{game.dm_id|tojson}}]
+                        var itemlist=[{{game.id|tojson}}, {{game.name|tojson}}, {{game.imglink|tojson}}, {{game.secret|tojson}}, {{game.published|tojson}},{{game.date_added|tojson}}, {{game.dm_id|tojson}}]
                         gamelist.push(itemlist)
                     {% endfor %}
                     var rows = [];
