@@ -27,7 +27,7 @@ def send_new_note(user_id, game_id, note, private=False, in_character=False):
     # current_game = Games.query.filter_by(id=game_id).first()
 
 
-    current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()[0]
+    current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
     session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()[0]
     # this will cause issues if a player has more than one character for now
 

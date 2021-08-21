@@ -129,6 +129,7 @@ def notes(id):
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
+    print(session_titles[-1], "\n\n")
     if len(session_titles) > 0:
         # query the notes and organize them by session in reverse order
         for i in range(session_titles[-1].number+1):
