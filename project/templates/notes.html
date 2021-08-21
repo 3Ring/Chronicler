@@ -164,7 +164,7 @@ const socket = io()
 {% if session_titles %}
     {% for session in session_titles %}
         <div id="session_header_{{session.id}}">Session{{session.number}}: {{session.title}}
-            <div id="session_card_{{session.id}}">
+            <div id="session_card_{{session.number}}">
                 {% for note in logs[session.number - 1] %}
                     <span id='note_span_{{note.id}}_{{note.user_id}}'>
                         <p id='note_{{note.id}}_{{note.user_id}}'><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>

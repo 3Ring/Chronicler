@@ -24,21 +24,16 @@ def send_new_note(user_id, game_id, note, private=False, in_character=False):
         private = True
     else:
         private = False
-    current_game = Games.query.filter_by(id=game_id).first()
-    v(user_id, "user_id", deep=True)
-    v(current_game, "current_game", deep=True)
-    v(current_game.dm_id, "current_game.dm_id", deep=True)
-    if user_id == current_game.dm_id:
-        charname = 'DM'
-    else:
-        charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id, game_id=game_id).first()
-        charname=charname[0]
-    session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()
-    # this will cause issues if a player has more than one character for now
-    character=Characters.query.with_entities(Characters.id).filter_by(user_id=user_id).first()
-    print('\n\n\n\n', "game_id:", game_id, "user_id:", user_id, "note:", note, "Private:", private, "in_character", in_character, "charname", charname, "character(id):", character, "session_number:", session_number)
+    # current_game = Games.query.filter_by(id=game_id).first()
 
-    new=Notes(charname=charname, note=note, session_number=session_number, private=private, in_character=in_character, character=character, user_id=user_id, game_id=game_id)
+
+    current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()[0]
+    session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()[0]
+    # this will cause issues if a player has more than one character for now
+
+    print('\n\n\n\n', "game_id:", game_id, "user_id:", user_id, "note:", note, "Private:", private, "in_character", in_character, "charname", current_char.name, "character(id):", current_char.id, "session_number:", session_number)
+
+    new=Notes(charname=current_char.name, note=note, session_number=session_number, private=private, in_character=in_character, character=current_char.id , user_id=user_id, game_id=game_id)
     
     db.session.add(new)
     db.session.flush()
