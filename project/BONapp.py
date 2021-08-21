@@ -124,11 +124,11 @@ def create():
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
-    print('\n\n\n\n', 'test notes')
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
+    v(session_titles, "session_titles", deep=True)
     print(session_titles[-1], "\n\n")
     if len(session_titles) > 0:
         # query the notes and organize them by session in reverse order
@@ -139,7 +139,7 @@ def notes(id):
                 logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
                 j+=1
             else:
-                logs.append('No Session data')
+                continue
         session_titles.reverse()
         for log in logs:
             try:
@@ -147,6 +147,8 @@ def notes(id):
                     log.reverse()
             except:
                 continue
+    v(logs, "logs", deep=True)
+    v(session_titles, "session_titles", deep=True)
 
 
     return render_template('notes.html',
