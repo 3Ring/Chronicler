@@ -116,8 +116,8 @@ def create():
         db.session.flush()
         dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
         db.session.add(dm_char)
-        v(dm_char, "dm_char", deep=True)
-        v(game, "game", deep=True)
+        playerlist=Players(users_id=current_user.id, games_id=game.id)
+        db.session.add(playerlist)
         db.session.commit()
         return redirect(url_for('main.notes', id=game.id))
 
