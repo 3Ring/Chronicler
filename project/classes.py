@@ -53,7 +53,6 @@ class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     imglink = db.Column(db.String(200), nullable=False)
-    sessions = db.Column(db.Integer, default=0, nullable=False)
     secret = db.Column(db.Integer, default=0)
     published = db.Column(db.Boolean, default=False, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
@@ -295,6 +294,12 @@ class GameForm(FlaskForm):
     secret = IntegerField("User who this game is attached to '0' if published")
     published = BooleanField("Publish? (Allow game to be searchable)")
     dm_id = IntegerField("User_id who this game is attached to")
+    gamesubmit = SubmitField("Submit")
+
+class CreateGameForm(FlaskForm):
+    name = StringField("Name of your game")
+    imglink = TextAreaField("Image Link")
+    published = BooleanField("Publish? (Allow game to be searchable)")
     gamesubmit = SubmitField("Submit")
 
 class NPCForm(FlaskForm):

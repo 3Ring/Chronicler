@@ -13,6 +13,8 @@ db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
 def index():
+    # game = Games.query.first()
+    # print(game.sessions, game.name)
     # refrest test
     # refresh_test = 'no'
     print('\n\n\n\n', 'test index')    
@@ -32,7 +34,7 @@ def index():
             dm_games=dm_games)
 
     return render_template("index.html")
-
+# import mysql.connector
 
 # @main.route('/initdb')
 # def initdb():
@@ -103,12 +105,12 @@ def joining(id):
 @main.route('/create', methods=["GET", "POST"])
 @login_required
 def create():
-    gameform=GameForm()
+    gameform=CreateGameForm()
     if request.method=="GET":
         return render_template('create.html',
             gameform=gameform)
     else:
-        game=Games(name=gameform.name.data, dm_id=current_user.id, imglink=gameform.imglink.data, sessions=gameform.sessions.data, published=gameform.published.data)
+        game=Games(name=gameform.name.data, dm_id=current_user.id, imglink=gameform.imglink.data, published=gameform.published.data)
         db.session.add(game)
         db.session.flush()
         id=game.id
