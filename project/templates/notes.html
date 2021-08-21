@@ -85,7 +85,7 @@ const socket = io()
 
 
 
-
+        {% if current_user.id == dmid %}
         // create form for making new session card
         document.getElementById("new_session_button").onclick = function() {
             // If new session form has already been deployed then pushing the button again will close it
@@ -104,6 +104,7 @@ const socket = io()
                 session_form_deployed = true
             }
         }
+        {% endif %}
 
 
 

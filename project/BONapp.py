@@ -119,10 +119,6 @@ def create():
 @login_required
 def notes(id):
     print('\n\n\n\n', 'test notes')
-    if os.environ.get("apptype") == 'local':
-        ip="127.0.0.1"
-    else:
-        ip="localhost"
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
@@ -147,7 +143,6 @@ def notes(id):
 
 
     return render_template('notes.html',
-        ip=ip,
         logs=logs,
         id=id,
         session_titles=session_titles,

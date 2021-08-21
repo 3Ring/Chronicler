@@ -1,22 +1,17 @@
 from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
-
 from .helpers import validate as v
 def called():
     print('\n\n\n\n', 'received', '\n\n\n\n')
 
 @socketio.on('send_new_session')
 def send_new_session(id, number, title, synopsis=None):
-    print("arrived!!!!!!!!!!!")
-    # print('\n\n\n\n', 'send_new_session', id, number, title, '\n\n\n\n')
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=id)
-    # v(new, "new")
     db.session.add(new)
     db.session.flush()
     db.session.commit()
     newsession = str("<div id='session"+str(new.number)+"'>Session"+str(new.number)+": "+new.title+"</div")
-    # print('\n\n\n\n', str("<div id='session"+str(new.number)+"'></div"), '\n\n\n\n')
     emit('fill_new_session', newsession, broadcast=True)
 
 @socketio.on('send_new_note')
@@ -29,17 +24,21 @@ def send_new_note(user_id, game_id, note, private=False, in_character=False):
         private = True
     else:
         private = False
-    # print('\n\n\n\n', 'send_new_note', user_id, game_id, note, private, in_character, '\n\n\n\n')
-    charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id, game_id=game_id).first()
-    # print('\n\n\n\n', 'charname', charname)
+    current_game = Games.query.filter_by(id=game_id).first()
+    v(user_id, "user_id", deep=True)
+    v(current_game, "current_game", deep=True)
+    v(current_game.dm_id, "current_game.dm_id", deep=True)
+    if user_id == current_game.dm_id:
+        charname = 'DM'
+    else:
+        charname=Characters.query.with_entities(Characters.name).filter_by(user_id=user_id, game_id=game_id).first()
+        charname=charname[0]
     session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()
-    # print('\n\n\n\n', 'session_id:', session_id)
     # this will cause issues if a player has more than one character for now
     character=Characters.query.with_entities(Characters.id).filter_by(user_id=user_id).first()
-    # print('\n\n\n\n', "character:", character)
-    # print('\n\n\n\n', "game_id:", game_id)
+    print('\n\n\n\n', "game_id:", game_id, "user_id:", user_id, "note:", note, "Private:", private, "in_character", in_character, "charname", charname, "character(id):", character, "session_number:", session_number)
 
-    new=Notes(charname=charname[0], note=note, session_number=session_number[0], private=private, in_character=in_character, character=character[0], user_id=user_id, game_id=game_id)
+    new=Notes(charname=charname, note=note, session_number=session_number, private=private, in_character=in_character, character=character, user_id=user_id, game_id=game_id)
     
     db.session.add(new)
     db.session.flush()
