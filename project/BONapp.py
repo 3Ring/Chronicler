@@ -119,6 +119,7 @@ def create():
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
+    edit_img="https://image.flaticon.com/icons/png/512/61/61456.png"
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
@@ -139,9 +140,10 @@ def notes(id):
                         logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=note.number).all())
     if len(session_titles) > 1:
         session_titles.reverse()
-
+    v(logs, "logs", deep=True)
 
     return render_template('notes.html',
+        edit_img=edit_img,
         logs=logs,
         id=id,
         session_titles=session_titles,
@@ -181,7 +183,6 @@ def test_tables():
     sessionheads=Sessions().head
     sessions=Sessions.query.all()
     test=Test.query.all()
-
 
     userform = UserForm()
     gameform = GameForm()
@@ -360,13 +361,6 @@ def post_test_tables():
         flash("Player %s: '%s' has been successfully deleted" % (deleted.id, deleted.users_id))
         db.session.commit()
         return redirect(url_for('main.test_tables'))
-    # session['name_to_delete'] = deleted.name
-    # session['id_to_delete'] = delete_id
-    # flash("Are you sure you want to delete %s?" % session['name_to_delete'])
-    # form = ConForm()
-    # return render_template('confirm.html',
-    # form = form,
-    # name = session['name_to_delete'])
 
 @main.route('/confirm', methods = ['POST'])
 @login_required
@@ -403,34 +397,3 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-
-
-@main.route('/test', methods = ['GET'])
-def test():
-    testform = TestForm()
-    tests=Test.query.all()
-    array=[]
-    for test in tests:
-        array.append(test)
-    array.reverse()
-    return render_template('test.html', testform=testform, tests=array)
-
-@main.route('/nuke')
-def nuke():
-    # print('test')
-    # nuked = Sessions.query.filter_by(games_id=15).all()
-
-    # for bomb in nuked:
-    #     # print('test', bomb.title, bomb.games_id )
-    #     db.session.delete(bomb)
-    #     db.session.commit()
-
-    nuked = Notes.query.filter_by(game_id=15).all()
-
-    for bomb in nuked:
-        # print('test', bomb.title, bomb.games_id )
-        db.session.delete(bomb)
-        db.session.commit()
-
-
-    return redirect(url_for('main.notes', id=15))

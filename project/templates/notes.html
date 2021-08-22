@@ -141,12 +141,15 @@ const socket = io()
 <div id="Session Cards">
 {% if session_titles %}
     {% for session in session_titles %}
-        <div id="session_header_{{session.id}}">Session{{session.number}}: {{session.title}}
+        <div class="border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
+            <h2>Session {{session.number}}: {{session.title}}</h2>
             <div id="session_card_{{session.number}}">
                 {% for note in logs[session.number] %}
                     <span id='note_span_{{note.id}}_{{note.user_id}}'>
-                        <p id='note_{{note.id}}_{{note.user_id}}'><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>
-                        <button id='del_{{note.id}}_{{note.user_id}}'>Delete Note</button>
+                        <p id='note_{{note.id}}_{{note.user_id}}'>
+                            {{ note.date_added }} || <b>{{ note.charname }}:</b> {{ note.note }}  
+                            <a id='del_{{note.id}}_{{note.user_id}}'><img class='edit_button' src={{edit_img}}></a>
+                        </p>
                     </span>
 
                 {% endfor %}
