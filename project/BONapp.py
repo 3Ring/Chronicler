@@ -13,13 +13,9 @@ db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
 def index():
-    # game = Games.query.first()
-    # print(game.sessions, game.name)
-    # refrest test
-    # refresh_test = 'no'
-    print('\n\n\n\n', 'test index')    
     if current_user.is_authenticated:
         games=Games.query.filter(
+            Games.dm_id != current_user.id,
             Games.id.in_(
                 Players.query.with_entities(Players.games_id).
                     filter(Players.users_id.in_(
@@ -29,7 +25,6 @@ def index():
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
         
         return render_template("index.html",
-            # refresh_test=refresh_test,
             games=games,
             dm_games=dm_games)
 
