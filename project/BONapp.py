@@ -128,8 +128,6 @@ def notes(id):
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
-    v(session_titles, "session_titles", deep=True)
-    # print(session_titles[-1], "\n\n")6
             
     # query the notes and organize them by session in reverse order
     if session_titles == None:
@@ -146,26 +144,6 @@ def notes(id):
                         logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=note.number).all())
     if len(session_titles) > 1:
         session_titles.reverse()
-    # if len(logs) > 1:
-    #     logs.reverse()
-
-    # for i in range(session_titles[-1].number+1):
-    #     if i == 0:
-    #         j=session_titles[0].number
-    #     if i == (session_titles[j].number):
-    #         logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
-    #         j+=1
-    #     else:
-    #         continue
-    # session_titles.reverse()
-    # for log in logs:
-    #     try:
-    #         if len(log) > 1:
-    #             log.reverse()
-    #     except:
-    #         continue
-    v(logs, "logs", deep=True)
-    v(session_titles, "session_titles", deep=True)
 
 
     return render_template('notes.html',
