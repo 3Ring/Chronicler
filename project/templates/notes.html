@@ -151,9 +151,6 @@ const socket = io()
 </form>
 <br/>
 <br/>
-{% if 1 == current_user.id %}
-    <button><a href="{{ url_for('main.nuke') }}">Nuke!!</a></button>
-{% endif %}
 {% if dmid == current_user.id %}
     
     <button id='new_session_button'>Start a new session?</button>
@@ -165,11 +162,12 @@ const socket = io()
     {% for session in session_titles %}
         <div id="session_header_{{session.id}}">Session{{session.number}}: {{session.title}}
             <div id="session_card_{{session.number}}">
-                {% for note in logs[session.number - 1] %}
+                {% for note in logs[session.number] %}
                     <span id='note_span_{{note.id}}_{{note.user_id}}'>
                         <p id='note_{{note.id}}_{{note.user_id}}'><b>{{ note.charname }}:</b> {{ note.note }} ... {{ note.date_added }}</p>
                         <button id='del_{{note.id}}_{{note.user_id}}'>Delete Note</button>
                     </span>
+
                 {% endfor %}
             </div>
         </div>

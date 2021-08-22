@@ -11,7 +11,7 @@ def send_new_session(id, number, title, synopsis=None):
     db.session.add(new)
     db.session.flush()
     db.session.commit()
-    newsession = str("<div id='session"+str(new.number)+"'>Session"+str(new.number)+": "+new.title+"</div")
+    newsession = str("<div id='session_header_"+str(new.id)+"'>Session"+str(new.number)+": "+str(new.title)+"<div id='session_card_"+str(new.number)+"'></div></div>")
     emit('fill_new_session', newsession, broadcast=True)
 
 @socketio.on('send_new_note')
@@ -43,58 +43,3 @@ def send_new_note(user_id, game_id, note, private=False, in_character=False):
     emit('fill_new_note', (new_note, new.private, new.session_number, new.in_character), broadcast=True)
     db.session.commit()
 
-# @socketio.on('delete_note_fill')
-# def delete_note(note_id, index, user_id):
-
-#     v(note_id, 'note_id')
-#     v(user_id, 'user_id')
-
-    # item_to_delete = table.query.filter_by(id=id).first()
-    # v(item_to_delete, 'item_to_delete')
-
-
-
-# tests below here
-@socketio.on('pushnote')
-def pushtest(test, id):
-
-    print('\n\n\n', 'id: ', id, '  test:   ', test, '\n\n\n')
-    new=Test(test=test)
-    db.session.add(new)
-    db.session.flush()
-    db.session.commit()
-    new = str('<li>'+id+": "+test+'</li>')
-    emit('fill', new)
-
-# test
-@socketio.on('pushtest')
-def pushtest(test, id):
-    print('\n\n\n', 'id: ', id, '  test:   ', test, '\n\n\n')
-    new=Test(test=test)
-    db.session.add(new)
-    db.session.flush()
-    db.session.commit()
-    new = str('<li>'+id+": "+test+'</li>')
-    emit('filltest', new)
-
-# @socketio.on('fill')
-# def send_json(json):
-#     socketio.emit(json, json=True)
-def called():
-    print('\n\n\n\n', 'received', '\n\n\n\n')
-
-
-
-
-
-# test
-@socketio.on('pushtest')
-def pushtest(test, id):
-
-    print('\n\n\n', 'id: ', id, '  test:   ', test, '\n\n\n')
-    new=Test(test=test)
-    db.session.add(new)
-    db.session.flush()
-    db.session.commit()
-    new = str('<li>'+id+": "+test+'</li>')
-    emit('filltest', new)

@@ -129,24 +129,41 @@ def notes(id):
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = []
     v(session_titles, "session_titles", deep=True)
-    print(session_titles[-1], "\n\n")
-    if len(session_titles) > 0:
-        # query the notes and organize them by session in reverse order
-        for i in range(session_titles[-1].number+1):
-            if i == 0:
-                j=session_titles[0].number
-            if i == (session_titles[j].number):
-                logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
-                j+=1
-            else:
-                continue
+    # print(session_titles[-1], "\n\n")6
+            
+    # query the notes and organize them by session in reverse order
+    if session_titles == None:
+        pass
+    else:
+        if type(session_titles) != list:
+            logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=session_titles.number).all())
+        else:
+            for session in session_titles:
+                if type(session) != list:
+                    logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all())
+                else:
+                    for note in session:
+                        logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=note.number).all())
+    if len(session_titles) > 1:
         session_titles.reverse()
-        for log in logs:
-            try:
-                if len(log) > 1:
-                    log.reverse()
-            except:
-                continue
+    # if len(logs) > 1:
+    #     logs.reverse()
+
+    # for i in range(session_titles[-1].number+1):
+    #     if i == 0:
+    #         j=session_titles[0].number
+    #     if i == (session_titles[j].number):
+    #         logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=i).all())
+    #         j+=1
+    #     else:
+    #         continue
+    # session_titles.reverse()
+    # for log in logs:
+    #     try:
+    #         if len(log) > 1:
+    #             log.reverse()
+    #     except:
+    #         continue
     v(logs, "logs", deep=True)
     v(session_titles, "session_titles", deep=True)
 
