@@ -59,12 +59,11 @@ const socket = io()
                 session_form_deployed = false
             } else {
                 // Create and deploy new session form
-                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0><input id='new_session_form_title' required, placeholder='Title(Required)' type='text'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><button id='new_session_form_submit'>Make Session</button></form>"
+                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0><input id='new_session_form_title' required, placeholder='Title(Required)' type='text'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><input type='submit' value ='Make Session'></input><input type='button' id='cancel_new_session' value='Cancel'></input></form>"
                 var new_session_form_id = document.getElementById('new_session_form_id')
-                var new_session_form_number = document.getElementById('new_session_form_number')
-                var new_session_form_title = document.getElementById('new_session_form_title')
-                var new_session_form_synopsis = document.getElementById('new_session_form_synopsis')
-                var new_session_form_submit = document.getElementById('new_session_form_submit')
+                , new_session_form_number = document.getElementById('new_session_form_number')
+                , new_session_form_title = document.getElementById('new_session_form_title')
+                , new_session_form_synopsis = document.getElementById('new_session_form_synopsis')
                 document.dispatchEvent(evt);
                 session_form_deployed = true
             }
@@ -88,6 +87,11 @@ const socket = io()
     })
     // Create on sumbit function for new session card after form for it has been created
     document.addEventListener("NewSessionFormCreated", function(event) {
+        // cancel button function
+        document.getElementById("cancel_new_session").addEventListener("click", function() { 
+            document.getElementById('new_session_form_div').innerHTML = ''
+            session_form_deployed = false
+        })
         // capture and send new session to server
         document.getElementById('new_session_form').onsubmit = function() {
             // ensure that form is filled out correctly
