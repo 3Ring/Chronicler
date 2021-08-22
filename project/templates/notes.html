@@ -22,9 +22,7 @@ const socket = io()
 
         // display new note
         socket.on('fill_new_note', function(new_note, private, session_number, in_character) {
-            console.log('fill_new_note', new_note, private, session_number, in_character)
             this_session = document.getElementById('session_card_'+session_number)
-            console.log('session_'+session_number)
             this_session.insertAdjacentHTML('afterbegin', new_note)
         });
 
@@ -92,12 +90,17 @@ const socket = io()
     document.addEventListener("NewSessionFormCreated", function(event) {
         // capture and send new session to server
         document.getElementById('new_session_form').onsubmit = function() {
+            // ensure that form is filled out correctly
             if (new_session_form_id.value != '' && new_session_form_number.value != '' && new_session_form_title.value != '' && parseInt(new_session_form_number.value) > -1) {
-                socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
-                console.log('send_new_session', typeof(new_session_form_id.value), typeof(new_session_form_number.value), typeof(new_session_form_title.value), typeof(new_session_form_synopsis.value))
-                document.getElementById("new_session_form_div").innerHTML = ""
-                session_form_deployed = false
-                return false
+                if (document.getElementById("session_card_"+new_session_form_number.value) == null) {
+                    socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
+                    document.getElementById("new_session_form_div").innerHTML = ""
+                    session_form_deployed = false
+                    return false
+                } else {
+                    alert("Session number must be unique")
+                    return false
+                }
             } else {
                 alert("Must fill out required fields")
                 return false
