@@ -120,7 +120,7 @@ const socket = io()
     <input type=hidden id='note_user_id', name='note_user_id', value='{{current_user.id}}'>
     <input type=hidden id='note_game_id', name='note_game_id', value='{{id}}'>
     <label for='new_note_text'>Note:</label>
-    <input id='note_note' required type='textarea' placeholder='Collaborative note'>
+    <textarea id='note_note' required autocomplete='off' type='textarea' placeholder='Collaborative note'></textarea>
     <br/>
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
     <input type='checkbox' id='note_private', name='note_private', value='n'>
