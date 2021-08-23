@@ -144,15 +144,24 @@ const socket = io()
         <div class="border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
             <h2>Session {{session.number}}: {{session.title}}</h2>
             <div id="session_card_{{session.number}}">
-                {% for note in logs[session.number] %}
-                    <span id='note_span_{{note.id}}_{{note.user_id}}'>
-                        <p id='note_{{note.id}}_{{note.user_id}}'>
-                            {{ note.date_added }} || <b>{{ note.charname }}:</b> {{ note.note }}  
-                            <a id='del_{{note.id}}_{{note.user_id}}'><img class='edit_button' src={{edit_img}}></a>
+                {% if typ(note_dict[session.number]) == lis %}
+                    {% for note in note_dict[session.number] %}
+                        <span id='note_span_{{note.id}}_{{note.user_id}}'>
+                            <p id='note_{{note.id}}_{{note.user_id}}'>
+                                {{ note.date_added }} || <b>{{ note.charname }}:</b> {{ note.note }}  
+                                <a id='edit_{{note.id}}_{{note.user_id}}'><img class='edit_button' src={{edit_img}}></a>
+                            </p>
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <span id='note_span_{{note_dict[st(session.number)].id}}_{{note_dict[session.number].user_id}}'>
+                        <p id='note_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'>
+                            {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> {{ note_dict[session.number].note }}  
+                            <a id='edit_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'><img class='edit_button' src={{edit_img}}></a>
                         </p>
                     </span>
 
-                {% endfor %}
+                {% endif %}
             </div>
         </div>
     {% endfor %}

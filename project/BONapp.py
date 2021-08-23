@@ -24,7 +24,13 @@ def index():
                                 id=current_user.id))))).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
         
+        thing=[1,2]
+        other={'slot': thing}
         return render_template("index.html",
+            other=other,
+            test='test',
+            ty=type,
+            lis=list,
             games=games,
             dm_games=dm_games)
 
@@ -123,28 +129,30 @@ def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
-    logs = []
+    logs = {}
             
     # query the notes and organize them by session in reverse order
     if session_titles == None:
         pass
     else:
         if type(session_titles) != list:
-            logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=session_titles.number).all())
+            session_titles.number=str(session_titles.number)
+            logs[str(session_titles.number)] = Notes.query.filter_by(game_id=id).filter_by(session_number=session_titles.number).all()
         else:
             for session in session_titles:
-                if type(session) != list:
-                    logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all())
-                else:
-                    for note in session:
-                        logs.append(Notes.query.filter_by(game_id=id).filter_by(session_number=note.number).all())
-    if len(session_titles) > 1:
-        session_titles.reverse()
-    v(logs, "logs", deep=True)
+                logs[str(session.number)] = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all()
+            if len(session_titles) > 1:
+                session_titles.reverse()
+            # Set as strings so that they can be used as dict keys
+            for session in session_titles:
+                session.number=str(session.number)
 
     return render_template('notes.html',
+        typ=type,
+        lis=list,
+        st=str,
         edit_img=edit_img,
-        logs=logs,
+        note_dict=logs,
         id=id,
         session_titles=session_titles,
         dmid=dmid)
