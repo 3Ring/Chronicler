@@ -13,12 +13,6 @@
         {% endfor %}
     {% endif %}
 {% endwith%}
-{% set test2 = test %}
-
-<h1>{{ty(other['slot'])}}</h1>
-{% if ty(other['slot']) == lis %}
-    <h2>yes</h2>
-{% endif %}
 
 {% if current_user.is_anonymous %}
 <h2>Welcome to my collaborative note taking app for dnd and other tabletop games!</br>Please Log in or Register to get started</h2>

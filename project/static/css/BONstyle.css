@@ -10,3 +10,15 @@
 .edit_button{
   height:1vh;
 }
+/* h2 {
+  color: red;
+} */
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.context-menu--active {
+  display: block;
+}

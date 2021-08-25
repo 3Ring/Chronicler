@@ -1,7 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+<!-- <script src"{{ url_for('static', filename='js/note_edit.js') }}"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
 <script type="text/javascript" charset="utf-8">
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+    (function() {
+        var edit_buttons = document.querySelectorAll(".edit_button");
+
+        for (var i = 0, len = edit_buttons.length; i < len; i++) {
+            var button = edit_buttons[i];
+            contextMenuListener(button);
+        }
+        function contextMenuListener(el) {
+            document.addEventListener( "contextmenu", function(e) {
+                e.preventDefault();
+                toggleMenuOn();
+            });
+        
+        function toggleMenuOn() {
+            if ( menuState !== 1 ) {
+                menuState = 1;
+                menu.classList.add(active);
+            }
+    }
+        }
+    })();
+    var menu = document.querySelector("#context-menu");
+    var menuState = 0;
+    var active = "context-menu--active";
+});
 
 const socket = io()
 
@@ -14,7 +43,7 @@ const socket = io()
         var note_is_in_character = false
 
         // display new session card
-        socket.on('fill_new_session', function(new_card) {
+        socket.on('fill_new_session', function(new_card, number) {
             session_cards = document.getElementById('Session Cards')
             session_cards.insertAdjacentHTML('afterbegin', new_card)
         });
@@ -141,7 +170,7 @@ const socket = io()
 <div id="Session Cards">
 {% if session_titles %}
     {% for session in session_titles %}
-        <div class="border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
+        <div class="sessions border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
             <h2>Session {{session.number}}: {{session.title}}</h2>
             <div id="session_card_{{session.number}}">
                 {% if typ(note_dict[session.number]) == lis %}
@@ -149,7 +178,9 @@ const socket = io()
                         <span id='note_span_{{note.id}}_{{note.user_id}}'>
                             <p id='note_{{note.id}}_{{note.user_id}}'>
                                 {{ note.date_added }} || <b>{{ note.charname }}:</b> {{ note.note }}  
-                                <a id='edit_{{note.id}}_{{note.user_id}}'><img class='edit_button' src={{edit_img}}></a>
+                                {% if note.user_id == current_user.id %}
+                                <a id='edit_{{note.id}}_{{note.user_id}}' class='edit_button'><img src={{edit_img}}></a>
+                                {% endif %}
                             </p>
                         </span>
                     {% endfor %}
@@ -157,7 +188,9 @@ const socket = io()
                     <span id='note_span_{{note_dict[st(session.number)].id}}_{{note_dict[session.number].user_id}}'>
                         <p id='note_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'>
                             {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> {{ note_dict[session.number].note }}  
-                            <a id='edit_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'><img class='edit_button' src={{edit_img}}></a>
+                            {% if note.user_id == current_user.id %}
+                            <a id='edit_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}' class='edit_button'><img src={{edit_img}}></a>
+                            {% endif %}
                         </p>
                     </span>
 
