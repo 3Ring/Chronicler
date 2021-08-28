@@ -1,24 +1,45 @@
 .table{
-    display: block;
-    overflow-x: auto;
-  }
+  display: block;
+  overflow-x: auto;
+}
 
 .test-table{
-    margin-bottom:50px;
+  margin-bottom: 50px;
 }
 
-.edit_button{
-  height:1vh;
-}
-/* h2 {
-  color: red;
-} */
-.context-menu {
-  display: none;
-  position: absolute;
-  z-index: 10;
+.note_edit_button{
+height: 1em;
 }
 
-.context-menu--active {
-  display: block;
+.note_edit_menu {
+display: none;
+position: absolute;
+z-index: 10;
+}
+
+.note_edit_menu--active {
+display: block;
+}
+
+*,
+*::before,
+*::after {
+box-sizing: border-box;
+}
+
+.tasks {
+list-style: none;
+margin: 0;
+padding: 0;
+}
+
+.task {
+display: flex;
+justify-content: space-between;
+padding: 12px 0;
+border-bottom: solid 1px #dfdfdf;
+}
+
+.task:last-child {
+border-bottom: none;
 }
