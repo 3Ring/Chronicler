@@ -62,18 +62,5 @@
     {% endfor %}
 {% endif %}
 </div>
-<nav id="note_edit_menu" class="note_edit_menu">
-        <ul class="note_edit_menu_items">
-            <li class="note_edit_menu_item">
-                <a href="#" class="note_edit_menu_link">
-                Edit Note
-                </a>
-            </li>
-            <li class="note_edit_menu_item">
-                <a href="#" class="note_edit_menu_link">
-                Delete Note
-                </a>
-            </li>
-        </ul>
-    </nav>
+{% include 'note_contextual_menu.html' %}
 {% endblock %}
