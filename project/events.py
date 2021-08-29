@@ -36,3 +36,7 @@ def send_new_note(user_id, game_id, note, priv=False, in_character=False):
     emit('fill_new_note', (new_note, new.private, new.session_number, new.in_character), broadcast=True)
     db.session.commit()
 
+@socketio.on('edit_ntoe')
+def edit_note(text, game_id, user_id, note_id):
+    print('edit_note received!!', text, game_id, user_id, note_id)
+

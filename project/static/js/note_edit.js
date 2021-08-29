@@ -59,6 +59,14 @@ function getPosition(e) {
   }
 }
 
+var edit_note_func = function () {
+  console.log("submitted")
+  let text = document.getElementById("input_change_" + note_id).value;
+  let game_id = document.getElementById('note_game_id');
+  let user_id = document.getElementById('note_user_id');
+  socket.emit("edit_note", text, game_id, user_id, note_id);
+
+}
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -110,7 +118,10 @@ function init() {
  */
 function contextListener() {
   document.addEventListener( "contextmenu", function(e) {
-    if ( clickInsideElement( e, taskItemClassName ) ) {
+    taskItemInContext = clickInsideElement( e, taskItemClassName );
+
+    if ( taskItemInContext ) {
+      // console.log(taskItemClassName)
       e.preventDefault();
       toggleMenuOn();
       positionMenu(e);
@@ -216,6 +227,41 @@ function positionMenu(e) {
  */
 function menuItemListener( link ) {
   console.log( "Task ID - " + taskItemInContext.getAttribute("data-id") + ", Task action - " + link.getAttribute("data-action"));
+  el_id = taskItemInContext.getAttribute("data-id");
+  let keys = ["id", "private", "in_character"];
+  let note_meta = {}
+  let long = 0
+  for (let i = 0, j = 0; i < el_id.length; i++) {
+    if (el_id[i] === "_") 
+    {
+      long = 0
+    } else {
+      if (long == 0) {
+        note_meta[keys[j]] = el_id[i];
+        long = 1
+        j++;
+      } else {
+        j--;
+        note_meta[keys[j]] += el_id[i];
+        j++;
+      }
+    }
+  }
+  // console.log(link.getAttribute("data-action"));
+  if (link.getAttribute("data-action") == "edit") {
+    var note_id = note_meta.id;
+    // console.log(note_id)
+    var is_private = note_meta.private;
+    // console.log(is_private)
+    var is_in_character = note_meta.in_character;
+    // console.log(is_in_character)
+    var inner = document.getElementById("inner_" + note_id);
+    var innertext = inner.innerHTML;
+    // console.log(innertext);
+    // console.log(innertext, "innerhtml");
+    inner.innerHTML = "<form onsubmit='edit_note_func()' id='form_" + note_id + "'><input type='text' value='" + innertext + "' id='input_change_" + note_id + "'><label for='change_private'>Make Private?</label><input type='checkbox' id='change_private' value='" + is_private + "'><label for='make_in_character'>Change to <i>in character?</i></label><input type='checkbox' id='make_in_character' value='" + is_in_character + "'><input type='submit' value='submit' id='change_submit_" + note_id + "'></form>";
+
+  }
   toggleMenuOff();
 }
 
