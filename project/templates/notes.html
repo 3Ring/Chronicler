@@ -2,10 +2,94 @@
 {% block content %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-<script src="{{ url_for('static', filename='js/socketio.js') }}"></script>
-<script src="{{ url_for('static', filename='js/note_edit.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/socketio.js') }}"></script> -->
+
 <script type="text/javascript" charset="utf-8">
-    
+
+// variables
+var context_menu_class_name = "note_edit_menu_link",
+context_menu_prefix = "note_edit_menu_",
+context_menu_name = "note_edit_menu",
+hidden_class_name = "hidden",
+active_class_name = "--active",
+image_class_name = "note_edit_button"
+menu_deployed = false;
+
+function init () {
+    click_listener();
+}
+
+function edit_note_func(num) {
+    return false;
+};
+
+function click_inside_element( e, className ) {
+  var el = e.srcElement || e.target;
+  
+  if ( el.classList.contains(className) ) {
+    return el;
+  } else {
+    while ( el = el.parentNode ) {
+        console.log(el);
+      if ( el.classList && el.classList.contains(className) ) {
+        console.log("it's here")
+        return el;
+      }
+    }
+  }
+  return false;
+}
+
+function toggle_menu_off() {
+    actives = document.getElementsByClassName(active_class_name)
+    for (let i = 0; i < actives.length; i++) {
+        actives[i].classList.add(hidden_class_name);
+        actives[i].classList.remove(active_class_name);
+        menu_deployed = false;
+    }
+}
+
+function toggle_menu_on(element) {
+    if (element.classList.contains(active_class_name)) {} else {
+        element.classList.add(active_class_name);
+        element.classList.remove(hidden_class_name);
+        menu_deployed = true;
+    }
+}
+
+function click_listener() {
+    document.addEventListener("click", function(e) {
+        if (click_inside_element( e, image_class_name )) {
+            if (menu_deployed == false) {
+                let context_menu_element = document.getElementById(context_menu_prefix + e.target.id);
+                toggle_menu_on(context_menu_element);
+            } 
+        } else if (click_inside_element( e, context_menu_name )) {} else {
+            toggle_menu_off();
+        }
+    })
+}
+
+
+    document.addEventListener("DOMContentLoaded", function(event) { 
+
+        // add listeners to the edit anchors
+        // edit_buttons = document.getElementsByClassName(image_class_name);
+        // for (let i = 0; i < edit_buttons.length; i++) {
+        //     edit_buttons[i].addEventListener("click", function() {
+        //         if (menu_deployed == false ) {
+        //             console.log("menu_deployed = ", menu_deployed)
+        //             console.log("note_edit_menu_" + edit_buttons[i].id)
+        //             toggle_menu_on(document.getElementById("note_edit_menu_" + edit_buttons[i].id));
+        //         }
+        //     })
+        // }
+
+        init();
+
+
+    });
+
 </script>
 
 <form id="note_form">
@@ -32,42 +116,135 @@
 
 <div id="Session Cards">
 {% if session_titles %}
+
+
+    <!-- Session Title Cards -->
     {% for session in session_titles %}
         <div class="sessions border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
             <h2>Session {{session.number}}: {{session.title}}</h2>
             <div id="session_card_{{session.number}}">
+
+
+                <!-- Session Notes -->
+                <!-- Logic for if there is more than one session -->
                 {% if typ(note_dict[session.number]) == lis %}
                     <ul>
-                    {% for note in note_dict[session.number] %}
-                        <!-- <span id='note_span_{{note.id}}_{{note.user_id}}'> -->
-                            <li>
-                            <span id='note_{{note.id}}'>
-                                {{ note.date_added }} || <b>{{ note.charname }}:</b> 
-                                <span id='inner_{{note.id}}'>{{ note.note }}</span>
-                            </span>
-                            {% if note.user_id == current_user.id %}
-                            <a id='edit_{{note.id}}' ><img class='note_edit_button' data-id='{{note.id}}_{{note.private}}_{{note.in_character}}' src={{edit_img}}></a>
-                            {% endif %}
-                            
+                        {% for note in note_dict[session.number] %}
+                            <li class="span_cont">
+                                <span id='note_{{note.id}}'>
+                                    {{ note.date_added }} || <b>{{ note.charname }}:</b> 
+                                    <span id='inner_{{note.id}}'>
+                                        {{ note.note }}
+                                    </span>
+                                    {% if note.user_id == current_user.id %}
+
+
+                                    <!-- Edit Button -->
+                                    <a id='edit_{{note.id}}' >
+                                        <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
+                                    </a>
+                                    <form onsubmit='edit_note_func({{ note.id }})' class='hidden edit_form' id="edit_form_{{ note.id }}">
+                                        <input type='text' value='{{ note.note }}'>
+                                        <input type='submit' value='submit'>
+                                        </br>
+
+                                        <span class="checkbox_span">
+                                            <input type='checkbox' id='change_private' value='{{ note.private }}'>
+                                            <label for='change_private'>
+                                                Make Private?
+                                            </label>
+                                        </span>
+                                        <span class="checkbox_span">
+                                        <input type='checkbox' id='make_in_character' value='{{ note.in_character }}'>
+                                        <label for='make_in_character'>
+                                            Change to <i>in character?</i>
+                                        </label>
+                                        </span>
+                                        
+                                    </form>
+                                </span>
+
+
+
+
+
+                                <!-- Edit Note Menu -->
+                                <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
+                                    <ul class="note_edit_menu_items">
+                                        <li class="note_edit_menu_item">
+                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link">
+                                                Edit Note
+                                            </a>
+                                        </li>
+                                        <li class="note_edit_menu_item">
+                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link">
+                                                Delete Note
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                {% endif %}
                             </li>
-                        <!-- </span> -->
-                    {% endfor %}
+                            </br>
+
+                        {% endfor %}
                     </ul>
+                
+                <!-- Logic for if there is only one Session -->
                 {% else %}
-                    <!-- <span id='note_span_{{note_dict[st(session.number)].id}}_{{note_dict[session.number].user_id}}'> -->
-                        <ul>
-                            <li>
-                        <span id='note_{{note_dict[session.number].id}}'>
-                            {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
-                            <span id='inner_{{note.id}}'>{{ note_dict[session.number].note }}</span>
-                        </span>
-                        {% if note.user_id == current_user.id %}
-                        <a id='edit_{{note_dict[session.number].id}}'><img class='note_edit_button' data-id='{{note_dict[session.number].id}}_{{note_dict[session.number].private}}_{{note_dict[session.number].in_character}}' src={{edit_img}}></a>
+                    <ul>
+                        <li class="span_cont">
+                            <span id='note_{{note_dict[session.number].id}}'>
+                                {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
+                                <span id='inner_{{note.id}}'>
+                                    {{ note_dict[session.number].note }}
+                                </span>
+                                {% if note.user_id == current_user.id %}
+                                <!-- Edit Button -->
+                                <a id='edit_note_{{note_dict[session.number].id}}' >
+                                    <img id='{{note.id}}' class='note_edit_button exclude' src={{edit_img}}>
+                                </a>
+                                <form onsubmit='edit_note_func({{ note_dict[session.number].id }})' class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
+                                    <input type='text' value='{{ note_dict[session.number].note }}'>
+                                    <input type='submit' value='submit'>
+                                    </br>
+                                    <span class="checkbox_span"></span>
+                                        <input type='checkbox' id='change_private' value='{{ note_dict[session.number].private }}'>
+                                        <label for='change_private'>
+                                            Make Private?
+                                        </label>
+                                    </span>
+
+                                    <span class="checkbox_span">
+                                    <input type='checkbox' id='make_in_character' value='{{ note_dict[session.number].in_character }}'>
+                                    <label for='make_in_character'>
+                                        Change to <i>in character?</i>
+                                    </label>
+                                    </span>
+                                    
+                                </form>
+                            </span>
+
+                            <!-- Edit Note Menu -->
+                            <nav id="note_edit_menu_{{note_dict[session.number].id}}" class="note_edit_menu hidden">
+                                <ul class="note_edit_menu_items">
+                                    <li class="note_edit_menu_item">
+                                        <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link">
+                                            Edit Note
+                                        </a>
+                                    </li>
+                                    <li class="note_edit_menu_item">
+                                        <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link">
+                                            Delete Note
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         {% endif %}
-                        
                         </li>
-                        </ul>
-                    <!-- </span> -->
+                        </br>
+                    </ul>
+
 
                 {% endif %}
             </div>
@@ -75,5 +252,4 @@
     {% endfor %}
 {% endif %}
 </div>
-{% include 'note_contextual_menu.html' %}
 {% endblock %}

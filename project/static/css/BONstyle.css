@@ -11,35 +11,26 @@
 height: 1em;
 }
 
-.note_edit_menu {
-display: none;
-position: absolute;
-z-index: 10;
-}
-
-.note_edit_menu--active {
-display: block;
-}
-
 *,
 *::before,
 *::after {
 box-sizing: border-box;
 }
 
-.tasks {
-list-style: none;
-margin: 0;
-padding: 0;
+
+.hidden {
+  display: none;
 }
 
-.task {
-display: flex;
-justify-content: space-between;
-padding: 12px 0;
-border-bottom: solid 1px #dfdfdf;
+.span_cont {
+  display: inline-flex;
+  flex-wrap: nowrap;
 }
 
-.task:last-child {
-border-bottom: none;
+.checkbox_span:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.note_edit_menu_link:hover {
+  color: red;
 }

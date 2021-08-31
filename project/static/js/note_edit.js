@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", function(event) { 
   (function() {
 
@@ -59,14 +61,13 @@ function getPosition(e) {
   }
 }
 
-var edit_note_func = function () {
-  console.log("submitted")
-  let text = document.getElementById("input_change_" + note_id).value;
-  let game_id = document.getElementById('note_game_id');
-  let user_id = document.getElementById('note_user_id');
-  socket.emit("edit_note", text, game_id, user_id, note_id);
-
-}
+function edit_note_func(note_id) {
+    console.log("submitted");
+    let text = document.getElementById("input_change_" + note_id).value;
+    let game_id = document.getElementById('note_game_id');
+    let user_id = document.getElementById('note_user_id');
+    socket.emit("edit_note", text, game_id, user_id, note_id);
+};
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -78,6 +79,8 @@ var edit_note_func = function () {
 /**
  * Variables.
  */
+
+
 var contextMenuClassName = "note_edit_menu";
 var menuState = 0;
 var contextMenuItemClassName = "note_edit_menu_item";
@@ -219,6 +222,20 @@ function positionMenu(e) {
     menu.style.top = clickCoordsY + "px";
   }
 }
+/**
+ * creates the listener for the edit form once it has been
+ */
+// document.addEventListener('edit_button_build', function (e) {
+//   var note_id = e.detail;
+//   console.log("event", note_id);
+//   document.getElementById("form_" + note_id).onsubmit = function(note_id) {
+//     console.log("submitted");
+//     let text = document.getElementById("input_change_" + note_id).value;
+//     let game_id = document.getElementById('note_game_id');
+//     let user_id = document.getElementById('note_user_id');
+//     socket.emit("edit_note", text, game_id, user_id, note_id);
+//   }
+// });
 
 /**
  * Dummy action function that logs an action when a menu item link is clicked
@@ -259,8 +276,9 @@ function menuItemListener( link ) {
     var innertext = inner.innerHTML;
     // console.log(innertext);
     // console.log(innertext, "innerhtml");
-    inner.innerHTML = "<form onsubmit='edit_note_func()' id='form_" + note_id + "'><input type='text' value='" + innertext + "' id='input_change_" + note_id + "'><label for='change_private'>Make Private?</label><input type='checkbox' id='change_private' value='" + is_private + "'><label for='make_in_character'>Change to <i>in character?</i></label><input type='checkbox' id='make_in_character' value='" + is_in_character + "'><input type='submit' value='submit' id='change_submit_" + note_id + "'></form>";
-
+    inner.innerHTML = "<form onsubmit='edit_note_func(" + note_id + ")' id='form_" + note_id + "'><input type='text' value='" + innertext + "' id='input_change_" + note_id + "'><label for='change_private'>Make Private?</label><input type='checkbox' id='change_private' value='" + is_private + "'><label for='make_in_character'>Change to <i>in character?</i></label><input type='checkbox' id='make_in_character' value='" + is_in_character + "'><input type='submit' value='submit' id='change_submit_" + note_id + "'></form>";
+    // const edit_event = new CustomEvent('edit_button_build', {'detail': note_id});
+    // document.dispatchEvent(edit_event);
   }
   toggleMenuOff();
 }
