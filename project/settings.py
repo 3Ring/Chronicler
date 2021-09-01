@@ -15,10 +15,11 @@ app = Flask(__name__)
 db_password = os.environ.get('DB_PASS')
 
 # Heroku
-if app.config["HEROKU_HOSTING"]:
+try:
+    app.config["HEROKU_HOSTING"]:
     app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL'))
 # local
-else:
+except:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
 
 
