@@ -42,13 +42,17 @@ def edit_note(text, is_private, in_character, game_id, user_id, note_id):
     note = Notes.query.filter_by(id=note_id).first()
     note.note = text
     db.session.flush()
-    edit_link="<a id='del_"+str(note.id)+"_"+str(note.user_id)+"'><img class='note_edit_button' src='https://image.flaticon.com/icons/png/512/61/61456.png'></a>"
     editted_note=note.note
     emit('fill_note_edit', (editted_note, note.private, note.session_number, note.in_character, note.id), broadcast=True)
     db.session.commit()
     
-
-    # need to add change in db
+@socketio.on("delete_note")
+def delete_note(id_num):
+    print("delete_note", id_num)
+    note = Notes.query.filter_by(id=id_num).first()
+    db.session.delete(note)
+    db.session.commit()
+    emit('remove_deleted_note', id_num, broadcast=True)
 
     
 

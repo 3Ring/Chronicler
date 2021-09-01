@@ -17,6 +17,10 @@ height: 1em;
 box-sizing: border-box;
 }
 
+.note_list {
+  display: flex;
+  flex-direction: column;
+}
 
 .hidden {
   display: none;

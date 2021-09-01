@@ -62,7 +62,6 @@ function getPosition(e) {
 }
 
 function edit_note_func(note_id) {
-    console.log("submitted");
     let text = document.getElementById("input_change_" + note_id).value;
     let game_id = document.getElementById('note_game_id');
     let user_id = document.getElementById('note_user_id');
@@ -124,7 +123,6 @@ function contextListener() {
     taskItemInContext = clickInsideElement( e, taskItemClassName );
 
     if ( taskItemInContext ) {
-      // console.log(taskItemClassName)
       e.preventDefault();
       toggleMenuOn();
       positionMenu(e);
@@ -264,21 +262,14 @@ function menuItemListener( link ) {
       }
     }
   }
-  // console.log(link.getAttribute("data-action"));
+
   if (link.getAttribute("data-action") == "edit") {
     var note_id = note_meta.id;
-    // console.log(note_id)
     var is_private = note_meta.private;
-    // console.log(is_private)
     var is_in_character = note_meta.in_character;
-    // console.log(is_in_character)
     var inner = document.getElementById("inner_" + note_id);
     var innertext = inner.innerHTML;
-    // console.log(innertext);
-    // console.log(innertext, "innerhtml");
     inner.innerHTML = "<form onsubmit='edit_note_func(" + note_id + ")' id='form_" + note_id + "'><input type='text' value='" + innertext + "' id='input_change_" + note_id + "'><label for='change_private'>Make Private?</label><input type='checkbox' id='change_private' value='" + is_private + "'><label for='make_in_character'>Change to <i>in character?</i></label><input type='checkbox' id='make_in_character' value='" + is_in_character + "'><input type='submit' value='submit' id='change_submit_" + note_id + "'></form>";
-    // const edit_event = new CustomEvent('edit_button_build', {'detail': note_id});
-    // document.dispatchEvent(edit_event);
   }
   toggleMenuOff();
 }
