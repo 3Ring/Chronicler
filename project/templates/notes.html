@@ -14,6 +14,7 @@ edit_form_class_name = "edit_form",
 edit_form_prefix = "edit_form_",
 hidden_class_name = "hidden",
 active_class_name = "--active",
+inner_id_prefix = "inner_",
 image_class_name = "note_edit_button",
 menu_deployed = false;
 
@@ -23,8 +24,14 @@ function init () {
     click_listener();
 }
 
-function edit_note_func(num) {
-    console.log("edit_note_func", num)
+function edit_note_func(id_num) {
+    console.log("edit_note_func", id_num);
+    toggle_form_off(id_num);
+    let note = document.getElementById(inner_id_prefix + id_num);
+    console.log("edit_note_func", note);
+    note.classList.remove(hidden_class_name);
+    let img = document.getElementById(id_num);
+    img.classList.remove(hidden_class_name);
     return false;
 };
 
@@ -70,12 +77,23 @@ function find_id(string) {
     return id;
 }
 
-function toggle_form_on(id) {
-    let id_num = find_id(id);
+function toggle_form_on(id_num) {
+    
+    console.log("toggle_form_on", (inner_id_prefix + id_num));
+    let note_text = document.getElementById(inner_id_prefix + id_num);
+    console.log("toggle_form_on", note_text);
+    note_text.classList.add(hidden_class_name);
     let form = document.getElementById(edit_form_prefix + id_num);
-    form.classList.remove("hidden");
+    form.classList.remove(hidden_class_name);
+    let img = document.getElementById(id_num);
+    img.classList.add(hidden_class_name);
     let text_area = document.getElementById("form_text_" + id_num);
     text_area.select();
+}
+
+function toggle_form_off(id_num) {
+    let form = document.getElementById(edit_form_prefix + id_num);
+    form.classList.add(hidden_class_name);
 }
 
 // Core functions
@@ -90,8 +108,8 @@ function click_listener() {
             if (click_inside_element( e, context_menu_class_name )) {
                 if ( e.target.getAttribute("data-action") == "edit" ) {
                     toggle_menu_off();
-                    let form_id = e.target.id;
-                    toggle_form_on(form_id);
+                    let id_num = find_id(e.target.id);
+                    toggle_form_on(id_num);
                 } else {
                     console.log("click_listener delete" )
                 }
@@ -156,9 +174,9 @@ function click_listener() {
                     <ul>
                         {% for note in note_dict[session.number] %}
                             <li class="span_cont">
-                                <span id='note_{{note.id}}'>
+                                <span class="span_cont" id='note_{{note.id}}'>
                                     {{ note.date_added }} || <b>{{ note.charname }}:</b> 
-                                    <span id='inner_{{note.id}}'>
+                                    <span class="note_text" id='inner_{{note.id}}'>  
                                         {{ note.note }}
                                     </span>
                                     {% if note.user_id == current_user.id %}
@@ -219,9 +237,9 @@ function click_listener() {
                 {% else %}
                     <ul>
                         <li class="span_cont">
-                            <span id='note_{{note_dict[session.number].id}}'>
+                            <span class="spane_cont" id='note_{{note_dict[session.number].id}}'>
                                 {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
-                                <span id='inner_{{note.id}}'>
+                                <span class="note_text" id='inner_{{note.id}}'>  
                                     {{ note_dict[session.number].note }}
                                 </span>
                                 {% if note.user_id == current_user.id %}

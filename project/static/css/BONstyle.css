@@ -34,3 +34,7 @@ box-sizing: border-box;
 .note_edit_menu_link:hover {
   color: red;
 }
+
+.note_text {
+  margin-left: .5em;
+}
