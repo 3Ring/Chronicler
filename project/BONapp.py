@@ -127,7 +127,7 @@ def create():
 def notes(id):
     edit_img="https://image.flaticon.com/icons/png/512/61/61456.png"
     # figure out how many sessions there are and if they have any notes attached to them
-    session_titles=Sessions.query.filter_by(games_id=id).all()
+    session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = {}
             

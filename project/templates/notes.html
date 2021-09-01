@@ -1,132 +1,166 @@
 {% extends "base.html" %}
 {% block content %}
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/socketio.js') }}"></script>
+
 <script type="text/javascript" charset="utf-8">
 
-const socket = io()
+// Variables
+var context_menu_class_name = "note_edit_menu_link",
+context_menu_prefix = "note_edit_menu_",
+context_menu_name = "note_edit_menu",
+edit_form_class_name = "edit_form",
+edit_form_prefix = "edit_form_",
+edit_form_text_prefix = "form_text_",
+edit_form_private_prefix = "change_private_",
+edit_form_in_character_prefix = "make_in_character_",
+hidden_class_name = "hidden",
+active_class_name = "--active",
+inner_id_prefix = "inner_",
+image_class_name = "note_edit_button",
+menu_deployed = false;
 
 
+// Helper functions
+function init () {
+    click_listener();
+}
 
-    document.addEventListener("DOMContentLoaded", function(event) { 
-        const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
-        var session_form_deployed = false
-        var note_is_private = false
-        var note_is_in_character = false
+function edit_note_func(id_num) {
+    // send data to server
+    let form = document.getElementById(edit_form_prefix + id_num);
+    console.log("edit_note_func form", form);
+    let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
+    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
+    note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value,
+    user_id = {{current_user.id}},
+    game_id = {{id}};
+    console.log("edit_note_func submit values", "text: ", note_text, "private: ", note_private, "in_character: ", note_in_character, "user_id: ", user_id, "game_id: ", game_id);
+    socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
 
-        // display new session card
-        socket.on('fill_new_session', function(new_card) {
-            session_cards = document.getElementById('Session Cards')
-            session_cards.insertAdjacentHTML('afterbegin', new_card)
-        });
+    // removal of form logic
+    console.log("edit_note_func", id_num);
+    toggle_form_off(id_num);
+    let note = document.getElementById(inner_id_prefix + id_num);
+    console.log("edit_note_func", note);
+    note.classList.remove(hidden_class_name);
+    let img = document.getElementById(id_num);
+    img.classList.remove(hidden_class_name);
+    return false;
+};
 
+function click_inside_element( e, className ) {
+  var el = e.srcElement || e.target;
+  
+  if ( el.classList.contains(className) ) {
+    return el;
+  } else {
+    while ( el = el.parentNode ) {
+      if ( el.classList && el.classList.contains(className) ) {
+        return el;
+      }
+    }
+  }
+  return false;
+}
 
-        // display new note
-        socket.on('fill_new_note', function(new_note, private, session_number, in_character) {
-            this_session = document.getElementById('session_card_'+session_number)
-            this_session.insertAdjacentHTML('afterbegin', new_note)
-        });
+function toggle_menu_off() {
+    actives = document.getElementsByClassName(active_class_name)
+    for (let i = 0; i < actives.length; i++) {
+        actives[i].classList.add(hidden_class_name);
+        actives[i].classList.remove(active_class_name);
+        menu_deployed = false;
+    }
+}
 
-        // set the values of the checkboxes based on whether they are checked or not
-        document.getElementById('note_in_character').onclick = function () {
-            if (note_is_in_character) {
-                document.getElementById('note_in_character').value = 'n'
-                note_is_in_character = false
-            } else {
-                document.getElementById('note_in_character').value = 'y'
-                note_is_in_character = true
-            }
+function toggle_menu_on(element) {
+    if (element.classList.contains(active_class_name)) {} else {
+        element.classList.add(active_class_name);
+        element.classList.remove(hidden_class_name);
+        menu_deployed = true;
+    }
+}
+
+function find_id(string) {
+    var id = "";
+    for (let i = 0; i < string.length; i++) {
+        if (parseInt(string[i])) {
+            id += string[i];
         }
-        document.getElementById('note_private').onclick = function () {
-            if (note_is_private) {
-                document.getElementById('note_private').value = 'n'
-                note_is_private = false
-            } else {
-                document.getElementById('note_private').value = 'y'
-                note_is_private = true
-            }
-        }
-        
+    }
+    return id;
+}
 
+function toggle_form_on(id_num) {
+    
+    console.log("toggle_form_on", (inner_id_prefix + id_num));
+    let note_text = document.getElementById(inner_id_prefix + id_num);
+    console.log("toggle_form_on", note_text);
+    note_text.classList.add(hidden_class_name);
+    let form = document.getElementById(edit_form_prefix + id_num);
+    form.classList.remove(hidden_class_name);
+    let img = document.getElementById(id_num);
+    img.classList.add(hidden_class_name);
+    let text_area = document.getElementById("form_text_" + id_num);
+    text_area.select();
+}
 
+function toggle_form_off(id_num) {
+    let form = document.getElementById(edit_form_prefix + id_num);
+    form.classList.add(hidden_class_name);
+}
 
-
-        {% if current_user.id == dmid %}
-        // create form for making new session card
-        document.getElementById("new_session_button").onclick = function() {
-            // If new session form has already been deployed then pushing the button again will close it
-            if (session_form_deployed) {
-                document.getElementById("new_session_form_div").innerHTML = ""
-                session_form_deployed = false
-            } else {
-                // Create and deploy new session form
-                document.getElementById("new_session_form_div").innerHTML = "<h2>Session Info</h2><form id ='new_session_form'><input id='new_session_form_id' type='hidden' value='{{id}}'><input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0><input id='new_session_form_title' required, placeholder='Title(Required)' type='text'><input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'><input type='submit' value ='Make Session'></input><input type='button' id='cancel_new_session' value='Cancel'></input></form>"
-                var new_session_form_id = document.getElementById('new_session_form_id')
-                , new_session_form_number = document.getElementById('new_session_form_number')
-                , new_session_form_title = document.getElementById('new_session_form_title')
-                , new_session_form_synopsis = document.getElementById('new_session_form_synopsis')
-                document.dispatchEvent(evt);
-                session_form_deployed = true
-            }
-        }
-        {% endif %}
-
-
-
-        // capture and send new note to server
-        document.getElementById("note_form").onsubmit = function() {
-            var new_note_user_id = document.getElementById('note_user_id')
-            , new_note_note = document.getElementById('note_note')
-            , new_note_private = document.getElementById('note_private')
-            , new_note_in_character = document.getElementById('note_in_character')
-            , new_note_game_id = document.getElementById('note_game_id')
-
-            socket.emit('send_new_note', new_note_user_id.value, new_note_game_id.value, new_note_note.value, new_note_private.value, new_note_in_character.value)
-            return false
-        }
-
-    })
-    // Create on sumbit function for new session card after form for it has been created
-    document.addEventListener("NewSessionFormCreated", function(event) {
-        // cancel button function
-        document.getElementById("cancel_new_session").addEventListener("click", function() { 
-            document.getElementById('new_session_form_div').innerHTML = ''
-            session_form_deployed = false
-        })
-        // capture and send new session to server
-        document.getElementById('new_session_form').onsubmit = function() {
-            // ensure that form is filled out correctly
-            if (new_session_form_id.value != '' && new_session_form_number.value != '' && new_session_form_title.value != '' && parseInt(new_session_form_number.value) > -1) {
-                if (document.getElementById("session_card_"+new_session_form_number.value) == null) {
-                    socket.emit('send_new_session', new_session_form_id.value, new_session_form_number.value, new_session_form_title.value, new_session_form_synopsis.value)
-                    document.getElementById("new_session_form_div").innerHTML = ""
-                    session_form_deployed = false
-                    return false
+// Core functions
+function click_listener() {
+    document.addEventListener("click", function(e) {
+        if (click_inside_element( e, image_class_name )) {
+            if (menu_deployed == false) {
+                let context_menu_element = document.getElementById(context_menu_prefix + e.target.id);
+                toggle_menu_on(context_menu_element);
+            } 
+        } else if (click_inside_element( e, context_menu_name )) {
+            if (click_inside_element( e, context_menu_class_name )) {
+                if ( e.target.getAttribute("data-action") == "edit" ) {
+                    toggle_menu_off();
+                    let id_num = find_id(e.target.id);
+                    toggle_form_on(id_num);
                 } else {
-                    alert("Session number must be unique")
-                    return false
+                    console.log("click_listener delete" )
                 }
-            } else {
-                alert("Must fill out required fields")
-                return false
-            }
-            
+        }
+
+        } else {
+            toggle_menu_off();
         }
     })
+}
 
+
+    document.addEventListener("DOMContentLoaded", function() { 
+        let forms = document.getElementsByClassName(edit_form_class_name);
+        for (let i = 0; i < forms.length; i++) {
+            let id_num = find_id(forms[i].id);
+            forms[i].addEventListener("submit", function () {
+                edit_note_func(id_num)
+            })
+        }
+        init();
+    });
 
 </script>
 
 <form id="note_form">
-    <input type=hidden id='note_user_id', name='note_user_id', value='{{current_user.id}}'>
-    <input type=hidden id='note_game_id', name='note_game_id', value='{{id}}'>
-    <label for='new_note_text'>Note:</label>
+    <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+    <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+    <label for='note_note'>Note:</label>
     <textarea id='note_note' required autocomplete='off' type='textarea' placeholder='Collaborative note'></textarea>
     <br/>
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
-    <input type='checkbox' id='note_private', name='note_private', value='n'>
+    <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
     <br/>
-    <label for='note_in_characer'>Note is written in character:</label>
-    <input type='checkbox' id='note_in_character', name='note_in_character', value='n'><br/>
+    <label for='note_in_character'>Note is written in character:</label>
+    <input type='checkbox' class="note_checkbox" id='note_in_character' name='note_in_character' value='False'><br/>
     <input id='note_submit' type='submit' value='Submit' name='note_submit'>
 
 </form>
@@ -140,26 +174,135 @@ const socket = io()
 
 <div id="Session Cards">
 {% if session_titles %}
+
+
+    <!-- Session Title Cards -->
     {% for session in session_titles %}
-        <div class="border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
+        <div class="sessions border shadow-lg p-3 mb-5 bg-light rounded" id="session_header_{{session.id}}">
             <h2>Session {{session.number}}: {{session.title}}</h2>
             <div id="session_card_{{session.number}}">
+
+
+                <!-- Session Notes -->
+                <!-- Logic for if there is more than one session -->
                 {% if typ(note_dict[session.number]) == lis %}
-                    {% for note in note_dict[session.number] %}
-                        <span id='note_span_{{note.id}}_{{note.user_id}}'>
-                            <p id='note_{{note.id}}_{{note.user_id}}'>
-                                {{ note.date_added }} || <b>{{ note.charname }}:</b> {{ note.note }}  
-                                <a id='edit_{{note.id}}_{{note.user_id}}'><img class='edit_button' src={{edit_img}}></a>
-                            </p>
-                        </span>
-                    {% endfor %}
+                    <ul>
+                        {% for note in note_dict[session.number] %}
+                            <li class="span_cont">
+                                <span class="span_cont" id='note_{{note.id}}'>
+                                    {{ note.date_added }} || <b>{{ note.charname }}:</b> 
+                                    <span class="note_text" id='inner_{{note.id}}'>  
+                                        {{ note.note }}
+                                    </span>
+                                    {% if note.user_id == current_user.id %}
+
+
+                                    <!-- Edit Button -->
+                                    <a id='edit_{{note.id}}' >
+                                        <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
+                                    </a>
+                                    <form class='hidden edit_form' id="edit_form_{{ note.id }}">
+                                        <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'>
+                                        <input type='submit' value='submit'>
+                                        </br>
+
+                                        <span class="checkbox_span">
+                                            <input type='checkbox' class="note_checkbox" id='change_private_{{note.id}}' value='{{ note.private }}'>
+                                            <label for='change_private_{{note.id}}'>
+                                                Make Private?
+                                            </label>
+                                        </span>
+                                        <span class="checkbox_span">
+                                        <input type='checkbox' class="note_checkbox" id='make_in_character_{{note.id}}' value='{{ note.in_character }}'>
+                                        <label for='make_in_character_{{note.id}}'>
+                                            Change to <i>in character?</i>
+                                        </label>
+                                        </span>
+                                        
+                                    </form>
+                                </span>
+
+
+
+
+
+                                <!-- Edit Note Menu -->
+                                <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
+                                    <ul class="note_edit_menu_items">
+                                        <li class="note_edit_menu_item">
+                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link" data-action="edit">
+                                                Edit Note
+                                            </a>
+                                        </li>
+                                        <li class="note_edit_menu_item">
+                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link" data-action="delete">
+                                                Delete Note
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                {% endif %}
+                            </li>
+                            </br>
+
+                        {% endfor %}
+                    </ul>
+                
+                <!-- Logic for if there is only one Session -->
                 {% else %}
-                    <span id='note_span_{{note_dict[st(session.number)].id}}_{{note_dict[session.number].user_id}}'>
-                        <p id='note_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'>
-                            {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> {{ note_dict[session.number].note }}  
-                            <a id='edit_{{note_dict[session.number].id}}_{{note_dict[session.number].user_id}}'><img class='edit_button' src={{edit_img}}></a>
-                        </p>
-                    </span>
+                    <ul>
+                        <li class="span_cont">
+                            <span class="spane_cont" id='note_{{note_dict[session.number].id}}'>
+                                {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
+                                <span class="note_text" id='inner_{{note.id}}'>  
+                                    {{ note_dict[session.number].note }}
+                                </span>
+                                {% if note.user_id == current_user.id %}
+                                <!-- Edit Button -->
+                                <a id='edit_note_{{note_dict[session.number].id}}' >
+                                    <img id='{{note_dict[session.number].id}}' class='note_edit_button exclude' src={{edit_img}}>
+                                </a>
+                                <form class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
+                                    <input type='text' id="form_text_{{note_dict[session.number].id}}" value='{{ note_dict[session.number].note }}'>
+                                    <input type='submit' value='submit'>
+                                    </br>
+                                    <span class="checkbox_span"></span>
+                                        <input type='checkbox' class="note_checkbox" id='change_private_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].private }}'>
+                                        <label for='change_private_{{note_dict[session.number].id}}'>
+                                            Make Private?
+                                        </label>
+                                    </span>
+
+                                    <span class="checkbox_span">
+                                    <input type='checkbox' class="note_checkbox" id='make_in_character_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].in_character }}'>
+                                    <label for='make_in_character_{{note_dict[session.number]}}'>
+                                        Change to <i>in character?</i>
+                                    </label>
+                                    </span>
+                                    
+                                </form>
+                            </span>
+
+                            <!-- Edit Note Menu -->
+                            <nav id="note_edit_menu_{{note_dict[session.number].id}}" class="note_edit_menu hidden">
+                                <ul class="note_edit_menu_items">
+                                    <li class="note_edit_menu_item">
+                                        <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="edit">
+                                            Edit Note
+                                        </a>
+                                    </li>
+                                    <li class="note_edit_menu_item">
+                                        <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="delete">
+                                            Delete Note
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
+                        </li>
+                        </br>
+                    </ul>
+
 
                 {% endif %}
             </div>

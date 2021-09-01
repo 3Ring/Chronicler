@@ -1,12 +1,40 @@
 .table{
-    display: block;
-    overflow-x: auto;
-  }
-
-.test-table{
-    margin-bottom:50px;
+  display: block;
+  overflow-x: auto;
 }
 
-.edit_button{
-  height:1vh;
+.test-table{
+  margin-bottom: 50px;
+}
+
+.note_edit_button{
+height: 1em;
+}
+
+*,
+*::before,
+*::after {
+box-sizing: border-box;
+}
+
+
+.hidden {
+  display: none;
+}
+
+.span_cont {
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+
+.checkbox_span:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.note_edit_menu_link:hover {
+  color: red;
+}
+
+.note_text {
+  margin-left: .5em;
 }
