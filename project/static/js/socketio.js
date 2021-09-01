@@ -1,9 +1,7 @@
 const socket = io();
     document.addEventListener("DOMContentLoaded", function(event) { 
         const evt = new Event("NewSessionFormCreated", {"bubbles":true, "cancelable":false})
-        var session_form_deployed = false
-        var note_is_private = false
-        var note_is_in_character = false
+        var session_form_deployed = false;
 
         // display new session card
         socket.on('fill_new_session', function(new_card, number) {
@@ -19,25 +17,31 @@ const socket = io();
         });
 
         // set the values of the checkboxes based on whether they are checked or not
-        document.getElementById('note_in_character').onclick = function () {
-            if (note_is_in_character) {
-                document.getElementById('note_in_character').value = 'n'
-                note_is_in_character = false
-            } else {
-                document.getElementById('note_in_character').value = 'y'
-                note_is_in_character = true
+        let checkboxes = document.getElementsByClassName("note_checkbox")
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            console.log("adding checkbox function", checkboxes[i])
+            checkboxes[i].onclick = function () {
+                if (checkboxes[i].checked) {
+                    checkboxes[i].value = 'True';
+                    console.log("checkboxes turn True")
+                } else {
+                    checkboxes[i].value = 'False';
+                    console.log("checkboxes turn False")
+
+                }
             }
         }
-        document.getElementById('note_private').onclick = function () {
-            if (note_is_private) {
-                document.getElementById('note_private').value = 'n'
-                note_is_private = false
-            } else {
-                document.getElementById('note_private').value = 'y'
-                note_is_private = true
-            }
-        }
-        
+        // document.getElementById('note_private').onclick = function () {
+        //     if (note_is_private) {
+        //         document.getElementById('note_private').value = 'False';
+        //         note_is_private = false;
+        //     } else {
+        //         document.getElementById('note_private').value = 'True';
+        //         note_is_private = true;
+        //     }
+        // }
+
 
 
 
@@ -71,6 +75,7 @@ const socket = io();
             , new_note_private = document.getElementById('note_private')
             , new_note_in_character = document.getElementById('note_in_character')
             , new_note_game_id = document.getElementById('note_game_id')
+            
 
             socket.emit('send_new_note', new_note_user_id.value, new_note_game_id.value, new_note_note.value, new_note_private.value, new_note_in_character.value)
             return false

@@ -12,6 +12,9 @@ context_menu_prefix = "note_edit_menu_",
 context_menu_name = "note_edit_menu",
 edit_form_class_name = "edit_form",
 edit_form_prefix = "edit_form_",
+edit_form_text_prefix = "form_text_",
+edit_form_private_prefix = "change_private_",
+edit_form_in_character_prefix = "make_in_character_",
 hidden_class_name = "hidden",
 active_class_name = "--active",
 inner_id_prefix = "inner_",
@@ -25,6 +28,17 @@ function init () {
 }
 
 function edit_note_func(id_num) {
+    let form = document.getElementById(edit_form_prefix + id_num);
+    console.log("edit_note_func form", form);
+    let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
+    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
+    note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value,
+    user_id = {{current_user.id}},
+    game_id = {{id}};
+    console.log("edit_note_func submit values", "text: ", note_text, "private: ", note_private, "in_character: ", note_in_character, "user_id: ", user_id, "game_id: ", game_id);
+    socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
+
+    // removal of form logic
     console.log("edit_note_func", id_num);
     toggle_form_off(id_num);
     let note = document.getElementById(inner_id_prefix + id_num);
@@ -136,16 +150,16 @@ function click_listener() {
 </script>
 
 <form id="note_form">
-    <input type=hidden id='note_user_id', name='note_user_id', value='{{current_user.id}}'>
-    <input type=hidden id='note_game_id', name='note_game_id', value='{{id}}'>
+    <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+    <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
     <label for='note_note'>Note:</label>
     <textarea id='note_note' required autocomplete='off' type='textarea' placeholder='Collaborative note'></textarea>
     <br/>
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
-    <input type='checkbox' id='note_private', name='note_private', value='n'>
+    <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
     <br/>
-    <label for='note_in_characer'>Note is written in character:</label>
-    <input type='checkbox' id='note_in_character', name='note_in_character', value='n'><br/>
+    <label for='note_in_character'>Note is written in character:</label>
+    <input type='checkbox' class="note_checkbox" id='note_in_character' name='note_in_character' value='False'><br/>
     <input id='note_submit' type='submit' value='Submit' name='note_submit'>
 
 </form>
@@ -192,14 +206,14 @@ function click_listener() {
                                         </br>
 
                                         <span class="checkbox_span">
-                                            <input type='checkbox' id='change_private' value='{{ note.private }}'>
-                                            <label for='change_private'>
+                                            <input type='checkbox' class="note_checkbox" id='change_private_{{note.id}}' value='{{ note.private }}'>
+                                            <label for='change_private_{{note.id}}'>
                                                 Make Private?
                                             </label>
                                         </span>
                                         <span class="checkbox_span">
-                                        <input type='checkbox' id='make_in_character' value='{{ note.in_character }}'>
-                                        <label for='make_in_character'>
+                                        <input type='checkbox' class="note_checkbox" id='make_in_character_{{note.id}}' value='{{ note.in_character }}'>
+                                        <label for='make_in_character_{{note.id}}'>
                                             Change to <i>in character?</i>
                                         </label>
                                         </span>
@@ -245,22 +259,22 @@ function click_listener() {
                                 {% if note.user_id == current_user.id %}
                                 <!-- Edit Button -->
                                 <a id='edit_note_{{note_dict[session.number].id}}' >
-                                    <img id='{{note.id}}' class='note_edit_button exclude' src={{edit_img}}>
+                                    <img id='{{note_dict[session.number].id}}' class='note_edit_button exclude' src={{edit_img}}>
                                 </a>
                                 <form class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
-                                    <input type='text' id="form_text_{{note.id}}" value='{{ note_dict[session.number].note }}'>
+                                    <input type='text' id="form_text_{{note_dict[session.number].id}}" value='{{ note_dict[session.number].note }}'>
                                     <input type='submit' value='submit'>
                                     </br>
                                     <span class="checkbox_span"></span>
-                                        <input type='checkbox' id='change_private' value='{{ note_dict[session.number].private }}'>
-                                        <label for='change_private'>
+                                        <input type='checkbox' class="note_checkbox" id='change_private_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].private }}'>
+                                        <label for='change_private_{{note_dict[session.number].id}}'>
                                             Make Private?
                                         </label>
                                     </span>
 
                                     <span class="checkbox_span">
-                                    <input type='checkbox' id='make_in_character' value='{{ note_dict[session.number].in_character }}'>
-                                    <label for='make_in_character'>
+                                    <input type='checkbox' class="note_checkbox" id='make_in_character_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].in_character }}'>
+                                    <label for='make_in_character_{{note_dict[session.number]}}'>
                                         Change to <i>in character?</i>
                                     </label>
                                     </span>
