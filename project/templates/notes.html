@@ -2,24 +2,29 @@
 {% block content %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-<!-- <script src="{{ url_for('static', filename='js/socketio.js') }}"></script> -->
+<script src="{{ url_for('static', filename='js/socketio.js') }}"></script>
 
 <script type="text/javascript" charset="utf-8">
 
-// variables
+// Variables
 var context_menu_class_name = "note_edit_menu_link",
 context_menu_prefix = "note_edit_menu_",
 context_menu_name = "note_edit_menu",
+edit_form_class_name = "edit_form",
+edit_form_prefix = "edit_form_",
 hidden_class_name = "hidden",
 active_class_name = "--active",
-image_class_name = "note_edit_button"
+image_class_name = "note_edit_button",
 menu_deployed = false;
 
+
+// Helper functions
 function init () {
     click_listener();
 }
 
 function edit_note_func(num) {
+    console.log("edit_note_func", num)
     return false;
 };
 
@@ -30,9 +35,7 @@ function click_inside_element( e, className ) {
     return el;
   } else {
     while ( el = el.parentNode ) {
-        console.log(el);
       if ( el.classList && el.classList.contains(className) ) {
-        console.log("it's here")
         return el;
       }
     }
@@ -57,6 +60,25 @@ function toggle_menu_on(element) {
     }
 }
 
+function find_id(string) {
+    var id = "";
+    for (let i = 0; i < string.length; i++) {
+        if (parseInt(string[i])) {
+            id += string[i];
+        }
+    }
+    return id;
+}
+
+function toggle_form_on(id) {
+    let id_num = find_id(id);
+    let form = document.getElementById(edit_form_prefix + id_num);
+    form.classList.remove("hidden");
+    let text_area = document.getElementById("form_text_" + id_num);
+    text_area.select();
+}
+
+// Core functions
 function click_listener() {
     document.addEventListener("click", function(e) {
         if (click_inside_element( e, image_class_name )) {
@@ -64,30 +86,33 @@ function click_listener() {
                 let context_menu_element = document.getElementById(context_menu_prefix + e.target.id);
                 toggle_menu_on(context_menu_element);
             } 
-        } else if (click_inside_element( e, context_menu_name )) {} else {
+        } else if (click_inside_element( e, context_menu_name )) {
+            if (click_inside_element( e, context_menu_class_name )) {
+                if ( e.target.getAttribute("data-action") == "edit" ) {
+                    toggle_menu_off();
+                    let form_id = e.target.id;
+                    toggle_form_on(form_id);
+                } else {
+                    console.log("click_listener delete" )
+                }
+        }
+
+        } else {
             toggle_menu_off();
         }
     })
 }
 
 
-    document.addEventListener("DOMContentLoaded", function(event) { 
-
-        // add listeners to the edit anchors
-        // edit_buttons = document.getElementsByClassName(image_class_name);
-        // for (let i = 0; i < edit_buttons.length; i++) {
-        //     edit_buttons[i].addEventListener("click", function() {
-        //         if (menu_deployed == false ) {
-        //             console.log("menu_deployed = ", menu_deployed)
-        //             console.log("note_edit_menu_" + edit_buttons[i].id)
-        //             toggle_menu_on(document.getElementById("note_edit_menu_" + edit_buttons[i].id));
-        //         }
-        //     })
-        // }
-
+    document.addEventListener("DOMContentLoaded", function() { 
+        let forms = document.getElementsByClassName(edit_form_class_name);
+        for (let i = 0; i < forms.length; i++) {
+            let id_num = find_id(forms[i].id);
+            forms[i].addEventListener("submit", function () {
+                edit_note_func(id_num)
+            })
+        }
         init();
-
-
     });
 
 </script>
@@ -143,8 +168,8 @@ function click_listener() {
                                     <a id='edit_{{note.id}}' >
                                         <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
                                     </a>
-                                    <form onsubmit='edit_note_func({{ note.id }})' class='hidden edit_form' id="edit_form_{{ note.id }}">
-                                        <input type='text' value='{{ note.note }}'>
+                                    <form class='hidden edit_form' id="edit_form_{{ note.id }}">
+                                        <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'>
                                         <input type='submit' value='submit'>
                                         </br>
 
@@ -172,12 +197,12 @@ function click_listener() {
                                 <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
                                     <ul class="note_edit_menu_items">
                                         <li class="note_edit_menu_item">
-                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link">
+                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link" data-action="edit">
                                                 Edit Note
                                             </a>
                                         </li>
                                         <li class="note_edit_menu_item">
-                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link">
+                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link" data-action="delete">
                                                 Delete Note
                                             </a>
                                         </li>
@@ -204,8 +229,8 @@ function click_listener() {
                                 <a id='edit_note_{{note_dict[session.number].id}}' >
                                     <img id='{{note.id}}' class='note_edit_button exclude' src={{edit_img}}>
                                 </a>
-                                <form onsubmit='edit_note_func({{ note_dict[session.number].id }})' class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
-                                    <input type='text' value='{{ note_dict[session.number].note }}'>
+                                <form class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
+                                    <input type='text' id="form_text_{{note.id}}" value='{{ note_dict[session.number].note }}'>
                                     <input type='submit' value='submit'>
                                     </br>
                                     <span class="checkbox_span"></span>
@@ -229,12 +254,12 @@ function click_listener() {
                             <nav id="note_edit_menu_{{note_dict[session.number].id}}" class="note_edit_menu hidden">
                                 <ul class="note_edit_menu_items">
                                     <li class="note_edit_menu_item">
-                                        <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link">
+                                        <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="edit">
                                             Edit Note
                                         </a>
                                     </li>
                                     <li class="note_edit_menu_item">
-                                        <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link">
+                                        <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="delete">
                                             Delete Note
                                         </a>
                                     </li>
