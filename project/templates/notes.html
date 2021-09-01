@@ -28,6 +28,7 @@ function init () {
 }
 
 function edit_note_func(id_num) {
+    // send data to server
     let form = document.getElementById(edit_form_prefix + id_num);
     console.log("edit_note_func form", form);
     let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
