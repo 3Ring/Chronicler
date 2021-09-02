@@ -28,7 +28,8 @@
 
 {% endfor %}
 
-    <h1>User List</h1>
+    <h1>Register</h1>
+    <h2>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h2> 
     <br/>
     <div class="shadow p-3 mb-5 bg-body rounded">
     <form method='POST'>
@@ -36,9 +37,6 @@
 
         {{ form.name.label(class="form-label") }}
         {{ form.name(class="form-control") }}
-        <br/>
-        {{ form.realname.label(class="form-label") }}
-        {{ form.realname(class="form-control") }}
         <br/>
         {{ form.email.label(class="form-label") }}
         {{ form.email(class="form-control") }}

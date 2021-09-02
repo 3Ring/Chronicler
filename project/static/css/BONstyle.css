@@ -38,7 +38,33 @@ box-sizing: border-box;
 .note_edit_menu_link:hover {
   color: red;
 }
-
+.index_start_image {
+  width: 100%;
+}
 .note_text {
   margin-left: .5em;
+}
+.find_create_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.welcome_message {
+  text-align: center;
+}
+
+.index_img_container {
+  text-align: center;
+}
+
+.games_grid_header {
+  text-align: center;
+}
+
+.games_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.index_game_image {
+  width: 100%;
 }

@@ -43,7 +43,7 @@ def login_post():
     # if the above check passes, then we know the user has the right credentials
     session['login_fail'] = False
     login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.index'))
 
 
 
@@ -66,7 +66,7 @@ def register():
             if user == None:
                 name = form.name.data
                 # if email is unique add information to db
-                user = Users(name=form.name.data, email=form.email.data, realname=form.realname.data, hash=generate_password_hash(form.hash.data, method='sha256'))
+                user = Users(name=form.name.data, email=form.email.data, hash=generate_password_hash(form.hash.data, method='sha256'))
                 db.session.add(user)
                 db.session.commit()
                 flash("Welcome to the table %s!" % form.realname.data)

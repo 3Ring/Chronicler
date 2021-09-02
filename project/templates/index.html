@@ -15,36 +15,64 @@
 {% endwith%}
 
 {% if current_user.is_anonymous %}
-<h2>Welcome to my collaborative note taking app for dnd and other tabletop games!</br>Please Log in or Register to get started</h2>
+<h2 class="welcome_message">Welcome to my collaborative note taking app for dnd and other tabletop games! Log in or Register to get started</h2>
 {% endif %}
-<h2>Find a Game:</h2>
-<a href="{{ url_for('main.join', id=0) }}">
-    <img src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
-</a>
-<h2>Create a Game:</h2>
-<a href="{{ url_for('main.create') }}">
-    <img src='https://miro.medium.com/max/970/1*qnbRKYQIx96TWcI8ZPfa2g.jpeg'>
-</a>
+
+
 {% if current_user.is_authenticated%}
     {% if games or dm_games %}
-        <h2>Your games:</h2>
-        {% if dm_games %}
-            <h3>DM:</h3>
-            {% for game in dm_games %}
-                <div>{{game.name}}</div>
-                <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
+        {% if games and dm_games %}
+            <h2 class="games_grid_header">Your games:</h2>
+            <div class="games_grid">
+                <div class="dm_games_col">
+                    <h2 class="dm_header">DM:</h2>
+                    {% for game in dm_games %}
+                        <div>{{game.name}}</div>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    {% endfor %}
+                </div>
+                <div class="player_games_col">
+                    <h2 class="dm_header">Player:</h2>
+                    {% for game in games %}
+                        <div>{{game.name}}</div>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            {% if dm_games %}
+            <h2 class="games_grid_header">Your games:</h2>
+                {% for game in dm_games %}
+                    <div>{{game.name}}</div>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
 
-            {% endfor %}
-        {% endif %}
-        {% if games %}
-            <h3>Player:</h3>
-            {% for game in games %}
-                <div>{{game.name}}</div>
-                <a href="{{ url_for('main.notes', id=game.id) }}"><img src={{game.imglink}}></a>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if games %}
+            <h2 class="games_grid_header">Your games:</h2>
+                {% for game in games %}
+                    <div>{{game.name}}</div>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                {% endfor %}
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}
+<div class="find_create_container">
+    <div class="index_img_container">
+        <h2>Find a Game:</h2>
+        <a href="{{ url_for('main.join', id=0) }}">
+            <img class="index_start_image" src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
+        </a>
+    </div class="find/create_container">
+    <div class="index_img_container">
+        <h2>Create a Game:</h2>
+        <a href="{{ url_for('main.create') }}">
+            <img class="index_start_image" src='https://miro.medium.com/max/970/1*qnbRKYQIx96TWcI8ZPfa2g.jpeg'>
+        </a>
+    </div>
+</div>
 
 
 {% endblock %}
