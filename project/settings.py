@@ -12,18 +12,20 @@ def postfix(string):
             return string
 
 app = Flask(__name__)
+
 db_password = os.environ.get('DB_PASS')
 
 # Heroku
 if os.environ.get("HEROKU_HOSTING"):
+    print("connecting to heroku...")
     app.config['SQLALCHEMY_DATABASE_URI'] = postfix(os.environ.get('DATABASE_URL'))
 # local
-else:
+elif os.environ.get("DOCKER_FLAG"):
+    print("connecting to local through docker...")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
-
-
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
+else:
+    print("connecting to local...")
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
