@@ -1,8 +1,8 @@
 from sqlalchemy.orm import backref
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FileField
+from wtforms.validators import DataRequired, Regexp
 from flask_login import UserMixin
 from .__init__ import db
 
@@ -52,7 +52,7 @@ class Users(UserMixin, db.Model):
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.String(200), nullable=False)
+    imglink = db.Column(db.Text, nullable=False)
     secret = db.Column(db.Integer, default=0)
     published = db.Column(db.Boolean, default=False, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
@@ -132,7 +132,7 @@ class Notes(db.Model):
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.String(200))
+    imglink = db.Column(db.Text, nullable=False)
     bio = db.Column(db.Text)
     platinum = db.Column(db.Integer, default=0)
     gold = db.Column(db.Integer, default=0)
@@ -289,7 +289,9 @@ class ConForm(FlaskForm):
 
 class GameForm(FlaskForm):
     name = StringField("Name")
-    imglink = TextAreaField("Image Link")
+    imglink = FileField(u'Image File'
+        , default="https://imgur.com/KudCFLI"
+        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
     sessions = IntegerField("Number of Sessions")
     secret = IntegerField("User who this game is attached to '0' if published")
     published = BooleanField("Publish? (Allow game to be searchable)")
@@ -298,7 +300,9 @@ class GameForm(FlaskForm):
 
 class CreateGameForm(FlaskForm):
     name = StringField("Name of your game")
-    imglink = TextAreaField("Image Link")
+    imglink = FileField(u'Image File'
+        , default="https://imgur.com/KudCFLI"
+        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
     published = BooleanField("Publish? (Allow game to be searchable)")
     gamesubmit = SubmitField("Submit")
 
@@ -313,7 +317,9 @@ class NPCForm(FlaskForm):
 
 class CharForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
-    imglink = TextAreaField("Image Link")
+    imglink = FileField(u'Image File'
+        , default="https://imgur.com/FqrfY2J"
+        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
     bio = TextAreaField("Bio")
     platinum = IntegerField("Platinum Pieces")
     gold = IntegerField("Gold Pieces")

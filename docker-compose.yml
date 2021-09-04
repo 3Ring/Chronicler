@@ -7,7 +7,7 @@ services:
         volumes: 
             - bonvolume:/var/lib/mysql
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
         ports:
             - 3306:3306
         cap_add:
@@ -18,7 +18,8 @@ services:
             context: .
         container_name: rest-server
         environment: 
-            DB_PASS: ${MYSQL_ROOT_PASSWORD}
+            DB_PASS: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
+            DOCKER_FLAG: 1
             PYTHONUNBUFFERED: "TRUE"
         ports:
             - 5000:5000
