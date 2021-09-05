@@ -14,7 +14,6 @@ def postfix(string):
 app = Flask(__name__)
 
 db_password = os.environ.get('DB_PASS')
-
 # Heroku
 if os.environ.get("HEROKU_HOSTING"):
     print("connecting to heroku...")

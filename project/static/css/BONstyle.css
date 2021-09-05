@@ -68,3 +68,17 @@ box-sizing: border-box;
 .index_game_image {
   width: 100%;
 }
+
+
+
+/* Quill */
+#scrolling-container {
+  height: 100%;
+  min-height: 100%;
+  overflow-y: auto;
+}
+#editor-container {
+  font-family: "Aref Ruqaa";
+  font-size: 18px;
+  height: 375px;
+}

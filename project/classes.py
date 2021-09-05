@@ -52,7 +52,7 @@ class Users(UserMixin, db.Model):
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.Text, nullable=False)
+    imglink = db.Column(db.Text)
     secret = db.Column(db.Integer, default=0)
     published = db.Column(db.Boolean, default=False, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
@@ -132,7 +132,7 @@ class Notes(db.Model):
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.Text, nullable=False)
+    imglink = db.Column(db.Text)
     bio = db.Column(db.Text)
     platinum = db.Column(db.Integer, default=0)
     gold = db.Column(db.Integer, default=0)
