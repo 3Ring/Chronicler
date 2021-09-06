@@ -26,7 +26,7 @@ var context_menu_class_name = "note_edit_menu_link"
 , new_session_form_synopsis_id = "new_session_form_synopsis"
 , new_session_form_cancel_id = "cancel_new_session"
 
-, new_note_form_id = "new_note_form"
+, new_note_form_id = "new_note_form";
 
 
 
@@ -71,12 +71,13 @@ socket.on('remove_deleted_note', function(id_num) {
 
 function edit_note_func(id_num) {
     // send data to server
-    let form = document.getElementById(edit_form_prefix + id_num);
-    let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
-    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
-    note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value,
-    user_id = {{current_user.id}},
-    game_id = {{id}};
+    // let form = document.getElementById(edit_form_prefix + id_num)
+    let note_text = document.getElementById(edit_form_text_prefix + id_num).value
+    , note_private = document.getElementById(edit_form_private_prefix + id_num).value
+    , note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value
+    , user_id = document.getElementById("note_user_id").value
+    , game_id = document.getElementById("note_game_id").value;
+
     socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
 
     // removal of form logic
@@ -147,8 +148,12 @@ function toggle_form_off(id_num) {
     form.classList.add(hidden_class_name);
 }
 
+// Core
+//
+//
+//
+//
 
-dfjhaskl
 document.addEventListener("DOMContentLoaded", function() { 
 
     // set the values of the checkboxes based on whether they are checked or not
@@ -163,54 +168,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     }
-
-    {% if current_user.id == dmid %}
-    // New Session form functions:
-    // variables
-    let form_container = document.getElementById(new_session_form_container_id)
-    , new_session_button = document.getElementById(new_session_button_id)
-    , cancel_button = document.getElementById(new_session_form_cancel_id)
-    , new_session_form = document.getElementById(new_session_form_id)
-    , game_id_input_element = document.getElementById(new_session_form_game_id)
-    , number_input_element = document.getElementById(new_session_form_number_id)
-    , title_input_element = document.getElementById(new_session_form_title_id)
-    , synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
-    
-    // create form for making new session card
-    new_session_button.onclick = function() {
-        form_container.classList.remove(hidden_class_name);
-        new_session_button.classList.add(hidden_class_name);
-    }
-
-    // function to remove new session form and add the button back
-    var cancel_new_session_func = function () {
-        form_container.classList.add(hidden_class_name);
-        new_session_button.classList.remove(hidden_class_name);
-    }
-    // remove form if cancel button is clicked
-    cancel_button.onclick = function() {
-        cancel_new_session_func();
-    } 
-
-    // capture and send new session to server
-    new_session_form.addEventListener("submit", function() {
-        // ensure that form is filled out correctly
-        console.log("on_submit")
-        if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
-            if (!document.getElementById("session_card_"+number_input_element.value)) {
-                socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
-                cancel_new_session_func();
-                return false;
-            } else {
-                alert("Session number must be unique");
-                return false;
-            }
-        } else {
-            alert("Must fill out required fields");
-            return false;
-        }
-    })
-    {% endif %}
 
     // New Note form functions:
     // Variables
