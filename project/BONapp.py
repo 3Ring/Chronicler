@@ -127,7 +127,6 @@ def notes(id):
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
     logs = {}
-            
     # query the notes and organize them by session in reverse order
     if session_titles == None:
         pass
@@ -135,19 +134,36 @@ def notes(id):
         if type(session_titles) != list:
             session_titles.number=str(session_titles.number)
             logs[str(session_titles.number)] = Notes.query.filter_by(game_id=id).filter_by(session_number=session_titles.number).all()
+
         else:
             for session in session_titles:
-                logs[str(session.number)] = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all()
+                notes = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all()
+                logs[str(session.number)] = notes
+
+
+
             if len(session_titles) > 1:
                 session_titles.reverse()
             # Set as strings so that they can be used as dict keys
             for session in session_titles:
                 session.number=str(session.number)
+    
+    import json
+    js_logs = {}
+    for session in logs:
+        if type(logs[session]) == list:
+            js_logs[session] = []
+            for note in logs[session]:
+                js_logs[session].append([note.id, note.note])
+        else:
+            js_logs[session] = [note.id, note.note]
+    js_note_dict = json.dumps(js_logs)
 
     return render_template('notes.html',
         typ=type,
         lis=list,
         st=str,
+        js_note_dict=js_note_dict,
         edit_img=edit_img,
         note_dict=logs,
         id=id,

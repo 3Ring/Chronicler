@@ -72,13 +72,26 @@ box-sizing: border-box;
 
 
 /* Quill */
-#scrolling-container {
-  height: 100%;
-  min-height: 100%;
-  overflow-y: auto;
+
+#form-container {
+  width: 500px;
 }
+
 #editor-container {
-  font-family: "Aref Ruqaa";
-  font-size: 18px;
-  height: 375px;
+  height: 130px;
+}
+
+/* editor font sizes */
+/* 
+*/
+.ql-size-small {
+  font-size: small;
+}
+
+.ql-size-large {
+  font-size: large;
+}
+
+.ql-size-huge {
+  font-size: xx-large;
 }
