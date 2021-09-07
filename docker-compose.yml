@@ -9,7 +9,7 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
         ports:
-            - 3306:3306
+            - 3307:3306
         cap_add:
         - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
 
@@ -20,7 +20,7 @@ services:
         environment: 
             DB_PASS: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
             DOCKER_FLAG: 1
-            PYTHONUNBUFFERED: "TRUE"
+            PYTHONUNBUFFERED: 1
         ports:
             - 5000:5000
         volumes:

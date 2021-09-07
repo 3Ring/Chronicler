@@ -8,7 +8,6 @@ from . import db
 from .helpers import validate as v
 
 main = Blueprint('main', __name__)
-# CORS(main)
 db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
@@ -23,11 +22,8 @@ def index():
                             Users.id).filter_by(
                                 id=current_user.id))))).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
-        
-        thing=[1,2]
-        other={'slot': thing}
+
         return render_template("index.html",
-            other=other,
             test='test',
             ty=type,
             lis=list,
@@ -35,10 +31,11 @@ def index():
             dm_games=dm_games)
 
     return render_template("index.html")
-# import mysql.connector
+
 
 # @main.route('/initdb')
 # def initdb():
+#     import mysql.connector
 #     try:
 #         mydb = mysql.connector.connect(
 #             host="bonmysqldb",
@@ -54,7 +51,7 @@ def index():
 #         cursor.execute("SHOW DATABASES")
 #         for table in cursor:
 #             print(table)
-#         return 'init database'
+#         return 'init bonmysqldb database'
 #     except:
 #         mydb = mysql.connector.connect(
 #             host="localhost",
@@ -70,7 +67,7 @@ def index():
 #         cursor.execute("SHOW DATABASES")
 #         for table in cursor:
 #             print(table)
-#         return 'init database'
+#         return 'init localhost database'
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
@@ -404,4 +401,5 @@ def confirm():
         return render_template('confirm.html',
             form = form,
             name = session['name_to_delete'])
+
 
