@@ -68,3 +68,7 @@ box-sizing: border-box;
 .index_game_image {
   width: 100%;
 }
+
+body {
+  background: red !important;
+}

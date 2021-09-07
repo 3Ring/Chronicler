@@ -7,4 +7,4 @@ RUN pip3 install -r requirements.txt && \
     pip install psycopg2-binary
 COPY . .
 
-CMD [ "gunicorn", "--reload", "-b", "0.0.0.0:5000", "--worker-class", "eventlet", "-w", "1", "app:app"; "flask", "db", "upgrade"]
+CMD [ "gunicorn", "--reload", "-b", "0.0.0.0:5000", "--worker-class", "eventlet", "-w", "1", "app:app" ]
