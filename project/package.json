@@ -1,0 +1,19 @@
+{
+  "name": "bon",
+  "version": "1.0.0",
+  "description": "front end for tabletop notetaking app",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.27.5",
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.0.0"
+  },
+  "dependencies": {
+    "sass": "^1.39.0"
+  }
+}
