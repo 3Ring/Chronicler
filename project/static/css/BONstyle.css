@@ -80,3 +80,7 @@ box-sizing: border-box;
   font-size: 18px;
   height: 375px;
 }
+
+body {
+  background: blue !important;
+}

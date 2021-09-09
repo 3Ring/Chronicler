@@ -1,0 +1,42 @@
+// // =============================================================================
+// // Breakpoint Variables
+// //
+// // These determine the major breakpoints used most consistently throughout
+// // your site. They are used with the breakpoint-sass mixin.
+// // =============================================================================
+
+$break1: 31.250em;  //500pixel
+$break2: 120em;     //1920pixel
+
+//499 pixel for use in max-width media queries
+$break1Max: 31.188em;
+
+$mobile: max-width $break1Max;
+
+//never ship with this
+$test: rgba(255,0,0,0.3);
+
+//font weights
+$lite: Helvetica, Arial, sans-serif;
+$liteitalic: Helvetica, Arial, sans-serif;
+$regularitalic: Helvetica, Arial, sans-serif;
+$italic: Helvetica, Arial, sans-serif;
+$bolditalic: Helvetica, Arial, sans-serif;
+$blackitalic: Helvetica, Arial, sans-serif;
+
+$reg: Helvetica, Arial, sans-serif;
+$med: Helvetica, Arial, sans-serif;
+$bold: Helvetica, Arial, sans-serif;
+$black:'robotoblack', Helvetica, Arial, sans-serif;
+
+//icon font
+$icon: 'FontAwesome';
+
+
+// // =============================================================================
+// // Brand Colors
+// //
+// // Declare brand colors as SCSS variables
+// // =============================================================================
+
+$transparent:	rgba(0, 0, 0, 0);
