@@ -1,0 +1,22 @@
+// // =============================================================================
+// // Theme mixins stack
+// //
+// // All used mixins are called here, and then compiled to styles.scss
+// // Make sure NOTHING renders from this file.
+// // =============================================================================
+
+
+// Global font sizes
+@import "mixins/font-sizes";
+
+// Tint and shade colors by variable
+@import "mixins/color-functions";
+
+// @include trans(); for all transitions
+@import "mixins/transitions";
+
+// Font styles for text inside WYSIWYG
+@import "mixins/globalWYSIWYG";
+
+// Global button styles
+@import "mixins/buttons";

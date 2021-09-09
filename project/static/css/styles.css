@@ -1,4 +1,156 @@
+@media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  body .dark .field-text-body p,
+body .dark .field-text-body h1,
+body .dark .field-text-body h2,
+body .dark .field-text-body h3,
+body .dark .field-text-body h4,
+body .dark .field-text-body h5,
+body .dark .field-text-body li {
+    color: white !important;
+  }
+}
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: green;
-  color: white;
+  font-size: 16px;
+  color: #455264;
+  font-family: "robotoregular", Helvetica, Arial, sans-serif;
+}
+a,
+a:link,
+a:visited {
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+a:not(.button),
+a:link:not(.button),
+a:visited:not(.button) {
+  color: blue;
+  color: var(--linkColor);
+}
+
+a:active,
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus {
+  color: blue;
+  color: var(--linkColor);
+}
+
+pre {
+  font-family: monospace;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+p {
+  margin: var(--lg) 0 0 0;
+}
+
+@font-face {
+  font-family: "robotoblack";
+  src: url("fonts/Roboto/roboto-black-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-black-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Black.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotobold";
+  src: url("fonts/Roboto/roboto-bold-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-bold-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotomedium";
+  src: url("fonts/Roboto/roboto-medium-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-medium-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoregular";
+  src: url("fonts/Roboto/roboto-regular-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-regular-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotolight";
+  src: url("fonts/Roboto/Roboto-Light-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Light-webfont.svg#robotolight") format("svg"), url("fonts/Roboto/Roboto-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotothinitalic";
+  src: url("fonts/Roboto/roboto-v20-latin-300italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-300italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-300italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoitalic";
+  src: url("fonts/Roboto/roboto-v20-latin-italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoiboldtalic";
+  src: url("fonts/Roboto/roboto-v20-latin-700italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-700italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-700italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoiblacktalic";
+  src: url("fonts/Roboto/roboto-v20-latin-900italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-900italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-900italic.ttf") format("truetype");
+}
+.size-1 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 2.54em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+  margin: 0 0 2rem 0;
+  margin: 0 0 var(--lg) 0;
+}
+@media screen and (min-width: 31.25em) {
+  .size-1 {
+    font-size: 3.441vw;
+    letter-spacing: 0.01064em;
+  }
+}
+.size-1 b,
+.size-1 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.size-1 em, .size-1 i {
+  font-family: "robotothinitalic", Helvetica, Arial, sans-serif;
+}
+.size-1 strong i,
+.size-1 strong em,
+.size-1 b i,
+.size-1 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+@media print {
+  .size-1 {
+    font-size: 41pt;
+    line-height: 46pt;
+  }
 }

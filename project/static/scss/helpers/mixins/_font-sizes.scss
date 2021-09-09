@@ -1,0 +1,50 @@
+// // =============================================================================
+// //
+// // Global headline and font size mixins
+// //
+// // =============================================================================
+
+
+@mixin size-1 {
+  font-family: $bold;
+  font-stretch: normal;
+  //40.6333px
+  font-size: 2.54em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+
+  color: var(--headlineColor);
+  margin: 0 0 $lg 0;
+  margin: 0 0 var(--lg) 0;
+
+  @media screen and (min-width: $break1) {
+    font-size: 3.441vw;
+    letter-spacing: 0.01064em;
+  }
+  b,
+  strong {
+    font-family: $bold;
+  }
+  em, i {
+    font-family: $liteitalic;
+  }
+  strong i,
+  strong em,
+  b i,
+  b em {
+    font-family: $bolditalic;
+  }
+
+  @media print {
+    font-size: 41pt;
+    line-height: 46pt;
+  }
+
+}
+
+@mixin size-2 { }
+@mixin size-3 { }
+@mixin size-4 { }
+@mixin size-5 { }
+@mixin size-6 { }

@@ -7,9 +7,14 @@
 
 $break1: 31.250em;  //500pixel
 $break2: 120em;     //1920pixel
+$break3: 120em;
+$break4: 120em;
 
 //499 pixel for use in max-width media queries
 $break1Max: 31.188em;
+
+$sizing1: 73.813em; //1181pixel --13.46 min body copy
+$sizing2: 96.625em; //1545pixel --17pt max body copy
 
 $mobile: max-width $break1Max;
 
@@ -17,20 +22,23 @@ $mobile: max-width $break1Max;
 $test: rgba(255,0,0,0.3);
 
 //font weights
-$lite: Helvetica, Arial, sans-serif;
-$liteitalic: Helvetica, Arial, sans-serif;
-$regularitalic: Helvetica, Arial, sans-serif;
-$italic: Helvetica, Arial, sans-serif;
-$bolditalic: Helvetica, Arial, sans-serif;
-$blackitalic: Helvetica, Arial, sans-serif;
+$lite: 'robotolight', Helvetica, Arial, sans-serif;
+$liteitalic: 'robotothinitalic', Helvetica, Arial, sans-serif;
+$regularitalic: 'robotoregularitalic', Helvetica, Arial, sans-serif;
+$italic: 'robotoitalic', Helvetica, Arial, sans-serif;
+$bolditalic: 'robotoiboldtalic', Helvetica, Arial, sans-serif;
+$blackitalic: 'robotoiblacktalic', Helvetica, Arial, sans-serif;
 
-$reg: Helvetica, Arial, sans-serif;
-$med: Helvetica, Arial, sans-serif;
-$bold: Helvetica, Arial, sans-serif;
-$black:'robotoblack', Helvetica, Arial, sans-serif;
+$reg: 'robotoregular', Helvetica, Arial, sans-serif;
+$med: 'robotomedium', Helvetica, Arial, sans-serif;
+$bold: 'robotobold', Helvetica, Arial, sans-serif;
+$black: 'robotoblack', Helvetica, Arial, sans-serif;
+$courier: monospace;
 
 //icon font
 $icon: 'FontAwesome';
+
+
 
 
 // // =============================================================================
@@ -40,3 +48,52 @@ $icon: 'FontAwesome';
 // // =============================================================================
 
 $transparent:	rgba(0, 0, 0, 0);
+
+//Gray Scale
+$max: rgba(255,255,255,1);
+$gray_surface: rgba(248, 247, 245, 1);  //gray1
+$gray_lightest: rgba(218, 220, 224 ,1); //gray2
+$gray_lighter: rgba(181, 186, 193 ,1);  //gray3
+$gray_light: rgba(143, 151, 162 ,1);
+$gray: rgba(106, 117, 131 ,1);
+$gray_dark: rgba(69, 82, 100 ,1);
+$gray_darker: rgba(46, 58, 73 ,1);
+$gray_darkest: rgba(33, 41, 54 ,1);
+$min: rgba(0,0,0,1);
+
+//text defaults
+$body_copy: $gray_dark;
+$link: blue;
+
+$base-font-family: $reg;
+$mono-stack: $courier;
+
+
+// // =============================================================================
+// // Global Spacing Variables
+// //
+// // SCSS variables for IE11 and dumber browsers
+// // =============================================================================
+
+//base unit for Ie11
+$sm:  1rem;
+
+//calculations for Ie11
+$xxxl: $sm * 6;
+$xxl: $sm * 4;
+$xl:  $sm * 3;
+$lg:  $sm * 2;
+$md:  $sm * 1.5;
+$xs:  $sm * .75;
+$xxs: $sm * .5;
+$xxxs: $sm * .25;
+
+
+// // =============================================================================
+// // 
+// // Base elements for calculating spacing
+// // 
+// // =============================================================================
+$size-unit-mobile: 0.5rem;
+$size-unit-variable: 1.1713vw;
+$size-unit-max: 1.125rem;

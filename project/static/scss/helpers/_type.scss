@@ -1,0 +1,102 @@
+// // =============================================================================
+// //
+// // Global Font Face Declarations
+// // 
+// // =============================================================================
+
+@font-face {
+    font-family: 'robotoblack';
+    src: url('fonts/Roboto/roboto-black-webfont.woff2') format('wof2f'),
+      url('fonts/Roboto/roboto-black-webfont.woff') format('woff'),
+      url('fonts/Roboto/Roboto-Black.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'robotobold';
+    src: url('fonts/Roboto/roboto-bold-webfont.woff2') format('wof2f'),
+      url('fonts/Roboto/roboto-bold-webfont.woff') format('woff'),
+      url('fonts/Roboto/Roboto-Bold.ttf') format('truetype');
+
+  }
+
+  @font-face {
+    font-family: 'robotomedium';
+    src: url('fonts/Roboto/roboto-medium-webfont.woff2') format('wof2f'),
+      url('fonts/Roboto/roboto-medium-webfont.woff') format('woff'),
+      url('fonts/Roboto/Roboto-Medium.ttf') format('truetype');
+
+  }
+
+  @font-face {
+    font-family: 'robotoregular';
+    src: url('fonts/Roboto/roboto-regular-webfont.woff2') format('wof2f'),
+      url('fonts/Roboto/roboto-regular-webfont.woff') format('woff'),
+      url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+
+  }
+
+  @font-face {
+    font-family: 'robotolight';
+    src: url('fonts/Roboto/Roboto-Light-webfont.woff') format('woff'),
+      url('fonts/Roboto/Roboto-Light-webfont.svg#robotolight') format('svg'),
+      url('fonts/Roboto/Roboto-Light.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'robotothinitalic';
+    src: url('fonts/Roboto/roboto-v20-latin-300italic.woff') format('woff'),
+      url('fonts/Roboto/roboto-v20-latin-300italic.svg#robotolight') format('svg'),
+      url('fonts/Roboto/roboto-v20-latin-300italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'robotoitalic';
+    src: url('fonts/Roboto/roboto-v20-latin-italic.woff') format('woff'),
+      url('fonts/Roboto/roboto-v20-latin-italic.svg#robotolight') format('svg'),
+      url('fonts/Roboto/roboto-v20-latin-italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'robotoiboldtalic';
+    src: url('fonts/Roboto/roboto-v20-latin-700italic.woff') format('woff'),
+      url('fonts/Roboto/roboto-v20-latin-700italic.svg#robotolight') format('svg'),
+      url('fonts/Roboto/roboto-v20-latin-700italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'robotoiblacktalic';
+    src: url('fonts/Roboto/roboto-v20-latin-900italic.woff') format('woff'),
+      url('fonts/Roboto/roboto-v20-latin-900italic.svg#robotolight') format('svg'),
+      url('fonts/Roboto/roboto-v20-latin-900italic.ttf') format('truetype');
+  }
+
+
+// // =============================================================================
+// //
+// // Assign CSS classes to font-size mixins
+// // 
+// // =============================================================================
+
+.size-1 {
+	@include size-1();
+}
+
+.size-2 {
+	@include size-2();
+}
+
+.size-3 {
+	@include size-3();
+}
+
+.size-4 {
+	@include size-4();
+}
+
+.size-5 {
+	@include size-5();
+}
+
+.size-6 {
+	@include size-6();
+}
+
+.body-copy {
+	@include size-6();
+}
