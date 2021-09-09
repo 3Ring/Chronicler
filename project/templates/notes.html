@@ -1,23 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="{{ url_for('static', filename='js/socketio.js') }}"></script>
+<script type="text/javascript" charset="utf-8">
+var user_id={{current_user.id}}
+, game_id={{id}};
 
-<form id="new_note_form">
-    <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-    <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-    <label for='note_note'>Note:</label>
-    <textarea id='note_note' required autocomplete='off' type='textarea' placeholder='Collaborative note'></textarea>
-    
+js_dict = JSON.parse({{js_note_dict|tojson }})
+console.log("js_dict", js_dict)
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    let note_session = 0
+    , note_id_index = 0
+    , note_note_index = 1;
+    {% for session in session_titles %}
+    if (note_session == {{session.number}}) {} else { note_session = {{session.number}} }
+
+
+    for (let i = 0; i < js_dict[note_session].length; i++) {
+        let note_id = (inner_id_prefix + js_dict[note_session][i][note_id_index])
+        , note_note = js_dict[note_session][i][note_note_index]
+        , note_element = document.getElementById(note_id);
+
+        note_element.innerHTML = note_note
+
+    }
+    {% endfor %}
+});
+</script>
+
+
+
+
+
+
+
+<div id="form-container" class="container">
+<form id="test_form_quill">
+    <!-- <div class="form-group"> -->
     <label for='note_private'>Note is private(The GM will still be able to see it):</label>
     <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
-    
     <label for='note_in_character'>Note is written in character:</label>
     <input type='checkbox' class="note_checkbox" id='note_in_character' name='note_in_character' value='False'>
-    <input id='note_submit' type='submit' value='Submit' name='note_submit'>
-
+    <input name="about" type="hidden">
+    <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+    <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+    <div id="editor">
+    </div>
+    <!-- </div> -->
+    <div class="row">
+    <button class="btn btn-primary" type="submit">Submit</button>
+    </div>
 </form>
+</div>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+
+</script>
 
 {% if dmid == current_user.id %}
     
@@ -33,6 +76,8 @@
             <input type='button' id='cancel_new_session' value='Cancel'>
         </form>
     </div>
+
+    <script src="{{ url_for('static', filename='js/new_session.js') }}"></script>
 {% endif %}
 
 <div id="Session Cards">
@@ -55,7 +100,6 @@
                                 <span class="span_cont" id='note_{{note.id}}'>
                                     {{ note.date_added }} || <b>{{ note.charname }}:</b> 
                                     <span class="note_text" id='inner_{{note.id}}'>  
-                                        {{ note.note }}
                                     </span>
                                     {% if note.user_id == current_user.id %}
 
@@ -118,7 +162,6 @@
                             <span class="spane_cont" id='note_{{note_dict[session.number].id}}'>
                                 {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
                                 <span class="note_text" id='inner_{{note.id}}'>  
-                                    {{ note_dict[session.number].note }}
                                 </span>
                                 {% if note.user_id == current_user.id %}
                                 <!-- Edit Button -->

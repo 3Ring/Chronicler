@@ -26,7 +26,10 @@ var context_menu_class_name = "note_edit_menu_link"
 , new_session_form_synopsis_id = "new_session_form_synopsis"
 , new_session_form_cancel_id = "cancel_new_session"
 
-, new_note_form_id = "new_note_form"
+// , new_note_form_id = "new_note_form"
+, new_note_form_id = "test_form_quill"
+, quill_form_id = "test_form_quill"
+, form_container_id = 'form-container';
 
 
 
@@ -71,12 +74,12 @@ socket.on('remove_deleted_note', function(id_num) {
 
 function edit_note_func(id_num) {
     // send data to server
-    let form = document.getElementById(edit_form_prefix + id_num);
-    let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
-    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
-    note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value,
-    user_id = {{current_user.id}},
-    game_id = {{id}};
+    // let form = document.getElementById(edit_form_prefix + id_num)
+    let note_text = document.getElementById(edit_form_text_prefix + id_num).value
+    , note_private = document.getElementById(edit_form_private_prefix + id_num).value
+    , note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value;
+
+
     socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
 
     // removal of form logic
@@ -147,9 +150,33 @@ function toggle_form_off(id_num) {
     form.classList.add(hidden_class_name);
 }
 
+// Core
+//
+//
+//
+//
 
-dfjhaskl
 document.addEventListener("DOMContentLoaded", function() { 
+
+
+
+    var test_form = document.getElementById(quill_form_id)
+
+    , form = document.getElementById(form_container_id)
+    , about = document.querySelector('input[name=about]');
+    console.log("test_form: ", user_id, game_id, test_form, form, about)
+
+    var quill = new Quill('#editor', { 
+    modules: {
+        toolbar: [
+        ['bold', 'italic'],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ list: 'ordered' }, { list: 'bullet' }]
+        ]
+    },
+    placeholder: 'A note about this session.',
+    theme: 'snow'
+    });
 
     // set the values of the checkboxes based on whether they are checked or not
     let checkboxes = document.getElementsByClassName("note_checkbox")
@@ -164,78 +191,30 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    {% if current_user.id == dmid %}
-    // New Session form functions:
-    // variables
-    let form_container = document.getElementById(new_session_form_container_id)
-    , new_session_button = document.getElementById(new_session_button_id)
-    , cancel_button = document.getElementById(new_session_form_cancel_id)
-    , new_session_form = document.getElementById(new_session_form_id)
-    , game_id_input_element = document.getElementById(new_session_form_game_id)
-    , number_input_element = document.getElementById(new_session_form_number_id)
-    , title_input_element = document.getElementById(new_session_form_title_id)
-    , synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
-    
-    // create form for making new session card
-    new_session_button.onclick = function() {
-        form_container.classList.remove(hidden_class_name);
-        new_session_button.classList.add(hidden_class_name);
-    }
-
-    // function to remove new session form and add the button back
-    var cancel_new_session_func = function () {
-        form_container.classList.add(hidden_class_name);
-        new_session_button.classList.remove(hidden_class_name);
-    }
-    // remove form if cancel button is clicked
-    cancel_button.onclick = function() {
-        cancel_new_session_func();
-    } 
-
-    // capture and send new session to server
-    new_session_form.addEventListener("submit", function() {
-        // ensure that form is filled out correctly
-        console.log("on_submit")
-        if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
-            if (!document.getElementById("session_card_"+number_input_element.value)) {
-                socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
-                cancel_new_session_func();
-                return false;
-            } else {
-                alert("Session number must be unique");
-                return false;
-            }
-        } else {
-            alert("Must fill out required fields");
-            return false;
-        }
-    })
-    {% endif %}
-
     // New Note form functions:
     // Variables
     let new_note_form = document.getElementById(new_note_form_id)
-    , new_note_form_user_id = document.getElementById('note_user_id')
-    , new_note_form_note = document.getElementById('note_note')
     , new_note_form_private = document.getElementById('note_private')
-    , new_note_form_in_character = document.getElementById('note_in_character')
-    , new_note_form_game_id = document.getElementById('note_game_id')
-
+    , new_note_form_in_character = document.getElementById('note_in_character');
 
     // capture and send new note to server
-    new_note_form.addEventListener("submit", function() {
-        console.log("test", new_note_form)
-        if (!new_note_form_note) {
+    new_note_form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        let new_note_html = quill.root.innerHTML
+        , new_note_private = new_note_form_private.value
+        , new_note_in_character = new_note_form_in_character.value;
+
+        if (quill.getText() == '\n') {
             alert("note cannot be empty");
-            return false
+            return false;
         } else {
-            console.log("note form submit")
+            console.log("note form submit", user_id, game_id, new_note_html, new_note_private, new_note_in_character.value)
             socket.emit('send_new_note'
-                , new_note_form_user_id.value
-                , new_note_form_game_id.value
-                , new_note_form_note.value
-                , new_note_form_private.value
-                , new_note_form_in_character.value
+                , user_id
+                , game_id
+                , new_note_html
+                , new_note_private
+                , new_note_in_character
             )
             return false
         }
@@ -273,6 +252,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
     }
+
+
 
     function init () {
         click_listener();

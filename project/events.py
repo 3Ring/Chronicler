@@ -33,12 +33,13 @@ def send_new_note(user_id, game_id, note, priv=False, in_character=False):
     db.session.flush()
     edit_link="<a id='del_"+str(new.id)+"_"+str(new.user_id)+"'><img class='note_edit_button' src='https://image.flaticon.com/icons/png/512/61/61456.png'></a>"
     new_note=str("<span id='note_span_"+str(new.id)+"_"+str(new.user_id)+"'><p id='note"+str(new.id)+"_"+str(new.user_id)+"'>"+str(new.date_added)+" || <b>"+str(new.charname)+":</b> "+str(new.note)+"  "+edit_link+"</p></span>")
+
     emit('fill_new_note', (new_note, new.private, new.session_number, new.in_character), broadcast=True)
     db.session.commit()
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, in_character, game_id, user_id, note_id):
-    print('edit_note received!!', text, is_private, in_character, game_id, user_id, note_id)
+    # print('edit_note received!!', text, is_private, in_character, game_id, user_id, note_id)
     note = Notes.query.filter_by(id=note_id).first()
     note.note = text
     db.session.flush()
@@ -48,7 +49,7 @@ def edit_note(text, is_private, in_character, game_id, user_id, note_id):
     
 @socketio.on("delete_note")
 def delete_note(id_num):
-    print("delete_note", id_num)
+    # print("delete_note", id_num)
     note = Notes.query.filter_by(id=id_num).first()
     db.session.delete(note)
     db.session.commit()
