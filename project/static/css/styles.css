@@ -424,7 +424,7 @@ form div {
   width: 100%;
   flex-grow: 1;
 }
-form div.checkbox, form div.radio {
+form div.checkbox, form div.radio, form div.button-row {
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
@@ -658,6 +658,72 @@ button:hover {
   .chronicler .container {
     margin: 0 auto;
   }
+}
+.chronicler .center-container {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.chronicler .center-container h1 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 2.54em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+}
+@media screen and (min-width: 31.25em) {
+  .chronicler .center-container h1 {
+    font-size: 3.322em;
+  }
+}
+.chronicler .center-container h1 b,
+.chronicler .center-container h1 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h1 em, .chronicler .center-container h1 i {
+  font-family: "robotothinitalic", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h1 strong i,
+.chronicler .center-container h1 strong em,
+.chronicler .center-container h1 b i,
+.chronicler .center-container h1 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+@media print {
+  .chronicler .center-container h1 {
+    font-size: 41pt;
+    line-height: 46pt;
+  }
+}
+.chronicler .center-container h2 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+@media screen and (min-width: 31.25em) {
+  .chronicler .center-container h2 {
+    font-size: 1.06em;
+  }
+}
+.chronicler .center-container h2 b,
+.chronicler .center-container h2 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h2 em, .chronicler .center-container h2 i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h2 strong i,
+.chronicler .center-container h2 strong em,
+.chronicler .center-container h2 b i,
+.chronicler .center-container h2 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
 }
 .chronicler .form-container {
   padding: var(--xxl);

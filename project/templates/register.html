@@ -1,63 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
 <script type="text/javascript" charset="utf-8">
-    document.addEventListener("DOMContentLoaded", function(event) {
-        reveal = document.getElementById('reveal')
-        hash = document.getElementById('hash')
-        confirm = document.getElementById('confirm')
-        document.getElementById('reveal').onclick = function () {
-            if (reveal.checked) {
-                hash.type = 'text'
-                confirm.type = 'text'
-            } else {
-                hash.type = 'password'
-                confirm.type = 'password'
-            }
+document.addEventListener("DOMContentLoaded", function(event) {
+    reveal = document.getElementById('reveal')
+    hash = document.getElementById('hash')
+    confirm = document.getElementById('confirm')
+    document.getElementById('reveal').onclick = function() {
+        if (reveal.checked) {
+            hash.type = 'text'
+            confirm.type = 'text'
+        } else {
+            hash.type = 'password'
+            confirm.type = 'password'
         }
-    })
+    }
+})
 </script>
-
-
-    
-{% for message  in get_flashed_messages() %}
-
+{% for message in get_flashed_messages() %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
     {{ message }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
 {% endfor %}
-
-    <h1>Register</h1>
-    <h2>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h2> 
-
-    <form method='POST'>
-        {{ form.hidden_tag() }}
-        <div>
-            {{ form.name.label(class="form-label") }}
-        {{ form.name(class="form-control") }}
-        </div>
-        
-        <div>
-            {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control") }}
-        </div>
-        
-        <div>
-            { form.hash.label(class="form-label") }}
-        {{ form.hash(class="form-control") }}
-        </div>
-        {
-        <div>
-            {{ form.confirm.label(class="form-label") }}
-        {{ form.confirm(class="form-control") }}{{ form.reveal }}  {{ form.reveal.label}}
-        </div>
-        
-        <div>
-            {{ form.usersubmit(class="btn btn-secondary") }}
-        </div>
-        
-
-    </form>
-
+<div class="center-container">
+    <div>
+        <h1>Register</h1>
+        <h2>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h2>
+    </div>
+    <div class="form-container">
+        <form method='POST'>
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control") }}
+            </div>
+            <div>
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+            </div>
+            <div>
+                {{ form.hash.label(class="form-label") }}
+                {{ form.hash(class="form-control") }}
+            </div>
+            
+            <div>
+                {{ form.confirm.label(class="form-label") }}
+                {{ form.confirm(class="form-control") }}
+                
+            </div>
+            <div class="checkbox">
+                {{ form.reveal }} {{ form.reveal.label}}
+            </div>
+            <div>
+                {{ form.usersubmit(class="btn btn-secondary") }}
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
