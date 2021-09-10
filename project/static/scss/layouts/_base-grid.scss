@@ -1,0 +1,40 @@
+// // =============================================================================
+// // 
+// // Base application grid at all screen sizes
+// // 
+// // =============================================================================
+
+body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+    height: 100%;
+
+    >header {
+        padding: var(--sm);
+    	background: var(--headerBackground);
+    	width: 100%;
+    }
+
+    >main {
+    	width: 100%;
+    }
+
+    >footer {
+    	background: var(--footerBackground);
+    	width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+        max-width: $break2;
+
+        @media screen and (min-width: $break2) {
+            margin: 0 auto;
+        }
+    }
+}

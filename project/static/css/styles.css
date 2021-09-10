@@ -9,6 +9,161 @@ body .dark .field-text-body li {
     color: white !important;
   }
 }
+.button {
+  min-width: 0 !important;
+  margin: 0;
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  padding: var(--xs) var(--lg);
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  background-color: var(--buttonBg);
+  color: var(--buttonText);
+  border: 0.125em solid var(--buttonBorder);
+  border-radius: 0.188em;
+}
+@media (hover: hover) {
+  .button:hover {
+    cursor: pointer;
+    background-color: var(--buttonHoverBg);
+    color: var(--buttonHoverText);
+    border: 0.125em solid var(--buttonHoverBorder);
+    text-decoration: none;
+  }
+}
+.button:focus, .button:active {
+  background-color: var(--buttonHoverBg);
+  color: var(--buttonHoverText);
+  border: 0.125em solid var(--buttonHoverBorder);
+}
+@media only print {
+  .button {
+    display: none !important;
+  }
+}
+
+.button.primary {
+  --buttonBg: var(--primaryButtonBg);
+  --buttonBorder: var(--primaryButtonBorder);
+  --buttonText: var(--primaryButtonText);
+  --buttonHoverBg: var(--primaryButtonHoverBg);
+  --buttonHoverText: var(--primaryButtonHoverText);
+  --buttonHoverBorder: var(--primaryButtonHoverBorder);
+}
+
+.button.secondary {
+  --buttonBg: var(--secondaryButtonBg);
+  --buttonBorder: var(--secondaryButtonBorder);
+  --buttonText: var(--secondaryButtonText);
+  --buttonHoverBg: var(--secondaryButtonHoverBg);
+  --buttonHoverText: var(--secondaryButtonHoverText);
+  --buttonHoverBorder: var(--secondaryButtonHoverBorder);
+}
+
+.button.alternate {
+  --buttonBg: var(--alternateButtonBg);
+  --buttonBorder: var(--alternateButtonBorder);
+  --buttonText: var(--alternateButtonText);
+  --buttonHoverBg: var(--alternateButtonHoverBg);
+  --buttonHoverText: var(--alternateButtonHoverText);
+  --buttonHoverBorder: var(--alternateButtonHoverBorder);
+}
+
+:root {
+  --headlineColor: #455264;
+  --headlineColorReverse: white;
+  --headlineLinkColor: black;
+  --copyColor: #455264;
+  --linkColor: black;
+  /** Alerts, disabled, and errors **/
+  --disabled: #b5bac1;
+  --error: red;
+  --accentColor: #b5bac1;
+  --alertCopy: black;
+  /** Borders **/
+  --border1: #f8f7f5;
+  --border2: #dadce0;
+  --border3: #b5bac1;
+  --accentBorder: transparent;
+  /** Inputs **/
+  --inputTextColor: #455264;
+  --inputPlaceholder: #b5bac1;
+  --inputBackground: white;
+  --inputBorderColor: var(--border3);
+  --primaryButtonBg: black;
+  --primaryButtonBorder: black;
+  --primaryButtonText: black;
+  --primaryButtonHoverBg: black;
+  --primaryButtonHoverBorder: black;
+  --primaryButtonHoverText: black;
+  --secondaryButtonBg: black;
+  --secondaryButtonBorder: black;
+  --secondaryButtonText: black;
+  --secondaryButtonHoverBg: black;
+  --secondaryButtonHoverBorder: black;
+  --secondaryButtonHoverText: black;
+  --alternateButtonBg: transparent;
+  --alternateButtonBorder: black;
+  --alternateButtonText: black;
+  --alternateButtonHoverBg: black;
+  --alternateButtonHoverBorder: black;
+  --alternateButtonHoverText: black;
+  --headerBackground: #dadce0;
+  --footerBackground: #6a7583;
+}
+
+:root {
+  /* ************************************ */
+  /* ************************************ */
+  --spacing: 0.5rem;
+  --xxxl: calc(var(--spacing) * 9);
+  --xxl: calc(var(--spacing) * 6);
+  --xl: calc(var(--spacing) * 4);
+  --lg: calc(var(--spacing) * 3);
+  --md: calc(var(--spacing) * 2);
+  --sm: calc(var(--spacing) * 1.5);
+  --xs: calc(var(--spacing) * 1);
+  --xxs: calc(var(--spacing) * .5);
+  --xxxs: calc(var(--spacing) * .25);
+}
+@media screen and (min-width: 31.25em) {
+  :root {
+    --spacing: 1rem;
+    --xxxl: calc(var(--spacing) * 6);
+    --xxl: calc(var(--spacing) * 4);
+    --xl: calc(var(--spacing) * 3);
+    --lg: calc(var(--spacing) * 2);
+    --md: calc(var(--spacing) * 1.5);
+    --sm: calc(var(--spacing) * 1);
+    --xs: calc(var(--spacing) * .75);
+    --xxs: calc(var(--spacing) * .5);
+    --xxxs: calc(var(--spacing) * .25);
+  }
+}
+@media screen and (min-width: 96.625em) {
+  :root {
+    --spacing: 1.125rem;
+  }
+}
+
+/* ************************************ */
+/* ************************************ */
+@media screen and (min-width: 31.25em) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: max-width 31.188em) {
+  .no-mobile {
+    display: none !important;
+  }
+}
+
+/* ************************************ */
+/* ************************************ */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -54,7 +209,6 @@ a:visited {
 a:not(.button),
 a:link:not(.button),
 a:visited:not(.button) {
-  color: blue;
   color: var(--linkColor);
 }
 
@@ -80,6 +234,14 @@ svg {
 
 p {
   margin: var(--lg) 0 0 0;
+}
+
+ul,
+li,
+ul li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 @font-face {
@@ -153,4 +315,56 @@ p {
     font-size: 41pt;
     line-height: 46pt;
   }
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-start;
+  height: 100%;
+}
+body > header {
+  padding: var(--sm);
+  background: var(--headerBackground);
+  width: 100%;
+}
+body > main {
+  width: 100%;
+}
+body > footer {
+  background: var(--footerBackground);
+  width: 100%;
+}
+body .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  max-width: 120em;
+}
+@media screen and (min-width: 120em) {
+  body .container {
+    margin: 0 auto;
+  }
+}
+
+nav {
+  --sm: 1em;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+nav a {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  --linkColor: navy;
+}
+nav ul {
+  display: flex;
+}
+nav ul:first-child li {
+  margin-right: var(--sm);
+}
+nav ul:last-child li {
+  margin-left: var(--sm);
 }

@@ -11,15 +11,15 @@
 
 		--headlineColor: #{$gray_dark};
 		--headlineColorReverse: #{$max};
-		--headlineLinkColor: #{};
+		--headlineLinkColor: #{$min};
 		--copyColor: #{$gray_dark};
-		--linkColor: #{};
+		--linkColor: #{$min};
 
 		/** Alerts, disabled, and errors **/
 		--disabled:  #{$gray_lighter};
-		--error: #{$driven};
+		--error: red;
 		--accentColor: #{$gray_lighter};
-		--alertCopy: #{};
+		--alertCopy: #{$min};
 
 		/** Borders **/
 		--border1: #{$gray_surface};
@@ -33,26 +33,29 @@
 		--inputBackground: #{$max};
 		--inputBorderColor: var(--border3);
 
-		--primaryButtonBg: #{};
-		--primaryButtonBorder: #{};
-		--primaryButtonText: #{};
-		--primaryButtonHoverBg: #{};
-		--primaryButtonHoverBorder: #{};
-		--primaryButtonHoverText: #{};
+		--primaryButtonBg: #{$min};
+		--primaryButtonBorder: #{$min};
+		--primaryButtonText: #{$min};
+		--primaryButtonHoverBg: #{$min};
+		--primaryButtonHoverBorder: #{$min};
+		--primaryButtonHoverText: #{$min};
 
-		--secondaryButtonBg: #{};
-		--secondaryButtonBorder: #{};
-		--secondaryButtonText: #{};
-		--secondaryButtonHoverBg: #{};
-		--secondaryButtonHoverBorder: #{};
-		--secondaryButtonHoverText: #{};
+		--secondaryButtonBg: #{$min};
+		--secondaryButtonBorder: #{$min};
+		--secondaryButtonText: #{$min};
+		--secondaryButtonHoverBg: #{$min};
+		--secondaryButtonHoverBorder: #{$min};
+		--secondaryButtonHoverText: #{$min};
 
 		--alternateButtonBg: transparent;
-		--alternateButtonBorder: #{};
-		--alternateButtonText: #{};
-		--alternateButtonHoverBg: #{};
-		--alternateButtonHoverBorder: #{};
-		--alternateButtonHoverText: #{};
+		--alternateButtonBorder: #{$min};
+		--alternateButtonText: #{$min};
+		--alternateButtonHoverBg: #{$min};
+		--alternateButtonHoverBorder: #{$min};
+		--alternateButtonHoverText: #{$min};
+
+		--headerBackground: #{$gray_lightest};
+		--footerBackground: #{$gray};
 
 
 }

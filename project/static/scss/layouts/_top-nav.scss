@@ -1,0 +1,35 @@
+// // =============================================================================
+// // 
+// // Top Nav Styles
+// // 
+// // =============================================================================
+
+nav {
+	--sm: 1em;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+	a {
+		font-family: $bold;
+		--linkColor: navy;
+	}
+
+	ul {
+		display: flex;
+
+		&:first-child {
+			li {
+				margin-right: var(--sm);
+			}
+		}
+		&:last-child {
+			li {
+				margin-left: var(--sm);
+			}
+		}
+
+		
+	}
+
+}

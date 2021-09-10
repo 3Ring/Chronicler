@@ -67,7 +67,6 @@ a:link,
 a:visited {
   @include trans();
   &:not(.button) {
-    color: $link;
     color: var(--linkColor);
   }
   text-decoration: none;
@@ -102,4 +101,12 @@ svg {
 p {
 	@include size-6();
 	margin: var(--lg) 0 0 0;
+}
+
+ul,
+li,
+ul li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }

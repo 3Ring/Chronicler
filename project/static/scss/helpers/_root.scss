@@ -53,13 +53,13 @@
 //
 /* ************************************ */
 .mobile-only {
-	@include breakpoint($break1) {
+	@media screen and (min-width: $break1) {
 		display: none !important;
 	}
 }
 
 .no-mobile {
-	@include breakpoint($mobile) {
+	@media screen and (min-width: $mobile) {
 		display: none !important;
 	}
 }

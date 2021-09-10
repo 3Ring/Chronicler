@@ -7,7 +7,12 @@
 
 // pre-render theme files
 @import "helpers/init";
+@import "helpers/root";
 
 // rendered theme files
 @import "helpers/reset";
 @import "helpers/type";
+
+// rendered layout files
+@import "layouts/base-grid";
+@import "layouts/top-nav";

@@ -12,13 +12,29 @@
 	<!-- Quill WYSIWYG -->
 	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-	<title>Bunch 'o Nerds</title>
+	<title>ςняοηιςℓεя</title>
 </head>
 
 
-<body> {% include 'navbar.html' %} <br />
+<body> 
+	<header>
+		<div class="container">
+			{% include 'navbar.html' %}
+		</div>
+		
+	</header>
 
-	<div class="container"> {% block content %} {% endblock %} </div>
+	<main>
+		<div class="container">
+			{% block content %} {% endblock %} 
+		</div>
+		
+	</main>
+	<footer>
+		<div class="container">
+			<p>FPO</p>
+		</div>
+	</footer>
 
 </body>
 
