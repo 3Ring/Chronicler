@@ -30,27 +30,34 @@
 
     <h1>Register</h1>
     <h2>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h2> 
-    <br/>
-    <div class="shadow p-3 mb-5 bg-body rounded">
+
     <form method='POST'>
         {{ form.hidden_tag() }}
-
-        {{ form.name.label(class="form-label") }}
+        <div>
+            {{ form.name.label(class="form-label") }}
         {{ form.name(class="form-control") }}
-        <br/>
-        {{ form.email.label(class="form-label") }}
+        </div>
+        
+        <div>
+            {{ form.email.label(class="form-label") }}
         {{ form.email(class="form-control") }}
-        <br/>
-        {{ form.hash.label(class="form-label") }}
+        </div>
+        
+        <div>
+            { form.hash.label(class="form-label") }}
         {{ form.hash(class="form-control") }}
-        <br/>
-        {{ form.confirm.label(class="form-label") }}
+        </div>
+        {
+        <div>
+            {{ form.confirm.label(class="form-label") }}
         {{ form.confirm(class="form-control") }}{{ form.reveal }}  {{ form.reveal.label}}
-        <br/>
-        {{ form.usersubmit(class="btn btn-secondary") }}
+        </div>
+        
+        <div>
+            {{ form.usersubmit(class="btn btn-secondary") }}
+        </div>
+        
 
     </form>
-    </div>
 
-<br/><br/><br/>
 {% endblock %}

@@ -2,18 +2,22 @@
 {% block content %}
 <img src={{game.imglink}}>
 <h3>Add Your character!</h3>
-<form  method='POST' action='/joining/{{game.id}}'>
-    {{ charform.hidden_tag() }}
-    {{ charform.name.label }}
-    {{ charform.name }}
-    <br/>
-    {{ charform.imglink.label }}
-    {{ charform.imglink }}
-    <br/>
-    {{ charform.bio.label }}
-    {{ charform.bio }}
-    <br/>
-    {{ charform.charsubmit }}
+<form method='POST' action='/joining/{{game.id}}'>
+    <div>
+        {{ charform.hidden_tag() }}
+        {{ charform.name.label }}
+        {{ charform.name }}
+    </div>
+    <div>
+        {{ charform.imglink.label }}
+        {{ charform.imglink }}
+    </div>
+    <div>
+        {{ charform.bio.label }}
+        {{ charform.bio }}
+    </div>
+    <div>
+        {{ charform.charsubmit }}
+    </div>
 </form>
-
 {% endblock %}
