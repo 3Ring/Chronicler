@@ -28,14 +28,14 @@
                     <h2 class="dm_header">DM:</h2>
                     {% for game in dm_games %}
                         <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                     {% endfor %}
                 </div>
                 <div class="player_games_col">
                     <h2 class="dm_header">Player:</h2>
                     {% for game in games %}
                         <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                     {% endfor %}
                 </div>
             </div>
@@ -44,7 +44,7 @@
             <h2 class="games_grid_header">Your games:</h2>
                 {% for game in dm_games %}
                     <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
 
                 {% endfor %}
             {% endif %}
@@ -53,7 +53,7 @@
             <h2 class="games_grid_header">Your games:</h2>
                 {% for game in games %}
                     <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                 {% endfor %}
             {% endif %}
         {% endif %}

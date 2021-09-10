@@ -26,7 +26,6 @@ else:
     print("connecting to local...")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = db_password
 

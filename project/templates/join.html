@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div role="alert">
+            {{ message }}
+            <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endwith %}
 {% if games %}
 {% for game in games %}
-<div>{{game}}</div>
-<a href="{{ url_for('main.join', id=game.id) }}"><img src={{game.imglink}}></a>
 <div>{{game.name}}</div>
+<a href="{{ url_for('main.join', id=game.id) }}"><img src="{{game.image}}"></a>
 {% endfor %}
 {% endif %}
 
