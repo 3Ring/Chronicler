@@ -19,8 +19,7 @@
   margin: 0 0 var(--lg) 0;
 
   @media screen and (min-width: $break1) {
-    font-size: 3.441vw;
-    letter-spacing: 0.01064em;
+    font-size: 3.322em;
   }
   b,
   strong {
@@ -46,5 +45,34 @@
 @mixin size-2 { }
 @mixin size-3 { }
 @mixin size-4 { }
-@mixin size-5 { }
+@mixin size-5 { 
+  font-family: $bold;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+
+  margin: 0 0 var(--xs) 0;
+
+  @media screen and (min-width: $break1) {
+    font-size: 1.06em;
+  }
+
+  b,
+  strong {
+    font-family: $bold;
+  }
+  em, i {
+    font-family: $bolditalic;
+  }
+  strong i,
+  strong em,
+  b i,
+  b em {
+    font-family: $bolditalic;
+  }
+
+
+}
 @mixin size-6 { }
