@@ -9,17 +9,22 @@ from . import db
 from .helpers import validate as v
 from .helpers import upload, nuke
 
-default_player_image_id = 1
-default_game_image_id = 5
-default_dm_image_id = 6
 
-main = Blueprint('main', __name__)
+# Variables
 db_password = os.environ.get('DB_PASS')
 decoder = "data:image/png;base64, "
+
+imageLink__defaultCharacter = "/static/images/default_character.jpg"
+imageLink__defaultGame = "/static/images/default_game.jpg"
+imageLink__defaultDm = "/static/images/default_dm.jpg"
+imageLink__buttonEdit = "/static/images/edit_button_image.png"
+
+
+main = Blueprint('main', __name__)
+
 @main.route("/")
 def index():
     if current_user.is_authenticated:
-        print("user id", current_user.id)
         games=Games.query.filter(
             Games.dm_id != current_user.id,
             Games.id.in_(
@@ -29,23 +34,32 @@ def index():
                             Users.id).filter_by(
                                 id=current_user.id))))).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
+
+        # set images for game lists
         for game in games:
             img = Images.query.filter_by(id=game.img_id).first()
-            game.image = decoder + img.img
-
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
         for game in dm_games:
             img = Images.query.filter_by(id=game.img_id).first()
-            game.image = decoder + img.img
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
 
-        return render_template("index.html",
-            test='test',
-            ty=type,
-            lis=list,
-            games=games,
-            dm_games=dm_games)
+        return render_template("index.html"
+            , ty=type
+            , lis=list
+            , games=games
+            , dm_games=dm_games)
 
-    return render_template("index.html")
+    return redirect('/welcome')
 
+@main.route('/welcome')
+def welcome():
+    return "todo"
 
 # @main.route('/initdb')
 # def initdb():
@@ -89,15 +103,15 @@ def join(id):
     if id == 0:
         games=Games.query.filter(Games.dm_id != current_user.id).all()
         for game in games:
-            print(game.img_id)
             img = Images.query.filter_by(id=game.img_id).first()
-            print(img)
-            game.image = decoder + img.img
-            # print(game.image)
-        return render_template("join.html",
-        games=games)
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
+        return render_template("join.html"
+            , games=games
+        )
     else:
-        print("redirect")
         return redirect(url_for('main.joining', id=id))
 
 
@@ -115,14 +129,12 @@ def joining(id):
         if charform.img.data:
 
             image_id = upload(image_form_name)
-
             if type(image_id) != int:
                 flash(image_id)
                 return redirect(url_for('main.joining', id=id))
-        else:
-            image_id = default_player_image_id
+            character=Characters(name=charform.name.data, img_id=image_id, bio=charform.bio.data, user_id=current_user.id, game_id=id)
 
-        character=Characters(name=charform.name.data, img_id=image_id, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+        character=Characters(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
 
         db.session.add(character)
         db.session.commit()
@@ -143,18 +155,16 @@ def create():
             gameform=gameform)
     else:
         if gameform.img.data:
-            print("number 1")
             image_id = upload(upload_name)
+            game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
             if type(image_id) != int:
                 flash(image_id)
                 redirect("/create")
         else:
-            image_id=default_game_image_id
-        game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
-        
+            game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
         db.session.add(game)
         db.session.flush()
-        dm_char=Characters(name="DM", user_id=current_user.id, img_id=default_dm_image_id, game_id=game.id)
+        dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
         db.session.add(dm_char)
         playerlist=Players(users_id=current_user.id, games_id=game.id)
         db.session.add(playerlist)
@@ -164,7 +174,6 @@ def create():
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
-    edit_img="https://image.flaticon.com/icons/png/512/61/61456.png"
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
@@ -206,7 +215,7 @@ def notes(id):
         lis=list,
         st=str,
         js_note_dict=js_note_dict,
-        edit_img=edit_img,
+        edit_img=imageLink__buttonEdit,
         note_dict=logs,
         id=id,
         session_titles=session_titles,
@@ -459,61 +468,10 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-import base64
-@main.route('/uploadd', methods=['POST'])
-def uploadd():
-    pic = request.files['filename']
-    
-    if not pic:
-        return 'No pic uploaded!', 400
-
-    if not allowed_file(pic.filename):
-        return "Not allowed file type", 400
-
-    secure = secure_filename(pic.filename)
-
-    mimetype = pic.mimetype
-
-    if not secure or not mimetype:
-        return 'Bad upload!', 400
-
-    img = Images(img=base64.b64encode(pic.read()), name=secure, mimetype=mimetype)
-    db.session.add(img)
-    db.session.commit()
-
-    return 'Img Uploaded!', 200
-
-
-# @main.route('/<int:id>')
-# def get_img(id):
-#     img = Img.query.filter_by(id=id).first()
-#     if not img:
-#         return 'Img Not Found!', 404
-#     img2=Img(img=base64.b64decode(img.img), name=img.name, mimetype=img.mimetype)
-
-#     return Response(img2.img, mimetype=img.mimetype)
-
-@main.route('/test', methods=["GET"])
-@login_required
-def test():
-    # img = 1
-    img1 = Images.query.filter_by(id=1).first()
-    all = Images.query.all()
-
-    for item in all:
-        print("id: ", item.id)
-
-    # img2=Img(img=base64.b64decode(img.img), name=img.name, mimetype=img.mimetype)
-    return render_template('test.html'
-        , img1=img1.img)
-        # , img2=img2.img
-        # , img3=img3.img)
+# @main.route('/test', methods=["GET"])
+# @login_required
+# def test():
+#     return
 
 @main.route('/nuked', methods=["GET"])
 @login_required

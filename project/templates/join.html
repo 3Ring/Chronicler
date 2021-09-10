@@ -13,6 +13,10 @@
 <div>{{game.name}}</div>
 <a href="{{ url_for('main.join', id=game.id) }}"><img src="{{game.image}}"></a>
 {% endfor %}
+{% else %}
+<h2>Looks like there aren't any games available yet. You should 
+    <a href="{{ url_for('main.create') }}" >make one!</a>
+</h2>
 {% endif %}
 
 {% endblock %}

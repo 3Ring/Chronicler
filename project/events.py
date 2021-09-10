@@ -3,13 +3,43 @@ from .classes import *
 from flask_socketio import emit
 from .helpers import validate as v
 
+# variables
+class__buttonEdit = "note_edit_button"
+imageLink__defaultCharacter = "/static/images/default_character.jpg"
+imageLink__defaultGame = "/static/images/default_game.jpg"
+imageLink__defaultDm = "/static/images/default_dm.jpg"
+imageLink__buttonEdit = "/static/images/edit_button_image.png"
+
+idPrefix__newSessionHeader = "session_header_"
+idPrefix__newSessionCard = "session_card_"
+classList__newSessionHeader = ""
+classList__newSessionCard = ""
+
 @socketio.on('send_new_session')
 def send_new_session(id, number, title, synopsis=None):
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=id)
     db.session.add(new)
     db.session.flush()
     db.session.commit()
-    newsession = str("<div class='border shadow-lg p-3 mb-5 bg-light rounded' id='session_header_"+str(new.id)+"'><h2>Session "+str(new.number)+": "+str(new.title)+"</h2><div id='session_card_"+str(new.number)+"'></div></div>")
+
+    id__newSessionHeader = idPrefix__newSessionHeader+str(new.id)
+    id__newSessionCard = idPrefix__newSessionCard+str(new.number)
+    content__newSessionHeader = "Session "+str(new.number)+": "+str(new.title)
+
+    newsession = str(
+        "<div id='"
+        +id__newSessionHeader
+        +"' class='"
+        +classList__newSessionHeader
+        +"'><h2>"
+        +content__newSessionHeader
+        +"</h2><div id='"
+        +id__newSessionCard
+        +"' "
+        +classList__newSessionCard
+        +"'></div></div>"
+    )
+
     emit('fill_new_session', newsession, broadcast=True)
 
 @socketio.on('send_new_note')
@@ -31,7 +61,7 @@ def send_new_note(user_id, game_id, note, priv=False, in_character=False):
 
     db.session.add(new)
     db.session.flush()
-    edit_link="<a id='del_"+str(new.id)+"_"+str(new.user_id)+"'><img class='note_edit_button' src='https://image.flaticon.com/icons/png/512/61/61456.png'></a>"
+    edit_link="<a id='del_"+str(new.id)+"_"+str(new.user_id)+"'><img class='note_edit_button' src='"+imageLink__buttonEdit+"'></a>"
     new_note=str("<span id='note_span_"+str(new.id)+"_"+str(new.user_id)+"'><p id='note"+str(new.id)+"_"+str(new.user_id)+"'>"+str(new.date_added)+" || <b>"+str(new.charname)+":</b> "+str(new.note)+"  "+edit_link+"</p></span>")
 
     emit('fill_new_note', (new_note, new.private, new.session_number, new.in_character), broadcast=True)
@@ -39,7 +69,6 @@ def send_new_note(user_id, game_id, note, priv=False, in_character=False):
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, in_character, game_id, user_id, note_id):
-    # print('edit_note received!!', text, is_private, in_character, game_id, user_id, note_id)
     note = Notes.query.filter_by(id=note_id).first()
     note.note = text
     db.session.flush()
@@ -49,7 +78,6 @@ def edit_note(text, is_private, in_character, game_id, user_id, note_id):
     
 @socketio.on("delete_note")
 def delete_note(id_num):
-    # print("delete_note", id_num)
     note = Notes.query.filter_by(id=id_num).first()
     db.session.delete(note)
     db.session.commit()
