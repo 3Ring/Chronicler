@@ -1,0 +1,85 @@
+// // =============================================================================
+// //
+// // Global CSS Custom Properties Structure
+// // 
+// // =============================================================================
+
+@import "schemes/fantasy";
+
+:root {
+
+
+/* ************************************ */
+//
+//  Global Spacing Variables
+//
+/* ************************************ */	
+	
+	--spacing: #{$size-unit-mobile};
+	   --xxxl: calc(var(--spacing) * 9);
+	    --xxl: calc(var(--spacing) * 6);
+	     --xl: calc(var(--spacing) * 4);
+	     --lg: calc(var(--spacing) * 3);
+	     --md: calc(var(--spacing) * 2);
+	     --sm: calc(var(--spacing) * 1.5);
+	     --xs: calc(var(--spacing) * 1);
+	    --xxs: calc(var(--spacing) * .5);
+	   --xxxs: calc(var(--spacing) * .25);
+
+	@media screen and (min-width: $break1) {
+
+		--spacing: #{$size-unit-variable};
+
+		   --xxxl: calc(var(--spacing) * 6);
+		    --xxl: calc(var(--spacing) * 4);
+		     --xl: calc(var(--spacing) * 3);
+		     --lg: calc(var(--spacing) * 2);
+		     --md: calc(var(--spacing) * 1.5);
+		     --sm: calc(var(--spacing) * 1);
+		     --xs: calc(var(--spacing) * .75);
+		    --xxs: calc(var(--spacing) * .5);
+		   --xxxs: calc(var(--spacing) * .25);
+	}
+
+	@media screen and (min-width: $sizing2) {
+
+		--spacing: #{$size-unit-max};
+		
+	}
+}
+/* ************************************ */
+//
+//  Mobile Specific Classes
+//
+/* ************************************ */
+.mobile-only {
+	@media screen and (min-width: $break1) {
+		display: none !important;
+	}
+}
+
+.no-mobile {
+	@media screen and (min-width: $mobile) {
+		display: none !important;
+	}
+}
+/* ************************************ */
+//
+//  Buttons extended to classes
+//
+/* ************************************ */
+.button {
+	@extend %button;
+
+	&.primary {
+		@extend %primary;
+	}
+
+	&.secondary {
+		@extend %secondary;
+	}
+
+	&.alternate {
+		@extend %alternate;
+	}
+}

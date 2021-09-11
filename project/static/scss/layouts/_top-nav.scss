@@ -1,0 +1,33 @@
+// // =============================================================================
+// // 
+// // Top Nav Styles
+// // 
+// // =============================================================================
+
+nav {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+	a {
+		@include size-5();
+	}
+
+	ul {
+		display: flex;
+
+		&:first-child {
+			li {
+				margin-right: var(--sm);
+			}
+		}
+		&:last-child {
+			li {
+				margin-left: var(--sm);
+			}
+		}
+
+		
+	}
+
+}

@@ -1,0 +1,62 @@
+// // =============================================================================
+// //
+// // Global button styles for all types and states
+// //
+// // =============================================================================
+
+
+:root {
+
+	// $sass variables declared here
+
+		--headlineColor: #{$gray_dark};
+		--headlineColorReverse: #{$max};
+		--headlineLinkColor: #{$min};
+		--copyColor: #{$gray_dark};
+		--linkColor: #{$min};
+
+		/** Alerts, disabled, and errors **/
+		--disabled:  #{$gray_lighter};
+		--error: red;
+		--accentColor: #{$gray_lighter};
+		--alertCopy: #{$min};
+
+		/** Borders **/
+		--border1: #{$gray_surface};
+		--border2: #{$gray_lightest};
+		--border3: #{$gray_lighter};
+		--accentBorder: transparent;
+
+		/** Inputs **/
+		--inputTextColor: #{$gray_dark};
+		--inputPlaceholder: #{$gray_lighter};
+		--inputBackground: #{$max};
+		--inputBorderColor: var(--border3);
+
+		--primaryButtonBg: #{$min};
+		--primaryButtonBorder: #{$min};
+		--primaryButtonText: #{$min};
+		--primaryButtonHoverBg: #{$min};
+		--primaryButtonHoverBorder: #{$min};
+		--primaryButtonHoverText: #{$min};
+
+		--secondaryButtonBg: #{$min};
+		--secondaryButtonBorder: #{$min};
+		--secondaryButtonText: #{$min};
+		--secondaryButtonHoverBg: #{$min};
+		--secondaryButtonHoverBorder: #{$min};
+		--secondaryButtonHoverText: #{$min};
+
+		--alternateButtonBg: transparent;
+		--alternateButtonBorder: #{$min};
+		--alternateButtonText: #{$min};
+		--alternateButtonHoverBg: #{$min};
+		--alternateButtonHoverBorder: #{$min};
+		--alternateButtonHoverText: #{$min};
+
+		--headerBackground: #{$gray_lighter};
+		--mainBackground: #{$gray_surface};
+		--footerBackground: #{$gray};
+
+
+}

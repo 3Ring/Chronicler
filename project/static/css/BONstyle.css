@@ -76,6 +76,7 @@ box-sizing: border-box;
 }
 
 #editor-container {
+
   height: 130px;
 }
 
@@ -92,4 +93,5 @@ box-sizing: border-box;
 
 .ql-size-huge {
   font-size: xx-large;
+
 }

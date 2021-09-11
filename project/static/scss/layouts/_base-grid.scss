@@ -1,0 +1,80 @@
+// // =============================================================================
+// // 
+// // Base application grid at all screen sizes
+// // 
+// // =============================================================================
+
+.chronicler {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+
+    >header {
+        padding: var(--sm);
+    	background: var(--headerBackground);
+    	width: 100%;
+    }
+
+    >main {
+    	width: 100%;
+        background: $test;
+        min-height: 100%;
+        flex-grow: 1;
+        background: var(--mainBackground);
+    }
+
+    >footer {
+    	background: var(--footerBackground);
+    	width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+
+        max-width: $break2;
+
+        @media screen and (min-width: $break2) {
+            margin: 0 auto;
+        }
+    }
+
+    .center-container {
+        display: flex;
+        width: 100%;
+        min-height: 100%;
+        align-items: center;
+        justify-content: center;
+
+        h1 {
+            @include size-1();
+        }
+        h2 {
+            @include size-5();
+        }
+    }
+
+    .form-container {
+        padding: var(--xxl);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .find_create_container {
+        padding: var(--xxl);
+
+        display: grid;
+
+        @media screen and (min-width: $break1) {
+            grid-template-columns: 1fr 1fr;
+            grid-gap: var(--md);
+        }
+        
+    }
+
+}

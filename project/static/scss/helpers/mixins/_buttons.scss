@@ -1,0 +1,104 @@
+// // =============================================================================
+// //
+// // Global button styles for all types and states
+// //
+// // =============================================================================
+
+
+%button {
+
+  @include size-5();
+  min-width: 0 !important;
+  margin: 0;
+  display: inline-block;
+  padding: $xs $lg;
+  padding: var(--xs) var(--lg);
+  text-decoration: none;
+  text-align: center;
+  @include trans(all, 0.15s, ease);
+  -webkit-appearance: none;
+  background-color: var(--buttonBg);
+  color: var(--buttonText);
+  border: 0.125em solid var(--buttonBorder);
+  border-radius: 0.188em;
+  @media (hover: hover) {
+    &:hover {
+      cursor: pointer;
+      background-color: var(--buttonHoverBg);
+      color: var(--buttonHoverText);
+      border: 0.125em solid var(--buttonHoverBorder);
+      text-decoration: none;
+    }
+  }
+  &:focus,
+  &:active {
+      background-color: var(--buttonHoverBg);
+      color: var(--buttonHoverText);
+      border: 0.125em solid var(--buttonHoverBorder);
+  }
+  @media only print {
+    display: none !important;
+  }
+}
+
+
+
+%primary {
+
+    --buttonBg: var(--primaryButtonBg);
+    --buttonBorder: var(--primaryButtonBorder);
+    --buttonText: var(--primaryButtonText);
+    --buttonHoverBg: var(--primaryButtonHoverBg);
+    --buttonHoverText: var(--primaryButtonHoverText);
+    --buttonHoverBorder: var(--primaryButtonHoverBorder);
+
+  }
+
+  %secondary {
+
+    --buttonBg: var(--secondaryButtonBg);
+    --buttonBorder: var(--secondaryButtonBorder);
+    --buttonText: var(--secondaryButtonText);
+    --buttonHoverBg: var(--secondaryButtonHoverBg);
+    --buttonHoverText: var(--secondaryButtonHoverText);
+    --buttonHoverBorder: var(--secondaryButtonHoverBorder);
+
+  }
+
+  %alternate {
+
+    --buttonBg: var(--alternateButtonBg);
+    --buttonBorder: var(--alternateButtonBorder);
+    --buttonText: var(--alternateButtonText);
+    --buttonHoverBg: var(--alternateButtonHoverBg);
+    --buttonHoverText: var(--alternateButtonHoverText);
+    --buttonHoverBorder: var(--alternateButtonHoverBorder);
+
+  }
+
+
+
+@mixin button($type: primary) {
+  @extend %button;
+  @if $type == 'primary' {
+    @extend %button;
+    @extend %primary;
+  }
+  @else if $type == 'secondary' {
+    @extend %button;
+    @extend %secondary;
+  }
+  @else if $type == 'alternate' {
+    @extend %button;
+    @extend %alternate;
+  }
+  @else if $type == 'navigation' {
+    @extend %button;
+    @extend %navigation;
+  }
+  @else {
+    @extend %button;
+    @extend %primary;
+  }
+}
+

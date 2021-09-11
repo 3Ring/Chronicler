@@ -1,34 +1,39 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<h3>Login</h3>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<div class="alert {{ fail }} alert-dismissible fade show" role="alert">
+<div class="center-container">
     <div>
-        {{ messages[0] }}
+        <h1>Login</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert {{ fail }} alert-dismissible fade show" role="alert">
+            <div>
+                {{ messages[0] }}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <h2>Don't have an account? <a href="{{ url_for('auth.register') }}">Make one!</a></h2>
+    </div>
+    <div class="form-container">
+        <form method="POST" action="/login">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+            </div>
+            <div>
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </div>
+            <div class="checkbox">
+                {{ form.remember }}
+                {{ form.remember.label(class="form-label") }}
+            </div>
+            <div>
+                {{ form.submit(class="button primary") }}
+            </div>
+        </form>
     </div>
 </div>
-{% endif %}
-{% endwith %}
-</br>
-<h1>Don't have an account? <a href="{{ url_for('auth.register') }}">Make one!</a></h1>
-<div class="shadow p-3 mb-5 bg-body rounded">
-    <form method="POST" action="/login">
-        {{ form.hidden_tag() }}
-        </br>
-        {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control") }}
-        </br>
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control") }}
-        </br>
-        {{ form.remember.label(class="form-label") }}
-        {{ form.remember }}
-        </br>
-        {{ form.submit(class="btn btn-secondary") }}
-    </form>
-</div>
-
+    
 {% endblock %}
