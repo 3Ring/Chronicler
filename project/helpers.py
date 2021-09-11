@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from .events import *
 from .classes import *
 from . import db
-
+from flask import request
 
 def validate(var, name="NoName", deep=False):
     it=0
