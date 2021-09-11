@@ -24,6 +24,7 @@ Jinja2==3.0.1
 Mako==1.1.4
 MarkupSafe==2.0.1
 mysql-connector-python==8.0.17
+Pillow==8.3.2
 protobuf==3.17.3
 pycparser==2.20
 PyMySQL==1.0.2

@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
 import os
+import json
 from .events import *
 from .classes import *
 from flask_login import login_required, current_user
@@ -12,7 +12,7 @@ from .helpers import upload, nuke
 
 # Variables
 db_password = os.environ.get('DB_PASS')
-decoder = "data:image/png;base64, "
+decoder = "data:;base64,"
 
 imageLink__defaultCharacter = "/static/images/default_character.jpg"
 imageLink__defaultGame = "/static/images/default_game.jpg"
@@ -59,8 +59,32 @@ def index():
 
 @main.route('/welcome')
 def welcome():
-    return "todo"
+    # todo
+    return redirect('/register')
 
+@main.route('/initdb_p')
+def initdb_p():
+
+    import psycopg2
+    from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+    # Connect to PostgreSQL DBMS
+
+    con = psycopg2.connect("host='bonmysqldb' user='postgres' password='NPTt8UFf8fcB374Kvu0e'");
+    con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);
+
+    # Obtain a DB Cursor
+    cursor          = con.cursor();
+    name_Database   = "bon";
+
+    # Create table statement
+
+    sqlCreateDatabase = "create database "+name_Database+";"
+
+    # Create a table in PostgreSQL database
+
+    cursor.execute(sqlCreateDatabase);
+    return 'init localhost database'
 # @main.route('/initdb')
 # def initdb():
 #     import mysql.connector
@@ -108,6 +132,7 @@ def join(id):
                 game.image = imageLink__defaultGame
             else:
                 game.image = decoder + img.img
+
         return render_template("join.html"
             , games=games
         )
@@ -156,12 +181,13 @@ def create():
     else:
         if gameform.img.data:
             image_id = upload(upload_name)
-            game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
             if type(image_id) != int:
                 flash(image_id)
                 redirect("/create")
+            game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
         else:
             game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
+
         db.session.add(game)
         db.session.flush()
         dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
@@ -199,7 +225,7 @@ def notes(id):
             for session in session_titles:
                 session.number=str(session.number)
     
-    import json
+    
     js_logs = {}
     for session in logs:
         if type(logs[session]) == list:
@@ -471,7 +497,7 @@ def confirm():
 # @main.route('/test', methods=["GET"])
 # @login_required
 # def test():
-#     return
+#     return 
 
 @main.route('/nuked', methods=["GET"])
 @login_required
