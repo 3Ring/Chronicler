@@ -782,3 +782,8 @@ nav ul:first-child li {
 nav ul:last-child li {
   margin-left: var(--sm);
 }
+
+/* Stuff Zack added */
+.hidden {
+  display:none;
+}

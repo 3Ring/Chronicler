@@ -28,11 +28,12 @@ def index():
         games=Games.query.filter(
             Games.dm_id != current_user.id,
             Games.id.in_(
-                Players.query.with_entities(Players.games_id).
-                    filter(Players.users_id.in_(
-                        Users.query.with_entities(
-                            Users.id).filter_by(
-                                id=current_user.id))))).all()
+            Players.query.with_entities(Players.games_id).
+            filter(Players.users_id.in_(
+            Users.query.with_entities(
+            Users.id).filter_by(
+            id=current_user.id))))
+        ).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
 
         # set images for game lists

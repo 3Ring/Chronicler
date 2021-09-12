@@ -51,12 +51,14 @@ def render_picture(data):
 def upload(filename):
     try:
         pic = request.files[filename]
+        print(pic)
     except:
         return 'Invalid file or filename'
 
     if not pic:
         return 'No file uploaded!'
 
+    print( "len", len(pic.stream.read()) )
     if len(pic.stream.read()) > 3000000:
         return 'image is too large. limit to images 1MB or less.'
 
@@ -65,11 +67,13 @@ def upload(filename):
         return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
 
     secure = secure_filename(pic.filename)
+    print(secure, " secure")
     
     if not secure or not mimetype:
         return 'Bad upload!'
 
-    data = pic.read()
+    pic.stream.seek(0)
+    data = pic.stream.read()
     render_file = render_picture(data)
 
     img = Images(img=render_file, name=secure, mimetype=mimetype)
@@ -77,6 +81,7 @@ def upload(filename):
     db.session.flush()
     id = img.id
     db.session.commit()
+    print(id)
     return id 
 
 
