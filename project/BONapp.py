@@ -148,6 +148,13 @@ def joining(id):
     charform=CharForm()
     game=Games.query.filter_by(id=id).first()
     if request.method=='GET':
+
+        # set images for game
+        img = Images.query.filter_by(id=game.img_id).first()
+        if not img:
+            game.image = imageLink__defaultGame
+        else:
+            game.image = decoder + img.img
         return render_template('joining.html',
             charform=charform,
             game=game)

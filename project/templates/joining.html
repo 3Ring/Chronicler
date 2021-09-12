@@ -8,8 +8,8 @@
         </div>
     {% endif %}
 {% endwith %}
-<img src="{{game.img}}">
-<h3>Add Your character!</h3>
+<img src="{{game.image}}">
+<h1>Create Character!</h1>
 <form  enctype="multipart/form-data" method='POST' action='/joining/{{game.id}}'>
     {{ charform.hidden_tag() }}
     {{ charform.name.label }}
