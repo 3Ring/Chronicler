@@ -59,8 +59,8 @@ def index():
 
 @main.route('/welcome')
 def welcome():
-    # todo
-    return redirect('/register')
+    
+    return render_template('welcome.html')
 
 @main.route('/initdb_p')
 def initdb_p():
