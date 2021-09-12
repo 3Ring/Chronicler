@@ -188,8 +188,6 @@ def create():
         else:
             game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
 
-        return redirect('/')
-
         db.session.add(game)
         db.session.flush()
         dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
