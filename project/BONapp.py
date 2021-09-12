@@ -120,7 +120,7 @@ def initdb_p():
 #         cursor.execute("SHOW DATABASES")
 #         for table in cursor:
 
-#         return 'init localhost database'
+#         return 'init localhost databases'
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
