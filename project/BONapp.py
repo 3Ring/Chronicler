@@ -70,7 +70,7 @@ def initdb_p():
 
     # Connect to PostgreSQL DBMS
 
-    con = psycopg2.connect("host='bonmysqldb' user='postgres' password='NPTt8UFf8fcB374Kvu0e'");
+    con = psycopg2.connect("host='bonsqldb' user='postgres' password='" + db_password + "'");
     con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);
 
     # Obtain a DB Cursor
@@ -84,7 +84,7 @@ def initdb_p():
     # Create a table in PostgreSQL database
 
     cursor.execute(sqlCreateDatabase);
-    return 'init localhost database'
+    return 'init localhost database\n'
 # @main.route('/initdb')
 # def initdb():
 #     import mysql.connector
@@ -189,7 +189,7 @@ def create():
             game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
 
         return redirect('/')
-        
+
         db.session.add(game)
         db.session.flush()
         dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
