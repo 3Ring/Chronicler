@@ -252,7 +252,10 @@ def notes(id):
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.name)
+    user = Users.query.filter_by(id=current_user.id).first()
+    return render_template('profile.html'
+        , user=user
+    )
 
 @main.route('/test_tables', methods = ['GET', 'POST'])
 @login_required

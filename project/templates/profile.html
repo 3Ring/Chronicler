@@ -2,9 +2,20 @@
 
 {% block content %}
 <div class="center-container">
-	<h1 class="title">
-	  Welcome to the table, {{ name }}!
-	</h1>
+	{% if user %}
+		<h1 class="title">
+			User: 
+		</h1>
+		<ul>
+			<li>Your Name: {{user.name}}</li>
+			<li>Your Email: {{user.email}}</li>
+			{% if user.characters %}
+			<li>Your Characters: {{user.characters}}</li>
+			{% else %}
+			<li>Your Characters: No Characters yet!</li>
+			{% endif %}
+		</ul>
+	{% endif %}
 </div>
 	
 {% endblock %}
