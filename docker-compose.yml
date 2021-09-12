@@ -5,7 +5,7 @@ services:
         image: postgres:9.6.23
         container_name: bonmysqldb
         volumes: 
-            - bonvolume:/var/lib/postgresql
+            - bonvolume:/var/lib/postgresql/data
         environment:
             MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD:-unsecured_password}
             POSTGRES_PASSWORD: ${SQL_ROOT_PASSWORD:-unsecured_password}

@@ -57,6 +57,9 @@ def upload(filename):
     if not pic:
         return 'No file uploaded!'
 
+    if len(pic.stream.read()) > 3000000:
+        return 'image is too large. limit to images 1MB or less.'
+
     mimetype = pic.mimetype
     if not allowed_file(mimetype):
         return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
@@ -103,10 +106,6 @@ def nuke():
     print("Characters")
     db.session.commit()
 
-    # db.session.query(Users).delete()
-    # print("Users")
-    # db.session.commit()
-
     db.session.query(Players).delete()
     print("Players")
     db.session.commit()
@@ -118,4 +117,9 @@ def nuke():
     db.session.query(Images).delete()
     print("Images")
     db.session.commit()
+
+    # db.session.query(Users).delete()
+    # print("Users")
+    # db.session.commit()
+
     return
