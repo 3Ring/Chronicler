@@ -399,8 +399,7 @@ def test_tables():
         lootform=lootform,
         noteform=noteform,
         playerform=playerform,
-        sessionform=sessionform,
-        test=test)
+        sessionform=sessionform)
 
 @main.route('/confirming', methods = ['POST'])
 @login_required
