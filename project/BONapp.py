@@ -1,14 +1,26 @@
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for, jsonify
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash
 import os
+import json
 from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
 from .helpers import validate as v
+from .helpers import upload, nuke
+
+
+# Variables
+db_password = os.environ.get('DB_PASS')
+decoder = "data:;base64,"
+
+imageLink__defaultCharacter = "/static/images/default_character.jpg"
+imageLink__defaultGame = "/static/images/default_game.jpg"
+imageLink__defaultDm = "/static/images/default_dm.jpg"
+imageLink__buttonEdit = "/static/images/edit_button_image.png"
+
 
 main = Blueprint('main', __name__)
-db_password = os.environ.get('DB_PASS')
 
 @main.route("/")
 def index():
@@ -16,23 +28,64 @@ def index():
         games=Games.query.filter(
             Games.dm_id != current_user.id,
             Games.id.in_(
-                Players.query.with_entities(Players.games_id).
-                    filter(Players.users_id.in_(
-                        Users.query.with_entities(
-                            Users.id).filter_by(
-                                id=current_user.id))))).all()
+            Players.query.with_entities(Players.games_id).
+            filter(Players.users_id.in_(
+            Users.query.with_entities(
+            Users.id).filter_by(
+            id=current_user.id))))
+        ).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
 
-        return render_template("index.html",
-            test='test',
-            ty=type,
-            lis=list,
-            games=games,
-            dm_games=dm_games)
+        # set images for game lists
+        for game in games:
+            img = Images.query.filter_by(id=game.img_id).first()
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
+        for game in dm_games:
+            img = Images.query.filter_by(id=game.img_id).first()
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
 
-    return render_template("index.html")
+        return render_template("index.html"
+            , ty=type
+            , lis=list
+            , games=games
+            , dm_games=dm_games)
 
+    return redirect('/welcome')
 
+@main.route('/welcome')
+def welcome():
+    
+    return render_template('welcome.html')
+
+@main.route('/initdb_p')
+def initdb_p():
+
+    import psycopg2
+    from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+    # Connect to PostgreSQL DBMS
+
+    con = psycopg2.connect("host='bonsqldb' user='postgres' password='" + db_password + "'");
+    con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);
+
+    # Obtain a DB Cursor
+    cursor          = con.cursor();
+    name_Database   = "bon";
+
+    # Create table statement
+
+    sqlCreateDatabase = "create database "+name_Database+";"
+
+    # Create a table in PostgreSQL database
+
+    cursor.execute(sqlCreateDatabase);
+    return 'init localhost database\n'
 # @main.route('/initdb')
 # def initdb():
 #     import mysql.connector
@@ -50,7 +103,7 @@ def index():
 #         db.create_all()
 #         cursor.execute("SHOW DATABASES")
 #         for table in cursor:
-#             print(table)
+
 #         return 'init bonmysqldb database'
 #     except:
 #         mydb = mysql.connector.connect(
@@ -66,16 +119,24 @@ def index():
 #         db.create_all()
 #         cursor.execute("SHOW DATABASES")
 #         for table in cursor:
-#             print(table)
+
 #         return 'init localhost database'
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
 def join(id):
     if id == 0:
-        games=Games.query.all()
-        return render_template("join.html",
-        games=games)
+        games=Games.query.filter(Games.dm_id != current_user.id).all()
+        for game in games:
+            img = Images.query.filter_by(id=game.img_id).first()
+            if not img:
+                game.image = imageLink__defaultGame
+            else:
+                game.image = decoder + img.img
+
+        return render_template("join.html"
+            , games=games
+        )
     else:
         return redirect(url_for('main.joining', id=id))
 
@@ -83,15 +144,31 @@ def join(id):
 @main.route('/joining/<int:id>', methods = ['GET', 'POST'])
 @login_required
 def joining(id):
-     
+    image_form_name = 'img'
     charform=CharForm()
     game=Games.query.filter_by(id=id).first()
     if request.method=='GET':
+
+        # set images for game
+        img = Images.query.filter_by(id=game.img_id).first()
+        if not img:
+            game.image = imageLink__defaultGame
+        else:
+            game.image = decoder + img.img
         return render_template('joining.html',
             charform=charform,
             game=game)
     if charform.charsubmit.data:
-        character=Characters(name=charform.name.data, imglink=charform.imglink.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+        if charform.img.data:
+
+            image_id = upload(image_form_name)
+            if type(image_id) != int:
+                flash(image_id)
+                return redirect(url_for('main.joining', id=id))
+            character=Characters(name=charform.name.data, img_id=image_id, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+
+        character=Characters(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+
         db.session.add(character)
         db.session.commit()
         player=Players(users_id=current_user.id, games_id=id)
@@ -103,13 +180,22 @@ def joining(id):
 @main.route('/create', methods=["GET", "POST"])
 @login_required
 def create():
+
     gameform=CreateGameForm()
+    upload_name = "img"
     if request.method=="GET":
         return render_template('create.html',
             gameform=gameform)
     else:
-        game=Games(name=gameform.name.data, dm_id=current_user.id, imglink=gameform.imglink.data, published=gameform.published.data)
-        
+        if gameform.img.data:
+            image_id = upload(upload_name)
+            if type(image_id) != int:
+                flash(image_id)
+                redirect("/create")
+            game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
+        else:
+            game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
+
         db.session.add(game)
         db.session.flush()
         dm_char=Characters(name="DM", user_id=current_user.id, game_id=game.id)
@@ -122,7 +208,6 @@ def create():
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
-    edit_img="https://image.flaticon.com/icons/png/512/61/61456.png"
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
     dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
@@ -148,7 +233,7 @@ def notes(id):
             for session in session_titles:
                 session.number=str(session.number)
     
-    import json
+    
     js_logs = {}
     for session in logs:
         if type(logs[session]) == list:
@@ -164,7 +249,7 @@ def notes(id):
         lis=list,
         st=str,
         js_note_dict=js_note_dict,
-        edit_img=edit_img,
+        edit_img=imageLink__buttonEdit,
         note_dict=logs,
         id=id,
         session_titles=session_titles,
@@ -173,7 +258,10 @@ def notes(id):
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.name)
+    user = Users.query.filter_by(id=current_user.id).first()
+    return render_template('profile.html'
+        , user=user
+    )
 
 @main.route('/test_tables', methods = ['GET', 'POST'])
 @login_required
@@ -203,7 +291,6 @@ def test_tables():
     players = Players.query.all()
     sessionheads=Sessions().head
     sessions=Sessions.query.all()
-    test=Test.query.all()
 
     userform = UserForm()
     gameform = GameForm()
@@ -418,4 +505,13 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
+# @main.route('/test', methods=["GET"])
+# @login_required
+# def test():
+#     return 
 
+@main.route('/nuked', methods=["GET"])
+@login_required
+def nuked():
+    nuke()
+    return "nuked"

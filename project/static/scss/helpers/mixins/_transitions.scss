@@ -1,0 +1,11 @@
+// // =============================================================================
+// //
+// // Use for all smooth transitions
+// // 
+// // =============================================================================
+
+
+// smooth transitions
+@mixin trans($property: all, $timing: .3s, $easing: ease) {
+  transition: $property $timing $easing;
+}

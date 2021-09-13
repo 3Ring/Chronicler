@@ -1,4 +1,19 @@
-body {  
-	background: green;
-	color: white;
-}
+// // =============================================================================
+// // Theme styles, all partials lead here
+// //
+// // Check output for rendering that shouldn't be there
+// // =============================================================================
+
+
+// pre-render theme files
+@import "helpers/init";
+@import "helpers/root";
+
+// rendered theme files
+@import "helpers/reset";
+@import "helpers/type";
+@import "helpers/forms";
+
+// rendered layout files
+@import "layouts/base-grid";
+@import "layouts/top-nav";

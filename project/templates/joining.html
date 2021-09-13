@@ -1,19 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<img src={{game.imglink}}>
-<h3>Add Your character!</h3>
-<form  method='POST' action='/joining/{{game.id}}'>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div role="alert">
+            {{ message }}
+            <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endwith %}
+<img src="{{game.image}}">
+<h1>Create Character!</h1>
+<form  enctype="multipart/form-data" method='POST' action='/joining/{{game.id}}'>
     {{ charform.hidden_tag() }}
     {{ charform.name.label }}
     {{ charform.name }}
     <br/>
-    {{ charform.imglink.label }}
-    {{ charform.imglink }}
+    {{ charform.img.label }}
+    {{ charform.img }}
     <br/>
     {{ charform.bio.label }}
     {{ charform.bio }}
     <br/>
     {{ charform.charsubmit }}
 </form>
-
 {% endblock %}

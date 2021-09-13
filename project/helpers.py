@@ -1,4 +1,11 @@
 from .classes import *
+import base64
+from werkzeug.utils import secure_filename
+from .events import *
+from .classes import *
+from . import db
+from flask import request
+
 
 def validate(var, name="NoName", deep=False):
     it=0
@@ -24,57 +31,96 @@ def validate(var, name="NoName", deep=False):
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             return None
 
-# def nuke(count=0):
-#     count += 1
-#     nope = 0
-#     try:
-#         db.session.query(Notes).delete()
-#     except:
-#         print("Notes")
-#         nope = 1
-#     try:
-#         db.session.query(Loot).delete()
-#     except:
-#         nope = 1
-#         print("Loot")
-#     try:
-#         db.session.query(Places).delete()
-#     except:
-#         nope = 1
-#         print("Places")
-#     try:
-#         db.session.query(NPCs).delete()
-#     except:
-#         nope = 1
-#         print("NPCs")
-#     try:
-#         db.session.query(Characters).delete()
-#     except:
-#         nope = 1
-#         print("Characters")
-#     try:
-#         db.session.query(Sessions).delete()
-#     except:
-#         nope = 1
-#         print("Sessions")
-#     try:
-#         db.session.query(Games).delete()
-#     except:
-#         nope = 1
-#         print("Games")
-#     try:
-#         db.session.query(Users).delete()
-#     except:
-#         nope = 1
-#         print("Users")
-#     try:
-#         db.session.query(Players).delete()
-#     except:
-#         nope = 1
-#         print("Players")
-#     db.session.commit()
-#     if nope == 1:
-#         nuke()
-#     if count == 20:
-#         return count
-#     return count
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+    for i, letter in enumerate(filename):
+        if letter == '/':
+            altered = (filename[i+1:]).lower()
+            break
+    
+    if altered in ALLOWED_EXTENSIONS:
+        return True
+    return False
+
+def render_picture(data):
+
+    render_pic = base64.b64encode(data).decode('ascii') 
+    return render_pic
+
+def upload(filename):
+    try:
+        pic = request.files[filename]
+    except:
+        return 'Invalid file or filename'
+
+    if not pic:
+        return 'No file uploaded!'
+
+    if len(pic.stream.read()) > 3000000:
+        return 'image is too large. limit to images 1MB or less.'
+
+    mimetype = pic.mimetype
+    if not allowed_file(mimetype):
+        return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
+
+    secure = secure_filename(pic.filename)
+    
+    if not secure or not mimetype:
+        return 'Bad upload!'
+
+    pic.stream.seek(0)
+    data = pic.stream.read()
+    render_file = render_picture(data)
+
+    img = Images(img=render_file, name=secure, mimetype=mimetype)
+    db.session.add(img)
+    db.session.flush()
+    id = img.id
+    db.session.commit()
+    return id 
+
+
+def nuke():
+
+    db.session.query(Notes).delete()
+    print("Notes")
+    db.session.commit()
+
+    db.session.query(Sessions).delete()
+    print("Sessions")
+    db.session.commit()
+
+    db.session.query(Loot).delete()
+    print("Loot")
+    db.session.commit()
+
+    db.session.query(Places).delete()
+    print("Places")
+    db.session.commit()
+
+    db.session.query(NPCs).delete()
+    print("NPCs")
+    db.session.commit()
+
+    db.session.query(Characters).delete()
+    print("Characters")
+    db.session.commit()
+
+    db.session.query(Players).delete()
+    print("Players")
+    db.session.commit()
+
+    db.session.query(Games).delete()
+    print("Games")
+    db.session.commit()
+
+    db.session.query(Images).delete()
+    print("Images")
+    db.session.commit()
+
+    # db.session.query(Users).delete()
+    # print("Users")
+    # db.session.commit()
+
+    return

@@ -1,15 +1,15 @@
 version: "3.8"
 
 services: 
-    bonmysqldb:
-        image: mysql:8.0.26
-        container_name: bonmysqldb
+    bonsqldb:
+        image: postgres:9.6.23
+        container_name: bonsqldb
         volumes: 
-            - bonvolume:/var/lib/mysql
+            - bonvolume:/var/lib/postgresql/data
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
+            POSTGRES_PASSWORD: ${SQL_ROOT_PASSWORD:-unsecured_password}
         ports:
-            - 3307:3306
+            - 5432:5432
         cap_add:
         - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
 
@@ -18,7 +18,7 @@ services:
             context: .
         container_name: rest-server
         environment: 
-            DB_PASS: ${MYSQL_ROOT_PASSWORD:-unsecured_password}
+            DB_PASS: ${SQL_ROOT_PASSWORD:-unsecured_password}
             DOCKER_FLAG: 1
             PYTHONUNBUFFERED: 1
         ports:

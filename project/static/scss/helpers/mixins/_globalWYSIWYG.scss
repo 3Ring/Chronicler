@@ -1,0 +1,389 @@
+// // =============================================================================
+// //
+// // Type styles for inside global WYSIWYG
+// // 
+// // =============================================================================
+
+
+@mixin globalWYSIWYG {
+  > * {
+    &:first-child {
+      //prevent headline top margin from pushing the first content down
+      margin-top: 0 !important;
+    }
+  }
+  .text-align-center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+
+    @include breakpoint($mobile) {
+      margin-left: 0 !important;
+      text-align: left;
+    }
+  }
+  h1 {
+    @include size-1();
+    // margin-top: $xl;
+    // margin-top: var(--xl);
+  }
+  h2 {
+    @include size-2();
+    margin-top: $lg;
+    margin-top: var(--lg);
+  }
+  h3 {
+    @include size-3();
+    margin-top: $md;
+    margin-top: var(--md);
+  }
+  h4 {
+    @include size-4();
+    margin-top: $sm;
+    margin-top: var(--sm);
+  }
+  h5 {
+    @include size-5();
+    margin-top: $sm;
+    margin-top: var(--sm);
+  }
+  h6 {
+    @include size-6();
+    margin-top: $sm;
+    margin-top: var(--sm);
+  }
+  p {
+    @include size-6();
+    a {
+      text-decoration: none;
+      // &:not([class*="button"]) {
+      //   @include animate-underline();
+      // }
+      &.button:first-child:not(:last-child) {
+        margin-right: $xs;
+        margin-right: var(--xs);
+      }
+    }
+    i,
+    em {
+      font-family: $liteitalic;
+      font-style: italic;
+    }
+    pre {
+      font-family: $courier;
+    }
+  }
+  pre {
+    font-family: $courier;
+    padding: $xxxs;
+    padding: var(--xxxs);
+    background-color: $gray1;
+    background-color: var(--drawerBackground);
+    margin: 0 0 $sm 0;
+    margin: 0 0 var(--sm) 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+  code {
+    white-space: normal;
+    word-break: break-word;
+  }
+  ol {
+    margin: 0 0 $sm $sm;
+    margin: 0 0 var(--sm) var(--sm);
+    @include size-6();
+    li {
+      @include size-6();
+      list-style-type: decimal;
+      margin: 0 0 $sm 1.75em;
+      margin: 0 0 var(--sm) 1.75em;
+      line-height: 1.5em;
+      a {
+        text-decoration: none;
+        // @include animate-underline();
+      }
+      p {
+        //prevent invisible wysiwyg nesting from changing size
+        font-size: 1em !important;
+      }
+      i,
+      em {
+        font-style: italic;
+      }
+      span {
+        color: $body_copy;
+        color: var(--copyColor);
+        a {
+          text-decoration: none;
+        }
+        p {
+          font-size: 1em !important;
+        }
+      }
+    }
+    ul,
+    ol {
+      font-size: 1em;
+    }
+    //updating ordered list indent style counters
+    ol {
+      li {
+        list-style-type: lower-alpha;
+      } ol li {
+        list-style-type: lower-roman;
+      }
+    }
+  }
+
+  ul {
+    margin: 0 0 $sm $sm;
+    margin: 0 0 var(--sm) var(--sm);
+    padding: 0;
+    @include size-6();
+    li {
+      @include size-6();
+      list-style-type: disc;
+      margin: 0 0 $sm 1.75em;
+      margin: 0 0 var(--sm) 1.75em;
+      line-height: 1.5em;
+
+      a {
+        text-decoration: none;
+        // &:not([class*="button"]) {
+        //   &:hover {
+        //     text-decoration: underline;
+        //   }
+        //   @include animate-underline();
+        // }
+      }
+      p {
+        font-size: 1em !important;
+      }
+      i,
+      em {
+        font-family: $lite;
+        font-style: italic;
+      }
+      span {
+        a {
+          text-decoration: none;
+        }
+        p {
+          font-size: 1em !important;
+        }
+      }
+    }
+    ul,
+    ol {
+      font-size: 1em;
+    }
+  }
+  ul ul,
+  ul ol,
+  ol ul,
+  ol ol,
+  ul .indent,
+  ol .indent {
+    padding-left: $md;
+    padding-left: var(--md);
+  }
+  ul,
+  ul {
+    &.no-bullets  li,
+    &.no-bullets  li ul li {
+      list-style-type: none;
+    }
+    &.no-bullets  li ul {
+      margin-top: var(--sm);
+    }
+  }
+  i,
+  em {
+    font-family: $lite;
+    font-style: italic;
+  }
+  sup {
+    vertical-align: super;
+    font-size: smaller;
+  }
+
+  // Control width of "small" and "medium" images uploaded into WYSIWYG
+  div[data-entity-embed-display-settings="_component_image_small"] {
+    max-width: 6rem;
+    @media screen and (min-width: $break1) {
+      max-width: 10rem;
+    }
+  }
+  div[data-entity-embed-display-settings="_component_image_medium"] {
+    max-width: 12rem;
+    @media screen and (min-width: $break1) {
+      max-width: 26rem;
+    }
+  }
+
+  img {
+    margin-bottom: $xs;
+    margin-bottom: var(--xs);
+    p {
+      margin: 0 0 $sm 0;
+      margin: 0 0 var(--sm) 0;
+    }
+    @include breakpoint($mobile) {
+      max-width: 100% !important;
+      height: auto;
+      display: block;
+    }
+  }
+  hr {
+    height: 0.063em;
+    background: $gray2;
+    background: var(--border2);
+    border: none;
+  }
+  blockquote {
+    display: inline-block;
+    padding: $md 0 $md $lg;
+    padding: var(--md) 0 var(--md) var(--lg);
+    margin: 0 0 1em 0;
+    background: rgba($impact, 0.075);
+    background: var(--drawerBackground);
+    border-left: 0.625em solid rgba($impact, 0.2);
+    border-left: var(--accentColor);
+    @media screen and (min-width: $break1) {
+      padding: $md $xs $md $lg;
+      padding: var(--md) var(--xs) var(--md) var(--lg);
+    }
+  }
+
+  .video,
+  .Video {
+    position: relative;
+    margin: 0 auto;
+    z-index: 1;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    @media screen and (min-width: $break2) {
+    }
+    //This is to hide the chromecast button
+    &::-internal-media-controls-overlay-cast-button {
+      display: none;
+    }
+    //the WYSIWYG adds a p here, it needs to do nothing.
+    p {
+      margin: 0;
+      display: inline;
+      padding: 0;
+      line-height: 1;
+    }
+  }
+  .video iframe,
+  .Video iframe .video object,
+  .Video object .video embed,
+  .Video embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  table {
+    @include breakpoint($mobile) {
+      display: block;
+      width: 100%;
+    }
+    thead {
+      th {
+        // @include size-5();
+      }
+    }
+
+    tr {
+      @include breakpoint($mobile) {
+        display: block;
+        width: 100%;
+        padding: $sm 0;
+        padding: var(--sm) 0;
+        border-bottom: 0.063em solid $gray2;
+        border-bottom: 0.063em solid var(--border2);
+        float: left;
+      }
+      td,
+      th {
+        padding: $xxs;
+        padding: var(--xxs);
+        border-bottom: 0.063em solid $gray2;
+        border-bottom: 0.063em solid var(--border2);
+        @include breakpoint($mobile) {
+          display: block;
+          width: 100%;
+          border: none;
+        }
+        strong {
+          color: $body_copy;
+          color: var(--copyColor);
+        }
+        span {
+          // @include size-5();
+        }
+      }
+    }
+    ul li {
+      font-size: 1.5em;
+    }
+  }
+  strong,
+  b {
+    font-family: $bold;
+    em,
+    i {
+      font-family: $bold;
+      font-style: italic;
+
+      &.fas {
+        font-family: $fa-icon;
+      }
+    }
+  }
+  .element-invisible {
+    display: none !important;
+  }
+  i.fas {
+    font-family: $fa-icon;
+  }
+  .fine-print {
+    @include fine-print();
+    li {
+      margin-bottom: 1em;
+    }
+  }
+  a {
+    &.button {
+      margin-bottom: $xs;
+      margin-bottom: var(--xs);
+    }
+    &[name] {
+      color: inherit;
+    }
+  }
+  .embedded-entity {
+    max-width: 75ch;
+    margin-bottom: $xs;
+    margin-bottom: var(--xs);
+  }
+}
+
+@media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  body .dark .field-text-body {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    li {
+      color: $max !important;
+    }
+  }
+}

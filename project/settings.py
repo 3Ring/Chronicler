@@ -21,15 +21,15 @@ if os.environ.get("HEROKU_HOSTING"):
 # local
 elif os.environ.get("DOCKER_FLAG"):
     print("connecting to local through docker...")
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:" + db_password + "@bonsqldb:5432/bon"
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@bonmysqldb:3306/BON'
 else:
     print("connecting to local...")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:' + db_password + '@localhost/BON'
 
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = db_password
-
+app.config['POSTGRES_PASSWORD'] = db_password
 app.config['SQLALCHEMY_ECHO'] = False
 
 

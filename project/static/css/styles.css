@@ -1,4 +1,789 @@
+@media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  body .dark .field-text-body p,
+body .dark .field-text-body h1,
+body .dark .field-text-body h2,
+body .dark .field-text-body h3,
+body .dark .field-text-body h4,
+body .dark .field-text-body h5,
+body .dark .field-text-body li {
+    color: white !important;
+  }
+}
+button,
+input[type=button],
+input[type=reset],
+input[type=submit], .button {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+  min-width: 0 !important;
+  margin: 0;
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  padding: var(--xs) var(--lg);
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  background-color: var(--buttonBg);
+  color: var(--buttonText);
+  border: 0.125em solid var(--buttonBorder);
+  border-radius: 0.188em;
+}
+@media screen and (min-width: 31.25em) {
+  button,
+input[type=button],
+input[type=reset],
+input[type=submit], .button {
+    font-size: 1.06em;
+  }
+}
+button b,
+input[type=button] b,
+input[type=reset] b,
+input[type=submit] b, .button b,
+button strong,
+input[type=button] strong,
+input[type=reset] strong,
+input[type=submit] strong,
+.button strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+button em,
+input[type=button] em,
+input[type=reset] em,
+input[type=submit] em, .button em, button i,
+input[type=button] i,
+input[type=reset] i,
+input[type=submit] i, .button i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+button strong i,
+input[type=button] strong i,
+input[type=reset] strong i,
+input[type=submit] strong i, .button strong i,
+button strong em,
+input[type=button] strong em,
+input[type=reset] strong em,
+input[type=submit] strong em,
+.button strong em,
+button b i,
+input[type=button] b i,
+input[type=reset] b i,
+input[type=submit] b i,
+.button b i,
+button b em,
+input[type=button] b em,
+input[type=reset] b em,
+input[type=submit] b em,
+.button b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+@media (hover: hover) {
+  button:hover,
+input[type=button]:hover,
+input[type=reset]:hover,
+input[type=submit]:hover, .button:hover {
+    cursor: pointer;
+    background-color: var(--buttonHoverBg);
+    color: var(--buttonHoverText);
+    border: 0.125em solid var(--buttonHoverBorder);
+    text-decoration: none;
+  }
+}
+button:focus,
+input[type=button]:focus,
+input[type=reset]:focus,
+input[type=submit]:focus, .button:focus, button:active,
+input[type=button]:active,
+input[type=reset]:active,
+input[type=submit]:active, .button:active {
+  background-color: var(--buttonHoverBg);
+  color: var(--buttonHoverText);
+  border: 0.125em solid var(--buttonHoverBorder);
+}
+@media only print {
+  button,
+input[type=button],
+input[type=reset],
+input[type=submit], .button {
+    display: none !important;
+  }
+}
+
+.button.primary {
+  --buttonBg: var(--primaryButtonBg);
+  --buttonBorder: var(--primaryButtonBorder);
+  --buttonText: var(--primaryButtonText);
+  --buttonHoverBg: var(--primaryButtonHoverBg);
+  --buttonHoverText: var(--primaryButtonHoverText);
+  --buttonHoverBorder: var(--primaryButtonHoverBorder);
+}
+
+.button.secondary {
+  --buttonBg: var(--secondaryButtonBg);
+  --buttonBorder: var(--secondaryButtonBorder);
+  --buttonText: var(--secondaryButtonText);
+  --buttonHoverBg: var(--secondaryButtonHoverBg);
+  --buttonHoverText: var(--secondaryButtonHoverText);
+  --buttonHoverBorder: var(--secondaryButtonHoverBorder);
+}
+
+.button.alternate {
+  --buttonBg: var(--alternateButtonBg);
+  --buttonBorder: var(--alternateButtonBorder);
+  --buttonText: var(--alternateButtonText);
+  --buttonHoverBg: var(--alternateButtonHoverBg);
+  --buttonHoverText: var(--alternateButtonHoverText);
+  --buttonHoverBorder: var(--alternateButtonHoverBorder);
+}
+
+:root {
+  --headlineColor: #455264;
+  --headlineColorReverse: white;
+  --headlineLinkColor: black;
+  --copyColor: #455264;
+  --linkColor: black;
+  /** Alerts, disabled, and errors **/
+  --disabled: #b5bac1;
+  --error: red;
+  --accentColor: #b5bac1;
+  --alertCopy: black;
+  /** Borders **/
+  --border1: #f8f7f5;
+  --border2: #dadce0;
+  --border3: #b5bac1;
+  --accentBorder: transparent;
+  /** Inputs **/
+  --inputTextColor: #455264;
+  --inputPlaceholder: #b5bac1;
+  --inputBackground: white;
+  --inputBorderColor: var(--border3);
+  --primaryButtonBg: black;
+  --primaryButtonBorder: black;
+  --primaryButtonText: black;
+  --primaryButtonHoverBg: black;
+  --primaryButtonHoverBorder: black;
+  --primaryButtonHoverText: black;
+  --secondaryButtonBg: black;
+  --secondaryButtonBorder: black;
+  --secondaryButtonText: black;
+  --secondaryButtonHoverBg: black;
+  --secondaryButtonHoverBorder: black;
+  --secondaryButtonHoverText: black;
+  --alternateButtonBg: transparent;
+  --alternateButtonBorder: black;
+  --alternateButtonText: black;
+  --alternateButtonHoverBg: black;
+  --alternateButtonHoverBorder: black;
+  --alternateButtonHoverText: black;
+  --headerBackground: #b5bac1;
+  --mainBackground: #f8f7f5;
+  --footerBackground: #6a7583;
+}
+
+:root {
+  /* ************************************ */
+  /* ************************************ */
+  --spacing: 0.5rem;
+  --xxxl: calc(var(--spacing) * 9);
+  --xxl: calc(var(--spacing) * 6);
+  --xl: calc(var(--spacing) * 4);
+  --lg: calc(var(--spacing) * 3);
+  --md: calc(var(--spacing) * 2);
+  --sm: calc(var(--spacing) * 1.5);
+  --xs: calc(var(--spacing) * 1);
+  --xxs: calc(var(--spacing) * .5);
+  --xxxs: calc(var(--spacing) * .25);
+}
+@media screen and (min-width: 31.25em) {
+  :root {
+    --spacing: 1rem;
+    --xxxl: calc(var(--spacing) * 6);
+    --xxl: calc(var(--spacing) * 4);
+    --xl: calc(var(--spacing) * 3);
+    --lg: calc(var(--spacing) * 2);
+    --md: calc(var(--spacing) * 1.5);
+    --sm: calc(var(--spacing) * 1);
+    --xs: calc(var(--spacing) * .75);
+    --xxs: calc(var(--spacing) * .5);
+    --xxxs: calc(var(--spacing) * .25);
+  }
+}
+@media screen and (min-width: 96.625em) {
+  :root {
+    --spacing: 1.125rem;
+  }
+}
+
+/* ************************************ */
+/* ************************************ */
+@media screen and (min-width: 31.25em) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: max-width 31.188em) {
+  .no-mobile {
+    display: none !important;
+  }
+}
+
+/* ************************************ */
+/* ************************************ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: green;
+  font-size: 16px;
+  color: #455264;
+  font-family: "robotoregular", Helvetica, Arial, sans-serif;
+}
+a,
+a:link,
+a:visited {
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+a:not(.button),
+a:link:not(.button),
+a:visited:not(.button) {
+  color: var(--linkColor);
+}
+
+a:active,
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus {
+  color: blue;
+  color: var(--linkColor);
+}
+
+pre {
+  font-family: monospace;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+p {
+  margin: var(--lg) 0 0 0;
+}
+
+ul,
+li,
+ul li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: "robotoblack";
+  src: url("fonts/Roboto/roboto-black-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-black-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Black.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotobold";
+  src: url("fonts/Roboto/roboto-bold-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-bold-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotomedium";
+  src: url("fonts/Roboto/roboto-medium-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-medium-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoregular";
+  src: url("fonts/Roboto/roboto-regular-webfont.woff2") format("wof2f"), url("fonts/Roboto/roboto-regular-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotolight";
+  src: url("fonts/Roboto/Roboto-Light-webfont.woff") format("woff"), url("fonts/Roboto/Roboto-Light-webfont.svg#robotolight") format("svg"), url("fonts/Roboto/Roboto-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotothinitalic";
+  src: url("fonts/Roboto/roboto-v20-latin-300italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-300italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-300italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoitalic";
+  src: url("fonts/Roboto/roboto-v20-latin-italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoiboldtalic";
+  src: url("fonts/Roboto/roboto-v20-latin-700italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-700italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-700italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "robotoiblacktalic";
+  src: url("fonts/Roboto/roboto-v20-latin-900italic.woff") format("woff"), url("fonts/Roboto/roboto-v20-latin-900italic.svg#robotolight") format("svg"), url("fonts/Roboto/roboto-v20-latin-900italic.ttf") format("truetype");
+}
+.size-1 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 2.54em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+}
+@media screen and (min-width: 31.25em) {
+  .size-1 {
+    font-size: 3.322em;
+  }
+}
+.size-1 b,
+.size-1 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.size-1 em, .size-1 i {
+  font-family: "robotothinitalic", Helvetica, Arial, sans-serif;
+}
+.size-1 strong i,
+.size-1 strong em,
+.size-1 b i,
+.size-1 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+@media print {
+  .size-1 {
+    font-size: 41pt;
+    line-height: 46pt;
+  }
+}
+
+.size-5 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+@media screen and (min-width: 31.25em) {
+  .size-5 {
+    font-size: 1.06em;
+  }
+}
+.size-5 b,
+.size-5 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.size-5 em, .size-5 i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+.size-5 strong i,
+.size-5 strong em,
+.size-5 b i,
+.size-5 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md);
+}
+form div {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+  flex-grow: 1;
+}
+form div.checkbox, form div.radio, form div.button-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+form p {
+  color: tomato;
+}
+
+/* ------------------- */
+/* Form Styles
+/* ----------------- */
+button,
+input,
+optgroup,
+select,
+keygen::-webkit-keygen-select,
+select[_moz-type=-mozilla-keygen],
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+label {
+  display: block;
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+@media screen and (min-width: 31.25em) {
+  label {
+    font-size: 1.06em;
+  }
+}
+label b,
+label strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+label em, label i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+label strong i,
+label strong em,
+label b i,
+label b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+
+input[type=radio] + label,
+input[type=checkbox] + label {
+  font-weight: 400;
+}
+
+button,
+input[type=button],
+input[type=reset],
+input[type=submit] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+button[disabled],
+input[disabled] {
+  cursor: default;
+}
+
+input {
+  line-height: normal;
+}
+
+textarea {
+  line-height: 1.25em;
+}
+
+select {
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+input[type=checkbox],
+input[type=radio] {
+  box-sizing: border-box;
+  padding: 0;
+  margin: var(--sm);
+}
+
+input[type=search] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+input[type=date],
+input[type=month],
+input[type=time],
+input[type=datetime],
+input[type=datetime-local],
+input[type=week],
+input[type=number],
+input[type=search],
+input[type=tel],
+input[type=color],
+select[_moz-type=-mozilla-keygen],
+keygen::-webkit-keygen-select,
+select,
+textarea {
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px #ddd;
+  border-radius: 2px;
+  vertical-align: middle;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0.5em 0.6em;
+  margin-bottom: 0.5em;
+}
+
+input[type=color] {
+  padding: 0;
+}
+
+input:not([type]) {
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px #ddd;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0.5em 0.6em;
+}
+
+input[type=color] {
+  padding: 0.2em 0.5em;
+}
+
+input[type=file]:focus,
+input[type=radio]:focus,
+input[type=checkbox]:focus {
+  outline: 1px auto #129FEA;
+}
+
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #eee;
+  color: #777;
+  border-color: #ccc;
+}
+
+input:focus:invalid,
+textarea:focus:invalid,
+select:focus:invalid {
+  color: #b94a48;
+  border-color: #e9322d;
+}
+
+input[type=file]:focus:invalid:focus,
+input[type=radio]:focus:invalid:focus,
+input[type=checkbox]:focus:invalid:focus {
+  outline-color: #e9322d;
+}
+
+/* Style your form buttons. Follow your heart */
+input[type=submit],
+input[type=reset],
+input[type=button],
+button {
+  display: inline-block;
+  padding: 8px 12px;
   color: white;
+  background-color: tomato;
+  border: 0;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+input[type=submit]:hover,
+input[type=reset]:hover,
+input[type=button]:hover,
+button:hover {
+  background-color: royalblue;
+}
+
+.chronicler {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+.chronicler > header {
+  padding: var(--sm);
+  background: var(--headerBackground);
+  width: 100%;
+}
+.chronicler > main {
+  width: 100%;
+  background: rgba(255, 0, 0, 0.3);
+  min-height: 100%;
+  flex-grow: 1;
+  background: var(--mainBackground);
+}
+.chronicler > footer {
+  background: var(--footerBackground);
+  width: 100%;
+}
+.chronicler .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  max-width: 120em;
+}
+@media screen and (min-width: 120em) {
+  .chronicler .container {
+    margin: 0 auto;
+  }
+}
+.chronicler .center-container {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.chronicler .center-container h1 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 2.54em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+}
+@media screen and (min-width: 31.25em) {
+  .chronicler .center-container h1 {
+    font-size: 3.322em;
+  }
+}
+.chronicler .center-container h1 b,
+.chronicler .center-container h1 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h1 em, .chronicler .center-container h1 i {
+  font-family: "robotothinitalic", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h1 strong i,
+.chronicler .center-container h1 strong em,
+.chronicler .center-container h1 b i,
+.chronicler .center-container h1 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+@media print {
+  .chronicler .center-container h1 {
+    font-size: 41pt;
+    line-height: 46pt;
+  }
+}
+.chronicler .center-container h2 {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+@media screen and (min-width: 31.25em) {
+  .chronicler .center-container h2 {
+    font-size: 1.06em;
+  }
+}
+.chronicler .center-container h2 b,
+.chronicler .center-container h2 strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h2 em, .chronicler .center-container h2 i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+.chronicler .center-container h2 strong i,
+.chronicler .center-container h2 strong em,
+.chronicler .center-container h2 b i,
+.chronicler .center-container h2 b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+.chronicler .form-container {
+  padding: var(--xxl);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.chronicler .find_create_container {
+  padding: var(--xxl);
+  display: grid;
+}
+@media screen and (min-width: 31.25em) {
+  .chronicler .find_create_container {
+    grid-template-columns: 1fr 1fr;
+    grid-gap: var(--md);
+  }
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+nav a {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-size: 0.81em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+@media screen and (min-width: 31.25em) {
+  nav a {
+    font-size: 1.06em;
+  }
+}
+nav a b,
+nav a strong {
+  font-family: "robotobold", Helvetica, Arial, sans-serif;
+}
+nav a em, nav a i {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+nav a strong i,
+nav a strong em,
+nav a b i,
+nav a b em {
+  font-family: "robotoiboldtalic", Helvetica, Arial, sans-serif;
+}
+nav ul {
+  display: flex;
+}
+nav ul:first-child li {
+  margin-right: var(--sm);
+}
+nav ul:last-child li {
+  margin-left: var(--sm);
+}
+
+/* Stuff Zack added */
+.hidden {
+  display:none;
 }

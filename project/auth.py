@@ -89,4 +89,4 @@ def register():
 def logout():
     flash('Successfully logged out')
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.welcome'))

@@ -1,11 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
+<script src="{{ url_for('static', filename='js/join.js') }}"></script>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div role="alert">
+            {{ message }}
+            <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endwith %}
 {% if games %}
+<h1>Public Games</h1>
 {% for game in games %}
-<div>{{game}}</div>
-<a href="{{ url_for('main.join', id=game.id) }}"><img src={{game.imglink}}></a>
-<div>{{game.name}}</div>
+<div id="selectGame_{{game.id}}" class="select_game">
+<a></a><img src="{{game.image}}"><h2>{{game.name}}</h2></a>
+</div>
+<div id="confirmCard_{{game.id}}" class="confirm_card hidden">
+    <img src="{{game.image}}">
+    <h1>{{game.name}}</h1>
+    <h2>Join this game?</h2>
+    <a class="game_cancel">Cancel</a><a href="{{ url_for('main.join', id=game.id) }}" class="game_confirm">Confirm</a>
+</div>
 {% endfor %}
+
+
+{% else %}
+<h2>Looks like there aren't any games available yet. You should 
+    <a href="{{ url_for('main.create') }}" >make one!</a>
+</h2>
 {% endif %}
 
 {% endblock %}

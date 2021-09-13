@@ -31,7 +31,6 @@ class Users(UserMixin, db.Model):
     name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     hash = db.Column(db.String(120), nullable=False)
-    realname = db.Column(db.String(20))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     characters = db.relationship('Characters', backref='user', lazy=True)
@@ -52,12 +51,13 @@ class Users(UserMixin, db.Model):
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.Text)
     secret = db.Column(db.Integer, default=0)
     published = db.Column(db.Boolean, default=False, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+    image = str
 
     places = db.relationship('Places', backref='game', lazy=True)
     NPCs = db.relationship('NPCs', backref='game', lazy=True)
@@ -67,14 +67,13 @@ class Games(db.Model):
         backref=db.backref('games', lazy=True))
 
     head = [
-        'ID', 
-        'Name', 
-        'Imglink', 
-        'Sessions', 
-        'Secret', 
-        'Date Added', 
-        'DM ID',
-        'Players']
+        'ID' 
+        ,'Name' 
+        ,'Secret' 
+        ,'Date Added' 
+        ,'DM ID'
+        ,'img_id'
+        ,'Players']
 
     def __repr__(self):
         return '<Game %r>' % self.name
@@ -95,11 +94,6 @@ class Sessions(db.Model):
         "Synopsis", 
         'Date Added',
         "Games ID"
-# potentially things to add in the future
-        # "Notes",
-        # "Players",
-        # "Places",
-        # "Loot",
         ]
 
     def __repr__(self):
@@ -132,47 +126,24 @@ class Notes(db.Model):
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    imglink = db.Column(db.Text)
     bio = db.Column(db.Text)
-    platinum = db.Column(db.Integer, default=0)
-    gold = db.Column(db.Integer, default=0)
-    electrum = db.Column(db.Integer, default=0)
-    silver = db.Column(db.Integer, default=0)
-    copper = db.Column(db.Integer, default=0)
-    experience = db.Column(db.Integer, default=0)
-    strength = db.Column(db.Integer, default=0)
-    dexterity = db.Column(db.Integer, default=0)
-    constitution = db.Column(db.Integer, default=0)
-    intelligence = db.Column(db.Integer, default=0)
-    wisdom = db.Column(db.Integer, default=0)
-    charisma = db.Column(db.Integer, default=0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    img_id = (db.Integer, db.ForeignKey('images.id'))
 
     # items = db.relationship('Loot', backref='character', lazy=True)
 
     head = [
-    'ID', 
-    'Name', 
-    'ImgLink', 
-    'Bio', 
-    'PP', 
-    'GP', 
-    'EP', 
-    'SP', 
-    'CP', 
-    'XP', 
-    'STR', 
-    'DEX', 
-    'CON', 
-    'INT', 
-    'WIS', 
-    'CHA', 
-    'Date Added', 
-    'User ID', 
-    'Game ID']
+    'ID' 
+    ,'Name' 
+    ,'ImgLink' 
+    ,'Bio'
+    ,'Date Added' 
+    ,'User ID' 
+    ,'Game ID'
+    ,'img ID']
 
     def __repr__(self):
         return '<Character %r>' % self.name
@@ -289,9 +260,7 @@ class ConForm(FlaskForm):
 
 class GameForm(FlaskForm):
     name = StringField("Name")
-    imglink = FileField(u'Image File'
-        , default="https://imgur.com/KudCFLI"
-        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
+    img = FileField("(Optional) Game Image")
     sessions = IntegerField("Number of Sessions")
     secret = IntegerField("User who this game is attached to '0' if published")
     published = BooleanField("Publish? (Allow game to be searchable)")
@@ -300,9 +269,7 @@ class GameForm(FlaskForm):
 
 class CreateGameForm(FlaskForm):
     name = StringField("Name of your game")
-    imglink = FileField(u'Image File'
-        , default="https://imgur.com/KudCFLI"
-        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
+    img = FileField("(Optional) Game Image")
     published = BooleanField("Publish? (Allow game to be searchable)")
     gamesubmit = SubmitField("Submit")
 
@@ -317,9 +284,7 @@ class NPCForm(FlaskForm):
 
 class CharForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
-    imglink = FileField(u'Image File'
-        , default="https://imgur.com/FqrfY2J"
-        , validators = [Regexp(u'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png)$')])
+    img = FileField("(Optional) Character Image")
     bio = TextAreaField("Bio")
     platinum = IntegerField("Platinum Pieces")
     gold = IntegerField("Gold Pieces")
@@ -377,14 +342,8 @@ class SessionForm(FlaskForm):
 class NewSessionForm(FlaskForm):
     newsessionsubmit = SubmitField("Start a new Session?")
 
-class Test(db.Model):
+class Images(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    test = db.Column(db.Text)
-
-    def __repr__(self):
-        return '<test %r>' % self.test
-
-
-class TestForm(FlaskForm):
-    test = TextAreaField("test")
-    testsubmit = SubmitField("Submit")
+    img = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)

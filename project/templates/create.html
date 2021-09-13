@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div role="alert">
+            {{ message }}
+            <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endwith %}
+<!-- <img src="data:;base64,{{image}}"> -->
 <h2>Create your game!</h2>
-<form  method='POST'>
+<form enctype="multipart/form-data" method='POST'>
     {{ gameform.hidden_tag() }}
     {{ gameform.name.label }}
     {{ gameform.name }}
     <br/>
-    {{ gameform.imglink.label }}
-    {{ gameform.imglink }}
+    {{ gameform.img.label }}
+    {{ gameform.img }}
     <br/>
     {{ gameform.published.label }}
     {{ gameform.published }}

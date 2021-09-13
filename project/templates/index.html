@@ -28,14 +28,14 @@
                     <h2 class="dm_header">DM:</h2>
                     {% for game in dm_games %}
                         <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                     {% endfor %}
                 </div>
                 <div class="player_games_col">
                     <h2 class="dm_header">Player:</h2>
                     {% for game in games %}
                         <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                     {% endfor %}
                 </div>
             </div>
@@ -44,7 +44,7 @@
             <h2 class="games_grid_header">Your games:</h2>
                 {% for game in dm_games %}
                     <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
 
                 {% endfor %}
             {% endif %}
@@ -53,7 +53,7 @@
             <h2 class="games_grid_header">Your games:</h2>
                 {% for game in games %}
                     <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src={{game.imglink}}></a>
+                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
                 {% endfor %}
             {% endif %}
         {% endif %}
@@ -63,13 +63,13 @@
     <div class="index_img_container">
         <h2>Find a Game:</h2>
         <a href="{{ url_for('main.join', id=0) }}">
-            <img class="index_start_image" src='https://www.wargamer.com/wp-content/uploads/2021/01/dnd-5e-class-guide-main-image-adventuring-party-closeup.jpg'>
+            <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}">
         </a>
     </div class="find/create_container">
     <div class="index_img_container">
         <h2>Create a Game:</h2>
         <a href="{{ url_for('main.create') }}">
-            <img class="index_start_image" src='https://miro.medium.com/max/970/1*qnbRKYQIx96TWcI8ZPfa2g.jpeg'>
+            <img class="index_start_image" src="{{url_for('static', filename='images/dm_games.jpeg')}}">
         </a>
     </div>
 </div>
