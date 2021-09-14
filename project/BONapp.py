@@ -234,7 +234,7 @@ def notes(id):
             for session in session_titles:
                 session.number=str(session.number)
     
-    
+
     js_logs = {}
     for session in logs:
         if type(logs[session]) == list:
