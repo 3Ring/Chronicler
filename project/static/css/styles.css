@@ -1162,7 +1162,7 @@ nav ul:last-child li:first-child a {
   font-style: italic;
 }
 
-form.wysiwyg {
+form#test_form_quill {
   box-shadow: none;
   border: none;
   padding: 0;
@@ -1172,27 +1172,27 @@ form.wysiwyg {
   margin: 0;
 }
 @media screen and (min-width: 31.25em) {
-  form.wysiwyg {
+  form#test_form_quill {
     grid-template-columns: 2fr 1fr;
   }
 }
-form.wysiwyg .form-group {
+form#test_form_quill .form-group {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-form.wysiwyg .ql-toolbar {
+form#test_form_quill .ql-toolbar {
   display: flex;
   align-items: baseline;
 }
-form.wysiwyg .ql-toolbar button {
+form#test_form_quill .ql-toolbar button {
   margin: 0;
   padding: 0;
 }
-form.wysiwyg .ql-container {
+form#test_form_quill .ql-container {
   height: var(--xxxl);
 }
-form.wysiwyg p {
+form#test_form_quill p {
   text-align: left;
 }
 
