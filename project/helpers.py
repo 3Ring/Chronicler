@@ -49,6 +49,7 @@ def render_picture(data):
     return render_pic
 
 def upload(filename):
+    print(filename, '\n\n1')
     try:
         pic = request.files[filename]
     except:

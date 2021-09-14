@@ -188,7 +188,8 @@ def create():
             gameform=gameform)
     else:
         if gameform.img.data:
-            image_id = upload(upload_name)
+            image_id = upload(upload_name) 
+            print(upload_name, '\n\n')
             if type(image_id) != int:
                 flash(image_id)
                 redirect("/create")
