@@ -16,7 +16,6 @@ var context_menu_class_name = "note_edit_menu_link"
 , edit_form_prefix = "edit_form_"
 , edit_form_text_prefix = "form_text_"
 , edit_form_private_prefix = "change_private_"
-, edit_form_in_character_prefix = "make_in_character_"
 
 , hidden_class_name = "hidden"
 , active_class_name = "--active"
@@ -41,7 +40,7 @@ var test_form = document.getElementById(quill_form_id)
 
 , form = document.getElementById(form_container_id)
 , about = document.querySelector('input[name=about]');
-console.log("test_form: ", user_id, game_id, test_form, form, about)
+
 
 
 
@@ -57,13 +56,13 @@ socket.on('fill_new_session', function(new_card) {
 
 
 // display new note
-socket.on('fill_new_note', function(new_note, priv, session_number, in_character) {
+socket.on('fill_new_note', function(new_note, priv, session_number) {
     this_session = document.getElementById('note_list_' + session_number)
     this_session.insertAdjacentHTML('beforeend', new_note)
 });
 
 // display note edit
-socket.on('fill_note_edit', function(editted_note, is_private, session_number, in_character, note_id) {
+socket.on('fill_note_edit', function(editted_note, is_private, session_number, note_id) {
     note_location = document.getElementById("inner_" + note_id);
     note_location.innerHTML = editted_note;
 });
@@ -89,10 +88,9 @@ function edit_note_func(id_num) {
     let form = document.getElementById(edit_form_prefix + id_num);
     let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
     note_private = document.getElementById(edit_form_private_prefix + id_num).value,
-    note_in_character = "False",
     user_id = {{current_user.id}},
     game_id = {{id}};
-    socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
+    socket.emit("edit_note", note_text, note_private, game_id, user_id, id_num);
 
     // removal of form logic
     toggle_form_off(id_num);
@@ -128,6 +126,7 @@ function toggle_menu_off() {
 }
 
 function toggle_menu_on(element) {
+
     if (element.classList.contains(active_class_name)) {} else {
         element.classList.add(active_class_name);
         element.classList.remove(hidden_class_name);
@@ -191,11 +190,9 @@ function change_checkbox_value_onClick() {
 
     // set click events
     for (let i = 0; i < checkboxes.length; i++) {
-        console.log("setting", i)
         checkboxes[i].addEventListener("click", function(event) {
             // find event origin
             let clicked = event.target;
-            console.log(clicked)
 
             // change value to opposite of current
             if (clicked.value == "True") {
@@ -248,7 +245,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // capture and send new session to server
     new_session_form.addEventListener("submit", function() {
         // ensure that form is filled out correctly
-        console.log("on_submit")
         if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
             if (!document.getElementById("session_card_"+number_input_element.value)) {
                 socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
@@ -276,20 +272,16 @@ document.addEventListener("DOMContentLoaded", function() {
         event.preventDefault();
         let new_note_html = quill.root.innerHTML
         , new_note_private = new_note_form_private.value
-        , new_note_in_character = "False";
 
         if (quill.getText() == '\n') {
             alert("note cannot be empty");
             return false
         } else {
-            console.log("note form submit")
-            console.log("note form submit", user_id, game_id, new_note_html, new_note_private, new_note_in_character)
             socket.emit('send_new_note'
                 , user_id
                 , game_id
                 , new_note_html
                 , new_note_private
-                , new_note_in_character
             )
             return false
         }
@@ -342,7 +334,6 @@ var user_id={{current_user.id}}
 , game_id={{id}};
 
 js_dict = JSON.parse({{js_note_dict|tojson }})
-console.log("js_dict", js_dict)
 
 document.addEventListener("DOMContentLoaded", function() {
     // set new notes to populate (doing this because wysiwig fomatting doesn't work otherwise)
@@ -481,12 +472,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                                         <input type='checkbox' class="" data-noteCheckbox="{{ note.private }}" value='{{ note.private }}'>
                                                         <label for='change_private_{{note.id}}'>
                                                             Private?
-                                                        </label>
-                                                    </span>
-                                                    <span class="checkbox_span">
-                                                        <input type='checkbox' class="" data-noteCheckbox="{{ note.in_character }}" value='{{ note.in_character }}'>
-                                                        <label for='make_in_character_{{note.id}}'>
-                                                            Change to <i>in character?</i>
                                                         </label>
                                                     </span>
                                                 </form>
