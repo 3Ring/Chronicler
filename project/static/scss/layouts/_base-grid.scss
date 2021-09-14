@@ -59,17 +59,4 @@
             margin: 0 auto;
         }
     }
-
-    .find_create_container {
-        padding: var(--xxl);
-
-        display: grid;
-
-        @media screen and (min-width: $break1) {
-            grid-template-columns: 1fr 1fr;
-            grid-gap: var(--md);
-        }
-
-    }
-
 }

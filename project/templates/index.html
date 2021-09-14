@@ -1,78 +1,76 @@
 {% extends 'base.html' %}
+
 {% block content %}
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-
-            <div class="alert {{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
     
-        {% endfor %}
-    {% endif %}
-{% endwith%}
-
-{% if current_user.is_anonymous %}
-<h2 class="welcome_message">Welcome to my collaborative note taking app for dnd and other tabletop games! Log in or Register to get started</h2>
-{% endif %}
-
-
-{% if current_user.is_authenticated%}
-    {% if games or dm_games %}
-        {% if games and dm_games %}
-            <h2 class="games_grid_header">Your games:</h2>
-            <div class="games_grid">
-                <div class="dm_games_col">
-                    <h2 class="dm_header">DM:</h2>
-                    {% for game in dm_games %}
-                        <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
-                    {% endfor %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="container">
+                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+                    </div>
                 </div>
-                <div class="player_games_col">
-                    <h2 class="dm_header">Player:</h2>
-                    {% for game in games %}
-                        <div>{{game.name}}</div>
-                        <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
-                    {% endfor %}
-                </div>
-            </div>
-        {% else %}
-            {% if dm_games %}
-            <h2 class="games_grid_header">Your games:</h2>
-                {% for game in dm_games %}
-                    <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
-
-                {% endfor %}
-            {% endif %}
-            
-            {% if games %}
-            <h2 class="games_grid_header">Your games:</h2>
-                {% for game in games %}
-                    <div>{{game.name}}</div>
-                    <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}"></a>
-                {% endfor %}
-            {% endif %}
+            {% endfor %}
         {% endif %}
-    {% endif %}
-{% endif %}
-<div class="find_create_container">
-    <div class="index_img_container">
-        <h2>Find a Game:</h2>
-        <a href="{{ url_for('main.join', id=0) }}">
-            <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}">
-        </a>
-    </div class="find/create_container">
-    <div class="index_img_container">
-        <h2>Create a Game:</h2>
-        <a href="{{ url_for('main.create') }}">
-            <img class="index_start_image" src="{{url_for('static', filename='images/dm_games.jpeg')}}">
-        </a>
+    {% endwith%}
+
+    <!-- {% if current_user.is_anonymous %}
+    <h2 class="welcome_message">Welcome to my collaborative note taking app for dnd and other tabletop games! Log in or Register to get started</h2>
+    {% endif %} -->
+
+
+    {% if current_user.is_authenticated%}
+
+    <div class="app-container">
+        {% if games or dm_games %}
+            <h1>Your Games:</h1>
+        {% endif %}
+
+        {% if games or dm_games %}
+            <div class="games">
+                {% if dm_games %}
+                    <div class="game">
+                        <h2>Dungeon Master</h2>
+                        <p>These are games you have created.</p>
+                        <ul>
+                            {% for game in dm_games %}
+                            <li>
+                                <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}">{{game.name}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if games %}
+                    <div class="game">
+                        <h2>Player</h2>
+                        <p>These are games you have joined as a player.</p>
+                        <ul>
+                            {% for game in games %}
+                            <li>
+                                <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}">{{game.name}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <h2>You don't appear to have any games yet.</h2>
+        {% endif %}
+
+        <div class="new-game">
+            <a href="{{ url_for('main.join', id=0) }}">
+                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}"> -->
+                <span class="fas fa-search-location"></span> Find a Game
+            </a>
+            <a href="{{ url_for('main.create') }}">
+                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/dm_games.jpeg')}}"> -->
+                <span class="far fa-plus-square"></span> Create a Game
+            </a>
+        </div>
     </div>
-</div>
 
-
+    {% endif %}
 {% endblock %}

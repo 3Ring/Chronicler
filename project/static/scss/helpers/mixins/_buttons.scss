@@ -66,18 +66,6 @@
 
   }
 
-  %alternate {
-
-    --buttonBg: var(--alternateButtonBg);
-    --buttonBorder: var(--alternateButtonBorder);
-    --buttonText: var(--alternateButtonText);
-    --buttonHoverBg: var(--alternateButtonHoverBg);
-    --buttonHoverText: var(--alternateButtonHoverText);
-    --buttonHoverBorder: var(--alternateButtonHoverBorder);
-
-  }
-
-
 
 @mixin button($type: primary) {
   @extend %button;
@@ -88,14 +76,6 @@
   @else if $type == 'secondary' {
     @extend %button;
     @extend %secondary;
-  }
-  @else if $type == 'alternate' {
-    @extend %button;
-    @extend %alternate;
-  }
-  @else if $type == 'navigation' {
-    @extend %button;
-    @extend %navigation;
   }
   @else {
     @extend %button;

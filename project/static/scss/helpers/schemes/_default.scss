@@ -27,7 +27,7 @@
 		--border2: #{$gray_lightest};
 		--border3: #{$gray_lighter};
 		--accentBorder: transparent;
-		--boxBorderRadius: var(--lg);
+		--boxBorderRadius: var(--md);
 
 		/** Inputs **/
 		--formBackground: #{$max};
@@ -37,31 +37,32 @@
 		--inputBorderColor: #{$gray_darker};
 		--inputFocusBorder: #{$brand};
 
+		/** Buttons **/
+
+		--buttonBorderRadius: var(--xs);
+
 		--primaryButtonBg: #{$brand};
 		--primaryButtonBorder: #{$brand};
 		--primaryButtonText: #{$min};
 		--primaryButtonHoverBg: #{$max};
 		--primaryButtonHoverBorder: #{$brand};
-		--primaryButtonHoverText: #{$min};
+		--primaryButtonHoverText: #{$brand};
 
-		--secondaryButtonBg: #{$min};
-		--secondaryButtonBorder: #{$min};
-		--secondaryButtonText: #{$min};
-		--secondaryButtonHoverBg: #{$min};
-		--secondaryButtonHoverBorder: #{$min};
-		--secondaryButtonHoverText: #{$min};
-
-		--alternateButtonBg: transparent;
-		--alternateButtonBorder: #{$min};
-		--alternateButtonText: #{$min};
-		--alternateButtonHoverBg: #{$min};
-		--alternateButtonHoverBorder: #{$min};
-		--alternateButtonHoverText: #{$min};
+		--secondaryButtonBg: #{$gray};
+		--secondaryButtonBorder: #{$gray};
+		--secondaryButtonText: #{$gray_darker};
+		--secondaryButtonHoverBg: #{$max};
+		--secondaryButtonHoverBorder: #{$brand};
+		--secondaryButtonHoverText: #{$brand};
 
 		--headerBackground: #{$gray_lighter};
 		--mainBackground: url(../images/chronicler-chrome-bg-light.jpg) 0 0 no-repeat;
 		--footerBackground: #{$gray};
 
+		--boxBackground: #{$max};
+		--boxAlternateBackground: #{$gray_surface};
+		--boxHoverBackground: #{$gray_lightest};
 		--textShadow: 1px 1px 3px rgba(0,0,0,0.3);
+		--textBorderShadow: 1px 1px 0 rgba(0,0,0,1);
 		--boxShadow: 2px 2px 10px 2px rgba(0,0,0,0.1);
 }

@@ -16,7 +16,7 @@ input[type=submit], .button {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
-  font-size: 1.063em;
+  font-size: 1.763em;
   letter-spacing: -0.019em;
   line-height: 1.085;
   max-width: 35ch;
@@ -128,15 +128,6 @@ input[type=submit], .button {
   --buttonHoverBorder: var(--secondaryButtonHoverBorder);
 }
 
-.button.alternate {
-  --buttonBg: var(--alternateButtonBg);
-  --buttonBorder: var(--alternateButtonBorder);
-  --buttonText: var(--alternateButtonText);
-  --buttonHoverBg: var(--alternateButtonHoverBg);
-  --buttonHoverText: var(--alternateButtonHoverText);
-  --buttonHoverBorder: var(--alternateButtonHoverBorder);
-}
-
 :root {
   --headlineColor: #455264;
   --headlineColorReverse: white;
@@ -150,11 +141,11 @@ input[type=submit], .button {
   --accentColor: #b5bac1;
   --alertCopy: black;
   /** Borders **/
-  --border1: #f8f7f5;
+  --border1: #d1d4d6;
   --border2: #dadce0;
   --border3: #b5bac1;
   --accentBorder: transparent;
-  --boxBorderRadius: var(--lg);
+  --boxBorderRadius: var(--md);
   /** Inputs **/
   --formBackground: white;
   --inputTextColor: white;
@@ -162,28 +153,28 @@ input[type=submit], .button {
   --inputBackground: #2e3a49;
   --inputBorderColor: #2e3a49;
   --inputFocusBorder: #6dc6af;
+  /** Buttons **/
+  --buttonBorderRadius: var(--xs);
   --primaryButtonBg: #6dc6af;
   --primaryButtonBorder: #6dc6af;
   --primaryButtonText: black;
   --primaryButtonHoverBg: white;
   --primaryButtonHoverBorder: #6dc6af;
-  --primaryButtonHoverText: black;
-  --secondaryButtonBg: black;
-  --secondaryButtonBorder: black;
-  --secondaryButtonText: black;
-  --secondaryButtonHoverBg: black;
-  --secondaryButtonHoverBorder: black;
-  --secondaryButtonHoverText: black;
-  --alternateButtonBg: transparent;
-  --alternateButtonBorder: black;
-  --alternateButtonText: black;
-  --alternateButtonHoverBg: black;
-  --alternateButtonHoverBorder: black;
-  --alternateButtonHoverText: black;
+  --primaryButtonHoverText: #6dc6af;
+  --secondaryButtonBg: #6a7583;
+  --secondaryButtonBorder: #6a7583;
+  --secondaryButtonText: #2e3a49;
+  --secondaryButtonHoverBg: white;
+  --secondaryButtonHoverBorder: #6dc6af;
+  --secondaryButtonHoverText: #6dc6af;
   --headerBackground: #b5bac1;
   --mainBackground: url(../images/chronicler-chrome-bg-light.jpg) 0 0 no-repeat;
   --footerBackground: #6a7583;
+  --boxBackground: white;
+  --boxAlternateBackground: #d1d4d6;
+  --boxHoverBackground: #dadce0;
   --textShadow: 1px 1px 3px rgba(0,0,0,0.3);
+  --textBorderShadow: 1px 1px 0 rgba(0,0,0,1);
   --boxShadow: 2px 2px 10px 2px rgba(0,0,0,0.1);
 }
 
@@ -310,7 +301,6 @@ p {
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
-  margin: var(--lg) 0 0 0;
 }
 p b,
 p strong {
@@ -395,7 +385,7 @@ form h6 {
   color: var(--copyColor);
   font-weight: 500;
   font-stretch: normal;
-  font-size: 0.813em;
+  font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
@@ -419,7 +409,7 @@ form p {
   color: var(--copyColor);
   font-weight: 500;
   font-stretch: normal;
-  font-size: 0.813em;
+  font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
@@ -468,7 +458,7 @@ label {
   color: var(--copyColor);
   font-weight: 500;
   font-stretch: normal;
-  font-size: 0.813em;
+  font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
@@ -660,16 +650,6 @@ input[type=color] {
     margin: 0 auto;
   }
 }
-.chronicler .find_create_container {
-  padding: var(--xxl);
-  display: grid;
-}
-@media screen and (min-width: 31.25em) {
-  .chronicler .find_create_container {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: var(--md);
-  }
-}
 
 nav {
   display: flex;
@@ -682,7 +662,7 @@ nav a {
   color: var(--copyColor);
   font-weight: 500;
   font-stretch: normal;
-  font-size: 0.813em;
+  font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
@@ -746,7 +726,7 @@ nav ul:last-child li a {
   color: var(--copyColor);
   font-weight: 500;
   font-stretch: normal;
-  font-size: 0.813em;
+  font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
   max-width: 75ch;
@@ -769,4 +749,209 @@ nav ul:last-child li a b em {
 }
 nav ul:last-child li:first-child a {
   color: var(--reverse);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md);
+  background: var(--boxBackground);
+  padding: var(--sm) var(--lg);
+  border-radius: var(--boxBorderRadius);
+  -webkit-box-shadow: var(--boxShadow);
+  box-shadow: var(--boxShadow);
+  min-width: 100%;
+}
+.app-container h1 {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 2.25em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+  font-family: "Grenze Gotisch", cursive;
+  font-weight: 700;
+  text-align: center;
+  max-width: none;
+}
+@media screen and (min-width: 31.25em) {
+  .app-container h1 {
+    font-size: 2.54em;
+  }
+}
+.app-container h1 b,
+.app-container h1 strong {
+  font-weight: 700;
+}
+.app-container h1 em, .app-container h1 i {
+  font-style: italic;
+}
+.app-container h1 strong i,
+.app-container h1 strong em,
+.app-container h1 b i,
+.app-container h1 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  margin: 0;
+}
+@media screen and (min-width: 31.25em) {
+  .app-container .games {
+    grid-template-columns: repeat(auto-fit, minmax(35ch, 1fr));
+    grid-auto-flow: row;
+    grid-gap: var(--sm) var(--sm);
+  }
+}
+.app-container .games .game h2 {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+  font-family: "PT Serif", serif;
+  font-weight: 700;
+}
+.app-container .games .game h2 b,
+.app-container .games .game h2 strong {
+  font-weight: 700;
+}
+.app-container .games .game h2 em, .app-container .games .game h2 i {
+  font-style: italic;
+}
+.app-container .games .game h2 strong i,
+.app-container .games .game h2 strong em,
+.app-container .games .game h2 b i,
+.app-container .games .game h2 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games .game p {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  max-width: 75ch;
+}
+.app-container .games .game p b,
+.app-container .games .game p strong {
+  font-weight: 700;
+}
+.app-container .games .game p em, .app-container .games .game p i {
+  font-style: italic;
+}
+.app-container .games .game p strong i,
+.app-container .games .game p strong em,
+.app-container .games .game p b i,
+.app-container .games .game p b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games .game ul {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: var(--sm) 0;
+}
+.app-container .games .game ul li {
+  margin: 0;
+  padding: var(--xs);
+  background: var(--boxBackground);
+  transition: all 0.3s ease;
+}
+.app-container .games .game ul li:nth-child(even) {
+  background: var(--boxAlternateBackground);
+}
+.app-container .games .game ul li:hover {
+  background: var(--boxHoverBackground);
+}
+.app-container .games .game ul a {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+  font-family: "Grenze Gotisch", cursive;
+  color: var(--copyColor);
+  font-weight: 900;
+}
+.app-container .games .game ul a b,
+.app-container .games .game ul a strong {
+  font-weight: 700;
+}
+.app-container .games .game ul a em, .app-container .games .game ul a i {
+  font-style: italic;
+}
+.app-container .games .game ul a strong i,
+.app-container .games .game ul a strong em,
+.app-container .games .game ul a b i,
+.app-container .games .game ul a b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games .game ul a:hover {
+  text-decoration: none;
+}
+.app-container .games .game ul a img {
+  max-height: var(--xl);
+  margin: 0 var(--sm) 0 0;
+}
+.app-container .new-game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md);
+}
+.app-container .new-game a {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  max-width: 35ch;
+  color: var(--headlineColor);
+  font-family: "Grenze Gotisch", cursive;
+  font-weight: 900;
+  color: var(--linkColor);
+  border-radius: var(--buttonBorderRadius);
+  padding: var(--sm) var(--md);
+  transition: all 0.3s ease;
+}
+.app-container .new-game a b,
+.app-container .new-game a strong {
+  font-weight: 700;
+}
+.app-container .new-game a em, .app-container .new-game a i {
+  font-style: italic;
+}
+.app-container .new-game a strong i,
+.app-container .new-game a strong em,
+.app-container .new-game a b i,
+.app-container .new-game a b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .new-game a:hover {
+  text-decoration: none;
+  background: var(--boxHoverBackground);
 }

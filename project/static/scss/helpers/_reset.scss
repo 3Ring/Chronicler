@@ -100,7 +100,6 @@ svg {
 // This needs to be here for global p tags
 p {
 	@include size-6();
-	margin: var(--lg) 0 0 0;
 }
 
 ul,
