@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class="container">
     <div class="form-container">
         <form method="POST" action="/login">
             <h1>Log In</h1>
@@ -30,5 +30,7 @@
             <h6>Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a></h6>
         </form>
     </div>
+</div>
+    
     
 {% endblock %}

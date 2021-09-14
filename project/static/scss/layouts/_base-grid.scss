@@ -18,6 +18,7 @@
     }
 
     >main {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -25,7 +26,7 @@
         min-height: 100%;
         flex-grow: 1;
 
-        >.container {
+        >.container, .game-container > .container {
             display: flex;
             flex-direction: column;
             flex-wrap: wrap;

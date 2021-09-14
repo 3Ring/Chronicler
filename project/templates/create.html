@@ -1,28 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div class="form-container">
-    <h2>Create your game!</h2>
-    <form  method='POST'>
-        <div>
-            {{ gameform.hidden_tag() }}
-            {{ gameform.name.label }}
-            {{ gameform.name }}
-        </div>
-        <div>
-            {{ gameform.img.label }}
-            {{ gameform.img }}
-        </div>
-        <div class="checkbox">
-            {{ gameform.published }}
-            {{ gameform.published.label }}
-        </div>
-        <div>
-            {{ gameform.gamesubmit }}
-        </div>
-            
-    </form>
+<div class="container">
+    <div class="form-container">
+        <h2>Create your game!</h2>
+        <form  method='POST'>
+            <div>
+                {{ gameform.hidden_tag() }}
+                {{ gameform.name.label }}
+                {{ gameform.name }}
+            </div>
+            <div>
+                {{ gameform.img.label }}
+                {{ gameform.img }}
+            </div>
+            <div class="checkbox">
+                {{ gameform.published }}
+                {{ gameform.published.label }}
+            </div>
+            <div>
+                {{ gameform.gamesubmit }}
+            </div>
+                
+        </form>
+    </div>
 </div>
+    
 
 
 {% endblock %}

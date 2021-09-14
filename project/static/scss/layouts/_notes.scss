@@ -1,0 +1,95 @@
+// // =============================================================================
+// // 
+// // Notes Functionality Styles
+// // 
+// // =============================================================================
+
+.game-container {
+    background: url(../images/dm_games.jpeg) center center no-repeat;
+    background-size: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+    flex-grow: 1;
+
+    overflow-y: scroll;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+
+    h1 {
+        --headlineColor: var(--reverse);
+        --textBorderShadow: 2px 2px 0 $brand;
+
+        text-align: center;
+        @include size-1();
+        font-family: $display;
+        font-weight: 700;
+
+        text-shadow: var(--textBorderShadow);
+        margin: 0 0 var(--md) 0;
+    }
+}
+
+.new-session {
+    margin: 0 0 var(--md) 0;
+    align-self: flex-start;
+}
+
+.notes-container {
+
+    display: flex;
+    min-width: 100%;
+
+    .session-log {
+
+        position: relative;
+        z-index: 0;
+        height: max-content;
+
+        background: var(--secondaryBoxBackground);
+        padding: var(--sm) var(--lg);
+        border-radius: var(--boxBorderRadius);
+        -webkit-box-shadow: var(--boxShadow);
+        box-shadow: var(--boxShadow);
+
+        --headlineColor: var(--reverse);
+        --copyColor: var(--reverse);
+
+        &:after {
+            content: "";
+            position: absolute;
+            display: block;
+            width: var(--xxl);
+            background: var(--secondaryBoxBackground);
+            height: 100%;
+            left: calc(100% - var(--lg));
+            top: 0;
+        }
+
+        h2 {
+            @include size-3();
+            font-family: $display;
+            font-weight: 600;
+        }
+    }
+
+    .notes {
+        position: relative;
+        z-index: 1;
+
+        background: var(--boxBackground);
+        padding: var(--sm) var(--lg);
+        border-radius: var(--boxBorderRadius);
+        -webkit-box-shadow: var(--boxShadow);
+        box-shadow: var(--boxShadow);
+        flex-grow: 1;
+
+        
+    }
+}

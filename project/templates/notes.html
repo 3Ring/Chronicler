@@ -1,227 +1,207 @@
 {% extends "base.html" %}
 {% block content %}
-
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="{{ url_for('static', filename='js/notes.js') }}"></script>
-
 <script type="text/javascript" charset="utf-8">
-var user_id={{current_user.id}}
-, game_id={{id}};
+var user_id = { { current_user.id } },
+    game_id = { { id } };
 
-js_dict = JSON.parse({{js_note_dict|tojson }})
+js_dict = JSON.parse({ { js_note_dict | tojson } })
 console.log("js_dict", js_dict)
 
 
 document.addEventListener("DOMContentLoaded", function() {
-    let note_session = 0
-    , note_id_index = 0
-    , note_note_index = 1;
-    {% for session in session_titles %}
-    if (note_session == {{session.number}}) {} else { note_session = {{session.number}} }
+    let note_session = 0,
+        note_id_index = 0,
+        note_note_index = 1; { % for session in session_titles % }
+    if (note_session == { { session.number } }) {} else { note_session = { { session.number } } }
 
 
     for (let i = 0; i < js_dict[note_session].length; i++) {
-        let note_id = (inner_id_prefix + js_dict[note_session][i][note_id_index])
-        , note_note = js_dict[note_session][i][note_note_index]
-        , note_element = document.getElementById(note_id);
+        let note_id = (inner_id_prefix + js_dict[note_session][i][note_id_index]),
+            note_note = js_dict[note_session][i][note_note_index],
+            note_element = document.getElementById(note_id);
 
         note_element.innerHTML = note_note
 
-    }
-    {% endfor %}
+    } { % endfor % }
 });
 </script>
-
-
-
-
-
-
-
-<div class="form-container">
-    <form id="test_form_quill">
-        <!-- <div class="form-group"> -->
-        <div classs="checkbox">
-            <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
-            <label for='note_private'>Note is private(The GM will still be able to see it):</label>
+<div class="game-container">
+    <div class="container">
+        <h1>The Name Of The Game</h1>
+        {% if dmid == current_user.id %}
+        <div class="new-session">
+            <button class="button primary" id='new_session_button'>Start a new session?</button>
         </div>
-        
-        <!-- <div class="checkbox">
-            <input type='checkbox' class="note_checkbox" id='note_in_character' name='note_in_character' value='False'>
-            <label for='note_in_character'>Note is written in character:</label>
-        </div> -->
-
-        
-        <input name="about" type="hidden">
-        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-        <div id="editor">
-        </div>
-        <!-- </div> -->
-        <div class="button-row">
-            <button class="button primary" type="submit">Submit</button>
-        </div>
-    </form>
-</div>
-
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-<script>
-
-</script>
-
-{% if dmid == current_user.id %}
-    
-    <button class="button primary" id='new_session_button'>Start a new session?</button>
-    <div id="new_session_cont" class="hidden">
-        <h2>Session Info</h2>
-        <form id ='new_session_form'>
-            <input id='new_session_form_game_id' type='hidden' value='{{id}}'>
-            <input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0>
-            <input id='new_session_form_title' required, placeholder='Title(Required)' type='text'>
-            <input id='new_session_form_synopsis' type='text', placeholder='Optional Synopsis'>
-            <input type='submit' value='Make Session'>
-            <input type='button' id='cancel_new_session' value='Cancel'>
-        </form>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/new_session.js') }}"></script>
-{% endif %}
-
-<div id="Session Cards">
-{% if session_titles %}
-
-
-    <!-- Session Title Cards -->
-    {% for session in session_titles %}
-        <div class="" id="session_header_{{session.id}}">
-            <h2>Session {{session.number}}: {{session.title}}</h2>
-            <div id="session_card_{{session.number}}">
-
-
-                <!-- Session Notes -->
-                <!-- Logic for if there is more than one session -->
-                {% if typ(note_dict[session.number]) == lis %}
-                    <ul class="note_list" id="note_list_{{session.number}}">
-                        {% for note in note_dict[session.number] %}
-                            <li class="span_cont" id="note_line_{{note.id}}">
-                                <span class="span_cont" id='note_{{note.id}}'>
-                                    {{ note.date_added }} || <b>{{ note.charname }}:</b> 
-                                    <span class="note_text" id='inner_{{note.id}}'>  
+        <script src="{{ url_for('static', filename='js/new_session.js') }}"></script>
+        {% endif %}
+        <div class="notes-container">
+            <div class="session-log">
+                <h2>Session Log</h2>
+            </div>
+            <div class="notes">
+                <h2>Notes</h2>
+                <div class="comment-container">
+                    <form id="test_form_quill">
+                        <!-- <div class="form-group"> -->
+                        <div class="checkbox">
+                            <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
+                            <label for='note_private'>Note is private(The GM will still be able to see it):</label>
+                        </div>
+                        <!-- <div class="checkbox">
+                                <input type='checkbox' class="note_checkbox" id='note_in_character' name='note_in_character' value='False'>
+                                <label for='note_in_character'>Note is written in character:</label>
+                            </div> -->
+                        <input name="about" type="hidden">
+                        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+                        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+                        <div id="editor">
+                        </div>
+                        <!-- </div> -->
+                        <div class="button-row">
+                            <button class="button primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+                <script>
+                </script>
+                <div id="Session Cards">
+                    {% if session_titles %}
+                    <!-- Session Title Cards -->
+                    {% for session in session_titles %}
+                    <div class="" id="session_header_{{session.id}}">
+                        <h2>Session {{session.number}}: {{session.title}}</h2>
+                        <div id="session_card_{{session.number}}">
+                            <!-- Session Notes -->
+                            <!-- Logic for if there is more than one session -->
+                            {% if typ(note_dict[session.number]) == lis %}
+                            <ul class="note_list" id="note_list_{{session.number}}">
+                                {% for note in note_dict[session.number] %}
+                                <li class="span_cont" id="note_line_{{note.id}}">
+                                    <span class="span_cont" id='note_{{note.id}}'>
+                                        {{ note.date_added }} || <b>{{ note.charname }}:</b>
+                                        <span class="note_text" id='inner_{{note.id}}'>
+                                        </span>
+                                        {% if note.user_id == current_user.id %}
+                                        <!-- Edit Button -->
+                                        <a id='edit_{{note.id}}'>
+                                            <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
+                                        </a>
+                                        <form class='hidden edit_form' id="edit_form_{{ note.id }}">
+                                            <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'>
+                                            <input type='submit' value='submit'>
+                                            <span class="checkbox_span">
+                                                <input type='checkbox' class="note_checkbox" id='change_private_{{note.id}}' value='{{ note.private }}'>
+                                                <label for='change_private_{{note.id}}'>
+                                                    Make Private?
+                                                </label>
+                                            </span>
+                                            <span class="checkbox_span">
+                                                <input type='checkbox' class="note_checkbox" id='make_in_character_{{note.id}}' value='{{ note.in_character }}'>
+                                                <label for='make_in_character_{{note.id}}'>
+                                                    Change to <i>in character?</i>
+                                                </label>
+                                            </span>
+                                        </form>
                                     </span>
-                                    {% if note.user_id == current_user.id %}
-
-
-                                    <!-- Edit Button -->
-                                    <a id='edit_{{note.id}}' >
-                                        <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
-                                    </a>
-                                    <form class='hidden edit_form' id="edit_form_{{ note.id }}">
-                                        <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'>
-                                        <input type='submit' value='submit'>
-                                        
-
-                                        <span class="checkbox_span">
-                                            <input type='checkbox' class="note_checkbox" id='change_private_{{note.id}}' value='{{ note.private }}'>
-                                            <label for='change_private_{{note.id}}'>
+                                    <!-- Edit Note Menu -->
+                                    <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
+                                        <ul class="note_edit_menu_items">
+                                            <li class="note_edit_menu_item">
+                                                <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link" data-action="edit">
+                                                    Edit Note
+                                                </a>
+                                            </li>
+                                            <li class="note_edit_menu_item">
+                                                <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link" data-action="delete">
+                                                    Delete Note
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <!-- Logic for if there is only one Session -->
+                            {% else %}
+                            <ul class="note_list" id="note_list_{{note_dict[session.number].number}}">
+                                <li class="span_cont">
+                                    <span class="spane_cont" id='note_{{note_dict[session.number].id}}'>
+                                        {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b>
+                                        <span class="note_text" id='inner_{{note.id}}'>
+                                        </span>
+                                        {% if note.user_id == current_user.id %}
+                                        <!-- Edit Button -->
+                                        <a id='edit_note_{{note_dict[session.number].id}}'>
+                                            <img id='{{note_dict[session.number].id}}' class='note_edit_button exclude' src={{edit_img}}>
+                                        </a>
+                                        <form class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
+                                            <input type='text' id="form_text_{{note_dict[session.number].id}}" value='{{ note_dict[session.number].note }}'>
+                                            <input type='submit' value='submit'>
+                                            <span class="checkbox_span"></span>
+                                            <input type='checkbox' class="note_checkbox" id='change_private_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].private }}'>
+                                            <label for='change_private_{{note_dict[session.number].id}}'>
                                                 Make Private?
                                             </label>
-                                        </span>
-                                        <span class="checkbox_span">
-                                        <input type='checkbox' class="note_checkbox" id='make_in_character_{{note.id}}' value='{{ note.in_character }}'>
-                                        <label for='make_in_character_{{note.id}}'>
+                                    </span>
+                                    <span class="checkbox_span">
+                                        <input type='checkbox' class="note_checkbox" id='make_in_character_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].in_character }}'>
+                                        <label for='make_in_character_{{note_dict[session.number]}}'>
                                             Change to <i>in character?</i>
                                         </label>
-                                        </span>
-                                        
+                                    </span>
                                     </form>
-                                </span>
-
-
-
-
-
-                                <!-- Edit Note Menu -->
-                                <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
-                                    <ul class="note_edit_menu_items">
-                                        <li class="note_edit_menu_item">
-                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link" data-action="edit">
-                                                Edit Note
-                                            </a>
-                                        </li>
-                                        <li class="note_edit_menu_item">
-                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link" data-action="delete">
-                                                Delete Note
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                                {% endif %}
-                            </li>
-                            
-
-                        {% endfor %}
-                    </ul>
-                
-                <!-- Logic for if there is only one Session -->
-                {% else %}
-                    <ul class="note_list" id="note_list_{{note_dict[session.number].number}}">
-                        <li class="span_cont">
-                            <span class="spane_cont" id='note_{{note_dict[session.number].id}}'>
-                                {{ note_dict[session.number].date_added }} || <b>{{ note_dict[session.number].charname }}:</b> 
-                                <span class="note_text" id='inner_{{note.id}}'>  
-                                </span>
-                                {% if note.user_id == current_user.id %}
-                                <!-- Edit Button -->
-                                <a id='edit_note_{{note_dict[session.number].id}}' >
-                                    <img id='{{note_dict[session.number].id}}' class='note_edit_button exclude' src={{edit_img}}>
-                                </a>
-                                <form class='hidden edit_form' id="edit_form_{{ note_dict[session.number].id }}">
-                                    <input type='text' id="form_text_{{note_dict[session.number].id}}" value='{{ note_dict[session.number].note }}'>
-                                    <input type='submit' value='submit'>
-                                    
-                                    <span class="checkbox_span"></span>
-                                        <input type='checkbox' class="note_checkbox" id='change_private_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].private }}'>
-                                        <label for='change_private_{{note_dict[session.number].id}}'>
-                                            Make Private?
-                                        </label>
                                     </span>
-
-                                    <span class="checkbox_span">
-                                    <input type='checkbox' class="note_checkbox" id='make_in_character_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].in_character }}'>
-                                    <label for='make_in_character_{{note_dict[session.number]}}'>
-                                        Change to <i>in character?</i>
-                                    </label>
-                                    </span>
-                                    
-                                </form>
-                            </span>
-
-                            <!-- Edit Note Menu -->
-                            <nav id="note_edit_menu_{{note_dict[session.number].id}}" class="note_edit_menu hidden">
-                                <ul class="note_edit_menu_items">
-                                    <li class="note_edit_menu_item">
-                                        <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="edit">
-                                            Edit Note
-                                        </a>
-                                    </li>
-                                    <li class="note_edit_menu_item">
-                                        <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="delete">
-                                            Delete Note
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        {% endif %}
-                        </li>
-                        
-                    </ul>
-
-
-                {% endif %}
+                                    <!-- Edit Note Menu -->
+                                    <nav id="note_edit_menu_{{note_dict[session.number].id}}" class="note_edit_menu hidden">
+                                        <ul class="note_edit_menu_items">
+                                            <li class="note_edit_menu_item">
+                                                <a href="#" id="note_edit_menu_edit_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="edit">
+                                                    Edit Note
+                                                </a>
+                                            </li>
+                                            <li class="note_edit_menu_item">
+                                                <a href="#" id="note_edit_menu_delete_{{note_dict[session.number].id}}" class="note_edit_menu_link" data-action="delete">
+                                                    Delete Note
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
         </div>
-    {% endfor %}
-{% endif %}
+    </div>
 </div>
+{% if dmid == current_user.id %}
+<div id="new_session_cont" class="hidden">
+    <div class="modal-container">
+        <div class="modal">
+            <div class="content">
+                <h2>Session Info</h2>
+                <form id='new_session_form'>
+                    <input id='new_session_form_game_id' type='hidden' value='{{id}}'>
+                    <input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0>
+                    <input id='new_session_form_title' required, placeholder='Title(Required)' type='text'>
+                    <input id='new_session_form_synopsis' type='text' , placeholder='Optional Synopsis'>
+                    <input type='submit' value='Make Session'>
+                    <input type='button' id='cancel_new_session' value='Cancel'>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/new_session.js') }}"></script>
+{% endif %}
 {% endblock %}

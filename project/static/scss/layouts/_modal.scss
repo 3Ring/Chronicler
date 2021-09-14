@@ -1,0 +1,75 @@
+// // =============================================================================
+// // 
+// // Pop Up Modal Styles
+// // 
+// // =============================================================================
+
+.shroud {
+    //display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background: var(--shroudBackground);
+}
+
+.modal-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    background: var(--formBackground);
+    overflow: hidden;
+    border-radius: var(--boxBorderRadius);
+    -webkit-box-shadow: var(--boxShadow);
+    box-shadow: var(--boxShadow);
+    max-width: $break1;
+
+    img {
+        width: 100%;
+    }
+
+    .content {
+        padding: var(--sm) var(--lg);
+        text-align: center;
+
+        h2 {
+            @include size-3();
+            font-family: $display;
+            font-weight: 700;
+            max-width: 35ch;
+
+            span {
+                font-family: $display;
+                font-weight: 900;
+            }
+        }
+        p {
+            @include size-5();
+        }
+
+        a {
+            color: var(--copyColor);
+        }
+
+    }
+
+    .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--sm);
+        margin: var(--sm) 0;
+        align-items: center;
+        justify-content: center;
+    }
+
+}

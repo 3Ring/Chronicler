@@ -48,21 +48,30 @@
 		--primaryButtonHoverBorder: #{$brand};
 		--primaryButtonHoverText: #{$brand};
 
-		--secondaryButtonBg: #{$gray};
-		--secondaryButtonBorder: #{$gray};
-		--secondaryButtonText: #{$gray_darker};
+		--secondaryButtonBg: #{$gray_light};
+		--secondaryButtonBorder: #{$gray_light};
+		--secondaryButtonText: #{$min};
 		--secondaryButtonHoverBg: #{$max};
 		--secondaryButtonHoverBorder: #{$brand};
 		--secondaryButtonHoverText: #{$brand};
+
+		/** Layout Regions **/
 
 		--headerBackground: #{$gray_lighter};
 		--mainBackground: url(../images/chronicler-chrome-bg-light.jpg) 0 0 no-repeat;
 		--footerBackground: #{$gray};
 
+		/** Boxes **/
+
 		--boxBackground: #{$max};
-		--boxAlternateBackground: #{$gray_surface};
+		--boxAlternateBackground: #{$brand_surface};
 		--boxHoverBackground: #{$gray_lightest};
 		--textShadow: 1px 1px 3px rgba(0,0,0,0.3);
 		--textBorderShadow: 1px 1px 0 rgba(0,0,0,1);
 		--boxShadow: 2px 2px 10px 2px rgba(0,0,0,0.1);
+
+		--secondaryBoxBackground: #{$gray_dark};
+
+		/** Modal **/
+		--shroudBackground: rgba(0,0,0,0.6);
 }

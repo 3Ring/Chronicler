@@ -21,7 +21,7 @@
 
 
     {% if current_user.is_authenticated%}
-
+<div class="container">
     <div class="app-container">
         {% if games or dm_games %}
             <h1>Your Games:</h1>
@@ -36,7 +36,10 @@
                         <ul>
                             {% for game in dm_games %}
                             <li>
-                                <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}">{{game.name}}</a>
+                                <a href="{{ url_for('main.notes', id=game.id) }}">
+                                    <img class="index_game_image" src="{{game.image}}">
+                                    {{game.name}}
+                                </a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -49,7 +52,10 @@
                         <ul>
                             {% for game in games %}
                             <li>
-                                <a href="{{ url_for('main.notes', id=game.id) }}"><img class="index_game_image" src="{{game.image}}">{{game.name}}</a>
+                                <a href="{{ url_for('main.notes', id=game.id) }}">
+                                    <img class="index_game_image" src="{{game.image}}">
+                                    {{game.name}}
+                                </a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -75,6 +81,6 @@
             </a>
         </div>
     </div>
-
+</div>
     {% endif %}
 {% endblock %}
