@@ -192,7 +192,7 @@ def create():
             print(upload_name, '\n\n')
             if type(image_id) != int:
                 flash(image_id)
-                redirect("/create")
+                return redirect("/create")
             game=Games(name=gameform.name.data, dm_id=current_user.id, img_id=image_id, published=gameform.published.data)
         else:
             game=Games(name=gameform.name.data, dm_id=current_user.id, published=gameform.published.data)
@@ -234,7 +234,7 @@ def notes(id):
             for session in session_titles:
                 session.number=str(session.number)
     
-    
+
     js_logs = {}
     for session in logs:
         if type(logs[session]) == list:

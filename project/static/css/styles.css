@@ -1137,3 +1137,18 @@ nav ul:last-child li:first-child a {
   box-shadow: var(--boxShadow);
   flex-grow: 1;
 }
+
+/* editor font sizes */
+/* 
+*/
+.ql-size-small {
+  font-size: small;
+}
+
+.ql-size-large {
+  font-size: large;
+}
+
+.ql-size-huge {
+  font-size: xx-large;
+}
