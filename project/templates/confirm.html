@@ -9,11 +9,11 @@
 <h2>confirm you wish to permanently delete {{ name }} by typing {{ name }} below</h2>
 <div class="shadow p-3 mb-5 bg-body rounded">
 	<form method='POST' action='/confirm  '>
-		<div>
+		<div class="row">
 			{{ form.todelete.label(class="form-label") }}
 			{{ form.todelete(class="form-control") }}	
 		</div>
-		<div class="button-row">
+		<div class="row button-row">
 			{{ form.confirm (class="button primary")}} 
 			{{ form.cancel (class="button secondary")}}
 		</div>

@@ -294,17 +294,18 @@ form {
   -webkit-box-shadow: var(--boxShadow);
   box-shadow: var(--boxShadow);
 }
-form div {
+form .row {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
   flex-grow: 1;
 }
-form div.checkbox, form div.radio, form div.button-row {
+form .row.checkbox, form .row.radio, form .row.button-row {
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: nowrap;
 }
 form h1 {
   font-family: "Urbanist", sans-serif;
@@ -1137,18 +1138,98 @@ nav ul:last-child li:first-child a {
   box-shadow: var(--boxShadow);
   flex-grow: 1;
 }
-
-/* editor font sizes */
-/* 
-*/
-.ql-size-small {
-  font-size: small;
+.notes-container .notes > h2 {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+}
+.notes-container .notes > h2 b,
+.notes-container .notes > h2 strong {
+  font-weight: 700;
+}
+.notes-container .notes > h2 em, .notes-container .notes > h2 i {
+  font-style: italic;
+}
+.notes-container .notes > h2 strong i,
+.notes-container .notes > h2 strong em,
+.notes-container .notes > h2 b i,
+.notes-container .notes > h2 b em {
+  font-weight: 700;
+  font-style: italic;
 }
 
-.ql-size-large {
-  font-size: large;
+form.wysiwyg {
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  margin: 0;
+}
+@media screen and (min-width: 31.25em) {
+  form.wysiwyg {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+form.wysiwyg .form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+form.wysiwyg .ql-toolbar {
+  display: flex;
+  align-items: baseline;
+}
+form.wysiwyg .ql-toolbar button {
+  margin: 0;
+  padding: 0;
+}
+form.wysiwyg .ql-container {
+  height: var(--xxxl);
+}
+form.wysiwyg p {
+  text-align: left;
 }
 
-.ql-size-huge {
-  font-size: xx-large;
+.session-container > h2 {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  color: var(--headlineColor);
+  font-family: "Grenze Gotisch", cursive;
+  margin: var(--sm) 0 var(--lg) 0;
+}
+.session-container > h2 b,
+.session-container > h2 strong {
+  font-weight: 700;
+}
+.session-container > h2 em, .session-container > h2 i {
+  font-style: italic;
+}
+.session-container > h2 strong i,
+.session-container > h2 strong em,
+.session-container > h2 b i,
+.session-container > h2 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.note_list li {
+  padding: var(--xs) 0;
+  border: var(--border);
+}
+.note_list .edit-note {
+  display: none;
+  width: var(--lg);
+}
+.note_list .span_cont:hover .edit-note {
+  display: flex;
 }

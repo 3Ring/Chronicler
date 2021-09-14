@@ -12,19 +12,19 @@
             {% endif %}
             {% endwith %}
             {{ form.hidden_tag() }}
-            <div>
+            <div class="row">
                 {{ form.email.label(class="form-label") }}
                 {{ form.email(class="form-control") }}
             </div>
-            <div>
+            <div class="row">
                 {{ form.password.label(class="form-label") }}
                 {{ form.password(class="form-control") }}
             </div>
-            <div class="checkbox">
+            <div class="checkbox row">
                 {{ form.remember }}
                 {{ form.remember.label(class="form-label") }}
             </div>
-            <div>
+            <div class="row">
                 {{ form.submit(class="button primary") }}
             </div>
             <h6>Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a></h6>

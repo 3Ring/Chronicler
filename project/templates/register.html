@@ -30,28 +30,28 @@
             {% endfor %}
 
             {{ form.hidden_tag() }}
-            <div>
+            <div class="row">
                 {{ form.name.label(class="form-label") }}
                 {{ form.name(class="form-control") }}
             </div>
-            <div>
+            <div class="row">
                 {{ form.email.label(class="form-label") }}
                 {{ form.email(class="form-control") }}
             </div>
-            <div>
+            <div class="row"
                 {{ form.hash.label(class="form-label") }}
                 {{ form.hash(class="form-control") }}
             </div>
             
-            <div>
+            <div class="row">
                 {{ form.confirm.label(class="form-label") }}
                 {{ form.confirm(class="form-control") }}
                 
             </div>
-            <div class="checkbox">
+            <div class="row checkbox">
                 {{ form.reveal }} {{ form.reveal.label}}
             </div>
-            <div>
+            <div class="row">
                 {{ form.usersubmit(class="btn btn-secondary") }}
             </div>
             <h6>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h6>

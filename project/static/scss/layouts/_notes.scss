@@ -90,6 +90,77 @@
         box-shadow: var(--boxShadow);
         flex-grow: 1;
 
-        
+        > h2 {
+            @include size-5();
+        }
+    }
+}
+
+form.wysiwyg {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin: 0;
+
+    @media screen and (min-width: $break1) {
+        grid-template-columns: 2fr 1fr;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .ql-toolbar {
+        display: flex;
+        align-items: baseline;
+
+        button {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    .ql-container {
+        height: var(--xxxl);
+    }
+
+    p {
+        text-align: left;
+    }
+
+}
+
+.session-container {
+    > h2 {
+        @include size-3();
+        font-family: $display;
+        margin: var(--sm) 0 var(--lg) 0;
+    }
+}
+
+.note_list {
+
+    li {
+        padding: var(--xs) 0;
+        border: var(--border);
+    }
+
+    .edit-note {
+        display: none;
+        width: var(--lg);
+    }
+    .span_cont {
+        &:hover {
+            .edit-note {
+                display: flex;
+                
+            }
+        }
     }
 }
