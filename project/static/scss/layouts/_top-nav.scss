@@ -7,10 +7,17 @@
 nav {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	width: 100%;
 
 	a {
 		@include size-5();
+
+		&.home-logo {
+			@include size-2();
+			color: var(--reverse);
+			text-shadow: var(--textShadow);
+		}
 	}
 
 	ul {
@@ -24,10 +31,19 @@ nav {
 		&:last-child {
 			li {
 				margin-left: var(--sm);
+
+				a {
+					@include size-5();
+					text-transform: uppercase;
+					font-weight: 700;
+				}
+
+				&:first-child {
+					a {
+						color: var(--reverse);
+					}
+				}
 			}
-		}
-
-		
+		}		
 	}
-
 }

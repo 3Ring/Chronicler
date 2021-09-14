@@ -7,11 +7,12 @@
 
 %button {
 
-  @include size-5();
+  @include size-3();
+  font-family: $display;
+  font-weight: 400;
   min-width: 0 !important;
   margin: 0;
   display: inline-block;
-  padding: $xs $lg;
   padding: var(--xs) var(--lg);
   text-decoration: none;
   text-align: center;

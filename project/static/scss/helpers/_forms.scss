@@ -8,6 +8,11 @@ form {
     display: flex;
     flex-direction: column;
     gap: var(--md);
+    background: var(--formBackground);
+    padding: var(--sm) var(--lg);
+    border-radius: var(--boxBorderRadius);
+    -webkit-box-shadow: var(--boxShadow);
+    box-shadow: var(--boxShadow);
 
     div {
         display: flex;
@@ -16,16 +21,38 @@ form {
         width: 100%;
         flex-grow: 1;
 
-        &.checkbox, &.radio, &.button-row {
-          flex-direction: row;
-          align-items: center;
-          justify-content: flex-start;
+        &.checkbox,
+        &.radio,
+        &.button-row {
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
         }
     }
-}
 
-form p {
-    color: tomato;
+    h1 {
+        @include size-2();
+        font-family: $display;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    h6 {
+        text-align: center;
+        @include size-5();
+    }
+
+    p {
+        @include size-5();
+        color: var(--copyColor);
+        margin: 0;
+        text-align: center;
+    }
+
+    a {
+        color: var(--linkColor);
+        font-weight: 700;
+    }
 }
 
 /* ------------------- */
@@ -43,17 +70,12 @@ textarea {
     color: inherit;
     font: inherit;
     margin: 0;
-    margin-top: 0.5em;
+    margin-top: var(--sm);
 }
 
 label {
     display: block;
     @include size-5();
-}
-
-input[type="radio"]+label,
-input[type="checkbox"]+label {
-    font-weight: 400;
 }
 
 button,
@@ -80,15 +102,16 @@ textarea {
 }
 
 select {
-    border: 1px solid #ccc;
-    background-color: #fff;
+    border: var(--inputBorderColor);
+    background-color: var(--inputBackground);
+    color: var(--inputTextColor);
 }
 
 input[type=checkbox],
 input[type=radio] {
     box-sizing: border-box;
     padding: 0;
-    margin: var(--sm);
+    margin: 0 var(--xs) 0 0;
 }
 
 input[type=search] {
@@ -121,16 +144,22 @@ select[_moz-type="-mozilla-keygen"],
 keygen::-webkit-keygen-select,
 select,
 textarea {
-    border: 1px solid #ccc;
-    box-shadow: inset 0 1px 3px #ddd;
-    border-radius: 2px;
+    font-family: $sans;
+    border: 1px solid var(--inputBorderColor);
     vertical-align: middle;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     max-width: 100%;
-    padding: 0.5em 0.6em;
-    margin-bottom: 0.5em;
+    padding: var(--xxs) var(--xs);
+    margin: 0;
+    background: var(--inputBackground);
+    color: var(--inputTextColor);
+    color: white;
+
+    &:focus {
+        outline: 2px solid var(--inputFocusBorder);
+    }
 }
 
 input[type=color] {
@@ -155,49 +184,19 @@ input[type=color] {
 input[type=file]:focus,
 input[type=radio]:focus,
 input[type=checkbox]:focus {
-    outline: 1px auto #129FEA;
+    //outline: 1px auto #129FEA;
 }
 
-input[readonly],
-select[readonly],
-textarea[readonly] {
-    background-color: #eee;
-    color: #777;
-    border-color: #ccc;
-}
+// input[readonly],
+// select[readonly],
+// textarea[readonly] {
+//     background-color: #eee;
+//     color: #777;
+//     border-color: #ccc;
+// }
 
-input:focus:invalid,
-textarea:focus:invalid,
-select:focus:invalid {
-    color: #b94a48;
-    border-color: #e9322d;
-}
+*:focus {
 
-input[type=file]:focus:invalid:focus,
-input[type=radio]:focus:invalid:focus,
-input[type=checkbox]:focus:invalid:focus {
-    outline-color: #e9322d;
-}
+    outline: none;
 
-
-/* Style your form buttons. Follow your heart */
-
-input[type="submit"],
-input[type="reset"],
-input[type="button"],
-button {
-    display: inline-block;
-    padding: 8px 12px;
-    color: white;
-    background-color: tomato;
-    border: 0;
-    cursor: pointer;
-    transition: all 300ms ease;
-}
-
-input[type="submit"]:hover,
-input[type="reset"]:hover,
-input[type="button"]:hover,
-button:hover {
-    background-color: royalblue;
 }

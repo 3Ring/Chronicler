@@ -9,24 +9,41 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 100vh;
+    background: var(--mainBackground);
+    background-size: cover;
 
     >header {
         padding: var(--sm);
-    	background: var(--headerBackground);
-    	width: 100%;
+        width: 100%;
     }
 
     >main {
-    	width: 100%;
-        background: $test;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
         min-height: 100%;
         flex-grow: 1;
-        background: var(--mainBackground);
+
+        >.container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: var(--sm);
+
+            max-width: $break2;
+
+            @media screen and (min-width: $break1) {
+                margin: var(--xl);
+            }
+        }
     }
 
     >footer {
-    	background: var(--footerBackground);
-    	width: 100%;
+        width: 100%;
     }
 
     .container {
@@ -34,6 +51,7 @@
         flex-wrap: wrap;
         align-items: center;
         width: 100%;
+        min-height: 100%;
 
         max-width: $break2;
 
@@ -41,29 +59,6 @@
             margin: 0 auto;
         }
     }
-
-    .center-container {
-        display: flex;
-        width: 100%;
-        min-height: 100%;
-        align-items: center;
-        justify-content: center;
-
-        h1 {
-            @include size-1();
-        }
-        h2 {
-            @include size-5();
-        }
-    }
-
-    .form-container {
-        padding: var(--xxl);
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
 
     .find_create_container {
         padding: var(--xxl);
@@ -74,7 +69,7 @@
             grid-template-columns: 1fr 1fr;
             grid-gap: var(--md);
         }
-        
+
     }
 
 }

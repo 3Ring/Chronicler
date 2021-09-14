@@ -1,21 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="center-container">
-    <div>
-        <h1>Login</h1>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert {{ fail }} alert-dismissible fade show" role="alert">
-            <div>
-                {{ messages[0] }}
-            </div>
-        </div>
-        {% endif %}
-        {% endwith %}
-        <h2>Don't have an account? <a href="{{ url_for('auth.register') }}">Make one!</a></h2>
-    </div>
+
     <div class="form-container">
         <form method="POST" action="/login">
+            <h1>Log In</h1>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <p>
+                {{ messages[0] }}
+            </p>
+            {% endif %}
+            {% endwith %}
             {{ form.hidden_tag() }}
             <div>
                 {{ form.email.label(class="form-label") }}
@@ -32,8 +27,8 @@
             <div>
                 {{ form.submit(class="button primary") }}
             </div>
+            <h6>Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a></h6>
         </form>
     </div>
-</div>
     
 {% endblock %}
