@@ -4,47 +4,43 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <!-- <script src="{{ url_for('static', filename='js/notes.js') }}"></script> -->
 <script type="text/javascript" charset="utf-8">
+
 const socket = io();
 
 // Variables
-var context_menu_class_name = "note_edit_menu_link",
-    context_menu_prefix = "note_edit_menu_",
-    context_menu_name = "note_edit_menu"
+var context_menu_class_name = "note_edit_menu_link"
+, context_menu_prefix = "note_edit_menu_"
+, context_menu_name = "note_edit_menu"
 
-    ,
-    edit_form_class_name = "edit_form",
-    edit_form_prefix = "edit_form_",
-    edit_form_text_prefix = "form_text_",
-    edit_form_private_prefix = "change_private_",
-    edit_form_in_character_prefix = "make_in_character_"
+, edit_form_class_name = "edit_form"
+, edit_form_prefix = "edit_form_"
+, edit_form_text_prefix = "form_text_"
+, edit_form_private_prefix = "change_private_"
+, edit_form_in_character_prefix = "make_in_character_"
 
-    ,
-    hidden_class_name = "hidden",
-    active_class_name = "--active",
-    inner_id_prefix = "inner_",
-    image_class_name = "note_edit_button",
-    new_session_form_game_id = "new_session_form_game_id",
-    menu_deployed = false
+, hidden_class_name = "hidden"
+, active_class_name = "--active"
+, inner_id_prefix = "inner_"
+, image_class_name = "note_edit_button"
+, new_session_form_game_id = "new_session_form_game_id"
+, menu_deployed = false
 
-    ,
-    new_session_form_container_id = "new_session_cont",
-    new_session_button_id = "new_session_button",
-    new_session_form_id = "new_session_form",
-    new_session_form_number_id = "new_session_form_number",
-    new_session_form_title_id = "new_session_form_title",
-    new_session_form_synopsis_id = "new_session_form_synopsis",
-    new_session_form_cancel_id = "cancel_new_session"
+, new_session_form_container_id = "new_session_cont"
+, new_session_button_id = "new_session_button"
+, new_session_form_id = "new_session_form"
+, new_session_form_number_id = "new_session_form_number"
+, new_session_form_title_id = "new_session_form_title"
+, new_session_form_synopsis_id = "new_session_form_synopsis"
+, new_session_form_cancel_id = "cancel_new_session"
 
-    ,
-    quill_form_id = "test_form_quill",
-    new_note_form_id = "test_form_quill",
-    form_container_id = "test_form_quill";
+, quill_form_id = "test_form_quill"
+, new_note_form_id = "test_form_quill"
+, form_container_id = "test_form_quill";
 
 var test_form = document.getElementById(quill_form_id)
 
-    ,
-    form = document.getElementById(form_container_id),
-    about = document.querySelector('input[name=about]');
+, form = document.getElementById(form_container_id)
+, about = document.querySelector('input[name=about]');
 console.log("test_form: ", user_id, game_id, test_form, form, about)
 
 
@@ -56,7 +52,7 @@ console.log("test_form: ", user_id, game_id, test_form, form, about)
 // display new session card
 socket.on('fill_new_session', function(new_card, number) {
     session_cards = document.getElementById('Session Cards')
-    session_cards.insertAdjacentHTML('afterbegin', new_card)
+    session_cards.insertAdjacentHTML('beforeend', new_card)
 });
 
 
@@ -92,10 +88,10 @@ function edit_note_func(id_num) {
     // send data to server
     let form = document.getElementById(edit_form_prefix + id_num);
     let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
-        note_private = document.getElementById(edit_form_private_prefix + id_num).value,
-        note_in_character = "False",
-        user_id = { { current_user.id } },
-        game_id = { { id } };
+    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
+    note_in_character = "False",
+    user_id = {{current_user.id}},
+    game_id = {{id}};
     socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
 
     // removal of form logic
@@ -107,19 +103,19 @@ function edit_note_func(id_num) {
     return false;
 };
 
-function click_inside_element(e, className) {
-    var el = e.srcElement || e.target;
+function click_inside_element( e, className ) {
+  var el = e.srcElement || e.target;
 
-    if (el.classList.contains(className)) {
+  if ( el.classList.contains(className) ) {
+    return el;
+  } else {
+    while ( el = el.parentNode ) {
+      if ( el.classList && el.classList.contains(className) ) {
         return el;
-    } else {
-        while (el = el.parentNode) {
-            if (el.classList && el.classList.contains(className)) {
-                return el;
-            }
-        }
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 function toggle_menu_off() {
@@ -166,13 +162,13 @@ function toggle_form_off(id_num) {
     form.classList.add(hidden_class_name);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() { 
 
     // set the values of the checkboxes based on whether they are checked or not
     let checkboxes = document.getElementsByClassName("note_checkbox")
 
     for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].onclick = function() {
+        checkboxes[i].onclick = function () {
             if (checkboxes[i].checked) {
                 checkboxes[i].value = 'True';
             } else {
@@ -181,17 +177,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    { % if current_user.id == dmid % }
+    {% if current_user.id == dm_id %}
     // New Session form functions:
     // variables
-    let form_container = document.getElementById(new_session_form_container_id),
-        new_session_button = document.getElementById(new_session_button_id),
-        cancel_button = document.getElementById(new_session_form_cancel_id),
-        new_session_form = document.getElementById(new_session_form_id),
-        game_id_input_element = document.getElementById(new_session_form_game_id),
-        number_input_element = document.getElementById(new_session_form_number_id),
-        title_input_element = document.getElementById(new_session_form_title_id),
-        synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
+    let form_container = document.getElementById(new_session_form_container_id)
+    , new_session_button = document.getElementById(new_session_button_id)
+    , cancel_button = document.getElementById(new_session_form_cancel_id)
+    , new_session_form = document.getElementById(new_session_form_id)
+    , game_id_input_element = document.getElementById(new_session_form_game_id)
+    , number_input_element = document.getElementById(new_session_form_number_id)
+    , title_input_element = document.getElementById(new_session_form_title_id)
+    , synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
 
     // create form for making new session card
     new_session_button.onclick = function() {
@@ -200,21 +196,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // function to remove new session form and add the button back
-    var cancel_new_session_func = function() {
+    var cancel_new_session_func = function () {
         form_container.classList.add(hidden_class_name);
         new_session_button.classList.remove(hidden_class_name);
     }
     // remove form if cancel button is clicked
     cancel_button.onclick = function() {
         cancel_new_session_func();
-    }
+    } 
 
     // capture and send new session to server
     new_session_form.addEventListener("submit", function() {
         // ensure that form is filled out correctly
         console.log("on_submit")
         if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
-            if (!document.getElementById("session_card_" + number_input_element.value)) {
+            if (!document.getElementById("session_card_"+number_input_element.value)) {
                 socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
                 cancel_new_session_func();
                 return false;
@@ -226,20 +222,21 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("Must fill out required fields");
             return false;
         }
-    }) { % endif % }
+    })
+    {% endif %}
 
     // New Note form functions:
     // Variables
-    let new_note_form = document.getElementById(new_note_form_id),
-        new_note_form_private = document.getElementById('note_private');
+    let new_note_form = document.getElementById(new_note_form_id)
+    , new_note_form_private = document.getElementById('note_private');
 
 
     // capture and send new note to server
     new_note_form.addEventListener("submit", function(event) {
         event.preventDefault();
-        let new_note_html = quill.root.innerHTML,
-            new_note_private = new_note_form_private.value,
-            new_note_in_character = "False";
+        let new_note_html = quill.root.innerHTML
+        , new_note_private = new_note_form_private.value
+        , new_note_in_character = "False";
 
         if (quill.getText() == '\n') {
             alert("note cannot be empty");
@@ -247,7 +244,13 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             console.log("note form submit")
             console.log("note form submit", user_id, game_id, new_note_html, new_note_private, new_note_in_character)
-            socket.emit('send_new_note', user_id, game_id, new_note_html, new_note_private, new_note_in_character)
+            socket.emit('send_new_note'
+                , user_id
+                , game_id
+                , new_note_html
+                , new_note_private
+                , new_note_in_character
+            )
             return false
         }
     });
@@ -256,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let forms = document.getElementsByClassName(edit_form_class_name);
     for (let i = 0; i < forms.length; i++) {
         let id_num = find_id(forms[i].id);
-        forms[i].addEventListener("submit", function() {
+        forms[i].addEventListener("submit", function () {
             edit_note_func(id_num)
         })
     }
@@ -264,14 +267,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // Core functions
     function click_listener() {
         document.addEventListener("click", function(e) {
-            if (click_inside_element(e, image_class_name)) {
+            if (click_inside_element( e, image_class_name )) {
                 if (menu_deployed == false) {
                     let context_menu_element = document.getElementById(context_menu_prefix + e.target.id);
                     toggle_menu_on(context_menu_element);
-                }
-            } else if (click_inside_element(e, context_menu_name)) {
-                if (click_inside_element(e, context_menu_class_name)) {
-                    if (e.target.getAttribute("data-action") == "edit") {
+                } 
+            } else if (click_inside_element( e, context_menu_name )) {
+                if (click_inside_element( e, context_menu_class_name )) {
+                    if ( e.target.getAttribute("data-action") == "edit" ) {
                         toggle_menu_off();
                         let id_num = find_id(e.target.id);
                         toggle_form_on(id_num);
@@ -286,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     }
 
-    function init() {
+    function init () {
         click_listener();
     }
 
@@ -295,35 +298,37 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 
-var user_id = { { current_user.id } },
-    game_id = { { id } };
+var user_id={{current_user.id}}
+, game_id={{id}};
 
-js_dict = JSON.parse({ { js_note_dict | tojson } })
+js_dict = JSON.parse({{js_note_dict|tojson }})
 console.log("js_dict", js_dict)
 
 document.addEventListener("DOMContentLoaded", function() {
     // set new notes to populate (doing this because wysiwig fomatting doesn't work otherwise)
-    let note_session = 0,
-        note_id_index = 0,
-        note_note_index = 1; { % for session in session_titles % }
-    if (note_session == { { session.number } }) {} else { note_session = { { session.number } } }
+    let note_session = 0
+    , note_id_index = 0
+    , note_note_index = 1;
+    {% for session in session_titles %}
+    if (note_session == {{session.number}}) {} else { note_session = {{session.number}} }
     for (let i = 0; i < js_dict[note_session].length; i++) {
-        let note_id = (inner_id_prefix + js_dict[note_session][i][note_id_index]),
-            note_note = js_dict[note_session][i][note_note_index],
-            note_element = document.getElementById(note_id);
+        let note_id = (inner_id_prefix + js_dict[note_session][i][note_id_index])
+        , note_note = js_dict[note_session][i][note_note_index]
+        , note_element = document.getElementById(note_id);
         note_element.innerHTML = note_note
-    } { % endfor % }
+    }
+    {% endfor %}
 
     // New Session form functions:
     // variables
-    let form_container = document.getElementById(new_session_form_container_id),
-        new_session_button = document.getElementById(new_session_button_id),
-        cancel_button = document.getElementById(new_session_form_cancel_id),
-        new_session_form = document.getElementById(new_session_form_id),
-        game_id_input_element = document.getElementById(new_session_form_game_id),
-        number_input_element = document.getElementById(new_session_form_number_id),
-        title_input_element = document.getElementById(new_session_form_title_id),
-        synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
+    let form_container = document.getElementById(new_session_form_container_id)
+    , new_session_button = document.getElementById(new_session_button_id)
+    , cancel_button = document.getElementById(new_session_form_cancel_id)
+    , new_session_form = document.getElementById(new_session_form_id)
+    , game_id_input_element = document.getElementById(new_session_form_game_id)
+    , number_input_element = document.getElementById(new_session_form_number_id)
+    , title_input_element = document.getElementById(new_session_form_title_id)
+    , synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
 
     // create form for making new session card
     new_session_button.onclick = function() {
@@ -332,21 +337,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // function to remove new session form and add the button back
-    var cancel_new_session_func = function() {
+    var cancel_new_session_func = function () {
         form_container.classList.add(hidden_class_name);
         new_session_button.classList.remove(hidden_class_name);
     }
     // remove form if cancel button is clicked
     cancel_button.onclick = function() {
         cancel_new_session_func();
-    }
+    } 
 
     // capture and send new session to server
     new_session_form.addEventListener("submit", function() {
         // ensure that form is filled out correctly
         console.log("on_submit")
         if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
-            if (!document.getElementById("session_card_" + number_input_element.value)) {
+            if (!document.getElementById("session_card_"+number_input_element.value)) {
                 socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
                 cancel_new_session_func();
                 return false;
@@ -363,8 +368,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <div class="game-container">
     <div class="container">
-        <h1>The Name Of The Game</h1>
-        {% if dmid == current_user.id %}
+        <h1>{{ game_name }}</h1>
+        {% if dm_id == current_user.id %}
         <div class="new-session">
             <button class="button primary" id='new_session_button'>Start a new session?</button>
         </div>
@@ -374,28 +379,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h2>Session Log</h2>
             </div>
             <div class="notes">
-                <h2>Add a new note:</h2>
+                <h2>Notes</h2>
                 <div class="comment-container">
-                    <form id="test_form_quill" class="wysiwyg">
+                    <form id="test_form_quill">
                         <div class="form-group">
-                            
-                            <input name="about" type="hidden" style="z-index: 101;">
-                            <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-                            <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-                            <div id="editor">
-                            </div>
-
+                        <div class="checkbox">
+                            <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
+                            <label for='note_private'>Note is private(The GM will still be able to see it):</label>
                         </div>
-                        <div class="form-group">
-                            <div class="row checkbox">
-                                <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
-                                <label for='note_private'>Note is private (The GM will still be able to see it):</label>
-                            </div>
-                            <div class="row button-row">
-                                <button class="button primary" type="submit">Submit</button>
-                            </div>
+                        <input name="about" type="hidden" style="z-index: 101;">
+                        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+                        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+                        <div id="editor">
                         </div>
-                            
+                        </div>
+                        <div class="button-row">
+                            <button class="button primary" type="submit">Submit</button>
+                        </div>
                     </form>
                 </div>
                 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     {% if session_titles %}
                     <!-- Session Title Cards -->
                     {% for session in session_titles %}
-                    <div class="session-container" id="session_header_{{session.id}}">
+                    <div class="" id="session_header_{{session.id}}">
                         <h2>Session {{session.number}}: {{session.title}}</h2>
                         <div id="session_card_{{session.number}}">
                             <!-- Session Notes -->
@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </span>
                                         {% if note.user_id == current_user.id %}
                                         <!-- Edit Button -->
-                                        <a class="edit-note" id='edit_{{note.id}}'>
+                                        <a id='edit_{{note.id}}'>
                                             <img id='{{note.id}}' class='note_edit_button' src={{edit_img}}>
                                         </a>
                                         <form class='hidden edit_form' id="edit_form_{{ note.id }}">
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 </div>
-{% if dmid == current_user.id %}
+{% if dm_id == current_user.id %}
 <div id="new_session_cont" class="hidden" style="z-index: 100;">
     <div class="modal-container">
         <div class="modal">
