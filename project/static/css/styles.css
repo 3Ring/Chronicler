@@ -19,7 +19,6 @@ input[type=submit], .button {
   font-size: 1.763em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   font-weight: 400;
@@ -300,7 +299,6 @@ p {
   font-size: 0.688em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
 }
 p b,
 p strong {
@@ -354,7 +352,6 @@ form h1 {
   font-size: 2.25em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   font-weight: 500;
@@ -388,7 +385,6 @@ form h6 {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
 }
 form h6 b,
 form h6 strong {
@@ -412,7 +408,6 @@ form p {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
   color: var(--copyColor);
   margin: 0;
   text-align: center;
@@ -461,7 +456,6 @@ label {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
 }
 label b,
 label strong {
@@ -665,7 +659,6 @@ nav a {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
 }
 nav a b,
 nav a strong {
@@ -688,7 +681,6 @@ nav a.home-logo {
   font-size: 2.25em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   color: var(--reverse);
   text-shadow: var(--textShadow);
@@ -729,7 +721,6 @@ nav ul:last-child li a {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
-  max-width: 75ch;
   text-transform: uppercase;
   font-weight: 700;
 }
@@ -769,7 +760,6 @@ nav ul:last-child li:first-child a {
   font-size: 2.25em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   font-weight: 700;
@@ -808,56 +798,6 @@ nav ul:last-child li:first-child a {
     grid-gap: var(--sm) var(--sm);
   }
 }
-.app-container .games .game h2 {
-  font-family: "Urbanist", sans-serif;
-  font-weight: 500;
-  font-stretch: normal;
-  font-size: 1.763em;
-  letter-spacing: -0.019em;
-  line-height: 1.085;
-  max-width: 35ch;
-  color: var(--headlineColor);
-  font-family: "PT Serif", serif;
-  font-weight: 700;
-}
-.app-container .games .game h2 b,
-.app-container .games .game h2 strong {
-  font-weight: 700;
-}
-.app-container .games .game h2 em, .app-container .games .game h2 i {
-  font-style: italic;
-}
-.app-container .games .game h2 strong i,
-.app-container .games .game h2 strong em,
-.app-container .games .game h2 b i,
-.app-container .games .game h2 b em {
-  font-weight: 700;
-  font-style: italic;
-}
-.app-container .games .game p {
-  font-family: "Urbanist", sans-serif;
-  color: var(--copyColor);
-  font-weight: 500;
-  font-stretch: normal;
-  font-size: 1em;
-  letter-spacing: 0;
-  line-height: 1.333;
-  max-width: 75ch;
-}
-.app-container .games .game p b,
-.app-container .games .game p strong {
-  font-weight: 700;
-}
-.app-container .games .game p em, .app-container .games .game p i {
-  font-style: italic;
-}
-.app-container .games .game p strong i,
-.app-container .games .game p strong em,
-.app-container .games .game p b i,
-.app-container .games .game p b em {
-  font-weight: 700;
-  font-style: italic;
-}
 .app-container .games .game ul {
   display: flex;
   width: 100%;
@@ -888,7 +828,6 @@ nav ul:last-child li:first-child a {
   font-size: 1.763em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   color: var(--copyColor);
@@ -915,6 +854,69 @@ nav ul:last-child li:first-child a {
   max-height: var(--xl);
   margin: 0 var(--sm) 0 0;
 }
+.app-container .game h2, .app-container .welcome h2 {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  color: var(--headlineColor);
+  font-family: "PT Serif", serif;
+  font-weight: 700;
+}
+.app-container .game h2 b,
+.app-container .game h2 strong, .app-container .welcome h2 b,
+.app-container .welcome h2 strong {
+  font-weight: 700;
+}
+.app-container .game h2 em, .app-container .game h2 i, .app-container .welcome h2 em, .app-container .welcome h2 i {
+  font-style: italic;
+}
+.app-container .game h2 strong i,
+.app-container .game h2 strong em,
+.app-container .game h2 b i,
+.app-container .game h2 b em, .app-container .welcome h2 strong i,
+.app-container .welcome h2 strong em,
+.app-container .welcome h2 b i,
+.app-container .welcome h2 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .game h2 span, .app-container .welcome h2 span {
+  font-family: "Grenze Gotisch", cursive;
+  font-weight: 900;
+}
+.app-container .game p, .app-container .welcome p {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+}
+.app-container .game p b,
+.app-container .game p strong, .app-container .welcome p b,
+.app-container .welcome p strong {
+  font-weight: 700;
+}
+.app-container .game p em, .app-container .game p i, .app-container .welcome p em, .app-container .welcome p i {
+  font-style: italic;
+}
+.app-container .game p strong i,
+.app-container .game p strong em,
+.app-container .game p b i,
+.app-container .game p b em, .app-container .welcome p strong i,
+.app-container .welcome p strong em,
+.app-container .welcome p b i,
+.app-container .welcome p b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .welcome {
+  text-align: center;
+}
 .app-container .new-game {
   display: flex;
   align-items: center;
@@ -928,7 +930,6 @@ nav ul:last-child li:first-child a {
   font-size: 1.763em;
   letter-spacing: -0.019em;
   line-height: 1.085;
-  max-width: 35ch;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   font-weight: 900;
