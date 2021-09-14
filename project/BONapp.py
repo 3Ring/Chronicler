@@ -211,6 +211,7 @@ def create():
 def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
+    print(Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all())
     game=Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all()[0]
     dm_id = game[0] 
     game_name = game[1]

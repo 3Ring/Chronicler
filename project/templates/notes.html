@@ -50,8 +50,8 @@ console.log("test_form: ", user_id, game_id, test_form, form, about)
 // 
 // 
 // display new session card
-socket.on('fill_new_session', function(new_card, number) {
-    session_cards = document.getElementById('Session Cards')
+socket.on('fill_new_session', function(new_card) {
+    session_cards = document.getElementById('Session Cards_' + number)
     session_cards.insertAdjacentHTML('beforeend', new_card)
 });
 
@@ -162,20 +162,60 @@ function toggle_form_off(id_num) {
     form.classList.add(hidden_class_name);
 }
 
-document.addEventListener("DOMContentLoaded", function() { 
 
-    // set the values of the checkboxes based on whether they are checked or not
-    let checkboxes = document.getElementsByClassName("note_checkbox")
-
+// Checkboxes
+// 
+//
+function set_true_checkboxes_to_checked() {
+    // find all checkboxes
+    let checkboxes = document.querySelectorAll("input[type='checkbox']");
+    
+    // make a list of the checkboxes that have a value of "True"
+    let checkboxes__true = [];
     for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].onclick = function () {
-            if (checkboxes[i].checked) {
-                checkboxes[i].value = 'True';
-            } else {
-                checkboxes[i].value = 'False';
-            }
+        if (checkboxes[i].value == "True") {
+            checkboxes__true.push(checkboxes[i])
         }
     }
+
+
+    // Set Checkboxes with a value of "True" to checked
+    for (let i = 0; i < checkboxes__true.length; i++) {
+        checkboxes__true[i].checked = true;
+    }
+}
+
+function change_checkbox_value_onClick() {
+    // find all checkboxes
+    var checkboxes = document.querySelectorAll("input[type='checkbox']");
+
+    // set click events
+    for (let i = 0; i < checkboxes.length; i++) {
+        console.log("setting", i)
+        checkboxes[i].addEventListener("click", function(event) {
+            // find event origin
+            let clicked = event.target;
+            console.log(clicked)
+
+            // change value to opposite of current
+            if (clicked.value == "True") {
+                clicked.value = "False";
+            } else {
+                clicked.value = "True";
+            }
+        })
+    }
+}
+
+function apply_checkbox_value_logic() {
+    set_true_checkboxes_to_checked();
+    change_checkbox_value_onClick();
+}
+
+document.addEventListener("DOMContentLoaded", function() { 
+
+    apply_checkbox_value_logic();
+
 
     {% if current_user.id == dm_id %}
     // New Session form functions:
@@ -349,7 +389,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // capture and send new session to server
     new_session_form.addEventListener("submit", function() {
         // ensure that form is filled out correctly
-        console.log("on_submit")
         if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
             if (!document.getElementById("session_card_"+number_input_element.value)) {
                 socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
@@ -373,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="new-session">
             <button class="button primary" id='new_session_button'>Start a new session?</button>
         </div>
-        {% endif %}
+{% endif %}
         <div class="notes-container">
             <div class="session-log">
                 <h2>Session Log</h2>
@@ -438,13 +477,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'>
                                             <input type='submit' value='submit'>
                                             <span class="checkbox_span">
-                                                <input type='checkbox' class="note_checkbox" id='change_private_{{note.id}}' value='{{ note.private }}'>
+                                                <input type='checkbox' class="" data-noteCheckbox="{{ note.private }}" value='{{ note.private }}'>
                                                 <label for='change_private_{{note.id}}'>
-                                                    Make Private?
+                                                    Private?
                                                 </label>
                                             </span>
                                             <span class="checkbox_span">
-                                                <input type='checkbox' class="note_checkbox" id='make_in_character_{{note.id}}' value='{{ note.in_character }}'>
+                                                <input type='checkbox' class="" data-noteCheckbox="{{ note.in_character }}" value='{{ note.in_character }}'>
                                                 <label for='make_in_character_{{note.id}}'>
                                                     Change to <i>in character?</i>
                                                 </label>
@@ -487,13 +526,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <input type='text' id="form_text_{{note_dict[session.number].id}}" value='{{ note_dict[session.number].note }}'>
                                             <input type='submit' value='submit'>
                                             <span class="checkbox_span"></span>
-                                            <input type='checkbox' class="note_checkbox" id='change_private_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].private }}'>
+                                            <input type='checkbox' data-noteCheckbox="{{ note_dict[session.number].in_character }}" value='{{ note_dict[session.number].private }}'>
                                             <label for='change_private_{{note_dict[session.number].id}}'>
-                                                Make Private?
+                                                Private?
                                             </label>
                                     </span>
                                     <span class="checkbox_span">
-                                        <input type='checkbox' class="note_checkbox" id='make_in_character_{{note_dict[session.number].id}}' value='{{ note_dict[session.number].in_character }}'>
+                                        <input type='checkbox' data-noteCheckbox="{{ note_dict[session.number].in_character }}" class="" value='{{ note_dict[session.number].in_character }}'>
                                         <label for='make_in_character_{{note_dict[session.number]}}'>
                                             Change to <i>in character?</i>
                                         </label>

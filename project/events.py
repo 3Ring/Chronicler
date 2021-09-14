@@ -2,6 +2,9 @@ from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
 from .helpers import validate as v
+# FE variables:
+classList__newSessionHeader = ""
+classList__newSessionCard = ""
 
 # variables
 class__buttonEdit = "note_edit_button"
@@ -12,8 +15,7 @@ imageLink__buttonEdit = "/static/images/edit_button_image.png"
 
 idPrefix__newSessionHeader = "session_header_"
 idPrefix__newSessionCard = "session_card_"
-classList__newSessionHeader = ""
-classList__newSessionCard = ""
+
 
 @socketio.on('send_new_session')
 def send_new_session(id, number, title, synopsis=None):

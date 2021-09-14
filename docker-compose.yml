@@ -5,7 +5,7 @@ services:
         image: postgres:9.6.23
         container_name: bonsqldb
         volumes: 
-            - bonvolume:/var/lib/postgresql/data
+            - bonvolume2:/var/lib/postgresql/data
         environment:
             POSTGRES_PASSWORD: ${SQL_ROOT_PASSWORD:-unsecured_password}
         ports:
@@ -27,8 +27,8 @@ services:
             - ./:/app
 
 volumes:
-    bonvolume:
-        name: bonvolume
+    bonvolume2:
+        name: bonvolume2
 
 networks: 
     default:
