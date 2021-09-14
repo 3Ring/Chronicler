@@ -52,7 +52,7 @@ console.log("test_form: ", user_id, game_id, test_form, form, about)
 // display new session card
 socket.on('fill_new_session', function(new_card, number) {
     session_cards = document.getElementById('Session Cards')
-    session_cards.insertAdjacentHTML('afterbegin', new_card)
+    session_cards.insertAdjacentHTML('beforeend', new_card)
 });
 
 
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    {% if current_user.id == dmid %}
+    {% if current_user.id == dm_id %}
     // New Session form functions:
     // variables
     let form_container = document.getElementById(new_session_form_container_id)
@@ -368,8 +368,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <div class="game-container">
     <div class="container">
-        <h1>The Name Of The Game</h1>
-        {% if dmid == current_user.id %}
+        <h1>{{ game_name }}</h1>
+        {% if dm_id == current_user.id %}
         <div class="new-session">
             <button class="button primary" id='new_session_button'>Start a new session?</button>
         </div>
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 </div>
-{% if dmid == current_user.id %}
+{% if dm_id == current_user.id %}
 <div id="new_session_cont" class="hidden" style="z-index: 100;">
     <div class="modal-container">
         <div class="modal">

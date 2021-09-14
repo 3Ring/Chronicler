@@ -211,7 +211,9 @@ def create():
 def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
-    dmid=Games.query.with_entities(Games.dm_id).filter_by(id=id).first()[0]
+    game=Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all()[0]
+    dm_id = game[0] 
+    game_name = game[1]
     logs = {}
     # query the notes and organize them by session in reverse order
     if session_titles == None:
@@ -245,16 +247,18 @@ def notes(id):
             js_logs[session] = [note.id, note.note]
     js_note_dict = json.dumps(js_logs)
 
-    return render_template('notes.html',
-        typ=type,
-        lis=list,
-        st=str,
-        js_note_dict=js_note_dict,
-        edit_img=imageLink__buttonEdit,
-        note_dict=logs,
-        id=id,
-        session_titles=session_titles,
-        dmid=dmid)
+    return render_template('notes.html'
+        , typ=type
+        , lis=list
+        , st=str
+        , js_note_dict=js_note_dict
+        , edit_img=imageLink__buttonEdit
+        , note_dict=logs
+        , id=id
+        , session_titles=session_titles
+        , dm_id=dm_id
+        , game_name=game_name
+    )
 
 @main.route('/profile')
 @login_required
