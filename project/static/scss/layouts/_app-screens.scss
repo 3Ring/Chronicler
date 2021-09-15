@@ -14,7 +14,8 @@
     -webkit-box-shadow: var(--boxShadow);
     box-shadow: var(--boxShadow);
 
-    min-width: 100%;
+    width: 100%;
+    max-width: 75em;
 
     h1 {
         @include size-2();

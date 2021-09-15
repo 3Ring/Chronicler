@@ -585,7 +585,7 @@ input[type=color] {
   justify-content: center;
   width: 100%;
   margin: var(--sm);
-  max-width: 120em;
+  max-width: 80em;
 }
 @media screen and (min-width: 31.25em) {
   .chronicler > main > .container, .chronicler > main .game-container > .container {
@@ -739,7 +739,8 @@ nav ul:last-child li:first-child a {
   border-radius: var(--boxBorderRadius);
   -webkit-box-shadow: var(--boxShadow);
   box-shadow: var(--boxShadow);
-  min-width: 100%;
+  width: 100%;
+  max-width: 75em;
 }
 .app-container h1 {
   font-family: "Urbanist", sans-serif;
