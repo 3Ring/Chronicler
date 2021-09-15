@@ -9,7 +9,7 @@
     {% endif %} -->
 
 
-    {% if current_user.is_authenticated%}
+{% if current_user.is_authenticated%}
 <div class="container">
     <div class="app-container">
 
@@ -30,12 +30,15 @@
 
         {% if games or dm_games %}
             <h1>Your Games:</h1>
+        {% else %}
+            <h1>Welcome!</h1>
         {% endif %}
 
-        {% if games or dm_games %}
-            <div class="games">
+        
+        <div class="games">
+            <div class="game">
                 {% if dm_games %}
-                    <div class="game">
+                    
                         <h2>Dungeon Master</h2>
                         <p>These are games you have created.</p>
                         <ul>
@@ -48,10 +51,17 @@
                             </li>
                             {% endfor %}
                         </ul>
-                    </div>
+                    
+                {% else %}
+
+                        <h2>Dungeon Master</h2>
+                        <p>You don't appear to have created any games yet.</p>
+
                 {% endif %}
+            </div>
+            <div class="game">
                 {% if games %}
-                    <div class="game">
+                    
                         <h2>Player</h2>
                         <p>These are games you have joined as a player.</p>
                         <ul>
@@ -64,28 +74,26 @@
                             </li>
                             {% endfor %}
                         </ul>
-                    </div>
-                {% endif %}
-            </div>
-            {% else %}
-            <div class="welcome">
-                <h2><span>Welcome!</span> </h2>
-                <p>You don't appear to have any games yet.</p>
-            </div>
-            
-        {% endif %}
+                {% else %}
 
-        <div class="new-game">
-            <a href="{{ url_for('main.join', id=0) }}">
-                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}"> -->
-                <span class="fas fa-search-location"></span> Find a Game
-            </a>
-            <a href="{{ url_for('main.create') }}">
+                        <h2>Player</h2>
+                        <p>You don't appear to have joined any games yet.</p>
+
+                {% endif %}
+                
+            </div>
+
+            <a class="new-game button primary" href="{{ url_for('main.create') }}">
                 <!-- <img class="index_start_image" src="{{url_for('static', filename='images/dm_games.jpeg')}}"> -->
                 <span class="far fa-plus-square"></span> Create a Game
             </a>
-        </div>
+
+            <a class="new-game button primary" href="{{ url_for('main.join', id=0) }}">
+                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}"> -->
+                <span class="fas fa-search-location"></span> Find a Game
+            </a>
+        </div>            
     </div>
 </div>
-    {% endif %}
+{% endif %}
 {% endblock %}
