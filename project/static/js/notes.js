@@ -1,5 +1,3 @@
-const socket = io();
-
 // Variables
 var context_menu_class_name = "note_edit_menu_link"
 , context_menu_prefix = "note_edit_menu_"
@@ -9,46 +7,60 @@ var context_menu_class_name = "note_edit_menu_link"
 , edit_form_prefix = "edit_form_"
 , edit_form_text_prefix = "form_text_"
 , edit_form_private_prefix = "change_private_"
-, edit_form_in_character_prefix = "make_in_character_"
 
-, hidden_class_name = "hidden"
-, active_class_name = "--active"
+, className__hidden = "hidden"
+, active_class_name = "active"
 , inner_id_prefix = "inner_"
 , image_class_name = "note_edit_button"
 , new_session_form_game_id = "new_session_form_game_id"
 , menu_deployed = false
 
-, new_session_form_container_id = "new_session_cont"
-, new_session_button_id = "new_session_button"
-, new_session_form_id = "new_session_form"
-, new_session_form_number_id = "new_session_form_number"
-, new_session_form_title_id = "new_session_form_title"
-, new_session_form_synopsis_id = "new_session_form_synopsis"
-, new_session_form_cancel_id = "cancel_new_session"
+, flag__formEdit_form = "form[data-flag='formEdit']"
 
-, new_note_form_id = "new_note_form"
+, flag__formNewSession_container = "div[data-flag='formNewSession_container']"
+, flag__button_newSessionDisplay = "button[data-flag='button_newSessionDisplay']"
+, flag__formNewSession_form = "form[data-flag='formNewSession_form']"
+, flag__formNewSession_inputSessionNumber = "input[data-flag='formNewSession_inputSessionNumber']"
+, flag__formNewSession_inputSessionTitle = "input[data-flag='formNewSession_inputSessionTitle']"
+, flag__formNewSession_inputSessionSynopsis = "input[data-flag='formNewSession_inputSessionSynopsis"
+, flag__formNewSession_buttonCancel = "input[data-flag='formNewSession_buttonCancel']"
+, flag__formNewSession_idGame = "input[data-flag='formNewSession_idGame']"
+, flag__newQuill_formSession = "form[data-flag='newQuill_FormSession']"
+
+, flag__newQuillPrivate = "input[data-flag='newQuillPrivate']";
+
+
 
 
 
 // socket.on Functions
 // 
 // 
-// 
-// display new session card
-socket.on('fill_new_session', function(new_card, number) {
-    session_cards = document.getElementById('Session Cards')
-    session_cards.insertAdjacentHTML('afterbegin', new_card)
+// //
+
+// Display new Session
+socket.on('fill_new_session', function(new_card) {
+    // Local Variables
+    let flag__sessionContainer = "div[data-flag='sessionsContainer"
+    , element__sessionsContainer = document.querySelector(flag__sessionContainer);
+
+    // Insert into document
+    element__sessionsContainer.insertAdjacentHTML('beforeend', new_card);
 });
 
 
 // display new note
-socket.on('fill_new_note', function(new_note, priv, session_number, in_character) {
-    this_session = document.getElementById('note_list_' + session_number)
-    this_session.insertAdjacentHTML('beforeend', new_note)
+socket.on('fill_new_note', function(new_note, priv, session_number) {
+    // local Variables
+    let flag__newNoteContainer = "ul[data-idSession='" + session_number + "']"
+    , element__newNoteContainer = document.querySelector(flag__newNoteContainer);
+
+    // Insert into document
+    element__newNoteContainer.insertAdjacentHTML('beforeend', new_note);
 });
 
 // display note edit
-socket.on('fill_note_edit', function(editted_note, is_private, session_number, in_character, note_id) {
+socket.on('fill_note_edit', function(editted_note, is_private, session_number, note_id) {
     note_location = document.getElementById("inner_" + note_id);
     note_location.innerHTML = editted_note;
 });
@@ -62,223 +74,467 @@ socket.on('remove_deleted_note', function(id_num) {
 
 
 
-// Helper functions
+// Note Edittor functions
 //
 //
-//
-//
+// //
+
+var attribute__editButtons = "data-editButtonAnchorId"
+, attribute__editMenu = "data-editMenuId"
+, attribute__contextForm = "data-contextMenuId";
 
 
-function edit_note_func(id_num) {
-    // send data to server
-    let form = document.getElementById(edit_form_prefix + id_num);
-    let note_text = document.getElementById(edit_form_text_prefix + id_num).value,
-    note_private = document.getElementById(edit_form_private_prefix + id_num).value,
-    note_in_character = document.getElementById(edit_form_in_character_prefix + id_num).value,
-    user_id = {{current_user.id}},
-    game_id = {{id}};
-    socket.emit("edit_note", note_text, note_private, note_in_character, game_id, user_id, id_num);
+// check if element or any of its parents contain the edit button
+function click_inside_element( e, attribute ) {
 
-    // removal of form logic
-    toggle_form_off(id_num);
-    let note = document.getElementById(inner_id_prefix + id_num);
-    note.classList.remove(hidden_class_name);
-    let img = document.getElementById(id_num);
-    img.classList.remove(hidden_class_name);
-    return false;
-};
+    // Local Variables
+    let el = e.target;
 
-function click_inside_element( e, className ) {
-  var el = e.srcElement || e.target;
-
-  if ( el.classList.contains(className) ) {
-    return el;
-  } else {
-    while ( el = el.parentNode ) {
-      if ( el.classList && el.classList.contains(className) ) {
+    // check if element clicked has attribute
+    if ( el.hasAttribute(attribute) ) {
         return el;
-      }
+    } else {
+
+        // check if any of the parentNodes have the attribute
+        while ( el = el.parentNode ) {
+            if ( el.hasAttribute(attribute) ) {
+                return el;
+            
+            // break before final loop otherwise it will throw an error
+            } else if (el.parentNode == document) {
+                break;
+            }
+        }
     }
-  }
-  return false;
+    return false;
 }
 
-function toggle_menu_off() {
+// hide all open menues
+function toggle_menues_off() {
+
+    // there should only be one, but this just makes sure
     actives = document.getElementsByClassName(active_class_name)
     for (let i = 0; i < actives.length; i++) {
-        actives[i].classList.add(hidden_class_name);
+        actives[i].classList.add(className__hidden);
         actives[i].classList.remove(active_class_name);
         menu_deployed = false;
     }
 }
 
+// deploy menu
 function toggle_menu_on(element) {
     if (element.classList.contains(active_class_name)) {} else {
         element.classList.add(active_class_name);
-        element.classList.remove(hidden_class_name);
+        element.classList.remove(className__hidden);
         menu_deployed = true;
     }
 }
 
-function find_id(string) {
-    var id = "";
-    for (let i = 0; i < string.length; i++) {
-        if (parseInt(string[i])) {
-            id += string[i];
-        }
-    }
-    return id;
-}
-
+// deploy note editting form
 function toggle_form_on(id_num) {
 
-    let note_text = document.getElementById(inner_id_prefix + id_num);
-    note_text.classList.add(hidden_class_name);
-    let form = document.getElementById(edit_form_prefix + id_num);
-    form.classList.remove(hidden_class_name);
-    let img = document.getElementById(id_num);
-    img.classList.add(hidden_class_name);
-    let text_area = document.getElementById("form_text_" + id_num);
-    text_area.select();
+    // Local variables
+    let flag__formEdit = "form[data-id_formEdit='"+id_num+"']"
+    , flag__notes_noteText = "span[data-id_noteText='"+id_num+"']"
+    , flag__notes_editImage = "span[data-id_editImage='"+id_num+"']"
+    , flag__formEdit_textArea = "input[data-id_formText='"+id_num+"']"
+
+    , element__formEdit = document.querySelector(flag__formEdit)
+    , element__notes_noteText = document.querySelector(flag__notes_noteText)
+    , element__notes_editImage = document.querySelector(flag__notes_editImage)
+    , element__formEdit_textArea = document.querySelector(flag__formEdit_textArea);
+
+
+    // hide original note
+    element__notes_noteText.classList.add(className__hidden);
+    element__notes_editImage.classList.add(className__hidden);
+
+    // display edit form
+    element__formEdit.classList.remove(className__hidden);
+
+    // highlight text to edit
+    element__formEdit_textArea.select();
 }
 
+// hide note editting form
 function toggle_form_off(id_num) {
-    let form = document.getElementById(edit_form_prefix + id_num);
-    form.classList.add(hidden_class_name);
+
+    // Local Variables
+    let flag__formEdit = "form[data-id_formEdit='"+id_num+"']" 
+    , form_element = document.querySelector(flag__formEdit)
+
+    // hide form
+    form_element.classList.add(className__hidden);
 }
 
+// capture form data and send data to server
+function edit_note_func(id_num) {
 
-dfjhaskl
-document.addEventListener("DOMContentLoaded", function() { 
+    // local variables
+    let flag__notes_noteText = "span[data-id_noteText='"+id_num+"']"
+    , flag__formEdit_form = "form[data-id_formEdit='"+id_num+"']"
+    , flag__formEdit_private = "input[data-id_noteCheckboxPrivate='"+id_num+"']"
+    , flag__notes_editImage = "span[data-id_editImage='"+id_num+"']"
 
-    // set the values of the checkboxes based on whether they are checked or not
-    let checkboxes = document.getElementsByClassName("note_checkbox")
+    , element__formEdit_form = document.querySelector(flag__formEdit_form)
+    , element__notes_editImage = document.querySelector(flag__notes_editImage)
+    , element__notes_noteText = document.querySelector(flag__notes_noteText)
+    , element__notes_checkboxPrivate = document.querySelector(flag__formEdit_private)
 
-    for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].onclick = function () {
-            if (checkboxes[i].checked) {
-                checkboxes[i].value = 'True';
-            } else {
-                checkboxes[i].value = 'False';
+    // capture data
+    , note_text = element__notes_noteText.innerHTML
+    , note_private = element__notes_checkboxPrivate.value;
+
+    // send to server
+    socket.emit("edit_note", note_text, note_private, game_id, user_id, id_num);
+
+    // remove form
+    toggle_form_off(id_num);
+    element__notes_noteText.classList.remove(className__hidden);
+    element__notes_editImage.classList.remove(className__hidden);
+    return false;
+};
+
+
+// Set click events to trigger contextual menu and deploy edit form
+function click_listener() {
+
+    document.addEventListener( "click", function( e ) {
+
+        // check if edit button was clicked
+        if ( click_inside_element( e, attribute__editButtons ) ) {
+
+            // check if context  menu is already deployed
+            if ( menu_deployed == false ) {
+
+                // deploy context menu
+                let flag__contextMenu = "div[data-contextMenuId='"+e.target.getAttribute("data-id_editImage")+"']"
+                , element__contextMenu = document.querySelector( flag__contextMenu );
+                toggle_menu_on( element__contextMenu );
             }
-        }
-    }
+        } 
+        // check if the click happened within the contextual form
+        else if ( click_inside_element( e, attribute__contextForm ) ) {
+            // check if the click happened within the edit menu
+            if (click_inside_element( e, attribute__editMenu )) {
 
-    {% if current_user.id == dmid %}
-    // New Session form functions:
-    // variables
-    let form_container = document.getElementById(new_session_form_container_id)
-    , new_session_button = document.getElementById(new_session_button_id)
-    , cancel_button = document.getElementById(new_session_form_cancel_id)
-    , new_session_form = document.getElementById(new_session_form_id)
-    , game_id_input_element = document.getElementById(new_session_form_game_id)
-    , number_input_element = document.getElementById(new_session_form_number_id)
-    , title_input_element = document.getElementById(new_session_form_title_id)
-    , synopsis_input_element = document.getElementById(new_session_form_synopsis_id);
+                // if the edit button was clicked
+                if ( e.target.getAttribute("data-action") == "edit" ) {
+                    
+                    let id_num = e.target.getAttribute("data-id_note");
 
-    // create form for making new session card
-    new_session_button.onclick = function() {
-        form_container.classList.remove(hidden_class_name);
-        new_session_button.classList.add(hidden_class_name);
-    }
+                    toggle_form_on(id_num);
+                    toggle_menues_off();
 
-    // function to remove new session form and add the button back
-    var cancel_new_session_func = function () {
-        form_container.classList.add(hidden_class_name);
-        new_session_button.classList.remove(hidden_class_name);
-    }
-    // remove form if cancel button is clicked
-    cancel_button.onclick = function() {
-        cancel_new_session_func();
-    } 
-
-    // capture and send new session to server
-    new_session_form.addEventListener("submit", function() {
-        // ensure that form is filled out correctly
-        console.log("on_submit")
-        if (game_id_input_element.value != '' && number_input_element.value != '' && title_input_element.value != '' && parseInt(number_input_element.value) > -1) {
-            if (!document.getElementById("session_card_"+number_input_element.value)) {
-                socket.emit('send_new_session', game_id_input_element.value, number_input_element.value, title_input_element.value, synopsis_input_element.value);
-                cancel_new_session_func();
-                return false;
-            } else {
-                alert("Session number must be unique");
-                return false;
+                // if the delete button was clicked
+                } else {
+                    let id_num = e.target.getAttribute("data-id_note");
+                    socket.emit("delete_note", id_num)
+                }
             }
         } else {
-            alert("Must fill out required fields");
-            return false;
+            toggle_menues_off();
         }
     })
-    {% endif %}
+}
 
-    // New Note form functions:
-    // Variables
-    let new_note_form = document.getElementById(new_note_form_id)
-    , new_note_form_user_id = document.getElementById('note_user_id')
-    , new_note_form_note = document.getElementById('note_note')
-    , new_note_form_private = document.getElementById('note_private')
-    , new_note_form_in_character = document.getElementById('note_in_character')
-    , new_note_form_game_id = document.getElementById('note_game_id')
+function submit_listener() {
 
+    // Local Variables
+    let elements__formEdit_form = document.querySelectorAll(flag__formEdit_form);
 
-    // capture and send new note to server
-    new_note_form.addEventListener("submit", function() {
-        console.log("test", new_note_form)
-        if (!new_note_form_note) {
-            alert("note cannot be empty");
-            return false
-        } else {
-            console.log("note form submit")
-            socket.emit('send_new_note'
-                , new_note_form_user_id.value
-                , new_note_form_game_id.value
-                , new_note_form_note.value
-                , new_note_form_private.value
-                , new_note_form_in_character.value
-            )
-            return false
-        }
-    });
+    // set listeners on all note editting forms in document
+    for (let i = 0; i < elements__formEdit_form.length; i++) {
+        elements__formEdit_form[i].addEventListener("submit", function (event) {
 
-    let forms = document.getElementsByClassName(edit_form_class_name);
-    for (let i = 0; i < forms.length; i++) {
-        let id_num = find_id(forms[i].id);
-        forms[i].addEventListener("submit", function () {
-            edit_note_func(id_num)
+            // stop page reload
+            event.preventDefault();
+            let id_num = event.target.getAttribute("data-id_formEdit")
+
+            // set function on form that handles the data
+            edit_note_func(id_num);
         })
     }
+}
 
-    // Core functions
-    function click_listener() {
-        document.addEventListener("click", function(e) {
-            if (click_inside_element( e, image_class_name )) {
-                if (menu_deployed == false) {
-                    let context_menu_element = document.getElementById(context_menu_prefix + e.target.id);
-                    toggle_menu_on(context_menu_element);
-                } 
-            } else if (click_inside_element( e, context_menu_name )) {
-                if (click_inside_element( e, context_menu_class_name )) {
-                    if ( e.target.getAttribute("data-action") == "edit" ) {
-                        toggle_menu_off();
-                        let id_num = find_id(e.target.id);
-                        toggle_form_on(id_num);
-                    } else {
-                        let id_num = find_id(e.target.id);
-                        socket.emit("delete_note", id_num)
-                    }
-                }
+
+
+// New Session form functions:
+// 
+// 
+// //
+
+// display form for making new session card
+function newSessionForm_clickListener() {
+
+    // Local Variables 
+    let element__button_newSessionDisplay = document.querySelector(flag__button_newSessionDisplay)
+    , element__formNewSession_container = document.querySelector(flag__formNewSession_container);
+
+    element__button_newSessionDisplay.onclick = function() {
+
+        element__formNewSession_container.classList.remove(className__hidden);
+        element__button_newSessionDisplay.classList.add(className__hidden);
+    }
+}
+
+// adds listener for cancel button click
+function cancel_button_listener() {
+    
+    // Local Variables 
+    let element__formNewSession_buttonCancel = document.querySelector(flag__formNewSession_buttonCancel);
+
+    element__formNewSession_buttonCancel.onclick = cancel_new_session_func()
+}
+
+// function to remove new session form and add the edit button back
+function cancel_new_session_func() {
+
+    // Local Variables
+    let element__button_newSessionDisplay = document.querySelector(flag__button_newSessionDisplay)
+    , element__formNewSession_container = document.querySelector(flag__formNewSession_container);
+
+    // add and removes hidden class
+    element__formNewSession_container.classList.add(className__hidden);
+    element__button_newSessionDisplay.classList.remove(className__hidden);
+}
+
+// check that all required data is there
+function new_session_form_is_incomplete() {
+
+    // Local Variables
+    let element__formNewSession_inputNumber = document.querySelector(flag__formNewSession_inputSessionNumber)
+    , element__formNewSession_inputTitle = document.querySelector(flag__formNewSession_inputSessionTitle);
+
+    // check each field to see if it's empty
+    // Session Title
+    if ( element__formNewSession_inputTitle.value == '' || element__formNewSession_inputTitle.value == null ) {
+        return true;
+
+    // check to make sure the number isn't zero which will mess up the rest of the algo's logic
+    } else if ( element__formNewSession_inputNumber.value == 0 ) {
+
+        // skip child conditionals if session zero
+    } else {
+
+        // Session Number
+        if ( element__formNewSession_inputNumber.value == '' || element__formNewSession_inputNumber.value == null ) {
+            return true;
+
+        // Check if the number field contains an integer
+        } else if ( parseInt( element__formNewSession_inputNumber.value ) == '' || parseInt( element__formNewSession_inputNumber.value ) == null ) {
+            return true;
+        } 
+    }
+    return false;
+}
+
+// check to make sure the session doesn't already exist
+function new_session_form_is_not_unique() {
+
+    // Local Variables
+    let element__formNewSession_inputNumber = document.querySelector(flag__formNewSession_inputSessionNumber);
+
+    if ( document.querySelector( "ul[data-idSession='"+element__formNewSession_inputNumber.value+"']" ) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+// Validation of new session
+function newSession__validateFormError() {
+
+    if ( new_session_form_is_incomplete() ) { 
+        alert("Must fill out required fields");
+        return true;
+
+    } else if ( new_session_form_is_not_unique() ) {
+        alert("Session number must be unique");
+        return true;
+
+    } else {
+        return false;
+    }
+}
+
+// capture and send new session to server
+function newSession__submitListener() {
+
+    // Local Variables
+    let element__formNewSession_form = document.querySelector(flag__formNewSession_form)
+    , element__formNewSession_inputTitle = document.querySelector(flag__formNewSession_inputSessionTitle)
+    , element__formNewSession_inputNumber = document.querySelector(flag__formNewSession_inputSessionNumber)
+    , element__formNewSession_inputSynopsis = document.querySelector(flag__formNewSession_inputSessionSynopsis);
+
+    element__formNewSession_form.addEventListener( "submit", function( event ) {
+        
+        // stop page from reloading
+        event.preventDefault();
+
+        // ensure that form is filled out correctly
+        newSession__validateFormError()
+
+        // send new session data to server through socket.io
+        socket.emit('send_new_session', game_id, element__formNewSession_inputNumber.value, element__formNewSession_inputTitle.value, element__formNewSession_inputSynopsis.value);
+        
+        // remove new session form
+        cancel_new_session_func();
+        return false;
+    })
+}
+
+function NewSessionMaker() {
+    newSessionForm_clickListener();
+    newSession__submitListener();
+    cancel_button_listener();
+}
+
+
+// Checkbox functions
+// 
+//
+// //
+
+function set_true_checkboxes_to_checked() {
+    // find all checkboxes
+    let checkboxes = document.querySelectorAll("input[type='checkbox']");
+    
+    // make a list of the checkboxes that have a value of "True"
+    let checkboxes__true = [];
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].value == "True") {
+            checkboxes__true.push(checkboxes[i])
+        }
+    }
+
+
+    // Set Checkboxes with a value of "True" to checked
+    for (let i = 0; i < checkboxes__true.length; i++) {
+        checkboxes__true[i].checked = true;
+    }
+}
+function change_checkbox_value_onClick() {
+    // find all checkboxes
+    let checkboxes = document.querySelectorAll("input[type='checkbox']");
+
+    // set click events
+    for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].addEventListener("click", function(event) {
+            // find event origin
+            let clicked = event.target;
+
+            // change value to opposite of current
+            if (clicked.value == "True") {
+                clicked.value = "False";
             } else {
-                toggle_menu_off();
+                clicked.value = "True";
             }
         })
     }
+}
+function apply_checkbox_value_logic() {
+    // run subprograms
+    set_true_checkboxes_to_checked();
+    change_checkbox_value_onClick();
+}
 
-    function init () {
-        click_listener();
+
+
+// New Note form functions:
+// 
+// 
+// //
+
+function NewQuill(event) {
+
+    // Local Variables
+    let element__newQuill_private = document.querySelector(flag__newQuillPrivate);
+
+    // prevent page reload
+    event.preventDefault();
+
+    // capture data
+    let new_note_html = quill.root.innerHTML
+    , new_note_private = element__newQuill_private.value
+
+    // check to make sure note isn't empty
+    if (quill.getText() == '\n') {
+        alert("note cannot be empty");
+        return false
+
+    // send data to server
+    } else {
+        socket.emit('send_new_note'
+            , user_id
+            , game_id
+            , new_note_html
+            , new_note_private
+        )
+        return false
     }
 
-    init();
+}
 
-})
+
+
+// capture and send new note to server
+function NewQuill_submitListener() {
+
+    // Local Variables
+    var element__newQuill_formSession = document.querySelector(flag__newQuill_formSession);
+
+    // Listener
+    element__newQuill_formSession.addEventListener("submit", function (event) {
+        NewQuill(event);
+    })
+}
+
+// set new notes to populate after page load Function 
+// We do it this because wysiwig fomatting doesn't work otherwise
+function insert_rich_note(note_session) {
+
+    // Local Variables
+
+    let note_id_index = 0
+    , index__noteText = 1
+    , index__noteId = 0;
+
+    for (let i = 0; i < js_dict[note_session].length; i++) {
+
+        // set the attributes of each rich note
+        let id__note = ( js_dict[note_session][i][index__noteId])
+        , note_rich = js_dict[note_session][i][index__noteText]
+        , flag__notes_noteText = "span[data-id_noteText='"+id__note+"']"
+        , element__notes_noteText = document.querySelector(flag__notes_noteText);
+
+        // insert rich note
+        element__notes_noteText.innerHTML = note_rich;
+    }
+}
+
+
+
+// Main Function
+// 
+// 
+// //
+
+// Start app
+function init() {
+
+// note editting functions
+click_listener();
+submit_listener();
+
+// general functions
+apply_checkbox_value_logic();
+
+// newSession functions
+NewSessionMaker();
+
+// Quill functions
+NewQuill_submitListener();
+}
 
