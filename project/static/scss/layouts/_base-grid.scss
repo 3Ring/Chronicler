@@ -45,6 +45,10 @@
 
     >footer {
         width: 100%;
+        p {
+            @include size-6();
+            margin: var(--xs);
+        }
     }
 
     .container {

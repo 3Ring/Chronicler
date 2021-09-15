@@ -18,7 +18,7 @@ var context_menu_class_name = "note_edit_menu_link"
 , edit_form_private_prefix = "change_private_"
 
 , hidden_class_name = "hidden"
-, active_class_name = "--active"
+, active_class_name = "active"
 , inner_id_prefix = "inner_"
 , image_class_name = "note_edit_button"
 , new_session_form_game_id = "new_session_form_game_id"
@@ -417,6 +417,8 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 });
 </script>
+
+
 <div class="game-container">
     <div class="container">
         <h1>{{ game_name }}</h1>
@@ -428,25 +430,44 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="notes-container">
             <div class="session-log">
                 <h2>Session Log</h2>
+
+                <ul class="sessions-list">
+                    <li class="session-anchor current">
+                        <h4>Session 2</h4>
+                        <h2>Into the Woods</h2>
+                    </li>
+                    <li class="session-anchor">
+                        <h4>Session 1</h4>
+                        <h2>The Thick Plottens</h2>
+                    </li>
+                    <li class="session-anchor">
+                        <h4>Session 0</h4>
+                        <h2>We are All Well Met</h2>
+                    </li>
+                </ul>
             </div>
             <div class="notes">
-                <h2>Notes</h2>
+                <h2>Add a new note to this session.</h2>
                 <div class="comment-container">
-                    <form id="test_form_quill">
+                    <form class="wysiwyg-form" id="test_form_quill">
                         <div class="form-group">
-                        <div class="checkbox">
-                            <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
-                            <label for='note_private'>Note is private(The GM will still be able to see it):</label>
-                        </div>
+                        
                         <input name="about" type="hidden" style="z-index: 101;">
                         <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
                         <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
                         <div id="editor">
                         </div>
                         </div>
-                        <div class="button-row">
-                            <button class="button primary" type="submit">Submit</button>
+                        <div class="form-group">
+                            <div class="row checkbox">
+                                <input type='checkbox' class="note_checkbox" id='note_private' name='note_private' value='False'>
+                                <label for='note_private'>Private - Visible only to you and the DM.</label>
+                            </div>
+                            <div class="row button-row">
+                                <button class="button primary" type="submit">Submit</button>
+                            </div>
                         </div>
+                        
                     </form>
                 </div>
                 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -463,11 +484,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     theme: 'snow'
                     });
                 </script>
-                <div id="Session Cards">
+                <div class="sessions-scroll-container" id="Session Cards">
                     {% if session_titles %}
                         <!-- Session Title Cards -->
                         {% for session in session_titles %}
-                            <div class="" id="session_header_{{session.id}}">
+                            <div class="session-container" id="session_header_{{session.id}}">
                                 <h2>Session {{session.number}}: {{session.title}}</h2>
                                 <div id="session_card_{{session.number}}">
                                     <!-- Session Notes -->
@@ -476,15 +497,22 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <ul class="note_list" id="note_list_{{session.number}}">
                                         {% for note in note_dict[session.number] %}
                                         <li class="span_cont" id="note_line_{{note.id}}">
-                                            <span class="span_cont" id='note_{{note.id}}'>
-                                                {{ note.date_added }} || <b>{{ note.charname }}:</b>
-                                                <span class="" data-id_noteText="{{note.id}}">
+                                            <span class="span_cont note-item" id='note_{{note.id}}'>
+                                                <span class="note-author">
+                                                    <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
+                                                    <!-- {{ note.date_added }} || -->
+                                                </span>
+
+                                                <span class="note-content">
+                                                    <h3>{{ note.charname }}:</h3>
+                                                    <span class="note-ql" data-id_noteText="{{note.id}}">
+                                                    </span>
                                                 </span>
 
                                                 {% if note.user_id == current_user.id %}
                                                 <!-- Edit Button -->
-                                                <a id='edit_{{note.id}}'>
-                                                    <img id='{{note.id}}' data-id_editImage="{{ note.id }}" class='note_edit_button' src={{edit_img}}>
+                                                <a class="edit-note" id='edit_{{note.id}}'>
+                                                    <span id='{{note.id}}' data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src={{edit_img}}></span>
                                                 </a>
                                                 <form class='hidden edit_form' data-id_formEdit="{{ note.id }}">
                                                     <input type='text' data-id_formText="{{note.id}}" value='{{ note.note }}'>
@@ -499,20 +527,20 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 </form>
 
                                                 <!-- Edit Note Menu -->
-                                                <nav id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
+                                                <div id="note_edit_menu_{{note.id}}" class="note_edit_menu hidden">
                                                     <ul class="note_edit_menu_items">
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link" data-action="edit">
+                                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" class="note_edit_menu_link button secondary" data-action="edit">
                                                                 Edit Note
                                                             </a>
                                                         </li>
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link" data-action="delete">
+                                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" class="note_edit_menu_link button secondary" data-action="delete">
                                                                 Delete Note
                                                             </a>
                                                         </li>
                                                     </ul>
-                                                </nav>
+                                                </div>
                                                 {% endif %}
 
                                             </span>
@@ -530,6 +558,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 {% if dm_id == current_user.id %}
 <div id="new_session_cont" class="hidden" style="z-index: 100;">
+    <div class="shroud"></div>
     <div class="modal-container">
         <div class="modal">
             <div class="content">
@@ -539,8 +568,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <input id='new_session_form_number' required, placeholder='Number(Required)' type='number' min=0>
                     <input id='new_session_form_title' required, placeholder='Title(Required)' type='text'>
                     <input id='new_session_form_synopsis' type='text' , placeholder='Optional Synopsis'>
-                    <input type='submit' value='Make Session'>
-                    <input type='button' id='cancel_new_session' value='Cancel'>
+                    <input class="button primary" type='submit' value='Make Session'>
+                    <input class="button secondary" type='button' id='cancel_new_session' value='Cancel'>
                 </form>
             </div>
         </div>

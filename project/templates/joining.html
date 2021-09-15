@@ -1,26 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div role="alert">
-            {{ message }}
-            <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
-{% endwith %}
-<img src="{{game.image}}">
-<h1>Create Character!</h1>
-<form  enctype="multipart/form-data" method='POST' action='/joining/{{game.id}}'>
-    {{ charform.hidden_tag() }}
-    {{ charform.name.label }}
-    {{ charform.name }}
-    <br/>
-    {{ charform.img.label }}
-    {{ charform.img }}
-    <br/>
-    {{ charform.bio.label }}
-    {{ charform.bio }}
-    <br/>
-    {{ charform.charsubmit }}
-</form>
+            
+
+
+<div class="container">
+    <div class="form-container">
+
+<!-- <img src="{{game.image}}"> -->
+        
+        <form  enctype="multipart/form-data" method='POST' action='/joining/{{game.id}}'>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                        <p>
+                            {{ message }}
+                            <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></button>
+                        </p>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <h1>Create Character!</h1>
+            <div class="row">
+                {{ charform.hidden_tag() }}
+                {{ charform.name.label }}
+                {{ charform.name }}
+            </div>
+                
+            <div class="row">
+                {{ charform.img.label }}
+                {{ charform.img }}  
+            </div>
+            
+            <div class="row">
+                {{ charform.bio.label }}
+                {{ charform.bio }}
+            </div>
+            
+            <div class="row">
+                {{ charform.charsubmit (class="button primary") }}
+            </div>
+        </form>
+
+    </div>
+</div>
+
 {% endblock %}

@@ -219,6 +219,7 @@ body {
   font-size: 16px;
   color: #455264;
   font-family: "robotoregular", Helvetica, Arial, sans-serif;
+  position: relative;
 }
 a,
 a:link,
@@ -594,6 +595,30 @@ input[type=color] {
 .chronicler > footer {
   width: 100%;
 }
+.chronicler > footer p {
+  font-family: "PT Serif", serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 0.688em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  margin: var(--xs);
+}
+.chronicler > footer p b,
+.chronicler > footer p strong {
+  font-weight: 700;
+}
+.chronicler > footer p em, .chronicler > footer p i {
+  font-style: italic;
+}
+.chronicler > footer p strong i,
+.chronicler > footer p strong em,
+.chronicler > footer p b i,
+.chronicler > footer p b em {
+  font-weight: 700;
+  font-style: italic;
+}
 .chronicler .container {
   display: flex;
   flex-wrap: wrap;
@@ -921,6 +946,44 @@ nav ul:last-child li:first-child a {
   background: var(--boxHoverBackground);
 }
 
+.alert {
+  width: max-content;
+  padding: var(--xs) var(--sm);
+  border-radius: 5px;
+  align-self: center;
+}
+.alert.alert-success {
+  background: var(--boxAlternateBackground);
+}
+.alert p {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+}
+.alert p b,
+.alert p strong {
+  font-weight: 700;
+}
+.alert p em, .alert p i {
+  font-style: italic;
+}
+.alert p strong i,
+.alert p strong em,
+.alert p b i,
+.alert p b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.alert button {
+  margin: 0;
+  margin: 0 0 0 var(--xs);
+  padding: var(--xxs);
+}
+
 .shroud {
   position: absolute;
   height: 100%;
@@ -1011,6 +1074,9 @@ nav ul:last-child li:first-child a {
 }
 .modal .content a {
   color: var(--copyColor);
+}
+.modal form {
+  box-shadow: none;
 }
 .modal .button-row {
   display: flex;
@@ -1113,6 +1179,7 @@ nav ul:last-child li:first-child a {
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
   font-weight: 600;
+  white-space: nowrap;
 }
 .notes-container .session-log h2 b,
 .notes-container .session-log h2 strong {
@@ -1128,17 +1195,78 @@ nav ul:last-child li:first-child a {
   font-weight: 700;
   font-style: italic;
 }
+.notes-container .session-log .sessions-list li {
+  margin: var(--xs) 0;
+}
+.notes-container .session-log .sessions-list li:hover, .notes-container .session-log .sessions-list li.current {
+  cursor: pointer;
+  --reverse: #6dc6af;
+}
+.notes-container .session-log .sessions-list li h4 {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  font-family: "Grenze Gotisch", cursive;
+  font-weight: 400;
+  color: var(--reverse);
+}
+.notes-container .session-log .sessions-list li h4 b,
+.notes-container .session-log .sessions-list li h4 strong {
+  font-weight: 700;
+}
+.notes-container .session-log .sessions-list li h4 em, .notes-container .session-log .sessions-list li h4 i {
+  font-style: italic;
+}
+.notes-container .session-log .sessions-list li h4 strong i,
+.notes-container .session-log .sessions-list li h4 strong em,
+.notes-container .session-log .sessions-list li h4 b i,
+.notes-container .session-log .sessions-list li h4 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.notes-container .session-log .sessions-list li h2 {
+  font-family: "PT Serif", serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.25em;
+  letter-spacing: 0em;
+  line-height: 1.222;
+  color: var(--copyColor);
+  font-family: "Grenze Gotisch", cursive;
+  font-weight: 400;
+  color: var(--reverse);
+  max-width: 20ch;
+}
+.notes-container .session-log .sessions-list li h2 b,
+.notes-container .session-log .sessions-list li h2 strong {
+  font-weight: 700;
+}
+.notes-container .session-log .sessions-list li h2 em, .notes-container .session-log .sessions-list li h2 i {
+  font-style: italic;
+}
+.notes-container .session-log .sessions-list li h2 strong i,
+.notes-container .session-log .sessions-list li h2 strong em,
+.notes-container .session-log .sessions-list li h2 b i,
+.notes-container .session-log .sessions-list li h2 b em {
+  font-weight: 700;
+  font-style: italic;
+}
 .notes-container .notes {
   position: relative;
   z-index: 1;
+  overflow: hidden;
   background: var(--boxBackground);
-  padding: var(--sm) var(--lg);
   border-radius: var(--boxBorderRadius);
   -webkit-box-shadow: var(--boxShadow);
   box-shadow: var(--boxShadow);
   flex-grow: 1;
 }
 .notes-container .notes > h2 {
+  margin: var(--sm) var(--lg) 0 var(--lg);
   font-family: "Urbanist", sans-serif;
   color: var(--copyColor);
   font-weight: 500;
@@ -1161,8 +1289,11 @@ nav ul:last-child li:first-child a {
   font-weight: 700;
   font-style: italic;
 }
+.notes-container .notes .comment-container {
+  margin: 0 var(--lg) var(--sm) var(--lg);
+}
 
-form#test_form_quill {
+form.wysiwyg-form {
   box-shadow: none;
   border: none;
   padding: 0;
@@ -1172,27 +1303,27 @@ form#test_form_quill {
   margin: 0;
 }
 @media screen and (min-width: 31.25em) {
-  form#test_form_quill {
+  form.wysiwyg-form {
     grid-template-columns: 2fr 1fr;
   }
 }
-form#test_form_quill .form-group {
+form.wysiwyg-form .form-group {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-form#test_form_quill .ql-toolbar {
+form.wysiwyg-form .ql-toolbar {
   display: flex;
   align-items: baseline;
 }
-form#test_form_quill .ql-toolbar button {
+form.wysiwyg-form .ql-toolbar button {
   margin: 0;
   padding: 0;
 }
-form#test_form_quill .ql-container {
+form.wysiwyg-form .ql-container {
   height: var(--xxxl);
 }
-form#test_form_quill p {
+form.wysiwyg-form p {
   text-align: left;
 }
 
@@ -1205,7 +1336,7 @@ form#test_form_quill p {
   line-height: 1.085;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
-  margin: var(--sm) 0 var(--lg) 0;
+  margin: var(--sm) var(--lg) 0 var(--lg);
 }
 .session-container > h2 b,
 .session-container > h2 strong {
@@ -1222,14 +1353,131 @@ form#test_form_quill p {
   font-style: italic;
 }
 
-.note_list li {
+.note_list > li {
+  position: relative;
   padding: var(--xs) 0;
   border: var(--border);
+}
+.note_list > li:nth-child(even) {
+  background: var(--boxAlternateBackground);
+}
+.note_list > li .note-item {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+}
+.note_list > li .note_edit_menu.active {
+  position: absolute;
+  right: var(--sm);
+  top: var(--xs);
+  width: auto;
+  font-size: 0.8em;
+}
+.note_list > li .note_edit_menu ul {
+  display: flex;
+  gap: var(--sm);
+}
+.note_list > li .note_edit_menu ul a {
+  color: var(--copyColor) !important;
 }
 .note_list .edit-note {
   display: none;
   width: var(--lg);
 }
+.note_list .edit-note:not(.active):hover {
+  text-decoration: none;
+  color: var(--copyColor);
+  cursor: pointer;
+}
 .note_list .span_cont:hover .edit-note {
   display: flex;
+}
+.note_list .note-author {
+  margin: 0 var(--sm) 0 var(--lg);
+}
+.note_list .note-author .author-image {
+  display: block;
+  background-size: cover;
+  background-position: top center;
+  height: var(--xl);
+  width: var(--xl);
+  border-radius: 50%;
+  border: 3px solid var(--border3);
+}
+.note_list .note-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.note_list .note-content h3 {
+  font-family: "PT Serif", serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.25em;
+  letter-spacing: 0em;
+  line-height: 1.222;
+  color: var(--copyColor);
+  font-family: "Grenze Gotisch", cursive;
+  color: #6dc6af;
+  font-weight: 700;
+}
+.note_list .note-content h3 b,
+.note_list .note-content h3 strong {
+  font-weight: 700;
+}
+.note_list .note-content h3 em, .note_list .note-content h3 i {
+  font-style: italic;
+}
+.note_list .note-content h3 strong i,
+.note_list .note-content h3 strong em,
+.note_list .note-content h3 b i,
+.note_list .note-content h3 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.note_list .note-ql p, .note_list .note-ql li {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  font-family: "PT Serif", serif;
+  max-width: 75ch;
+}
+.note_list .note-ql p b,
+.note_list .note-ql p strong, .note_list .note-ql li b,
+.note_list .note-ql li strong {
+  font-weight: 700;
+}
+.note_list .note-ql p em, .note_list .note-ql p i, .note_list .note-ql li em, .note_list .note-ql li i {
+  font-style: italic;
+}
+.note_list .note-ql p strong i,
+.note_list .note-ql p strong em,
+.note_list .note-ql p b i,
+.note_list .note-ql p b em, .note_list .note-ql li strong i,
+.note_list .note-ql li strong em,
+.note_list .note-ql li b i,
+.note_list .note-ql li b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.note_list .note-ql p span.ql-size-large, .note_list .note-ql li span.ql-size-large {
+  font-size: 1.5em;
+}
+.note_list .note-ql p span.ql-size-huge, .note_list .note-ql li span.ql-size-huge {
+  font-size: 2em;
+}
+.note_list .note-ql ol li {
+  list-style-type: decimal;
+  padding: 0;
+  margin: 0 0 0 var(--md);
+}
+.note_list .note-ql ul li {
+  list-style-type: disc;
+  padding: 0;
+  margin: 0 0 0 var(--md);
 }

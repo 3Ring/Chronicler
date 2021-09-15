@@ -1,20 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
 <script src="{{ url_for('static', filename='js/join.js') }}"></script>
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="container">
-            <div class="alert {{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
-            </div>
-        </div>
-    {% endif %}
-{% endwith %}
+        
 
 <div class="container">
     
     <div class="app-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container">
+                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                        <p>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+                        </p>
+                        
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
         {% if games %}
             <h1>Public Games</h1>
         {% endif %}

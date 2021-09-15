@@ -76,6 +76,33 @@
             @include size-3();
             font-family: $display;
             font-weight: 600;
+            white-space: nowrap;
+
+        }
+
+        .sessions-list {
+            li {
+                margin: var(--xs) 0;
+
+                &:hover, &.current {
+                    cursor: pointer;
+                    --reverse: #{$brand};
+                }
+
+                h4 {
+                    @include size-5();
+                    font-family: $display;
+                    font-weight: 400;
+                    color: var(--reverse);
+                }
+                h2 {
+                    @include size-4();
+                    font-family: $display;
+                    font-weight: 400;
+                    color: var(--reverse);
+                    max-width: 20ch;
+                }
+            }
         }
     }
 
@@ -83,20 +110,27 @@
         position: relative;
         z-index: 1;
 
+        overflow: hidden;
+
         background: var(--boxBackground);
-        padding: var(--sm) var(--lg);
+        
         border-radius: var(--boxBorderRadius);
         -webkit-box-shadow: var(--boxShadow);
         box-shadow: var(--boxShadow);
         flex-grow: 1;
 
         > h2 {
+            margin: var(--sm) var(--lg) 0 var(--lg);
             @include size-5();
+        }
+
+        .comment-container {
+            margin: 0 var(--lg) var(--sm) var(--lg);
         }
     }
 }
 
-form#test_form_quill {
+form.wysiwyg-form {
     box-shadow: none;
     border: none;
     padding: 0;
@@ -140,20 +174,58 @@ form#test_form_quill {
     > h2 {
         @include size-3();
         font-family: $display;
-        margin: var(--sm) 0 var(--lg) 0;
+        margin: var(--sm) var(--lg) 0 var(--lg);
     }
 }
 
 .note_list {
 
-    li {
+    > li {
+        position: relative;
         padding: var(--xs) 0;
         border: var(--border);
+
+        &:nth-child(even) {
+            background: var(--boxAlternateBackground);
+        }
+
+        .note-item {
+            display: grid;
+            grid-template-columns: max-content 1fr max-content;
+        }
+
+        .note_edit_menu {
+            &.active {
+                position: absolute;
+                right: var(--sm);
+                top: var(--xs);
+                width: auto;
+
+                font-size: 0.8em;
+            }
+
+            ul {
+                display: flex;
+                gap: var(--sm);
+
+                a {
+                    color: var(--copyColor) !important;
+                }
+            }
+        }
     }
+
 
     .edit-note {
         display: none;
         width: var(--lg);
+        &:not(.active) {
+            &:hover {
+                text-decoration: none;
+                color: var(--copyColor);
+                cursor: pointer;
+            }
+        }
     }
     .span_cont {
         &:hover {
@@ -161,6 +233,68 @@ form#test_form_quill {
                 display: flex;
                 
             }
+        }
+    }
+
+    .note-author {
+        margin: 0 var(--sm) 0 var(--lg);
+        .author-image {
+            display: block;
+            background-size: cover;
+            background-position: top center;
+            height: var(--xl);
+            width: var(--xl);
+            border-radius: 50%;
+            border: 3px solid var(--border3);
+        }
+    }
+
+    .note-content {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        h3 {
+            @include size-4();
+            font-family: $display;
+            color: $brand;
+            font-weight: 700;
+        }
+    }
+
+    .note-ql {
+        p, li {
+            @include size-5();
+            font-family: $serif;
+            max-width: 75ch;
+
+            span {
+                &.ql-size-large {
+                    font-size: 1.5em;
+                }
+                &.ql-size-huge {
+                    font-size: 2.0em;
+                }
+            }
+
+        }
+        ol {
+            li {
+                list-style-type: decimal;
+                padding: 0;
+                margin: 0 0 0 var(--md);
+            }
+            
+        }
+        ul {
+            li {
+                list-style-type: disc;
+                padding: 0;
+                margin: 0 0 0 var(--md);
+            }
+            
         }
     }
 }

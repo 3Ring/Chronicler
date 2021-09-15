@@ -23,10 +23,13 @@
             <h1>Register</h1>
 
             {% for message in get_flashed_messages() %}
-                <p>
-                    {{ message }}
-                </p>   
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <p>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+                    </p>   
+                    
+                </div>
             {% endfor %}
 
             {{ form.hidden_tag() }}
@@ -38,7 +41,7 @@
                 {{ form.email.label(class="form-label") }}
                 {{ form.email(class="form-control") }}
             </div>
-            <div class="row"
+            <div class="row">
                 {{ form.hash.label(class="form-label") }}
                 {{ form.hash(class="form-control") }}
             </div>
@@ -52,7 +55,7 @@
                 {{ form.reveal }} {{ form.reveal.label}}
             </div>
             <div class="row">
-                {{ form.usersubmit(class="btn btn-secondary") }}
+                {{ form.usersubmit(class="button primary") }}
             </div>
             <h6>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h6>
         </form>

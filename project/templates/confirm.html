@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-{% for message in get_flashed_messages() %} 
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-	{{ message }}
-	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-<h2>confirm you wish to permanently delete {{ name }} by typing {{ name }} below</h2>
+
 <div class="shadow p-3 mb-5 bg-body rounded">
 	<form method='POST' action='/confirm  '>
+		{% for message in get_flashed_messages() %} 
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<p>
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+				</p>
+			</div>
+		{% endfor %}
+		<h2>confirm you wish to permanently delete {{ name }} by typing {{ name }} below</h2>
 		<div class="row">
 			{{ form.todelete.label(class="form-label") }}
 			{{ form.todelete(class="form-control") }}	
@@ -19,5 +22,5 @@
 		</div>
 		
 	</form>
-</div>a
+</div>
 {% endblock %}
