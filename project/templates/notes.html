@@ -105,12 +105,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     {% if session_titles %}
                         <!-- Session Title Cards -->
                         {% for session in session_titles %}
-                            <div class="session-container" id="session_header_{{session.id}}">
+                            <div class="session-container">
                                 <h2>Session {{session.number}}: {{session.title}}</h2>
-                                <div id="session_card_{{session.number}}">
+                                <div>
                                     <!-- Session Notes -->
                                     
-                                    <ul class="note_list" data-idSession="{{session.number}}" id="note_list_{{session.number}}">
+                                    <ul class="note_list" data-idSession="{{session.number}}">
                                         {% for note in note_dict[session.number] %}
                                         <li class="span_cont" id="note_line_{{note.id}}">
                                             <span class="span_cont note-item" id='note_{{note.id}}'>

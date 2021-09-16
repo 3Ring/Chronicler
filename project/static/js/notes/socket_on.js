@@ -9,7 +9,7 @@ socket.on('fill_new_session', function(new_card) {
     let element__sessionsContainer = document.querySelector(flag__sessionContainer);
 
     // Insert into document
-    element__sessionsContainer.insertAdjacentHTML('beforeend', new_card);
+    element__sessionsContainer.insertAdjacentHTML('beforeBegin', new_card);
 });
 
 

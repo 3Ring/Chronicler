@@ -2,9 +2,8 @@ from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
 from .helpers import validate as v
-# FE variables:
-classList__newSessionHeader = ""
-classList__newSessionCard = ""
+from .helpers import element_builder, Blueprint_reader
+
 
 # variables
 class__buttonEdit = "note_edit_button"
@@ -24,25 +23,13 @@ def send_new_session(id, number, title, synopsis=None):
     db.session.flush()
     db.session.commit()
 
-    id__newSessionHeader = idPrefix__newSessionHeader+str(new.id)
-    id__newSessionCard = idPrefix__newSessionCard+str(new.number)
-    content__newSessionHeader = "Session "+str(new.number)+": "+str(new.title)
+    template = Blueprint_reader("newsession", new)
 
-    newsession = str(
-        "<div id='"
-        +id__newSessionHeader
-        +"' class='"
-        +classList__newSessionHeader
-        +"'><h2>"
-        +content__newSessionHeader
-        +"</h2><div id='"
-        +id__newSessionCard
-        +"' "
-        +classList__newSessionCard
-        +"'></div></div>"
-    )
 
-    emit('fill_new_session', newsession, broadcast=True)
+    element = element_builder(template)
+
+    emit('fill_new_session', element, broadcast=True)
+
 
 @socketio.on('send_new_note')
 def send_new_note(user_id, game_id, note, priv=False):

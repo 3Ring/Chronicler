@@ -125,3 +125,126 @@ def nuke():
     # db.session.commit()
 
     return
+
+
+# Functions to dynamically create html elements
+# 
+# 
+# #
+
+
+# builds each element from a dictionary
+def make_element(**dictionary):
+    element = ""
+    # add sibling element
+    if "beforeBegin" in dictionary.keys():
+        element += dictionary["beforeBegin"]
+
+    # add HTML opening tag
+    element += "<"
+    if "type" in dictionary.keys():
+        element += dictionary["type"]
+    else:
+        return 1
+
+    # add classes to element if they exist
+    if "class" in dictionary.keys():
+        element += " class='"
+        element += dictionary["class"]
+        element += "'"
+
+    # add "data-<type>" to element if it exists
+    if "dataType" in dictionary.keys():
+        element += " data-"
+        element += dictionary["dataType"]
+        element += "='"
+        
+        # if the data type has a value add it
+        if "dataValue" in dictionary.keys():
+            element += dictionary["dataValue"]
+        element += "'"
+    element += ">"
+
+    # add innerHTML 1st sibling if it exists
+    if "afterBegin" in dictionary.keys():
+        element += dictionary["afterBegin"]
+    
+    # add innerHTML if it exists
+    if "innerHTML" in dictionary.keys():
+        element += dictionary["innerHTML"]
+
+
+    # add innerHTML 2nd sibling if it exists
+    if "beforeEnd" in dictionary.keys():
+        element += dictionary["beforeEnd"]
+
+    # Close tag
+    element += "</"
+    element += dictionary["type"]
+    element += ">"
+
+    # Add folloing element if it exists
+    if "afterEnd" in dictionary.keys():
+        element += dictionary["afterEnd"]
+    return element
+
+
+# nests all the elements together into one
+# elements need to be ordered child -> parent (optional sibling)-> grandparent
+# siblings are optional at any step
+def element_builder( element_list ):
+    complete_element = ""
+
+    # nest each element
+    for element in element_list:
+
+        # if the incoming element isn't a parent element it returns sibling elements
+        if "sibling" in element.keys():
+            element["afterEnd"] = complete_element
+            print(complete_element)
+        else:
+            element[ "innerHTML" ] = complete_element
+
+        complete_element = make_element( **element )
+        print(complete_element)
+
+        # error(s)
+        if type(complete_element) is int:
+            if complete_element == 1:
+                raise "dictionary missing element type"
+
+    print("complete element", complete_element, "\n\n")
+    return complete_element
+
+def Blueprint_reader(style, model):
+    # dictionary HTML element blueprints
+    newSession = [
+            {
+                "type": "div"
+                , "class": "session-container"
+            }
+            , {
+                "type": "h2"
+                , "sibling": True
+            }
+            , {
+                "type": "div"
+            }
+            , {
+                "type": "ul"
+                , "class": "note_list"
+                , "dataType": "idSession"
+            }
+    ]
+
+
+    if style.lower().strip() == "newsession":
+        newSession[1]['innerHTML'] = "Session"+str(model.number)+": "+model.title
+        newSession[1]['dataValue'] = str(model.number)
+        newSession.reverse()
+    else:
+        print("no")
+        raise "incorrect style"
+    return newSession
+
+
