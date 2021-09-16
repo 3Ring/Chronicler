@@ -237,14 +237,41 @@ def Blueprint_reader(style, model):
             }
     ]
 
+    # newNote = [
+    #     {
+    #         "type": "li"
+    #         , "class": "span_cont"
+    #     }
+    #     , {
+    #         "type": "span"
+    #         , "class": "span_cont note-item"
+    #     }
+    #     , {
+    #         "type": "span"
+    #         , "class": "note-author"
+    #     }
+    #     , {
+    #         "type": "div"
+    #         , "class": "author-image"
+    #         , "style" 
+    #     }
+    # ]
 
-    if style.lower().strip() == "newsession":
+    if style == "newsession":
         newSession[1]['innerHTML'] = "Session"+str(model.number)+": "+model.title
         newSession[1]['dataValue'] = str(model.number)
         newSession.reverse()
+    elif style == "newnote":
+        return
     else:
         print("no")
         raise "incorrect style"
     return newSession
 
-
+def priv_convert(priv):
+    if priv == 'True':
+        priv = True
+    else:
+        priv = False
+    
+    return priv

@@ -216,6 +216,7 @@ def notes(id):
     dm_id = game[0] 
     game_name = game[1]
     logs = {}
+
     # query the notes and organize them by session in reverse order
     if session_titles == None:
         pass

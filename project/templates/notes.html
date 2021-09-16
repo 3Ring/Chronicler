@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                     
                                     <ul class="note_list" data-idSession="{{session.number}}">
                                         {% for note in note_dict[session.number] %}
-                                        <li class="span_cont" id="note_line_{{note.id}}">
-                                            <span class="span_cont note-item" id='note_{{note.id}}'>
+                                        <li class="span_cont">
+                                            <span class="span_cont note-item">
                                                 <span class="note-author">
                                                     <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
                                                     <!-- {{ note.date_added }} || -->

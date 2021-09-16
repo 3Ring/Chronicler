@@ -2,7 +2,7 @@ from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
 from .helpers import validate as v
-from .helpers import element_builder, Blueprint_reader
+from .helpers import element_builder, Blueprint_reader, priv_convert
 
 
 # variables
@@ -15,28 +15,28 @@ imageLink__buttonEdit = "/static/images/edit_button_image.png"
 idPrefix__newSessionHeader = "session_header_"
 idPrefix__newSessionCard = "session_card_"
 
-
+# Create, store and return new session on new session event
 @socketio.on('send_new_session')
 def send_new_session(id, number, title, synopsis=None):
+
+    # convert message to model and add to db
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=id)
     db.session.add(new)
     db.session.flush()
     db.session.commit()
 
+    # convert data to html element
     template = Blueprint_reader("newsession", new)
-
-
     element = element_builder(template)
 
+    # return data to client
     emit('fill_new_session', element, broadcast=True)
 
 
 @socketio.on('send_new_note')
 def send_new_note(user_id, game_id, note, priv=False):
-    if priv == 'True':
-        priv = True
-    else:
-        priv = False
+    
+    priv_convert(priv)
 
     current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
     session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()[0]
@@ -45,12 +45,18 @@ def send_new_note(user_id, game_id, note, priv=False):
 
 
     db.session.add(new)
-    db.session.flush()
+    # db.session.flush()
+    # db.session.commit()
+
+    # convert data to html element
+    template = Blueprint_reader("newnote", new)
+    element = element_builder(template)
+
     edit_link="<a id='del_"+str(new.id)+"_"+str(new.user_id)+"'><img class='note_edit_button' src='"+imageLink__buttonEdit+"'></a>"
     new_note=str("<span id='note_span_"+str(new.id)+"_"+str(new.user_id)+"'><p id='note"+str(new.id)+"_"+str(new.user_id)+"'>"+str(new.date_added)+" || <b>"+str(new.charname)+":</b> "+str(new.note)+"  "+edit_link+"</p></span>")
 
     emit('fill_new_note', (new_note, new.private, new.session_number), broadcast=True)
-    db.session.commit()
+    
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, game_id, user_id, note_id):

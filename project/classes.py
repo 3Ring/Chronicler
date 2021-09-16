@@ -123,6 +123,7 @@ class Notes(db.Model):
         'game_id'
     ]
 
+
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -131,19 +132,10 @@ class Characters(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    img_id = (db.Integer, db.ForeignKey('images.id'))
+    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
 
     # items = db.relationship('Loot', backref='character', lazy=True)
 
-    head = [
-    'ID' 
-    ,'Name' 
-    ,'ImgLink' 
-    ,'Bio'
-    ,'Date Added' 
-    ,'User ID' 
-    ,'Game ID'
-    ,'img ID']
 
     def __repr__(self):
         return '<Character %r>' % self.name
