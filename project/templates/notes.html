@@ -3,14 +3,18 @@
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
-
 // Core variables
-const socket = io();
 var user_id = {{current_user.id}}
 , game_id = {{id}}
 , js_dict = JSON.parse({{js_note_dict|tojson }});
 </script>
-<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/variables.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/general.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/socket_on.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/new_session.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/new_note.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/note_editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/main.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -105,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <h2>Session {{session.number}}: {{session.title}}</h2>
                                 <div id="session_card_{{session.number}}">
                                     <!-- Session Notes -->
-                                    <!-- Logic for if there is more than one session -->
                                     
                                     <ul class="note_list" data-idSession="{{session.number}}" id="note_list_{{session.number}}">
                                         {% for note in note_dict[session.number] %}
