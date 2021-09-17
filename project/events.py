@@ -45,8 +45,8 @@ def send_new_note(user_id, game_id, note, private_=False):
 
     print(new.charname)
     db.session.add(new)
-    # db.session.flush()
-    # db.session.commit()
+    db.session.flush()
+    db.session.commit()
 
     # convert data to html element
     template = Blueprint_reader("newnote", new, user_id)
