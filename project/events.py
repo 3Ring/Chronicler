@@ -1,8 +1,7 @@
 from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
-from .helpers import validate as v
-from .helpers import element_builder, Blueprint_reader, priv_convert
+from .helpers import translate, priv_convert
 
 
 # variables
@@ -26,8 +25,7 @@ def send_new_session(id, number, title, synopsis=None):
     db.session.commit()
 
     # convert data to html element
-    template = Blueprint_reader("newsession", new)
-    element = element_builder(template)
+    element =translate(new)
 
     # return data to client
     emit('fill_new_session', element, broadcast=True)
@@ -35,25 +33,21 @@ def send_new_session(id, number, title, synopsis=None):
 
 @socketio.on('send_new_note')
 def send_new_note(user_id, game_id, note, private_=False):
-    print("here")
+
     private_ = priv_convert(private_)
     
     current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
     session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()[0]
+
     # this will cause issues if a player has more than one character for now
     new=Notes(charname=current_char.name, note=note, session_number=session_number, private=private_, in_character=False, character=current_char.id , user_id=user_id, game_id=game_id)
 
-    print(new.charname)
     db.session.add(new)
     db.session.flush()
     db.session.commit()
 
     # convert data to html element
-    template = Blueprint_reader("newnote", new, user_id)
-    element = element_builder(template)
-
-    # edit_link="<a id='del_"+str(new.id)+"_"+str(new.user_id)+"'><img class='note_edit_button' src='"+imageLink__buttonEdit+"'></a>"
-    # new_note=str("<span id='note_span_"+str(new.id)+"_"+str(new.user_id)+"'><p id='note"+str(new.id)+"_"+str(new.user_id)+"'>"+str(new.date_added)+" || <b>"+str(new.charname)+":</b> "+str(new.note)+"  "+edit_link+"</p></span>")
+    element = translate(new)
 
     emit('fill_new_note', (element, new.private, new.session_number), broadcast=True)
     

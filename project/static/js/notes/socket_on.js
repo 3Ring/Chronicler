@@ -19,7 +19,7 @@ socket.on('fill_new_note', function(new_note, priv, session_number) {
     element = get_session_element(session_number);
 
     // Insert into document
-    element.insertAdjacentHTML('beforeend', new_note);
+    element.insertAdjacentHTML('afterbegin', new_note);
 });
 
 // display note edit

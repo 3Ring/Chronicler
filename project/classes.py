@@ -87,14 +87,7 @@ class Sessions(db.Model):
 
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
-    head = [
-        'ID',
-        'Session Number', 
-        'Title',
-        "Synopsis", 
-        'Date Added',
-        "Games ID"
-        ]
+    header = " session."
 
     def __repr__(self):
         return '<Session %r>' % self.title
@@ -112,16 +105,8 @@ class Notes(db.Model):
     character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    head = [
-        'ID',
-        'Note',
-        'session_number',
-        'Private',
-        'In Character',
-        'date_added',
-        'character',
-        'game_id'
-    ]
+    
+    header = " note."
 
 
 class Characters(db.Model):

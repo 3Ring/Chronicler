@@ -6,7 +6,6 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
-from .helpers import validate as v
 from .helpers import upload, nuke
 
 

@@ -111,11 +111,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         <!-- Session Title Cards -->
                         {% for session in session_titles %}
                             <div class="session-container">
-                                <h2>Session {{session.number}}: {{session.title}}</h2>
+                                <h2>Session {{ session.number }}: {{ session.title }}</h2>
                                 <div>
                                     <!-- Session Notes -->
                                     
-                                    <ul class="note_list" data-idSession="{{session.number}}">
+                                    <ul class="note_list" data-idSession="{{ session.number }}">
                                         {% for note in note_dict[session.number] %}
                                         <li class="span_cont">
                                             <span class="span_cont note-item">
@@ -130,36 +130,36 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                                 <span class="note-content">
                                                     <h3>{{ note.charname }}:</h3>
-                                                    <span class="note-ql" data-id_noteText="{{note.id}}">
+                                                    <span class="note-ql" data-id_noteText="{{ note.id }}">
                                                     </span>
                                                 </span>
 
                                                 {% if note.user_id == current_user.id %}
                                                 <!-- Edit Button -->
-                                                <a data-editButtonAnchorId="((note.id))" class="edit-note" id='edit_{{note.id}}'>
-                                                    <span id='{{note.id}}' data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src={{edit_img}}></span>
+                                                <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
+                                                    <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
                                                 </a>
                                                 <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                                                    <input type='text' data-id_formText="{{note.id}}" value='{{ note.note }}'>
+                                                    <input type='text' data-id_formText="{{ note.id }}" value='{{ note.note }}'>
                                                     <input type='submit' value='submit'>
                                                     <span class="checkbox_span">
-                                                        <input type='checkbox' class="" data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
-                                                        <label for='change_private_{{note.id}}'>
+                                                        <input type='checkbox' data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
+                                                        <label for='change_private_{{ note.id }}'>
                                                             Private?
                                                         </label>
                                                     </span>
                                                 </form>
 
                                                 <!-- Edit Note Menu -->
-                                                <div data-contextMenuId="{{note.id}}" class="note_edit_menu hidden">
+                                                <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">
                                                     <ul class="note_edit_menu_items">
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" id="note_edit_menu_edit_{{note.id}}" data-editMenuId="{{note.id}}" class="note_edit_menu_link button secondary" data-id_note="{{note.id}}" data-action="edit">
+                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
                                                                 Edit Note
                                                             </a>
                                                         </li>
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" id="note_edit_menu_delete_{{note.id}}" data-editMenuId="{{note.id}}" class="note_edit_menu_link button secondary" data-id_note="{{note.id}}" data-action="delete">
+                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="delete">
                                                                 Delete Note
                                                             </a>
                                                         </li>
