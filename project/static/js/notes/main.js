@@ -4,7 +4,7 @@
 // //
 
 // Start app
-function init() {
+function init(DM="") {
 
     // note editting functions
     Note_Editor();
@@ -12,9 +12,11 @@ function init() {
     // general functions
     Checkbox_logic();
 
-    // newSession functions
-    NewSessionMaker();
-
     // Quill functions
     NewQuill_submitListener();
+
+    if (DM == "DM") {
+        // newSession functions
+        NewSessionMaker();
+    }
 }

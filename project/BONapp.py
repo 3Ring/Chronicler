@@ -206,17 +206,22 @@ def create():
         db.session.commit()
         return redirect(url_for('main.notes', id=game.id))
 
+def get_char_image(game_id):
+    return None
+
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
-    print(Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all())
+    games = Games.query.filter_by(id=id).all()[0]
+    print(games.id, games.name, games.players)
     game=Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all()[0]
     dm_id = game[0] 
     game_name = game[1]
     logs = {}
 
+    char_image = get_char_image(1)
     # query the notes and organize them by session in reverse order
     if session_titles == None:
         pass

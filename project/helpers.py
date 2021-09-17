@@ -153,6 +153,12 @@ def make_element(**dictionary):
         element += dictionary["class"]
         element += "'"
 
+    # add classes to element if they exist
+    if "style" in dictionary.keys():
+        element += " style='"
+        element += dictionary["style"]
+        element += "'"
+
     # add "data-<type>" to element if it exists
     if "dataType" in dictionary.keys():
         element += " data-"
@@ -173,6 +179,9 @@ def make_element(**dictionary):
     if "innerHTML" in dictionary.keys():
         element += dictionary["innerHTML"]
 
+    # add childElement if it exists
+    if "childElement" in dictionary.keys():
+        element += dictionary["childElement"]
 
     # add innerHTML 2nd sibling if it exists
     if "beforeEnd" in dictionary.keys():
@@ -186,6 +195,7 @@ def make_element(**dictionary):
     # Add folloing element if it exists
     if "afterEnd" in dictionary.keys():
         element += dictionary["afterEnd"]
+    print(element)
     return element
 
 
@@ -200,23 +210,22 @@ def element_builder( element_list ):
 
         # if the incoming element isn't a parent element it returns sibling elements
         if "sibling" in element.keys():
-            element["afterEnd"] = complete_element
-            print(complete_element)
+            element[ "afterEnd" ] = complete_element
+        elif "step_sibling" in element.keys():
+            element[ "beforeBegin" ] = complete_element
         else:
-            element[ "innerHTML" ] = complete_element
+            element[ "childElement" ] = complete_element
 
         complete_element = make_element( **element )
-        print(complete_element)
 
         # error(s)
         if type(complete_element) is int:
             if complete_element == 1:
                 raise "dictionary missing element type"
 
-    print("complete element", complete_element, "\n\n")
     return complete_element
 
-def Blueprint_reader(style, model):
+def Blueprint_reader(style, model, user_id=None):
     # dictionary HTML element blueprints
     newSession = [
             {
@@ -236,42 +245,95 @@ def Blueprint_reader(style, model):
                 , "dataType": "idSession"
             }
     ]
+    newnote_author = [
+        {
+            "type": "span"
+            , "class": "note-author"
+        }
+        , {
+            "type": "div"
+            ,"class": "author-image"
+        }
+    ]
+    newnote_content = [
+        {
+            "type": "span"
+            , "class": "note-content"
+            , "sibling": True
+        }
+        , {
+            "type": "h3"
+            , "sibling": True
+        }
+        , {
+            "type": "span"
+            , "class": "note-ql"
+            , "dataType": "noteText"
+            , "sibling": True
+        }
+    ]
+    newnote = [
+        {
+            "type": "li"
+            , "class": "span_cont"
+        }
+        , {
+            "type": "span"
+            , "class": "span_cont note-item"
+        }
+    ]
 
-    # newNote = [
-    #     {
-    #         "type": "li"
-    #         , "class": "span_cont"
-    #     }
-    #     , {
-    #         "type": "span"
-    #         , "class": "span_cont note-item"
-    #     }
-    #     , {
-    #         "type": "span"
-    #         , "class": "note-author"
-    #     }
-    #     , {
-    #         "type": "div"
-    #         , "class": "author-image"
-    #         , "style" 
-    #     }
-    # ]
+
 
     if style == "newsession":
         newSession[1]['innerHTML'] = "Session"+str(model.number)+": "+model.title
         newSession[1]['dataValue'] = str(model.number)
         newSession.reverse()
-    elif style == "newnote":
+        return newSession
+    elif style == "newnote_author":
+        if model.charname == "DM":
+            newnote_author[1]["style"] = "background-image: url(../static/images/default_character.jpg)"
+        else:
+            newnote_author[1]["style"] = "background-image: url(../static/images/default_dm.jpg)"
+        # newnote_content.reverse()
+        return newnote_author
+    elif style == "newnote_content":
+        newnote_content[1]["innerHTML"] = model.charname+":"
+        newnote_content[2]["dataValue"] = str(model.id)
+        # newnote_content.reverse()
+        return newnote_content
+    elif style == "newnote_editbutton":
+        # todo
         return
+    elif style == "newnote_editform":
+        # todo
+        return
+    elif style == "newnote_editnotemenu":
+        # todo
+        return
+    elif style == "newnote_editform_edit":
+        # todo
+        return
+    elif style == "newnote_editform_delete":
+        # todo
+        return
+    elif style == "newnote":
+        author_template = Blueprint_reader("newnote_author", model, user_id)
+        # author_element =  element_builder(author_template)
+        content_template = Blueprint_reader("newnote_content", model, user_id)
+        # content_element = element_builder(content_template)
+        
+        newnote = content_template + author_template + newnote
+        newnote.reverse()
+        return newnote
     else:
         print("no")
         raise "incorrect style"
-    return newSession
 
 def priv_convert(priv):
     if priv == 'True':
-        priv = True
+        private_ = True
     else:
-        priv = False
+        private_ = False
     
-    return priv
+    return private_

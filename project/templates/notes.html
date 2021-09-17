@@ -31,7 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
     insert_rich_note(note_session);
 
     {% endfor %}
+    
+    {% if dm_id == current_user.id %}
+    init("DM");
+    {% else %}
     init();
+    {% endif %}
 })
 </script>
 
@@ -115,7 +120,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <li class="span_cont">
                                             <span class="span_cont note-item">
                                                 <span class="note-author">
+                                                    {% if note.charname == "DM" %}
                                                     <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
+                                                    {% else %}
+                                                    <div class="author-image" style="background-image: url(../static/images/default_character.jpg)"></div>
+                                                    {% endif %}
                                                     <!-- {{ note.date_added }} || -->
                                                 </span>
 
@@ -132,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 </a>
                                                 <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
                                                     <input type='text' data-id_formText="{{note.id}}" value='{{ note.note }}'>
-                                                    <!-- <input type='text' id="form_text_{{note.id}}" value='{{ note.note }}'> -->
                                                     <input type='submit' value='submit'>
                                                     <span class="checkbox_span">
                                                         <input type='checkbox' class="" data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
