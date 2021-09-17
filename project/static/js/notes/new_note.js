@@ -8,7 +8,6 @@ function NewQuill(event) {
     // Local Variables
     let element__newQuill_private = document.querySelector(flag__newQuillPrivate);
 
-    console.log("here")
     // capture data
     let new_note_html = quill.root.innerHTML
     , new_note_private = element__newQuill_private.value

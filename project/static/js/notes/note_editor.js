@@ -28,7 +28,7 @@ function click_inside_element( e, attribute ) {
     return false;
 }
 
-// hide all open menues
+// hide all open contextual menues
 function toggle_menues_off() {
 
     // there should only be one, but this just makes sure
@@ -40,7 +40,7 @@ function toggle_menues_off() {
     }
 }
 
-// deploy menu
+// deploy context menu
 function toggle_menu_on(element) {
     if (element.classList.contains(className__active)) {} else {
         element.classList.add(className__active);
@@ -48,7 +48,32 @@ function toggle_menu_on(element) {
         menu_deployed = true;
     }
 }
+// function NewQuill(event) {
 
+//     // Local Variables
+//     let element__newQuill_private = document.querySelector(flag__newQuillPrivate);
+
+//     // capture data
+//     let new_note_html = quill.root.innerHTML
+//     , new_note_private = element__newQuill_private.value
+
+//     // check to make sure note isn't empty
+//     if (quill.getText() == '\n') {
+//         alert("note cannot be empty");
+//         return false
+
+//     // send data to server
+//     } else {
+//         socket.emit('send_new_note'
+//             , user_id
+//             , game_id
+//             , new_note_html
+//             , new_note_private
+//         )
+//         return false
+//     }
+
+// }
 // deploy note editting form
 function toggle_form_on(id_num) {
 
