@@ -71,8 +71,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="comment-container">
                     <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
                         <div class="form-group">
-                        
-                        <input name="about" type="hidden" style="z-index: 101;">
                         <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
                         <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
                         <div id="Quill_sessionNew">
@@ -115,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     
                                     <ul class="note_list" data-idSession="{{ session.number }}">
                                         {% for note in note_dict[session.number] %}
-                                        <li class="span_cont">
+                                        <li class="span_cont" data-id_noteCont="{{ note.id }}">
                                             <span class="span_cont note-item">
                                                 <span class="note-author">
                                                     {% if note.charname == "DM" %}
@@ -139,51 +137,23 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 </a>
                                                 
                                                 <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                                                    <div class="form-group">
+                                                    <div class="form-group" >
                                                     
-                                                        <input name="about" type="hidden" style="z-index: 101;">
                                                         <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
                                                         <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-                                                        <div id="QuillEdit_{{ note.id }}">
+                                                        <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="row checkbox">
-                                                            <input type='checkbox' class="note_checkbox" data-flag="newQuillPrivate" name='note_private' value='False'>
+                                                            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
                                                             <label for='note_private'>Private - Visible only to you and the DM.</label>
                                                         </div>
                                                         <div class="row button-row">
                                                             <button class="button primary" type="submit">Submit</button>
                                                         </div>
                                                     </div>
-                                                    <!-- <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> -->
-                                                    <script>
-                                                        
-                                                    var quill_{{ note.id }} = new Quill("#QuillEdit_{{ note.id }}", { 
-                                                        modules: {
-                                                            toolbar: [
-                                                            ['bold', 'italic'],
-                                                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                                                            [{ list: 'ordered' }, { list: 'bullet' }]
-                                                            ]
-                                                        },
-                                                        placeholder: 'A note about this session.',
-                                                        theme: 'snow'
-                                                        });
-                                                        
-                                                    </script>
                                                 </form>
-                                                
-                                                <!-- <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                                                    <input type='text' data-id_formText="{{ note.id }}" value='{{ note.note }}'>
-                                                    <input type='submit' value='submit'>
-                                                    <span class="checkbox_span">
-                                                        <input type='checkbox' data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
-                                                        <label for='change_private_{{ note.id }}'>
-                                                            Private?
-                                                        </label>
-                                                    </span>
-                                                </form> -->
 
                                                 <!-- Edit Note Menu -->
                                                 <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">

@@ -54,12 +54,13 @@ def send_new_note(user_id, game_id, note, private_=False):
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, game_id, user_id, note_id):
+    private = priv_convert(is_private)
     note = Notes.query.filter_by(id=note_id).first()
     note.note = text
-    note.private = is_private
+    note.private = private
     db.session.flush()
     editted_note=note.note
-    emit('fill_note_edit', (editted_note, note.private, note.session_number, note.id), broadcast=True)
+    emit('fill_note_edit', (editted_note, private, note.session_number, note.id), broadcast=True)
     db.session.commit()
     
 @socketio.on("delete_note")

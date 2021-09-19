@@ -17,6 +17,26 @@ function get_session_element(session_number) {
     return element
 }
 
+// return inner html from Quill editor from event
+function get_quill_text_from_event(event) {
+
+    // Local Variables
+    let el = event.target;
+
+    // if the event originated from the editor
+    if  (el.classList.contains( "ql-editor" ) ) {
+        return el.innerhtml;
+    } 
+
+    // iterate through the child elements until editor is found
+    while ( el = el.firstElementChild ) {
+        if  (el.classList.contains( "ql-editor" ) ) {
+            return el.innerhtml;
+        }
+    }
+    // if the editor isn't found
+    return "Quill editor not found"
+}
 // Checkbox functions
 // 
 //

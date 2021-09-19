@@ -10,7 +10,7 @@ function NewQuill(event) {
 
     // capture data
     let new_note_html = quill.root.innerHTML
-    , new_note_private = element__newQuill_private.value
+    , new_note_private = element__newQuill_private.value;
 
     // check to make sure note isn't empty
     if (quill.getText() == '\n') {
@@ -25,6 +25,9 @@ function NewQuill(event) {
             , new_note_html
             , new_note_private
         )
+
+        // clear editor
+        quill.root.innerHTML = "";
         return false
     }
 

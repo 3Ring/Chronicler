@@ -8,7 +8,6 @@ function newSessionForm_clickListener() {
 
     // Local Variables 
     let element__button_newSessionDisplay = document.querySelector(flag__button_newSessionDisplay)
-    console.log(flag__button_newSessionDisplay)
     , element__formNewSession_container = document.querySelector(flag__formNewSession_container);
 
     element__button_newSessionDisplay.onclick = function() {
