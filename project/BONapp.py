@@ -35,7 +35,7 @@ def index():
         ).all()
         dm_games=Games.query.filter_by(dm_id=current_user.id).all()
 
-        # set images for game lists
+        # set images for game the lists
         for game in games:
             img = Images.query.filter_by(id=game.img_id).first()
             if not img:
