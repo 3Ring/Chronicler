@@ -55,12 +55,12 @@ def index():
             , games=games
             , dm_games=dm_games)
 
-    return redirect('/welcome')
+    return redirect(url_for('auth.login'))
 
-@main.route('/welcome')
-def welcome():
+# @main.route('/welcome')
+# def welcome():
     
-    return render_template('welcome.html')
+#     return render_template('welcome.html')
 
 @main.route('/initdb_p')
 def initdb_p():
