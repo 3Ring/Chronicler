@@ -32,12 +32,26 @@ function click_inside_element( e, attribute ) {
 // hide all open contextual menues
 function toggle_menues_off() {
 
-    // there should only be one, but this just makes sure
-    actives = document.getElementsByClassName(className__active)
-    for (let i = 0; i < actives.length; i++) {
-        actives[i].classList.add(className__hidden);
-        actives[i].classList.remove(className__active);
-        menu_deployed = false;
+    // find all context menus
+    let contextMenus = document.querySelectorAll("div[data-flag='contextMenu']");
+
+    // check to see if there are any yet
+    if ( contextMenus.length != 0 ) {
+        
+        // iterate through each element, remove active class name if it exists and hide it
+        for (let i = 0; i < contextMenus.length; i++) {
+            // remove active class
+            if ( contextMenus[i].classList.contains( className__active ) ) {
+                contextMenus[i].classList.remove( className__active );
+            }
+            // add hidden class if not already applied
+            if ( ! contextMenus[i].classList.contains( className__hidden ) ) {
+                contextMenus[i].classList.add(className__hidden);
+            }
+
+            // update menu flag
+            menu_deployed = false;
+        }
     }
 }
 // deploy context menu

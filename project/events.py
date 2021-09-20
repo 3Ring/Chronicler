@@ -16,16 +16,16 @@ idPrefix__newSessionCard = "session_card_"
 
 # Create, store and return new session on new session event
 @socketio.on('send_new_session')
-def send_new_session(id, number, title, synopsis=None):
+def send_new_session(games_id, number, title, synopsis=None):
 
     # convert message to model and add to db
-    new=Sessions(number=number, title=title, synopsis=synopsis, games_id=id)
+    new=Sessions(number=number, title=title, synopsis=synopsis, games_id=games_id)
     db.session.add(new)
     db.session.flush()
     db.session.commit()
 
     # convert data to html element
-    element =translate(new)
+    element = translate(new)
 
     # return data to client
     emit('fill_new_session', element, broadcast=True)

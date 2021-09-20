@@ -210,21 +210,24 @@ def translate(model):
 
     # Determine which type of element to create
     header = model.header
-    if header == " note.":
+    if header == "note.":
         html = htmlTemplate__newNote
         html = note_conditionals(html, model)
-    if header == " session.":
+    elif header == "session.":
         html = htmlTemplate__newSession
     
+    # populate the dict with the model's key/value pairs
+    columns = {}
+    for column in model.__table__.columns:
+        columns[str(column.key)] = getattr(model, str(column.key))
+
     # iterate through each key/value pair in the model instance's attributes
-    for key, value in model.__dict__.items():
+    for key, value in columns.items():
 
         # create template for translator
-        key = str(key)
-        value = str(value)
-        key = "{{" + header + key + " }}"
+        key = "{{ " + header + key + " }}"
 
         # replace jinja variables
-        html =  html.replace(key, value)
+        html = html.replace(key, str(value))
 
     return html

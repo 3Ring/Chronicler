@@ -15,6 +15,9 @@ function init(DM="") {
     // Quill functions
     NewQuill_submitListener();
 
+    // set current session
+    setActiveSession__onPageLoad();
+
     if (DM == "DM") {
         // newSession functions
         NewSessionMaker();

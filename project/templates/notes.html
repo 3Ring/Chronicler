@@ -48,11 +48,18 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         {% endif %}
         <div class="notes-container">
+            {% if session_titles %}
             <div class="session-log">
                 <h2>Session Log</h2>
-
+                
                 <ul class="sessions-list">
-                    <li class="session-anchor current">
+                    {% for session in session_titles %}
+                    <li class="session-anchor" data-number_sessionList="{{ session.number }}">
+                        <h4>Session {{ session.number }}</h4>
+                        <h2>{{ session.title }}</h2>
+                    </li>
+                    {% endfor %}
+                    <!-- <li class="session-anchor current">
                         <h4>Session 2</h4>
                         <h2>Into the Woods</h2>
                     </li>
@@ -63,9 +70,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     <li class="session-anchor">
                         <h4>Session 0</h4>
                         <h2>We are All Well Met</h2>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
+            {% endif %}
             <div class="notes">
                 <h2>Add a new note to this session.</h2>
                 <div class="comment-container">
@@ -106,11 +114,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     {% if session_titles %}
                         <!-- Session Title Cards -->
                         {% for session in session_titles %}
-                            <div class="session-container">
+                            <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
                                 <h2>Session {{ session.number }}: {{ session.title }}</h2>
                                 <div>
                                     <!-- Session Notes -->
-                                    
                                     <ul class="note_list" data-idSession="{{ session.number }}">
                                         {% for note in note_dict[session.number] %}
                                         <li class="span_cont" data-id_noteCont="{{ note.id }}">
@@ -156,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 </form>
 
                                                 <!-- Edit Note Menu -->
-                                                <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">
+                                                <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
                                                     <ul class="note_edit_menu_items">
                                                         <li class="note_edit_menu_item">
                                                             <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">

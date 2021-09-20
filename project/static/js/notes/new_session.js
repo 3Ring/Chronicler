@@ -116,7 +116,11 @@ function newSession__submitListener() {
         newSession__validateFormError()
 
         // send new session data to server through socket.io
-        socket.emit('send_new_session', game_id, element__formNewSession_inputNumber.value, element__formNewSession_inputTitle.value, element__formNewSession_inputSynopsis.value);
+        socket.emit('send_new_session'
+            , game_id
+            , element__formNewSession_inputNumber.value
+            , element__formNewSession_inputTitle.value
+            , element__formNewSession_inputSynopsis.value);
         
         // remove new session form
         cancel_new_session_func();
