@@ -25,29 +25,31 @@ def send_new_session(games_id, number, title, synopsis=None):
     db.session.commit()
 
     # convert data to html element
-    element = translate(new)
-
+    elements = translate(new)
+    session_container = elements[0]
+    session_list = elements[1]
+    print(session_container, "\n\n\n\n", session_list)
     # return data to client
-    emit('fill_new_session', element, broadcast=True)
+    emit('fill_new_session', (session_container, session_list, str(number)), broadcast=True)
 
 
 @socketio.on('send_new_note')
-def send_new_note(user_id, game_id, note, private_=False):
+def send_new_note(user_id, game_id, session_number, note, private_=False):
 
     private_ = priv_convert(private_)
     
     current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
-    session_number=Sessions.query.with_entities(Sessions.number).filter_by(games_id=game_id).order_by(Sessions.number.desc()).first()[0]
+    session_number=session_number
 
     # this will cause issues if a player has more than one character for now
-    new=Notes(charname=current_char.name, note=note, session_number=session_number, private=private_, in_character=False, character=current_char.id , user_id=user_id, game_id=game_id)
+    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private_, in_character=False, character=current_char.id , user_id=user_id, game_id=game_id)
 
     db.session.add(new)
     db.session.flush()
     db.session.commit()
 
     # convert data to html element
-    element = translate(new)
+    element = translate(new)[0]
 
     emit('fill_new_note', (element, new.private, new.session_number), broadcast=True)
     

@@ -3,7 +3,7 @@
 // 
 // //
 
-function NewQuill(event) {
+function NewQuill(event, quill) {
 
     // Local Variables
     let element__newQuill_private = document.querySelector(flag__newQuillPrivate);
@@ -22,6 +22,7 @@ function NewQuill(event) {
         socket.emit('send_new_note'
             , user_id
             , game_id
+            , current__session_number
             , new_note_html
             , new_note_private
         )
@@ -34,7 +35,7 @@ function NewQuill(event) {
 }
 
 // capture and send new note to server
-function NewQuill_submitListener() {
+function NewQuill_submitListener(quill) {
 
     // Local Variables
     var element__newQuill_formSession = document.querySelector(flag__newQuill_formSession);
@@ -43,7 +44,7 @@ function NewQuill_submitListener() {
     element__newQuill_formSession.addEventListener("submit", function (event) {
         // prevent page reload
         event.preventDefault();
-        NewQuill(event);
+        NewQuill(event, quill);
     })
 }
 

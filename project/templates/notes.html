@@ -9,12 +9,17 @@ var user_id = {{current_user.id}}
 , js_dict = JSON.parse({{js_note_dict|tojson }});
 </script>
 <script src="{{ url_for('static', filename='js/notes/variables.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/notes/quill_session.js') }}"></script>
 <script src="{{ url_for('static', filename='js/notes/general.js') }}"></script>
 <script src="{{ url_for('static', filename='js/notes/socket_on.js') }}"></script>
 <script src="{{ url_for('static', filename='js/notes/new_session.js') }}"></script>
 <script src="{{ url_for('static', filename='js/notes/new_note.js') }}"></script>
 <script src="{{ url_for('static', filename='js/notes/note_editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes/session_display.js') }}"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="{{ url_for('static', filename='js/notes/main.js') }}"></script>
+
 <script type="text/javascript" charset="utf-8">
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -39,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     {% endif %}
 })
 </script>
+
 <div class="game-container">
     <div class="container">
         <h1>{{ game_name }}</h1>
@@ -52,25 +58,13 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="session-log">
                 <h2>Session Log</h2>
                 
-                <ul class="sessions-list">
+                <ul class="sessions-list" data-flag="sessions_list" >
                     {% for session in session_titles %}
-                    <li class="session-anchor" data-number_sessionList="{{ session.number }}">
+                    <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
                         <h4>Session {{ session.number }}</h4>
                         <h2>{{ session.title }}</h2>
                     </li>
                     {% endfor %}
-                    <!-- <li class="session-anchor current">
-                        <h4>Session 2</h4>
-                        <h2>Into the Woods</h2>
-                    </li>
-                    <li class="session-anchor">
-                        <h4>Session 1</h4>
-                        <h2>The Thick Plottens</h2>
-                    </li>
-                    <li class="session-anchor">
-                        <h4>Session 0</h4>
-                        <h2>We are All Well Met</h2>
-                    </li> -->
                 </ul>
             </div>
             {% endif %}
@@ -96,20 +90,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                     </form>
                 </div>
-                <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-                <script>
-                    var quill = new Quill('#Quill_sessionNew', { 
-                    modules: {
-                        toolbar: [
-                        ['bold', 'italic'],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ list: 'ordered' }, { list: 'bullet' }]
-                        ]
-                    },
-                    placeholder: 'A note about this session.',
-                    theme: 'snow'
-                    });
-                </script>
+                
+                
                 <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
                     {% if session_titles %}
                         <!-- Session Title Cards -->

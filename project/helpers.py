@@ -141,25 +141,41 @@ def translate(model):
 
     # HTML Templates
     htmlTemplate__newSession = '''
-    <div class="session-container">
+    <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
         <h2>Session {{ session.number }}: {{ session.title }}</h2>
         <div>
             <!-- Session Notes -->
-            
             <ul class="note_list" data-idSession="{{ session.number }}">
         </div>
     </div>
     '''
+    
+    
+    # '''
+    # <div class="session-container">
+    #     <h2>Session {{ session.number }}: {{ session.title }}</h2>
+    #     <div>
+    #         <!-- Session Notes -->
+            
+    #         <ul class="note_list" data-idSession="{{ session.number }}">
+    #     </div>
+    # </div>
+    # '''
 
+    htmlTemplate__newSessionList = '''
+    <li class="session-anchor current" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+        <h4>Session {{ session.number }}</h4>
+        <h2>{{ session.title }}</h2>
+    </li>
+    '''
     htmlTemplate__newNote = '''
-    <li class="span_cont">
+    <li class="span_cont" data-id_noteCont="{{ note.id }}">
         <span class="span_cont note-item">
             <span class="note-author">
 
                 <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
 
                 <div class="author-image" style="background-image: url(../static/images/default_character.jpg)"></div>
-
                 <!-- {{ note.date_added }} || -->
             </span>
 
@@ -175,19 +191,28 @@ def translate(model):
             <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
                 <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
             </a>
-            <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                <input type='text' data-id_formText="{{ note.id }}" value='{{ note.note }}'>
-                <input type='submit' value='submit'>
-                <span class="checkbox_span">
-                    <input type='checkbox' data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
-                    <label for='change_private_{{ note.id }'>
-                        Private?
-                    </label>
-                </span>
+            
+            <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
+                <div class="form-group" >
+                
+                    <input type="hidden" id='note_user_id' name='note_user_id' value='{{ note.user_id }}'>
+                    <input type="hidden" id='note_game_id' name='note_game_id' value='{{ note.game_id }}'>
+                    <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row checkbox">
+                        <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
+                        <label for='note_private'>Private - Visible only to you and the DM.</label>
+                    </div>
+                    <div class="row button-row">
+                        <button class="button primary" type="submit">Submit</button>
+                    </div>
+                </div>
             </form>
 
             <!-- Edit Note Menu -->
-            <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">
+            <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
                 <ul class="note_edit_menu_items">
                     <li class="note_edit_menu_item">
                         <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
@@ -201,33 +226,92 @@ def translate(model):
                     </li>
                 </ul>
             </div>
-            
+
         </span>
     </li>
-    
-    </ul>
     '''
+    
+    # '''
+    # <li class="span_cont">
+    #     <span class="span_cont note-item">
+    #         <span class="note-author">
+
+    #             <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
+
+    #             <div class="author-image" style="background-image: url(../static/images/default_character.jpg)"></div>
+
+    #             <!-- {{ note.date_added }} || -->
+    #         </span>
+
+    #         <span class="note-content">
+    #             <h3>{{ note.charname }}:</h3>
+    #             <span class="note-ql" data-id_noteText="{{ note.id }}">
+    #             {{ note.note }}
+    #             </span>
+    #         </span>
+
+
+    #         <!-- Edit Button -->
+    #         <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
+    #             <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
+    #         </a>
+    #         <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
+    #             <input type='text' data-id_formText="{{ note.id }}" value='{{ note.note }}'>
+    #             <input type='submit' value='submit'>
+    #             <span class="checkbox_span">
+    #                 <input type='checkbox' data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
+    #                 <label for='change_private_{{ note.id }'>
+    #                     Private?
+    #                 </label>
+    #             </span>
+    #         </form>
+
+    #         <!-- Edit Note Menu -->
+    #         <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">
+    #             <ul class="note_edit_menu_items">
+    #                 <li class="note_edit_menu_item">
+    #                     <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
+    #                         Edit Note
+    #                     </a>
+    #                 </li>
+    #                 <li class="note_edit_menu_item">
+    #                     <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="delete">
+    #                         Delete Note
+    #                     </a>
+    #                 </li>
+    #             </ul>
+    #         </div>
+            
+    #     </span>
+    # </li>
+    
+    # </ul>
+    # '''
 
     # Determine which type of element to create
     header = model.header
     if header == "note.":
         html = htmlTemplate__newNote
         html = note_conditionals(html, model)
+        html = [html]
     elif header == "session.":
-        html = htmlTemplate__newSession
-    
+        html = [htmlTemplate__newSession, htmlTemplate__newSessionList]
+        
     # populate the dict with the model's key/value pairs
     columns = {}
     for column in model.__table__.columns:
         columns[str(column.key)] = getattr(model, str(column.key))
 
     # iterate through each key/value pair in the model instance's attributes
-    for key, value in columns.items():
+    i = 0
+    while i < len(html):
+        for key, value in columns.items():
 
-        # create template for translator
-        key = "{{ " + header + key + " }}"
+            # create template for translator
+            key = "{{ " + header + key + " }}"
 
-        # replace jinja variables
-        html = html.replace(key, str(value))
+            # replace jinja variables
+            html[i] = html[i].replace(key, str(value))
+        i+=1
 
     return html

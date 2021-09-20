@@ -5,11 +5,12 @@ const socket = io()
 , className__active_sessionList = "current";
 
 var menu_deployed = false
+, current__session_number = 0
 
 , flag__formEdit_form = "form[data-flag='formEdit']"
 
 , flag__formNewSession_container = "div[data-flag='formNewSession_container']"
-, flag__button_newSessionDisplay = "button[data-flag='button_newSessionDisplay']"
+, flag__button_newSessionDisplay = "[data-flag='button_newSessionDisplay']"
 , flag__formNewSession_form = "form[data-flag='formNewSession_form']"
 , flag__formNewSession_inputSessionNumber = "input[data-flag='formNewSession_inputSessionNumber']"
 , flag__formNewSession_inputSessionTitle = "input[data-flag='formNewSession_inputSessionTitle']"

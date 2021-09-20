@@ -23,7 +23,9 @@ function cancel_button_listener() {
     // Local Variables 
     let element__formNewSession_buttonCancel = document.querySelector(flag__formNewSession_buttonCancel);
 
-    element__formNewSession_buttonCancel.onclick = cancel_new_session_func()
+    element__formNewSession_buttonCancel.addEventListener("click", function () {
+        cancel_new_session_func();
+    })
 }
 
 // function to remove new session form and add the edit button back
@@ -80,7 +82,6 @@ function new_session_form_is_not_unique() {
         return false;
     }
 }
-
 
 // Validation of new session
 function newSession__validateFormError() {

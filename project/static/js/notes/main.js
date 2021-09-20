@@ -13,13 +13,15 @@ function init(DM="") {
     Checkbox_logic();
 
     // Quill functions
-    NewQuill_submitListener();
+    let quill = make_quill ();
+    NewQuill_submitListener(quill);
 
     // set current session
     setActiveSession__onPageLoad();
-
+    clickListener__sessionList ();
     if (DM == "DM") {
         // newSession functions
         NewSessionMaker();
     }
+    
 }
