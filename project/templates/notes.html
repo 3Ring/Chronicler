@@ -69,7 +69,6 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             {% endif %}
             <div class="notes">
-                <h2>Add a new note to this session.</h2>
                 <div class="comment-container">
                     <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
                         <div class="form-group">
@@ -124,7 +123,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
                                                     <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
                                                 </a>
+
+                                                {% endif %}
                                                 
+                                            </span>
+                                            
+                                            {% if note.user_id == current_user.id %}
                                                 <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
                                                     <div class="form-group" >
                                                     
@@ -148,20 +152,19 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
                                                     <ul class="note_edit_menu_items">
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
+                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
                                                                 Edit Note
                                                             </a>
                                                         </li>
                                                         <li class="note_edit_menu_item">
-                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="delete">
+                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
                                                                 Delete Note
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                {% endif %}
+                                            {% endif %}
 
-                                            </span>
                                         </li>
                                         {% endfor %}
                                     </ul>
@@ -177,19 +180,20 @@ document.addEventListener("DOMContentLoaded", function() {
 {% if dm_id == current_user.id %}
 <!-- New Session Form -->
 <div data-flag="formNewSession_container" class="hidden" style="z-index: 100;">
-    <!-- <div class="shroud"></div> -->
-    <div class="modal-container">
-        <div class="modal">
-            <div class="content">
-                <h2>Session Info</h2>
-                <form data-flag="formNewSession_form">
-                    <input data-flag="formNewSession_idGame" id='new_session_form_game_id' type='hidden' value='{{id}}'>
-                    <input data-flag="formNewSession_inputSessionNumber" required placeholder='Number(Required)' type='number' min='0'>
-                    <input data-flag="formNewSession_inputSessionTitle" required placeholder='Title(Required)' type='text'>
-                    <input data-flag="formNewSession_inputSessionSynopsis" type='text' placeholder='Optional Synopsis'>
-                    <input class="button primary" type='submit' value='Make Session'>
-                    <input class="button secondary" type='button' data-flag="formNewSession_buttonCancel" value='Cancel'>
-                </form>
+    <div class="shroud">
+        <div class="modal-container">
+            <div class="modal">
+                <div class="content">
+                    <h2>Session Info</h2>
+                    <form data-flag="formNewSession_form">
+                        <input data-flag="formNewSession_idGame" id='new_session_form_game_id' type='hidden' value='{{id}}'>
+                        <input data-flag="formNewSession_inputSessionNumber" required placeholder='Number (Required)' type='number' min='0'>
+                        <input data-flag="formNewSession_inputSessionTitle" required placeholder='Title (Required)' type='text'>
+                        <input data-flag="formNewSession_inputSessionSynopsis" type='text' placeholder='Synopsis'>
+                        <input class="button primary" type='submit' value='Make Session'>
+                        <input class="button secondary" type='button' data-flag="formNewSession_buttonCancel" value='Cancel'>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

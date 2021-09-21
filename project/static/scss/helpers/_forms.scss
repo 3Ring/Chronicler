@@ -9,7 +9,7 @@ form {
     flex-direction: column;
     gap: var(--md);
     background: var(--formBackground);
-    padding: var(--sm) var(--lg);
+    padding: var(--lg) var(--lg);
     border-radius: var(--boxBorderRadius);
     -webkit-box-shadow: var(--boxShadow);
     box-shadow: var(--boxShadow);
@@ -156,11 +156,11 @@ textarea {
     margin: 0;
     background: var(--inputBackground);
     color: var(--inputTextColor);
-    color: white;
 
     &:focus {
         outline: 2px solid var(--inputFocusBorder);
     }
+    
 }
 
 input[type=color] {
@@ -200,4 +200,17 @@ input[type=checkbox]:focus {
 
     outline: none;
 
+}
+
+input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: var(--inputPlaceholder);
+}
+input::-moz-placeholder { /* Firefox 19+ */
+  color: var(--inputPlaceholder);
+}
+input:-ms-input-placeholder { /* IE 10+ */
+  color: var(--inputPlaceholder);
+}
+input:-moz-placeholder { /* Firefox 18- */
+  color: var(--inputPlaceholder);
 }

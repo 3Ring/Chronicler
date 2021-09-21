@@ -1,25 +1,16 @@
-@media (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  body .dark .field-text-body p,
-body .dark .field-text-body h1,
-body .dark .field-text-body h2,
-body .dark .field-text-body h3,
-body .dark .field-text-body h4,
-body .dark .field-text-body h5,
-body .dark .field-text-body li {
-    color: white !important;
-  }
-}
 button,
 input[type=button],
 input[type=reset],
 input[type=submit], .button {
   font-family: "Grenze Gotisch", cursive;
-  font-size: 1.3em;
+  font-size: 1.7em;
+  line-height: 1.3;
   font-weight: 400;
   min-width: 0 !important;
+  width: max-content;
   margin: 0;
   display: inline-block;
-  padding: var(--xs) var(--lg);
+  padding: var(--xxxs) var(--sm);
   text-decoration: none;
   text-align: center;
   transition: all 0.15s ease;
@@ -27,7 +18,7 @@ input[type=submit], .button {
   background-color: var(--buttonBg);
   color: var(--buttonText);
   border: 0.125em solid var(--buttonBorder);
-  border-radius: 0.188em;
+  border-radius: var(--buttonBorderRadius);
 }
 @media (hover: hover) {
   button:hover,
@@ -80,9 +71,9 @@ input[type=submit], .button {
 }
 
 :root {
-  --headlineColor: #455264;
+  --headlineColor: black;
   --headlineColorReverse: white;
-  --headlineLinkColor: black;
+  --headlineLinkColor: #455264;
   --copyColor: #212936;
   --linkColor: #6dc6af;
   --reverse: white;
@@ -100,15 +91,15 @@ input[type=submit], .button {
   /** Inputs **/
   --formBackground: white;
   --inputTextColor: white;
-  --inputPlaceholder: #dadce0;
+  --inputPlaceholder: #8f97a2;
   --inputBackground: #2e3a49;
   --inputBorderColor: #2e3a49;
   --inputFocusBorder: #6dc6af;
   /** Buttons **/
-  --buttonBorderRadius: var(--xs);
+  --buttonBorderRadius: var(--xs) / var(--xxs);
   --primaryButtonBg: #6dc6af;
   --primaryButtonBorder: #6dc6af;
-  --primaryButtonText: black;
+  --primaryButtonText: white;
   --primaryButtonHoverBg: white;
   --primaryButtonHoverBorder: #6dc6af;
   --primaryButtonHoverText: #6dc6af;
@@ -126,12 +117,67 @@ input[type=submit], .button {
   --boxBackground: white;
   --boxAlternateBackground: #ddf2ec;
   --boxHoverBackground: #dadce0;
-  --textShadow: 1px 1px 3px rgba(0,0,0,0.3);
-  --textBorderShadow: 1px 1px 0 rgba(0,0,0,1);
-  --boxShadow: 2px 2px 10px 2px rgba(0,0,0,0.1);
+  --textShadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  --textBorderShadow: 1px 1px 0 rgba(0, 0, 0, 1);
+  --boxShadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.1);
   --secondaryBoxBackground: #455264;
   /** Modal **/
-  --shroudBackground: rgba(0,0,0,0.6);
+  --shroudBackground: rgba(0, 0, 0, 0.6);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --headlineColor: white;
+    --headlineColorReverse: black;
+    --headlineLinkColor: #8f97a2;
+    --copyColor: #dadce0;
+    --linkColor: #45aa90;
+    --reverse: #8f97a2;
+    /** Alerts, disabled, and errors **/
+    --disabled: #2e3a49;
+    --error: red;
+    --accentColor: #2e3a49;
+    --alertCopy: white;
+    /** Borders **/
+    --border1: #212936;
+    --border2: #2e3a49;
+    --border3: #455264;
+    --accentBorder: transparent;
+    /** Inputs **/
+    --formBackground: #6dc6af;
+    --inputTextColor: #455264;
+    --inputPlaceholder: #dadce0;
+    --inputBackground: white;
+    --inputBorderColor: white;
+    --inputFocusBorder: #45aa90;
+    /** Buttons **/
+    --buttonBorderRadius: var(--xs) / var(--xxs);
+    --primaryButtonBg: #45aa90;
+    --primaryButtonBorder: #45aa90;
+    --primaryButtonText: white;
+    --primaryButtonHoverBg: black;
+    --primaryButtonHoverBorder: #45aa90;
+    --primaryButtonHoverText: #45aa90;
+    --secondaryButtonBg: #455264;
+    --secondaryButtonBorder: #455264;
+    --secondaryButtonText: white;
+    --secondaryButtonHoverBg: #dadce0;
+    --secondaryButtonHoverBorder: #45aa90;
+    --secondaryButtonHoverText: #45aa90;
+    /** Layout Regions **/
+    --headerBackground: #b5bac1;
+    --mainBackground: url(../images/chronicler-chrome-bg-dark.jpg) 0 0 no-repeat;
+    --footerBackground: #6a7583;
+    /** Boxes **/
+    --boxBackground: #2e3a49;
+    --boxAlternateBackground: #455264;
+    --boxHoverBackground: #455264;
+    --textShadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    --textBorderShadow: 1px 1px 0 rgba(0, 0, 0, 1);
+    --boxShadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.1);
+    --secondaryBoxBackground: #212936;
+    /** Modal **/
+    --shroudBackground: rgba(0, 0, 0, 0.6);
+  }
 }
 
 :root {
@@ -282,7 +328,7 @@ ul li {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 form {
@@ -290,7 +336,7 @@ form {
   flex-direction: column;
   gap: var(--md);
   background: var(--formBackground);
-  padding: var(--sm) var(--lg);
+  padding: var(--lg) var(--lg);
   border-radius: var(--boxBorderRadius);
   -webkit-box-shadow: var(--boxShadow);
   box-shadow: var(--boxShadow);
@@ -510,7 +556,6 @@ textarea {
   margin: 0;
   background: var(--inputBackground);
   color: var(--inputTextColor);
-  color: white;
 }
 input[type=text]:focus,
 input[type=password]:focus,
@@ -554,6 +599,26 @@ input[type=color] {
 
 *:focus {
   outline: none;
+}
+
+input::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: var(--inputPlaceholder);
+}
+
+input::-moz-placeholder {
+  /* Firefox 19+ */
+  color: var(--inputPlaceholder);
+}
+
+input:-ms-input-placeholder {
+  /* IE 10+ */
+  color: var(--inputPlaceholder);
+}
+
+input:-moz-placeholder {
+  /* Firefox 18- */
+  color: var(--inputPlaceholder);
 }
 
 .chronicler {
@@ -662,41 +727,14 @@ nav a b em {
   font-weight: 700;
   font-style: italic;
 }
-nav a.home-logo {
-  font-family: "Urbanist", sans-serif;
-  font-weight: 500;
-  font-stretch: normal;
-  font-size: 2.25em;
-  letter-spacing: -0.019em;
-  line-height: 1.085;
-  color: var(--headlineColor);
-  color: var(--reverse);
-  text-shadow: var(--textShadow);
-}
-@media screen and (min-width: 31.25em) {
-  nav a.home-logo {
-    font-size: 2.54em;
-  }
-}
-nav a.home-logo b,
-nav a.home-logo strong {
-  font-weight: 700;
-}
-nav a.home-logo em, nav a.home-logo i {
-  font-style: italic;
-}
-nav a.home-logo strong i,
-nav a.home-logo strong em,
-nav a.home-logo b i,
-nav a.home-logo b em {
-  font-weight: 700;
-  font-style: italic;
-}
 nav ul {
   display: flex;
 }
 nav ul:first-child li {
   margin-right: var(--sm);
+}
+nav ul:first-child li img {
+  max-height: var(--xl);
 }
 nav ul:last-child li {
   margin-left: var(--sm);
@@ -852,8 +890,9 @@ nav ul:last-child li:first-child a {
   letter-spacing: -0.019em;
   line-height: 1.085;
   color: var(--headlineColor);
-  font-family: "PT Serif", serif;
-  font-weight: 700;
+  font-weight: 800;
+  color: var(--headlineColor);
+  text-transform: uppercase;
 }
 .app-container .game h2 b,
 .app-container .game h2 strong, .app-container .welcome h2 b,
@@ -905,7 +944,10 @@ nav ul:last-child li:first-child a {
   font-style: italic;
 }
 .app-container a.new-game {
-  color: var(--copyColor);
+  color: white;
+}
+.app-container a.new-game:hover {
+  color: #6dc6af;
 }
 
 .alert {
@@ -1109,10 +1151,16 @@ nav ul:last-child li:first-child a {
   display: flex;
   min-width: 100%;
 }
+@media screen and (max-width: 48.438em) {
+  .notes-container {
+    flex-wrap: wrap;
+  }
+}
 .notes-container .session-log {
   position: relative;
   z-index: 0;
   height: max-content;
+  width: 100%;
   background: var(--secondaryBoxBackground);
   padding: var(--sm) var(--lg);
   border-radius: var(--boxBorderRadius);
@@ -1121,15 +1169,28 @@ nav ul:last-child li:first-child a {
   --headlineColor: var(--reverse);
   --copyColor: var(--reverse);
 }
+@media screen and (min-width: 48.438em) {
+  .notes-container .session-log {
+    width: unset;
+  }
+}
 .notes-container .session-log:after {
   content: "";
   position: absolute;
   display: block;
-  width: var(--xxl);
+  width: 100%;
   background: var(--secondaryBoxBackground);
-  height: 100%;
-  left: calc(100% - var(--lg));
-  top: 0;
+  height: var(--xxl);
+  top: calc(100% - var(--lg));
+  left: 0;
+}
+@media screen and (min-width: 48.438em) {
+  .notes-container .session-log:after {
+    width: var(--xxl);
+    height: 100%;
+    left: calc(100% - var(--lg));
+    top: 0;
+  }
 }
 .notes-container .session-log h2 {
   font-family: "Urbanist", sans-serif;
@@ -1220,6 +1281,7 @@ nav ul:last-child li:first-child a {
 .notes-container .notes {
   position: relative;
   z-index: 1;
+  padding-top: var(--lg);
   overflow: hidden;
   background: var(--boxBackground);
   border-radius: var(--boxBorderRadius);
@@ -1259,15 +1321,31 @@ form.wysiwyg-form {
   box-shadow: none;
   border: none;
   padding: 0;
-  display: grid;
+  background: var(--boxBackground);
   grid-template-columns: 1fr;
   width: 100%;
   margin: 0;
+}
+form.wysiwyg-form:not(.hidden) {
+  display: grid;
 }
 @media screen and (min-width: 31.25em) {
   form.wysiwyg-form {
     grid-template-columns: 2fr 1fr;
   }
+}
+form.wysiwyg-form .ql-container.ql-snow,
+form.wysiwyg-form .ql-toolbar.ql-snow {
+  border: 1px solid var(--border3);
+}
+form.wysiwyg-form .ql-editor.ql-blank::before {
+  color: var(--inputPlaceholder);
+}
+form.wysiwyg-form .ql-toolbar {
+  background: var(--reverse);
+}
+form.wysiwyg-form .ql-container {
+  background: var(--boxBackground);
 }
 form.wysiwyg-form .form-group {
   display: flex;
@@ -1327,31 +1405,48 @@ form.wysiwyg-form p {
   display: grid;
   grid-template-columns: max-content 1fr max-content;
 }
-.note_list > li .note_edit_menu.active {
+.note_list > li .note_edit_menu:not(.hidden) {
   position: absolute;
-  right: var(--sm);
-  top: var(--xs);
-  width: auto;
-  font-size: 0.8em;
+  font-size: 0.8;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--shroudBackground);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .note_list > li .note_edit_menu ul {
   display: flex;
   gap: var(--sm);
 }
 .note_list > li .note_edit_menu ul a {
-  color: var(--copyColor) !important;
+  color: white;
+}
+.note_list > li .note_edit_menu ul a:hover {
+  color: #6dc6af;
 }
 .note_list .edit-note {
-  display: none;
-  width: var(--lg);
+  display: flex;
+  min-width: var(--lg);
 }
 .note_list .edit-note:not(.active):hover {
   text-decoration: none;
   color: var(--copyColor);
   cursor: pointer;
 }
-.note_list .span_cont:hover .edit-note {
+.note_list .edit-note .note_edit_button {
+  display: none;
+}
+.note_list .span_cont:hover .edit-note .note_edit_button {
   display: flex;
+}
+.note_list .span_cont form.wysiwyg-form {
+  width: auto;
+  margin: 0 var(--sm) 0 var(--xxxl);
+  background: none;
+  border-radius: none;
 }
 .note_list .note-author {
   margin: 0 var(--sm) 0 var(--lg);

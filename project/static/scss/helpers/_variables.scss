@@ -6,8 +6,8 @@
 // // =============================================================================
 
 $break1: 31.250em;  //500pixel
-$break2: 120em;     //1920pixel
-$break3: 120em;
+$break2: 48.438em;  //775pixel    
+$break3: 120em;		//1920pixel
 $break4: 120em;
 
 //499 pixel for use in max-width media queries
@@ -51,6 +51,7 @@ $icon: 'FontAwesome';
 
 $brand: rgba(109, 198, 175, 1);
 $brand_surface: rgba(221, 242, 236, 1);
+$brand_dark: rgba(69, 170, 144, 1);
 $transparent:	rgba(0, 0, 0, 0);
 
 //Gray Scale

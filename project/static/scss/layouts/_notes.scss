@@ -46,11 +46,22 @@
     display: flex;
     min-width: 100%;
 
+    @media screen and (max-width: $break2) {
+        flex-wrap: wrap;
+    }
+
     .session-log {
+
+
 
         position: relative;
         z-index: 0;
         height: max-content;
+        width: 100%;
+
+        @media screen and (min-width: $break2) {
+            width: unset;
+        }
 
         background: var(--secondaryBoxBackground);
         padding: var(--sm) var(--lg);
@@ -62,14 +73,24 @@
         --copyColor: var(--reverse);
 
         &:after {
+
             content: "";
             position: absolute;
             display: block;
-            width: var(--xxl);
+            width: 100%;
             background: var(--secondaryBoxBackground);
-            height: 100%;
-            left: calc(100% - var(--lg));
-            top: 0;
+            height: var(--xxl);
+            top: calc(100% - var(--lg));
+            left: 0;    
+
+            @media screen and (min-width: $break2) {
+             
+                width: var(--xxl);
+                height: 100%;
+                left: calc(100% - var(--lg));
+                top: 0;
+
+            }
         }
 
         h2 {
@@ -109,7 +130,7 @@
     .notes {
         position: relative;
         z-index: 1;
-
+        padding-top: var(--lg);
         overflow: hidden;
 
         background: var(--boxBackground);
@@ -135,13 +156,35 @@ form.wysiwyg-form {
     border: none;
     padding: 0;
 
-    display: grid;
-    grid-template-columns: 1fr;
+    background: var(--boxBackground);
+
+
+        grid-template-columns: 1fr;
     width: 100%;
     margin: 0;
 
+    &:not(.hidden) {
+        display: grid;
+    }
+
     @media screen and (min-width: $break1) {
         grid-template-columns: 2fr 1fr;
+    }
+
+    .ql-container.ql-snow,
+    .ql-toolbar.ql-snow {
+        border: 1px solid var(--border3);
+    }
+    .ql-editor.ql-blank::before {
+        color: var(--inputPlaceholder);
+    }
+
+    .ql-toolbar {
+        background: var(--reverse);
+    }
+
+    .ql-container {
+        background: var(--boxBackground);
     }
 
     .form-group {
@@ -195,21 +238,32 @@ form.wysiwyg-form {
         }
 
         .note_edit_menu {
-            &.active {
-                position: absolute;
-                right: var(--sm);
-                top: var(--xs);
-                width: auto;
 
-                font-size: 0.8em;
+            &:not(.hidden) {
+                position: absolute;
+                font-size: 0.8;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background: var(--shroudBackground);
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
+            
+            
 
             ul {
                 display: flex;
                 gap: var(--sm);
 
                 a {
-                    color: var(--copyColor) !important;
+                    color: $max;
+
+                    &:hover {
+                        color: $brand;
+                    }
                 }
             }
         }
@@ -217,8 +271,8 @@ form.wysiwyg-form {
 
 
     .edit-note {
-        display: none;
-        width: var(--lg);
+        display: flex;
+        min-width: var(--lg);
         &:not(.active) {
             &:hover {
                 text-decoration: none;
@@ -226,13 +280,24 @@ form.wysiwyg-form {
                 cursor: pointer;
             }
         }
+        .note_edit_button {
+            display: none;
+        }
     }
     .span_cont {
         &:hover {
             .edit-note {
-                display: flex;
-                
+                .note_edit_button {
+                    display: flex;
+                }
             }
+        }
+
+        form.wysiwyg-form {
+            width: auto;
+            margin: 0 var(--sm) 0 var(--xxxl);
+            background: none;
+            border-radius: none;
         }
     }
 

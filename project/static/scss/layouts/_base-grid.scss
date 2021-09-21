@@ -58,9 +58,9 @@
         width: 100%;
         min-height: 100%;
 
-        max-width: $break2;
+        max-width: $break3;
 
-        @media screen and (min-width: $break2) {
+        @media screen and (min-width: $break3) {
             margin: 0 auto;
         }
     }

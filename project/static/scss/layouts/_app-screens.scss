@@ -93,8 +93,9 @@
     .game, .welcome {
         h2 {
             @include size-3();
-            font-family: $serif;
-            font-weight: 700;
+            font-weight: 800;
+            color: var(--headlineColor);
+            text-transform: uppercase;
 
             span {
                 font-family: $display;
@@ -107,7 +108,11 @@
     }
 
     a.new-game {
-        color: var(--copyColor);
+        color: $max;
+
+        &:hover {
+            color: $brand;
+        }
     }
 
 }

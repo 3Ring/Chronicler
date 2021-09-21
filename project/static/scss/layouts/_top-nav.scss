@@ -13,11 +13,6 @@ nav {
 	a {
 		@include size-5();
 
-		&.home-logo {
-			@include size-2();
-			color: var(--reverse);
-			text-shadow: var(--textShadow);
-		}
 	}
 
 	ul {
@@ -26,6 +21,10 @@ nav {
 		&:first-child {
 			li {
 				margin-right: var(--sm);
+
+				img {
+					max-height: var(--xl);
+				}
 			}
 		}
 		&:last-child {
