@@ -94,9 +94,10 @@ def nuke():
     print("Images")
     db.session.commit()
 
-    # db.session.query(Users).delete()
-    # print("Users")
-    # db.session.commit()
+    db.session.query(Users).delete()
+    print("Users")
+    db.session.commit()
+    init_training_wheels_db()
 
     return
 
@@ -246,3 +247,54 @@ def translate(model):
         i+=1
 
     return html
+
+# run on db creation for tutorial messages
+def init_training_wheels_db():
+    chronicler_user = Users(name = "Chronicler", email="app@chronicler.gg", hash="nope")
+    db.session.add(chronicler_user)
+    db.session.commit()
+
+# add tutorial notes and session zero to game
+def new_game_training_wheels(game):
+
+    tutorial_user=Users.query.filter_by(email="app@chronicler.gg").first()
+    # add tutorial character
+    tutorial_character = Characters(name="Chronicler Helper", user_id=tutorial_user.id, game_id=game.id)
+    db.session.add(tutorial_character)
+    db.session.commit()
+
+    # add session zero
+    session_zero = Sessions(number=0, title="The Adventure Begins!", games_id=game.id)
+    db.session.add(session_zero)
+    db.session.commit()
+
+    tutorial_notes = []
+    note_texts = [
+        # note 1
+        '''
+        <p><strong class="ql-size-huge"><u>Intro Note 1:</u></strong></p><p>Welcome to your next great adventure!</p><p><br></p><p>This is a place where you can write and share notes.</p>
+        ''',
+        # note 2
+        '''
+        <p><strong class="ql-size-huge"><u>Intro Note 2:</u></strong></p><p>Notes are ordered by "Session" by which we typically mean game session, but for you it can mean whatever you want!</p><p><br></p><p>For your "Session Zero" notes I recommend you have notes related to the overall shape of your game. A short list would be:</p><p><br></p><ol><li>house rules</li><li>areas of roleplay and story that are off limits due to player comfort</li><li>expectations</li></ol><ul><li>how long each session should be</li><li>how often you plan to meet</li><li>what you will do if a player can't make it</li><li>etc!</li></ul>
+        ''',
+        # note 3
+        '''
+        <p><strong class="ql-size-huge"><u>Intro Note 3:</u></strong></p><p>you can edit and delete your notes whenever you like, and though you can't typically delete other player's note, you are more than welcome to get rid of mine if you are already experts!</p>
+        ''',
+        # note 4
+        '''
+        <p><strong class="ql-size-huge"><u>Intro note 4:</u></strong></p><p>Right now this site is in an Alpha phase, which means Chronicler is just a baby!</p><p><br></p><p>If you notice anything that seems broken or could be improved please let me know so I can make it better!</p>
+        ''',
+        # note 5
+        '''
+        <p><strong class="ql-size-huge"><u>Intro Note 5:</u></strong></p><p>This is the last note in the session!</p><p><br></p><p><em>Then why is it at the top?</em></p><p><br></p><p>Chronicler is designed to be a collaborative note taking application. That means that it's meant to be used while you are playing together! We think it's better if the newest notes appear at the top of the page.</p><p><br></p><p>Don't worry, you can change this if you like....<strong>(eventually)</strong></p>
+        '''
+    ]
+
+    for note in note_texts:
+        tutorial_notes.append(Notes(charname="Chronicler Helper", note=note, session_number=0, user_id=tutorial_user.id, character=tutorial_character.id, game_id=game.id))
+    
+    for Note_obj in tutorial_notes:
+        db.session.add(Note_obj)
+        db.session.commit()

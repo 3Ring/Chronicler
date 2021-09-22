@@ -14,6 +14,12 @@ function filled_note_logic (note_id) {
 
 // Display new Session
 socket.on('fill_new_session', function(new_session, new_list, session_number) {
+
+    // remove filler session title if first session
+    let filler_session = document.querySelector(`li[data-number_sessionList="set_up"]`)
+    if ( filler_session) {
+        filler_session.remove();
+    }
     // Local Variables
     let element__sessionsContainer = document.querySelector(flag__sessionContainer)
     , element__sessionsList = document.querySelector("ul[data-flag='sessions_list']");
@@ -33,7 +39,7 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
     // session container
     element__new_session = document.querySelector("div[data-number_sessionCont='" + session_number +"']");
     display_sessionCont(element__new_list);
-    set_currentSessionVariable_fromElement(element__new_session);
+    set_currentSessionVariable_fromElement(element__new_list);
     // session list
 
     })

@@ -6,7 +6,7 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
-from .helpers import upload, nuke
+from .helpers import upload, nuke, new_game_training_wheels
 
 
 # Variables
@@ -202,6 +202,10 @@ def create():
         playerlist=Players(users_id=current_user.id, games_id=game.id)
         db.session.add(playerlist)
         db.session.commit()
+
+        # add tutorial notes and session zero to game
+        new_game_training_wheels(game)
+
         return redirect(url_for('main.notes', id=game.id))
 
 def get_char_image(game_id):
@@ -217,6 +221,8 @@ def notes(id):
     dm_id = game[0] 
     game_name = game[1]
     logs = {}
+
+    tutorial = Users.query.filter_by(email="app@chronicler.gg").first()
 
     char_image = get_char_image(1)
     # query the notes and organize them by session in reverse order
@@ -252,9 +258,7 @@ def notes(id):
     js_note_dict = json.dumps(js_logs)
 
     return render_template('notes.html'
-        , typ=type
-        , lis=list
-        , st=str
+        , tutorial=tutorial
         , js_note_dict=js_note_dict
         , edit_img=imageLink__buttonEdit
         , note_dict=logs

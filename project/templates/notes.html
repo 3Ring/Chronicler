@@ -54,20 +54,26 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         {% endif %}
         <div class="notes-container">
-            {% if session_titles %}
+            
             <div class="session-log">
                 <h2>Session Log</h2>
-                
-                <ul class="sessions-list" data-flag="sessions_list" >
-                    {% for session in session_titles %}
-                    <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
-                        <h4>Session {{ session.number }}</h4>
-                        <h2>{{ session.title }}</h2>
-                    </li>
-                    {% endfor %}
-                </ul>
+                {% if session_titles %}
+                    <ul class="sessions-list" data-flag="sessions_list" >
+                        {% for session in session_titles %}
+                        <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+                            <h4>Session {{ session.number }}</h4>
+                            <h2>{{ session.title }}</h2>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <ul class="sessions-list" data-flag="sessions_list" >
+                        <li data-flag="sessionList" data-number_sessionList="set_up">
+                            <h4>Setting up the table...</h4>
+                    </ul>
+                {% endif %}
             </div>
-            {% endif %}
+            
             <div class="notes">
                 <div class="comment-container">
                     <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
@@ -118,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                     </span>
                                                 </span>
 
-                                                {% if note.user_id == current_user.id %}
+                                                {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
                                                 <!-- Edit Button -->
                                                 <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
                                                     <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
@@ -128,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 
                                             </span>
                                             
-                                            {% if note.user_id == current_user.id %}
+                                            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
                                                 <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
                                                     <div class="form-group" >
                                                     
