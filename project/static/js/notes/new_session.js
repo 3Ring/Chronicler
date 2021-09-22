@@ -123,10 +123,12 @@ function newSession__submitListener() {
                 , element__formNewSession_inputNumber.value
                 , element__formNewSession_inputTitle.value
                 , element__formNewSession_inputSynopsis.value);
-        }
+
         // remove new session form
         cancel_new_session_func();
         return false;
+        }
+    return false
     })
 }
 
