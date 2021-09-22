@@ -125,18 +125,17 @@ function toggle_form_on(id_num) {
     // Local variables
     let flag__formEdit = "form[data-id_formEdit='"+id_num+"']"
     , flag__notes_noteText = "span[data-id_noteText='"+id_num+"']"
-    , flag__notes_editImage = "span[data-id_editImage='"+id_num+"']"
-    // , flag__formEdit_textArea = "input[data-id_formText='"+id_num+"']"
+    , flag__notes_editImage = "a[data-editButtonAnchorId='"+id_num+"']"
 
     , element__formEdit = document.querySelector(flag__formEdit)
     , element__notes_noteText = document.querySelector(flag__notes_noteText)
     , element__notes_editImage = document.querySelector(flag__notes_editImage)
-    // , element__formEdit_textArea = document.querySelector(flag__formEdit_textArea);
 
 
     // hide original note
     element__notes_noteText.classList.add(className__hidden);
-    element__notes_editImage.classList.add(className__hidden);
+    element__notes_editImage.remove();
+    // element__notes_editImage.classList.add(className__hidden);
 
     // display edit form
     element__formEdit.classList.remove(className__hidden);
@@ -180,10 +179,6 @@ function edit_note_func(id_num, event) {
     , note_text = element__formEdit_Editor.innerHTML
     , note_private = element__notes_checkboxPrivate.value;
 
-    // check to see if the 
-    // if ( ! element__editorParent.getAttribute("data-socketFlag" ) {
-
-    // })
     // send to server
     socket.emit("edit_note"
         , note_text
@@ -195,7 +190,6 @@ function edit_note_func(id_num, event) {
     // remove form
     toggle_form_off(id_num);
     element__notes_noteText.classList.remove(className__hidden);
-    element__notes_editImage.classList.remove(className__hidden);
     return false;
 };
 

@@ -3,6 +3,15 @@
 // 
 // //
 
+// this is to add logic to notes populated throuck websocket
+function filled_note_logic (note_id) {
+    let socket_inserted_element_note_edit_form = document.querySelector(`form[data-id_formedit='${note_id}']`);
+        socket_inserted_element_note_edit_form.addEventListener("submit", function (event) {
+            let note_id = event.target.getAttribute("data-id_formedit")
+            edit_note_func(note_id, event);
+    })
+}
+
 // Display new Session
 socket.on('fill_new_session', function(new_session, new_list, session_number) {
     // Local Variables
@@ -40,20 +49,20 @@ socket.on('fill_new_note', function(new_note, priv, note_id, session_number) {
     element.insertAdjacentHTML('afterbegin', new_note);
 
     // apply logic
-    let socket_inserted_element_note_edit_form = document.querySelector(`form[data-id_formedit='${note_id}']`);
-    socket_inserted_element_note_edit_form.addEventListener("submit", function (event) {
-        let note_id = event.target.getAttribute("data-id_formedit")
-        edit_note_func(note_id, event);
-    })
+    filled_note_logic(note_id);
+
 });
 
 // display note edit
 socket.on('fill_note_edit', function(editted_note, is_private, session_number, note_id_number) {
-    // local Variables
-    note_location = get_note_element(note_id_number);
+    // find location of old note and insert new note in its place
+    old_note_location = document.querySelector(`li[data-id_notecont="${note_id_number}"]`);
+    old_note_location.insertAdjacentHTML("afterend", editted_note);
+    old_note_location.remove();
 
-    // Insert into document
-    note_location.innerHTML = editted_note;
+    // apply logic
+    filled_note_logic(note_id_number);
+    
 });
 
 // Remove deleted note for all users without reloading page

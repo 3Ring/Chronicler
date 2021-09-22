@@ -60,9 +60,11 @@ def edit_note(text, is_private, game_id, user_id, note_id):
     note.note = text
     note.private = private
     db.session.flush()
-    editted_note=note.note
-    emit('fill_note_edit', (editted_note, private, note.session_number, note.id), broadcast=True)
     db.session.commit()
+
+    editted_note= translate(note)[0]
+    emit('fill_note_edit', (editted_note, private, note.session_number, note.id), broadcast=True)
+    
     
 @socketio.on("delete_note")
 def delete_note(id_num):
