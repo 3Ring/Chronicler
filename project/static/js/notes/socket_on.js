@@ -32,12 +32,19 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
 
 
 // display new note
-socket.on('fill_new_note', function(new_note, priv, session_number) {
+socket.on('fill_new_note', function(new_note, priv, note_id, session_number) {
     // local Variables
     element = get_session_element(session_number);
 
     // Insert into document
     element.insertAdjacentHTML('afterbegin', new_note);
+
+    // apply logic
+    let socket_inserted_element_note_edit_form = document.querySelector(`form[data-id_formedit='${note_id}']`);
+    socket_inserted_element_note_edit_form.addEventListener("submit", function (event) {
+        let note_id = event.target.getAttribute("data-id_formedit")
+        edit_note_func(note_id, event);
+    })
 });
 
 // display note edit

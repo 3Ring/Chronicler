@@ -149,18 +149,6 @@ def translate(model):
         </div>
     </div>
     '''
-    
-    
-    # '''
-    # <div class="session-container">
-    #     <h2>Session {{ session.number }}: {{ session.title }}</h2>
-    #     <div>
-    #         <!-- Session Notes -->
-            
-    #         <ul class="note_list" data-idSession="{{ session.number }}">
-    #     </div>
-    # </div>
-    # '''
 
     htmlTemplate__newSessionList = '''
     <li class="session-anchor current" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
@@ -192,6 +180,8 @@ def translate(model):
                 <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
             </a>
             
+        </span>
+
             <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
                 <div class="form-group" >
                 
@@ -215,78 +205,19 @@ def translate(model):
             <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
                 <ul class="note_edit_menu_items">
                     <li class="note_edit_menu_item">
-                        <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
+                        <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
                             Edit Note
                         </a>
                     </li>
                     <li class="note_edit_menu_item">
-                        <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="delete">
+                        <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
                             Delete Note
                         </a>
                     </li>
                 </ul>
             </div>
-
-        </span>
     </li>
     '''
-    
-    # '''
-    # <li class="span_cont">
-    #     <span class="span_cont note-item">
-    #         <span class="note-author">
-
-    #             <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
-
-    #             <div class="author-image" style="background-image: url(../static/images/default_character.jpg)"></div>
-
-    #             <!-- {{ note.date_added }} || -->
-    #         </span>
-
-    #         <span class="note-content">
-    #             <h3>{{ note.charname }}:</h3>
-    #             <span class="note-ql" data-id_noteText="{{ note.id }}">
-    #             {{ note.note }}
-    #             </span>
-    #         </span>
-
-
-    #         <!-- Edit Button -->
-    #         <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
-    #             <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
-    #         </a>
-    #         <form class='hidden edit_form' data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-    #             <input type='text' data-id_formText="{{ note.id }}" value='{{ note.note }}'>
-    #             <input type='submit' value='submit'>
-    #             <span class="checkbox_span">
-    #                 <input type='checkbox' data-id_noteCheckboxPrivate="{{ note.id }}" value='{{ note.private }}'>
-    #                 <label for='change_private_{{ note.id }'>
-    #                     Private?
-    #                 </label>
-    #             </span>
-    #         </form>
-
-    #         <!-- Edit Note Menu -->
-    #         <div data-contextMenuId="{{ note.id }}" class="note_edit_menu hidden">
-    #             <ul class="note_edit_menu_items">
-    #                 <li class="note_edit_menu_item">
-    #                     <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="edit">
-    #                         Edit Note
-    #                     </a>
-    #                 </li>
-    #                 <li class="note_edit_menu_item">
-    #                     <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button secondary" data-id_note="{{ note.id }}" data-action="delete">
-    #                         Delete Note
-    #                     </a>
-    #                 </li>
-    #             </ul>
-    #         </div>
-            
-    #     </span>
-    # </li>
-    
-    # </ul>
-    # '''
 
     # Determine which type of element to create
     header = model.header

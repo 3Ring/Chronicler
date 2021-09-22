@@ -170,6 +170,8 @@ function edit_note_func(id_num, event) {
     , element__notes_noteText = document.querySelector(flag__notes_noteText)
     , element__notes_checkboxPrivate = document.querySelector(flag__formEdit_private);
 
+    // stop page reload
+    event.preventDefault();
     // find element
     let element__editorParent = document.querySelector(flag__formEdit_parent)
     , element__formEdit_Editor = element__editorParent.firstElementChild
@@ -178,6 +180,10 @@ function edit_note_func(id_num, event) {
     , note_text = element__formEdit_Editor.innerHTML
     , note_private = element__notes_checkboxPrivate.value;
 
+    // check to see if the 
+    // if ( ! element__editorParent.getAttribute("data-socketFlag" ) {
+
+    // })
     // send to server
     socket.emit("edit_note"
         , note_text
@@ -206,6 +212,7 @@ function delete_note(id_num) {
     // emit delete event to server
     socket.emit("delete_note", id_num);
 }
+
 // Set listener for note edit forms
 function submit_listener() {
 
@@ -216,8 +223,6 @@ function submit_listener() {
     for (let i = 0; i < elements__formEdit_form.length; i++) {
         elements__formEdit_form[i].addEventListener("submit", function (event) {
 
-            // stop page reload
-            event.preventDefault();
             let id_num = event.target.getAttribute("data-id_formEdit")
 
             // set function on form that handles the data

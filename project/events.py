@@ -28,7 +28,6 @@ def send_new_session(games_id, number, title, synopsis=None):
     elements = translate(new)
     session_container = elements[0]
     session_list = elements[1]
-    print(session_container, "\n\n\n\n", session_list)
     # return data to client
     emit('fill_new_session', (session_container, session_list, str(number)), broadcast=True)
 
@@ -51,7 +50,7 @@ def send_new_note(user_id, game_id, session_number, note, private_=False):
     # convert data to html element
     element = translate(new)[0]
 
-    emit('fill_new_note', (element, new.private, new.session_number), broadcast=True)
+    emit('fill_new_note', (element, new.private, new.id, new.session_number), broadcast=True)
     
 
 @socketio.on('edit_note')
