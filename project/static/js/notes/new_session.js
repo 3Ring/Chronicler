@@ -88,14 +88,14 @@ function newSession__validateFormError() {
 
     if ( new_session_form_is_incomplete() ) { 
         alert("Must fill out required fields");
-        return true;
+        return false;
 
     } else if ( new_session_form_is_not_unique() ) {
         alert("Session number must be unique");
-        return true;
+        return false;
 
     } else {
-        return false;
+        return true;
     }
 }
 
@@ -114,15 +114,16 @@ function newSession__submitListener() {
         event.preventDefault();
 
         // ensure that form is filled out correctly
-        newSession__validateFormError()
+        validated = newSession__validateFormError()
 
-        // send new session data to server through socket.io
-        socket.emit('send_new_session'
-            , game_id
-            , element__formNewSession_inputNumber.value
-            , element__formNewSession_inputTitle.value
-            , element__formNewSession_inputSynopsis.value);
-        
+        if ( validated ) {
+            // send new session data to server through socket.io
+            socket.emit('send_new_session'
+                , game_id
+                , element__formNewSession_inputNumber.value
+                , element__formNewSession_inputTitle.value
+                , element__formNewSession_inputSynopsis.value);
+        }
         // remove new session form
         cancel_new_session_func();
         return false;
