@@ -89,6 +89,7 @@ function click_listener() {
                     
                     let id_num = e.target.getAttribute("data-id_note");
 
+                    e.preventDefault();
                     toggle_form_on(id_num);
                     toggle_menues_off();
 
@@ -131,7 +132,7 @@ function toggle_form_on(id_num) {
     , element__notes_noteText = document.querySelector(flag__notes_noteText)
     , element__notes_editImage = document.querySelector(flag__notes_editImage)
 
-
+    
     // hide original note
     element__notes_noteText.classList.add(className__hidden);
     element__notes_editImage.remove();
