@@ -40,7 +40,7 @@ function get_quill_text_from_event(event) {
 
 // Set new session form's default number to n+1 of highest current session
 function set_new_session_form_highest ( highest ) {
-    if ( document.querySelector( `data-flag="formNewSession_container"` ) ) {
+    if ( document.querySelector( `form[data-flag="formNewSession_container"]` ) ) {
         let sessionNumberField = document.querySelector(`input[data-flag="formNewSession_inputSessionNumber"`)
         , sessionTitleField = document.querySelector(`input[data-flag="formNewSession_inputSessionTitle"]`)
         , sessionSynopsisField = document.querySelector(`input[data-flag="formNewSession_inputSessionSynopsis"]`);
@@ -49,7 +49,7 @@ function set_new_session_form_highest ( highest ) {
         sessionTitleField.value = "";
         sessionSynopsisField.value = "";
     };
-
+};
 // Checkbox functions
 // 
 //

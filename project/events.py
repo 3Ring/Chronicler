@@ -6,7 +6,7 @@ from .helpers import translate, priv_convert
 
 # variables
 class__buttonEdit = "note_edit_button"
-imageLink__defaultCharacter = "/static/images/default_character.jpg"\
+imageLink__defaultCharacter = "/static/images/default_character.jpg"
 imageLink__defaultGame = "/static/images/default_game.jpg"
 imageLink__defaultDm = "/static/images/default_dm.jpg"
 imageLink__buttonEdit = "/static/images/edit_button_image.png"
