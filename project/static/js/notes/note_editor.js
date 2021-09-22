@@ -74,10 +74,11 @@ function click_listener() {
             if ( menu_deployed == false ) {
 
                 // deploy context menu
-                let flag__contextMenu = "div[data-contextMenuId='"+e.target.getAttribute("data-id_editImage")+"']"
-                , element__contextMenu = document.querySelector( flag__contextMenu );
-                toggle_menu_on( element__contextMenu );
-            }
+                // if statement is because the user can click the container which would throw an error otherwise
+                if ( e.target.getAttribute("data-id_editImage") ) {
+                    toggle_menu_on( document.querySelector( `div[data-contextMenuId="${ e.target.getAttribute("data-id_editImage") }"]` ) );
+                } 
+            };
         } 
         // check if the click happened within the contextual form
         else if ( click_inside_element( e, attribute__contextForm ) ) {
