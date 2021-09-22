@@ -32,16 +32,20 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
     element__sessionsContainer.insertAdjacentHTML('afterbegin', new_session);
     element__sessionsList.insertAdjacentHTML('afterbegin', new_list);
 
+    // update "New Session form's default number logic"
+    if ( session_number > current__session_number ) {
+        set_new_session_form_highest ( session_number );
+    }
+
     // apply logic
     element__new_list = document.querySelector("li[data-number_sessionList='" + session_number + "']")
     element__new_list.addEventListener("click", function () {
-    apply_sessionHighlightLogic_fromElement(element__new_list);
-    // session container
-    element__new_session = document.querySelector("div[data-number_sessionCont='" + session_number +"']");
-    display_sessionCont(element__new_list);
-    set_currentSessionVariable_fromElement(element__new_list);
-    // session list
 
+        apply_sessionHighlightLogic_fromElement(element__new_list);
+        // session container
+        element__new_session = document.querySelector("div[data-number_sessionCont='" + session_number +"']");
+        display_sessionCont(element__new_list);
+        set_currentSessionVariable_fromElement(element__new_list);
     })
 });
 

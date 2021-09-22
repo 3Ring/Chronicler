@@ -110,7 +110,6 @@ function clickListener__sessionList () {
         })
     }
 }
-
 // Display most recent session and set active hook on page load
 function setActiveSession__onPageLoad () {
 
@@ -134,7 +133,7 @@ function setActiveSession__onPageLoad () {
 
         // set current session variable
         current__session_number = highest;
-
+        set_new_session_form_highest ( current__session_number )
         // Flag most recent session elements and display most recent session container
         // Sessions List
         let element__sessionList_mostRecent = document.querySelector("li[data-number_sessionList='" + highest + "']");

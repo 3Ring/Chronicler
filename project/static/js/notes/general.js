@@ -38,7 +38,16 @@ function get_quill_text_from_event(event) {
     return "Quill editor not found"
 }
 
+// Set new session form's default number to n+1 of highest current session
+function set_new_session_form_highest ( highest ) {
+    let sessionNumberField = document.querySelector(`input[data-flag="formNewSession_inputSessionNumber"`)
+    , sessionTitleField = document.querySelector(`input[data-flag="formNewSession_inputSessionTitle"]`)
+    , sessionSynopsisField = document.querySelector(`input[data-flag="formNewSession_inputSessionSynopsis"]`);
 
+    sessionNumberField.value = parseInt(highest) + 1;
+    sessionTitleField.value = "";
+    sessionSynopsisField.value = "";
+}
 
 // Checkbox functions
 // 
