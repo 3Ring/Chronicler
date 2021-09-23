@@ -1,9 +1,11 @@
 from .classes import *
+import os
 import base64
 from werkzeug.utils import secure_filename
 from .events import *
 from .classes import *
 from . import db
+from werkzeug.security import generate_password_hash
 from flask import request
 
 def allowed_file(filename):
@@ -250,7 +252,8 @@ def translate(model):
 
 # run on db creation for tutorial messages
 def init_training_wheels_db():
-    chronicler_user = Users(name = "Chronicler", email="app@chronicler.gg", hash="nope")
+    admin_pass = os.environ.get("ADMIN_PASS")
+    chronicler_user = Users(name = "Chronicler", email="app@chronicler.gg", hash=generate_password_hash(admin_pass, method='sha256'))
     db.session.add(chronicler_user)
     db.session.commit()
 
