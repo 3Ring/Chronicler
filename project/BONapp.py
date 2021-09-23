@@ -57,25 +57,22 @@ def index():
 
     return redirect(url_for('auth.login'))
 
-# @main.route('/welcome')
-# def welcome():
-    
-#     return render_template('welcome.html')
-
-@main.route('/initdb_p')
+# create database
+@main.route('/initdb')
 def initdb_p():
 
     import psycopg2
+    from .helpers import init_training_wheels_db
     from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
     # Connect to PostgreSQL DBMS
 
-    con = psycopg2.connect("host='bonsqldb' user='postgres' password='" + db_password + "'");
-    con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);
+    con = psycopg2.connect("host='bonsqldb' user='postgres' password='" + db_password + "'")
+    con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
     # Obtain a DB Cursor
-    cursor          = con.cursor();
-    name_Database   = "bon";
+    cursor          = con.cursor()
+    name_Database   = "bon"
 
     # Create table statement
 
@@ -83,43 +80,11 @@ def initdb_p():
 
     # Create a table in PostgreSQL database
 
-    cursor.execute(sqlCreateDatabase);
+    cursor.execute(sqlCreateDatabase)
+
+    init_training_wheels_db()
+
     return 'init localhost database\n'
-# @main.route('/initdb')
-# def initdb():
-#     import mysql.connector
-#     try:
-#         mydb = mysql.connector.connect(
-#             host="bonmysqldb",
-#             user="root",
-#             password=db_password
-#         )
-#         cursor = mydb.cursor()
-
-#         cursor.execute("DROP DATABASE IF EXISTS BON")
-#         cursor.execute("CREATE DATABASE BON")
-
-#         db.create_all()
-#         cursor.execute("SHOW DATABASES")
-#         for table in cursor:
-
-#         return 'init bonmysqldb database'
-#     except:
-#         mydb = mysql.connector.connect(
-#             host="localhost",
-#             user="root",
-#             password=db_password
-#         )
-#         cursor = mydb.cursor()
-
-#         cursor.execute("DROP DATABASE IF EXISTS BON")
-#         cursor.execute("CREATE DATABASE BON")
-
-#         db.create_all()
-#         cursor.execute("SHOW DATABASES")
-#         for table in cursor:
-
-#         return 'init localhost databases'
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
@@ -147,7 +112,7 @@ def joining(id):
     charform=CharForm()
     game=Games.query.filter_by(id=id).first()
     if request.method=='GET':
-
+         
         # set images for game
         img = Images.query.filter_by(id=game.img_id).first()
         if not img:
@@ -161,15 +126,20 @@ def joining(id):
         if charform.img.data:
 
             image_id = upload(image_form_name)
+
             if type(image_id) != int:
                 flash(image_id)
                 return redirect(url_for('main.joining', id=id))
+
             character=Characters(name=charform.name.data, img_id=image_id, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+            db.session.add(character)
+            db.session.commit()
 
-        character=Characters(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
-
-        db.session.add(character)
-        db.session.commit()
+        else:
+            character=Characters(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id)
+            db.session.add(character)
+            db.session.flush()
+            
         player=Players(users_id=current_user.id, games_id=id)
         db.session.add(player)
         db.session.commit()
@@ -208,15 +178,32 @@ def create():
 
         return redirect(url_for('main.notes', id=game.id))
 
-def get_char_image(game_id):
-    return None
+
+def make_character_images(game_id):
+    image_dict = {}
+    character_list = Characters.query.filter_by(game_id=game_id).all()
+    for character in character_list:
+        image = Images.query.filter_by(id=character.img_id).first()
+        print(image, character.name)
+        # set defaults if no image exists
+        
+        if image == None:
+            if character.name == "DM":
+                image_dict[character.name] = imageLink__defaultDm
+            else:
+                image_dict[character.name] = imageLink__defaultCharacter
+        else:
+            decoder2 = f"data:{image.mimetype};base64, "
+            image_dict[character.name] = decoder2 + image.img
+    return image_dict
 
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
-    games = Games.query.filter_by(id=id).all()[0]
+    character_images = make_character_images(id)
+
     game=Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all()[0]
     dm_id = game[0] 
     game_name = game[1]
@@ -224,8 +211,6 @@ def notes(id):
 
     tutorial = Users.query.filter_by(email="app@chronicler.gg").first()
 
-    char_image = get_char_image(1)
-    # query the notes and organize them by session in reverse order
     if session_titles == None:
         pass
     else:
@@ -237,8 +222,6 @@ def notes(id):
             for session in session_titles:
                 notes = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all()
                 logs[str(session.number)] = notes
-
-
 
             if len(session_titles) > 1:
                 session_titles.reverse()
@@ -259,6 +242,7 @@ def notes(id):
 
     return render_template('notes.html'
         , tutorial=tutorial
+        , character_images=character_images
         , js_note_dict=js_note_dict
         , edit_img=imageLink__buttonEdit
         , note_dict=logs
@@ -517,10 +501,6 @@ def confirm():
             form = form,
             name = session['name_to_delete'])
 
-# @main.route('/test', methods=["GET"])
-# @login_required
-# def test():
-#     return 
 
 @main.route('/nuked', methods=["GET"])
 @login_required

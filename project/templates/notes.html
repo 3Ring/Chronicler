@@ -110,11 +110,16 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <li class="span_cont" data-id_noteCont="{{ note.id }}">
                                             <span class="span_cont note-item">
                                                 <span class="note-author">
-                                                    {% if note.charname == "DM" %}
-                                                    <div class="author-image" style="background-image: url(../static/images/default_dm.jpg)"></div>
-                                                    {% else %}
-                                                    <div class="author-image" style="background-image: url(../static/images/default_character.jpg)"></div>
-                                                    {% endif %}
+                                                    {% for name, image in character_images.items() %}
+                                                        {% if name == note.charname %}
+                                                            <div class="author-image {{ name }}"><img src="{{ image }}" alt="Character portrait of {{ name }}"></div>
+
+                                                        
+                                                        {% endif %}
+                                                    
+
+                                                    {% endfor %}
+                                                    
                                                     <!-- {{ note.date_added }} || -->
                                                 </span>
 

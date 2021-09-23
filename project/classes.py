@@ -2,7 +2,7 @@ from sqlalchemy.orm import backref
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FileField
-from wtforms.validators import DataRequired, Regexp
+from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from .__init__ import db
 
@@ -106,6 +106,11 @@ class Notes(db.Model):
 
     header = "note."
 
+class Images(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    img = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)
 
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -117,7 +122,14 @@ class Characters(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
 
-    # items = db.relationship('Loot', backref='character', lazy=True)
+    # @classmethod
+    # def create(cls, **kw):
+    #     obj = cls(**kw)
+    #     db.session.add(obj)
+    #     db.session.commit()
+    #     return obj
+    # image = Images.query.with_entities(Images.img).filer_by(id = img_id).first()
+    # print(image)
 
 
     def __repr__(self):
@@ -317,8 +329,4 @@ class SessionForm(FlaskForm):
 class NewSessionForm(FlaskForm):
     newsessionsubmit = SubmitField("Start a new Session?")
 
-class Images(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    img = db.Column(db.Text, nullable=False)
-    name = db.Column(db.Text, nullable=False)
-    mimetype = db.Column(db.Text, nullable=False)
+

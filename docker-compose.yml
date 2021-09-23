@@ -19,6 +19,7 @@ services:
         container_name: rest-server
         environment: 
             DB_PASS: ${SQL_ROOT_PASSWORD:-unsecured_password}
+            ADMIN_PASS: ${ADMIN_PASS:-password123}
             DOCKER_FLAG: 1
             PYTHONUNBUFFERED: 1
         ports:

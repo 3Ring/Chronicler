@@ -25,7 +25,6 @@ def render_picture(data):
     return render_pic
 
 def upload(filename):
-    print(filename, '\n\n1')
     try:
         pic = request.files[filename]
     except:
@@ -53,9 +52,9 @@ def upload(filename):
     img = Images(img=render_file, name=secure, mimetype=mimetype)
     db.session.add(img)
     db.session.flush()
-    id = img.id
+    _id = img.id
     db.session.commit()
-    return id 
+    return _id 
 
 
 def nuke():
@@ -99,9 +98,10 @@ def nuke():
     db.session.query(Users).delete()
     print("Users")
     db.session.commit()
+
     init_training_wheels_db()
 
-    return
+    return "database reset"
 
 
 # Functions to dynamically create html elements
@@ -250,6 +250,7 @@ def translate(model):
 
     return html
 
+# function to be run on server init
 # run on db creation for tutorial messages
 def init_training_wheels_db():
     admin_pass = os.environ.get("ADMIN_PASS")
