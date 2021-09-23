@@ -62,10 +62,14 @@ function insert_rich_note(note_session) {
         // set the attributes of each rich note
         let id__note = ( js_dict[note_session][i][index__noteId])
         , note_rich = js_dict[note_session][i][index__noteText]
-        , flag__notes_noteText = "span[data-id_noteText='"+id__note+"']"
-        , element__notes_noteText = document.querySelector(flag__notes_noteText);
+        
+        , element__notes_noteText = document.querySelector( `span[data-id_noteText="${id__note}"]` );
 
         // insert rich note
-        element__notes_noteText.innerHTML = note_rich;
+        if (element__notes_noteText) {
+            element__notes_noteText.innerHTML = note_rich;
+        } else {
+            console.log("skipped ", i)
+        }
     }
 }

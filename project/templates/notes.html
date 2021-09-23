@@ -54,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         {% endif %}
         <div class="notes-container">
-            
             <div class="session-log">
                 <h2>Session Log</h2>
                 {% if session_titles %}
@@ -73,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     </ul>
                 {% endif %}
             </div>
-            
             <div class="notes">
                 <div class="comment-container">
                     <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
@@ -92,11 +90,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <button class="button primary" type="submit">Submit</button>
                             </div>
                         </div>
-                        
                     </form>
                 </div>
-                
-                
                 <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
                     {% if session_titles %}
                         <!-- Session Title Cards -->
@@ -107,76 +102,121 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <!-- Session Notes -->
                                     <ul class="note_list" data-idSession="{{ session.number }}">
                                         {% for note in note_dict[session.number] %}
-                                        <li class="span_cont" data-id_noteCont="{{ note.id }}">
-                                            <span class="span_cont note-item">
-                                                <span class="note-author">
-                                                    {% for name, image in character_images.items() %}
-                                                        {% if name == note.charname %}
-                                                            <div class="author-image {{ name }}"><img src="{{ image }}" alt="Character portrait of {{ name }}"></div>
-
-                                                        
-                                                        {% endif %}
-                                                    
-
-                                                    {% endfor %}
-                                                    
-                                                    <!-- {{ note.date_added }} || -->
-                                                </span>
-
-                                                <span class="note-content">
-                                                    <h3>{{ note.charname }}:</h3>
-                                                    <span class="note-ql" data-id_noteText="{{ note.id }}">
+                                            {% if note.private == True and note.user_id == current_user.id %}
+                                                <li class="span_cont" data-id_noteCont="{{ note.id }}">
+                                                    <span class="span_cont note-item">
+                                                        <span class="note-author">
+                                                            <div class="author-image {{ note.charname }}"><img src="{{ character_images[note.charname] }}" alt="Character portrait of {{ note.charname }}"></div>
+                                                            <!-- {{ note.date_added }} || -->
+                                                        </span>
+                                                            <span class="note-content note-private">
+                                                                <h3>{{ note.charname }}:</h3>
+                                                                <h4>Only you can see this:</h4>
+                                                                <span class="note-ql" data-id_noteText="{{ note.id }}">
+                                                                </span>
+                                                            </span>
+                                                            <!-- Edit Button -->
+                                                            <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
+                                                                <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
+                                                            </a>
                                                     </span>
-                                                </span>
-
-                                                {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
-                                                <!-- Edit Button -->
-                                                <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
-                                                    <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
-                                                </a>
-
-                                                {% endif %}
-                                                
-                                            </span>
-                                            
-                                            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
-                                                <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                                                    <div class="form-group" >
+                                                        <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
+                                                            <div class="form-group" >
+                                                            
+                                                                <input type="hidden" id='note_user_id' name='note_user_id' value='{{ current_user.id }}'>
+                                                                <input type="hidden" id='note_game_id' name='note_game_id' value='{{ id }}'>
+                                                                <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="row checkbox">
+                                                                    <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
+                                                                    <label for='note_private'>Private - Visible only to you and the DM.</label>
+                                                                </div>
+                                                                <div class="row button-row">
+                                                                    <button class="button primary" type="submit">Submit</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                        <!-- Edit Note Menu -->
+                                                        <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
+                                                            <ul class="note_edit_menu_items">
+                                                                <li class="note_edit_menu_item">
+                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
+                                                                        Edit Note
+                                                                    </a>
+                                                                </li>
+                                                                <li class="note_edit_menu_item">
+                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
+                                                                        Delete Note
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                </li>
+                                            {% elif note.private != True %}
+                                                <li class="span_cont" data-id_noteCont="{{ note.id }}">
+                                                    <span class="span_cont note-item">
+                                                        <span class="note-author">
+                                                            {% for name, image in character_images.items() %}
+                                                                {% if name == note.charname %}
+                                                                    <div class="author-image {{ name }}"><img src="{{ image }}" alt="Character portrait of {{ name }}"></div>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            
+                                                            <!-- {{ note.date_added }} || -->
+                                                        </span>
+                                                            <span class="note-content">
+                                                                <h3>{{ note.charname }}:</h3>
+                                                                <span class="note-ql" data-id_noteText="{{ note.id }}">
+                                                                </span>
+                                                            </span>
+                                                        {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                                                            <!-- Edit Button -->
+                                                            <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
+                                                                <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
+                                                            </a>
+                                                        {% endif %}
+                                                    </span>
                                                     
-                                                        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-                                                        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-                                                        <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="row checkbox">
-                                                            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
-                                                            <label for='note_private'>Private - Visible only to you and the DM.</label>
-                                                        </div>
-                                                        <div class="row button-row">
-                                                            <button class="button primary" type="submit">Submit</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
+                                                    {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                                                        <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
+                                                            <div class="form-group" >
+                                                            
+                                                                <input type="hidden" id='note_user_id' name='note_user_id' value='{{ current_user.id }}'>
+                                                                <input type="hidden" id='note_game_id' name='note_game_id' value='{{ id }}'>
+                                                                <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="row checkbox">
+                                                                    <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
+                                                                    <label for='note_private'>Private - Visible only to you and the DM.</label>
+                                                                </div>
+                                                                <div class="row button-row">
+                                                                    <button class="button primary" type="submit">Submit</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
 
-                                                <!-- Edit Note Menu -->
-                                                <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
-                                                    <ul class="note_edit_menu_items">
-                                                        <li class="note_edit_menu_item">
-                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
-                                                                Edit Note
-                                                            </a>
-                                                        </li>
-                                                        <li class="note_edit_menu_item">
-                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
-                                                                Delete Note
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                                        <!-- Edit Note Menu -->
+                                                        <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
+                                                            <ul class="note_edit_menu_items">
+                                                                <li class="note_edit_menu_item">
+                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
+                                                                        Edit Note
+                                                                    </a>
+                                                                </li>
+                                                                <li class="note_edit_menu_item">
+                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
+                                                                        Delete Note
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    {% endif %}
+                                                </li>
                                             {% endif %}
-
-                                        </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
