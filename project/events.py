@@ -41,7 +41,7 @@ def send_new_note(user_id, game_id, session_number, note, private_=False):
     session_number=session_number
 
     # this will cause issues if a player has more than one character for now
-    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private_, in_character=False, character=current_char.id , user_id=user_id, game_id=game_id)
+    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private_, character=current_char.id , user_id=user_id, game_id=game_id)
 
     db.session.add(new)
     db.session.flush()
