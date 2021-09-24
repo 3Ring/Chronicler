@@ -229,6 +229,9 @@ form.wysiwyg-form {
 
 .note_list {
 
+    display: flex;
+    flex-direction: column-reverse;
+
     > li {
         position: relative;
         padding: var(--xs) 0;

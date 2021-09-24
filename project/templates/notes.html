@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                         <span class="note-author">
                                                             {% for name, image in character_images.items() %}
                                                                 {% if name == note.charname %}
-                                                                    <div class="author-image {{ name }}"><img src="{{ image }}" alt="Character portrait of {{ name }}"></div>
+                                                                    <div class="author-image {{ name }}" style="background-image: url({{ image }});"></div>
                                                                 {% endif %}
                                                             {% endfor %}
                                                             

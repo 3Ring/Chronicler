@@ -1397,6 +1397,10 @@ form.wysiwyg-form p {
   margin-bottom: var(--lg);
 }
 
+.note_list {
+  display: flex;
+  flex-direction: column-reverse;
+}
 .note_list > li {
   position: relative;
   padding: var(--xs) 0;
