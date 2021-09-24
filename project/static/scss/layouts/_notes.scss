@@ -5,7 +5,9 @@
 // // =============================================================================
 
 .game-container {
-    background: url(../images/dm_games.jpeg) center center no-repeat;
+    
+    background-position: center center;
+    background-repeat: no-repeat;
     background-size: cover;
 
     display: flex;
@@ -219,6 +221,10 @@ form.wysiwyg-form {
         font-family: $display;
         margin: var(--sm) var(--lg) 0 var(--lg);
     }
+
+    > div {
+        margin-bottom: var(--lg);
+    }
 }
 
 .note_list {
@@ -273,6 +279,8 @@ form.wysiwyg-form {
     .edit-note {
         display: flex;
         min-width: var(--lg);
+        height: max-content;
+        padding: var(--xxs);
         &:not(.active) {
             &:hover {
                 text-decoration: none;
@@ -324,7 +332,7 @@ form.wysiwyg-form {
         h3 {
             @include size-4();
             font-family: $display;
-            color: $brand;
+            color: $brand_dark;
             font-weight: 700;
         }
     }

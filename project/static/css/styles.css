@@ -1092,7 +1092,8 @@ nav ul:last-child li:first-child a {
 }
 
 .game-container {
-  background: url(../images/dm_games.jpeg) center center no-repeat;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   align-items: center;
@@ -1392,6 +1393,9 @@ form.wysiwyg-form p {
   font-weight: 700;
   font-style: italic;
 }
+.session-container > div {
+  margin-bottom: var(--lg);
+}
 
 .note_list > li {
   position: relative;
@@ -1430,6 +1434,8 @@ form.wysiwyg-form p {
 .note_list .edit-note {
   display: flex;
   min-width: var(--lg);
+  height: max-content;
+  padding: var(--xxs);
 }
 .note_list .edit-note:not(.active):hover {
   text-decoration: none;
@@ -1476,7 +1482,7 @@ form.wysiwyg-form p {
   line-height: 1.222;
   color: var(--copyColor);
   font-family: "Grenze Gotisch", cursive;
-  color: #6dc6af;
+  color: #45aa90;
   font-weight: 700;
 }
 .note_list .note-content h3 b,

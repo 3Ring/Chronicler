@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 </script>
 
-<div class="game-container">
+<div class="game-container" style="background-image: url(../images/dm_games.jpeg);">
     <div class="container">
         <h1>{{ game_name }}</h1>
         {% if dm_id == current_user.id %}
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <li class="span_cont" data-id_noteCont="{{ note.id }}">
                                                     <span class="span_cont note-item">
                                                         <span class="note-author">
-                                                            <div class="author-image {{ note.charname }}"><img src="{{ character_images[note.charname] }}" alt="Character portrait of {{ note.charname }}"></div>
+                                                            <div class="author-image {{ note.charname }}" style="background-image: url('{{ character_images[note.charname] }}');"></div>
                                                             <!-- {{ note.date_added }} || -->
                                                         </span>
                                                             <span class="note-content note-private">
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 {% if dm_id == current_user.id %}
 <!-- New Session Form -->
-<div data-flag="formNewSession_container" class="hidden" style="z-index: 100;">
+<div data-flag="formNewSession_container" class="hidden">
     <div class="shroud">
         <div class="modal-container">
             <div class="modal">
