@@ -96,7 +96,7 @@ class Notes(db.Model):
     note = db.Column(db.Text)
     session_number = db.Column(db.Integer)
     private = db.Column(db.Boolean)
-    in_character = db.Column(db.Boolean)
+    to_gm = db.Column(db.Boolean)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
