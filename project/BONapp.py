@@ -6,7 +6,7 @@ from .events import *
 from .classes import *
 from flask_login import login_required, current_user
 from . import db
-from .helpers import upload, nuke, new_game_training_wheels
+from .helpers import upload, nuke, new_game_training_wheels, attach_game_image_or_default_from_Images_model
 
 
 # Variables
@@ -92,12 +92,8 @@ def join(id):
     if id == 0:
         games=Games.query.filter(Games.dm_id != current_user.id).all()
         for game in games:
-            img = Images.query.filter_by(id=game.img_id).first()
-            if not img:
-                game.image = imageLink__defaultGame
-            else:
-                game.image = decoder + img.img
-
+            img_id = Images.query.filter_by(id=game.img_id).first()
+            game.image = attach_game_image_or_default_from_Images_model(img_id)
         return render_template("join.html"
             , games=games
         )
@@ -204,13 +200,15 @@ def notes(id):
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
     character_images = make_character_images(id)
 
-    game=Games.query.with_entities(Games.dm_id, Games.name).filter_by(id=id).all()[0]
-    dm_id = game[0] 
-    game_name = game[1]
+    # get game info
+    game=Games.query.filter_by(id=id).first()
+    if game.img_id:
+        image=Images.query.filter_by(id=game.img_id).first()
+        game.image = attach_game_image_or_default_from_Images_model(image)
+
+    # get note info
     logs = {}
-
     tutorial = Users.query.filter_by(email="app@chronicler.gg").first()
-
     if session_titles == None:
         pass
     else:
@@ -229,7 +227,8 @@ def notes(id):
             for session in session_titles:
                 session.number=str(session.number)
     
-
+    # connvert notes to JSON so that the js script attached to notes.html can insert the rich text.
+    # This has to be done because otherwise the html won't be able to read the mark up
     js_logs = {}
     for session in logs:
         if type(logs[session]) == list:
@@ -248,8 +247,7 @@ def notes(id):
         , note_dict=logs
         , id=id
         , session_titles=session_titles
-        , dm_id=dm_id
-        , game_name=game_name
+        , game=game
     )
 
 @main.route('/profile')

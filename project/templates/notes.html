@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     {% endfor %}
     
-    {% if dm_id == current_user.id %}
+    {% if game.dm_id == current_user.id %}
     init("DM");
     {% else %}
     init();
@@ -45,10 +45,10 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 </script>
 
-<div class="game-container" style="background-image: url(/static/images/dm_games.jpeg);">
+<div class="game-container" style="background-image: url({{ game.image }});"></div>
     <div class="container">
-        <h1>{{ game_name }}</h1>
-        {% if dm_id == current_user.id %}
+        <h1>{{ game.name }}</h1>
+        {% if game.dm_id == current_user.id %}
             <div class="new-session">
                 <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
             </div>
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 </div>
-{% if dm_id == current_user.id %}
+{% if game.dm_id == current_user.id %}
 <!-- New Session Form -->
 <div data-flag="formNewSession_container" class="hidden">
     <div class="shroud">

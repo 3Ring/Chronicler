@@ -56,6 +56,12 @@ def upload(filename):
     db.session.commit()
     return _id 
 
+def attach_game_image_or_default_from_Images_model(model):
+    if not model.img or not model.mimetype:
+        image = "/static/images/default_game.jpg"
+    else:
+        image = f"data:{model.mimetype};base64,{model.img}"
+    return image
 
 def nuke():
 
