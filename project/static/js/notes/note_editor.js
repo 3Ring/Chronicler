@@ -179,8 +179,10 @@ function edit_note_func(id_num, event) {
 
     // capture data
     , note_text = element__formEdit_Editor.innerHTML
-    , note_private = element__notes_checkboxPrivate.value;
-
+    , note_private = "False";
+    if ( element__notes_checkboxPrivate ) {
+        note_private = element__notes_checkboxPrivate.value;
+    } 
     // send to server
     socket.emit("edit_note"
         , note_text

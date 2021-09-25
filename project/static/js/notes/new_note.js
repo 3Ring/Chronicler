@@ -6,11 +6,13 @@
 function NewQuill(event, quill) {
 
     // Local Variables
-    let element__newQuill_private = document.querySelector(flag__newQuillPrivate);
+    let element__newQuill_private = document.querySelector(flag__newQuillPrivate)
+    , element__newQuill_to_dm = document.querySelector(`input[data-flag="newQuillDm"`) 
 
     // capture data
     let new_note_html = quill.root.innerHTML
-    , new_note_private = element__newQuill_private.value;
+    , new_note_private = element__newQuill_private.value
+    , new_note_to_dm = element__newQuill_to_dm.value
 
     // check to make sure note isn't empty
     if (quill.getText() == '\n') {
@@ -25,6 +27,7 @@ function NewQuill(event, quill) {
             , current__session_number
             , new_note_html
             , new_note_private
+            , new_note_to_dm
         )
 
         // clear editor

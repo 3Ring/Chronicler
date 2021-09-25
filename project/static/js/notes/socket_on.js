@@ -51,7 +51,7 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
 
 
 // display new note
-socket.on('fill_new_note', function(new_note, priv, note_id, session_number) {
+socket.on('fill_new_note', function(new_note, private, to_dm, note_id, session_number) {
     // local Variables
     element = get_session_element(session_number);
 
