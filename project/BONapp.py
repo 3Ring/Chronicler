@@ -140,7 +140,7 @@ def joining(id):
         db.session.add(player)
         db.session.commit()
         flash("{0} has joined the {1}!!".format(charform.name.data, game.name), "alert-success")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.notes', id=game.id))
 
 @main.route('/create', methods=["GET", "POST"])
 @login_required

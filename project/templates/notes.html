@@ -45,6 +45,20 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 </script>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            
+            <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                <p>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+                </p>
+            </div>
+            
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 <div class="game-container" style="background-image: url({{ game.image }});"></div>
     <div class="container">
         <h1>{{ game.name }}</h1>
