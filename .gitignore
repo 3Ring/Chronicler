@@ -1,0 +1,17 @@
+project/node_modules/
+.dockerignore
+project/test.py
+test.py
+project/ignored
+project/templates/test.html
+project/liteBON.db
+project/utils
+chronicler.egg-info
+credits.txt
+*.pyc
+*.pyo
+.env
+/wslVenv
+/venv
+*/__pycache__
+*__pycache__

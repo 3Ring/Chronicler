@@ -1,1 +1,0 @@
-JS Context menu built by using "https://github.com/callmenick/Custom-Context-Menu" as base
