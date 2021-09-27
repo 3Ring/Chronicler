@@ -1,0 +1,88 @@
+Roleplay website.
+
+Site Layout
+    index
+        most recent notes
+            DM
+            players
+    Characters - 
+        Page for each Character
+            stats - 
+            inventory -
+            notes
+    NPCs
+        drop down menu for the characters
+
+databases
+
+    CREATE TABLE users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        username TEXT NOT NULL, 
+        hash TEXT NOT NULL, 
+        name TEXT, 
+        pronoun TEXT 
+    );
+
+    CREATE TABLE games(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        name TEXT NOT NULL,
+        dm_id INTEGER NOT NULL,
+        imglink TEXT NOT NULL,
+        sessions integer NOT NULL,
+        secret INTEGER DEFAULT 0,
+        FOREIGN KEY(dm_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE characters(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        bio TEXT,
+        plat INTEGER,
+        gold INTEGER,
+        electrum INTEGER,
+        silver INTEGER,
+        copper INTEGER,
+        exp INTEGER,
+        str INTEGER,
+        dex INTEGER,
+        con INTEGER,
+        int INTEGER,
+        wis INTEGER,
+        cha INTEGER,
+        game_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        FOREIGN KEY(game_id) REFERENCES games(id),
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE npcs(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        game_id INTEGER NOT NULL,
+        FOREIGN KEY(game_id) REFERENCES games(id)
+    );
+
+    CREATE TABLE places(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        game_id INTEGER NOT NULL,
+        FOREIGN KEY(game_id) REFERENCES games(id)
+    );
+
+    CREATE TABLE loot(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        copper_value INTEGER,
+        owner_id INTEGER NOT NULL,
+        FOREIGN KEY(owner_id) REFERENCES characters(id)
+    );
+
+    CREATE TABLE players(
+        game_id INTEGER NOT NULL, 
+        user_id INTEGER NOT NULL, 
+        FOREIGN KEY(game_id) REFERENCES games(id),
+        FOREIGN KEY(user_id) REFERENCES users(id) 
+    );

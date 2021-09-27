@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- <script>
+    function .done(function(data){
+var image = document.createElement("img")
+image.src = "data:image/png;base64," + data;
+document.body.appendChildd(image);
+});
+</script> -->
+<form enctype="multipart/form-data" method="post" action="{{url_for('main.uploadd')}}">
+    <p>File: <input type="file" name="filename" /></p>
+    <p><input type = "submit" value = "Upload" /></p>
+</form>
+<img src="data:image/png;base64, {{img1}}" alt="Character portrait">
+<!-- <img src="data:image/png;base64, {{img2}}" alt="Character portrait">
+<img src="data:image/png;base64, {{img2}}" alt="Character portrait"> -->
+{% endblock %}
