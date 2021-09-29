@@ -80,7 +80,7 @@ input[type=submit], .button {
   /** Alerts, disabled, and errors **/
   --disabled: #b5bac1;
   --error: red;
-  --accentColor: #b5bac1;
+  --accentColor: #c4836d;
   --alertCopy: black;
   /** Borders **/
   --border1: rgba(219, 222, 224, 0.5);
@@ -135,7 +135,7 @@ input[type=submit], .button {
     /** Alerts, disabled, and errors **/
     --disabled: #2e3a49;
     --error: red;
-    --accentColor: #2e3a49;
+    --accentColor: #9e5e48;
     --alertCopy: white;
     /** Borders **/
     --border1: #212936;
@@ -348,11 +348,14 @@ form .row {
   width: 100%;
   flex-grow: 1;
 }
-form .row.checkbox, form .row.radio, form .row.button-row {
+form .row.checkbox, form .row.radio, form .row.button-row, form .row.submit {
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: nowrap;
+}
+form.wysiwyg-form .row.checkbox, form.wysiwyg-form .row.radio, form.wysiwyg-form .row.button-row, form.wysiwyg-form .row.submit {
+  justify-content: flex-start;
 }
 form h1 {
   font-family: "Urbanist", sans-serif;
@@ -363,6 +366,7 @@ form h1 {
   line-height: 1.085;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
+  color: var(--linkColor);
   font-weight: 500;
   text-align: center;
 }
@@ -792,6 +796,7 @@ nav ul:last-child li:first-child a {
   font-weight: 700;
   text-align: center;
   max-width: none;
+  margin: var(--sm) 0;
 }
 @media screen and (min-width: 31.25em) {
   .app-container h1 {
@@ -823,6 +828,7 @@ nav ul:last-child li:first-child a {
     grid-template-columns: 1fr 1fr;
     grid-auto-flow: row;
     grid-gap: var(--sm) var(--sm);
+    margin: 0 0 var(--sm) 0;
   }
 }
 .app-container .games .game ul {
@@ -891,8 +897,9 @@ nav ul:last-child li:first-child a {
   line-height: 1.085;
   color: var(--headlineColor);
   font-weight: 800;
-  color: var(--headlineColor);
+  color: var(--accentColor);
   text-transform: uppercase;
+  margin: 0 0 var(--xs) 0;
 }
 .app-container .game h2 b,
 .app-container .game h2 strong, .app-container .welcome h2 b,
@@ -924,6 +931,7 @@ nav ul:last-child li:first-child a {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
+  font-weight: 900;
 }
 .app-container .game p b,
 .app-container .game p strong, .app-container .welcome p b,
@@ -945,6 +953,8 @@ nav ul:last-child li:first-child a {
 }
 .app-container a.new-game {
   color: white;
+  justify-self: center;
+  margin-bottom: var(--sm);
 }
 .app-container a.new-game:hover {
   color: #6dc6af;
@@ -1511,7 +1521,7 @@ form.wysiwyg-form p {
   font-size: 0.688em;
   letter-spacing: 0;
   line-height: 1.333;
-  color: var(--headlineColor);
+  color: var(--accentColor);
 }
 .note_list .note-content h4 b,
 .note_list .note-content h4 strong {
@@ -1582,10 +1592,10 @@ form.wysiwyg-form p {
   font-weight: 700;
   font-style: italic;
 }
-.note_list .note-ql p span.ql-size-large, .note_list .note-ql li span.ql-size-large {
+.note_list .note-ql p .ql-size-large, .note_list .note-ql li .ql-size-large {
   font-size: 1.5em;
 }
-.note_list .note-ql p span.ql-size-huge, .note_list .note-ql li span.ql-size-huge {
+.note_list .note-ql p .ql-size-huge, .note_list .note-ql li .ql-size-huge {
   font-size: 2em;
 }
 .note_list .note-ql ol li {

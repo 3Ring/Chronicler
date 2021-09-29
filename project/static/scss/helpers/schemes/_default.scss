@@ -19,7 +19,7 @@
     /** Alerts, disabled, and errors **/
     --disabled: #{$gray_lighter};
     --error: red;
-    --accentColor: #{$gray_lighter};
+    --accentColor: #{$accent};
     --alertCopy: #{$min};
 
     /** Borders **/
@@ -87,7 +87,7 @@
         /** Alerts, disabled, and errors **/
         --disabled: #{$gray_darker};
         --error: red;
-        --accentColor: #{$gray_darker};
+        --accentColor: #{$accent_dark};
         --alertCopy: #{$max};
 
         /** Borders **/

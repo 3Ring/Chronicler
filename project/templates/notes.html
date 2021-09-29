@@ -62,12 +62,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="game-container" style="background-image: url({{ game.image }});">
     <div class="container">
         <div class="header-container">
-            
-            {% if game.dm_id == current_user.id %}
-                <div class="new-session">
+            <div class="new-session">
+                {% if game.dm_id == current_user.id %}
                     <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
 
             <h1>{{ game.name }}</h1>
         </div>
@@ -161,11 +160,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                                                 <div class="form-group">
                                                                     <div class="row checkbox">
                                                                         <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
-                                                                        <label for='note_private'>Private - Visible only to you and the DM.</label>
+                                                                        <label for='note_private'><strong>Draft</strong> - Visible only to you until published</label>
                                                                     </div>
                                                                     <div class="row checkbox">
                                                                         <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
-                                                                        <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
+                                                                        <label for='note_to_dm'><strong>Privileged</strong> - Visible only to you and the DM</label>
                                                                     </div>
                                                                     <div class="row button-row">
                                                                         <button class="button primary" type="submit">Submit</button>
@@ -252,11 +251,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                                                         {% if note.user_id == current_user.id %}
                                                                         <div class="row checkbox">
                                                                             <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
-                                                                            <label for='note_private'>Private - Visible only to you and the DM.</label>
+                                                                            <label for='note_private'><strong>Draft</strong> - Visible only to you until published</label>
                                                                         </div>
                                                                         <div class="row checkbox">
                                                                             <input type='checkbox' class="note_checkbox" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='False'>
-                                                                            <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
+                                                                            <label for='note_to_dm'><strong>Privileged</strong> - Visible only to you and the DM</label>
                                                                         </div>
                                                                         {% endif %}
                                                                         <div class="row button-row">

@@ -23,17 +23,30 @@ form {
 
         &.checkbox,
         &.radio,
-        &.button-row {
+        &.button-row,
+        &.submit {
             flex-direction: row;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             flex-wrap: nowrap;
+        }
+    }
+
+    &.wysiwyg-form {
+        .row {
+            &.checkbox,
+            &.radio,
+            &.button-row,
+            &.submit {
+                justify-content: flex-start;
+            }
         }
     }
 
     h1 {
         @include size-2();
         font-family: $display;
+        color: var(--linkColor);
         font-weight: 500;
         text-align: center;
     }
