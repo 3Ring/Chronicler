@@ -1109,9 +1109,13 @@ nav ul:last-child li:first-child a {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  width: 100%;
-  height: calc(100vh - 5.7em);
   padding: var(--md) 0;
+}
+@media screen and (min-width: 48.438em) {
+  .game-container {
+    width: 100%;
+    height: calc(100vh - 5.7em);
+  }
 }
 .game-container h1 {
   --headlineColor: var(--reverse);
@@ -1159,8 +1163,9 @@ nav ul:last-child li:first-child a {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  width: 100%;
 }
-@media screen and (min-width: 31.25em) {
+@media screen and (min-width: 48.438em) {
   .header-container {
     display: grid;
     width: 100%;

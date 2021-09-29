@@ -15,9 +15,15 @@
     justify-content: center;
     flex-grow: 1;
 
-    width: 100%;
-    height: calc(100vh - 5.7em);
     padding: var(--md) 0;
+
+    @media screen and (min-width: $break2) {
+        width: 100%;
+        height: calc(100vh - 5.7em);
+        
+    }
+
+    
 
     h1 {
         --headlineColor: var(--reverse);
@@ -43,8 +49,9 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    width: 100%;
 
-    @media screen and (min-width: $break1) {
+    @media screen and (min-width: $break2) {
         display: grid;
         width: 100%;
         grid-template-columns: max-content 1fr;
