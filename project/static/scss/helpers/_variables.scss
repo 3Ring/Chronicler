@@ -18,6 +18,8 @@ $sizing2: 96.625em; //1545pixel --17pt max body copy
 
 $mobile: max-width $break1Max;
 
+$navHeight: calc(var(--spacing) * 13.5);
+
 //never ship with this
 $test: rgba(255,0,0,0.3);
 

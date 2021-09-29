@@ -654,7 +654,7 @@ input:-moz-placeholder {
 }
 @media screen and (min-width: 31.25em) {
   .chronicler > main > .container, .chronicler > main .game-container > .container {
-    margin: var(--xl);
+    margin: 0 var(--xl);
   }
 }
 .chronicler > footer {
@@ -1101,7 +1101,7 @@ nav ul:last-child li:first-child a {
   width: 100%;
   min-height: 100%;
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: hidden;
   position: absolute;
   top: 0;
   left: 0;
@@ -1114,7 +1114,7 @@ nav ul:last-child li:first-child a {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
-  font-size: 2.54em;
+  font-size: 2.25em;
   letter-spacing: -0.019em;
   line-height: 1.085;
   color: var(--headlineColor);
@@ -1125,7 +1125,7 @@ nav ul:last-child li:first-child a {
 }
 @media screen and (min-width: 31.25em) {
   .game-container h1 {
-    font-size: 3.322em;
+    font-size: 2.54em;
   }
 }
 .game-container h1 b,
@@ -1148,6 +1148,24 @@ nav ul:last-child li:first-child a {
   align-self: flex-start;
 }
 
+.header-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+@media screen and (min-width: 31.25em) {
+  .header-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: max-content 1fr;
+  }
+}
+.header-container h1 {
+  width: 100%;
+  text-align: center;
+}
+
 .notes-container {
   display: flex;
   min-width: 100%;
@@ -1155,6 +1173,14 @@ nav ul:last-child li:first-child a {
 @media screen and (max-width: 48.438em) {
   .notes-container {
     flex-wrap: wrap;
+  }
+}
+@media screen and (min-width: 48.438em) {
+  .notes-container .scroll-max {
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    max-height: calc(100vh - calc(var(--spacing) * 13.5));
   }
 }
 .notes-container .session-log {
@@ -1476,6 +1502,30 @@ form.wysiwyg-form p {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+}
+.note_list .note-content h4 {
+  font-family: "PT Serif", serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 0.688em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  color: var(--headlineColor);
+}
+.note_list .note-content h4 b,
+.note_list .note-content h4 strong {
+  font-weight: 700;
+}
+.note_list .note-content h4 em, .note_list .note-content h4 i {
+  font-style: italic;
+}
+.note_list .note-content h4 strong i,
+.note_list .note-content h4 strong em,
+.note_list .note-content h4 b i,
+.note_list .note-content h4 b em {
+  font-weight: 700;
+  font-style: italic;
 }
 .note_list .note-content h3 {
   font-family: "PT Serif", serif;

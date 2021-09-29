@@ -59,176 +59,97 @@ document.addEventListener("DOMContentLoaded", function() {
         {% endfor %}
     {% endif %}
 {% endwith %}
-<div class="game-container" style="background-image: url({{ game.image }});"></div>
+<div class="game-container" style="background-image: url({{ game.image }});">
     <div class="container">
-        <h1>{{ game.name }}</h1>
-        {% if game.dm_id == current_user.id %}
-            <div class="new-session">
-                <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
-            </div>
-        {% endif %}
+        <div class="header-container">
+            
+            {% if game.dm_id == current_user.id %}
+                <div class="new-session">
+                    <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
+                </div>
+            {% endif %}
+
+            <h1>{{ game.name }}</h1>
+        </div>
+        
         <div class="notes-container">
             <div class="session-log">
-                <h2>Session Log</h2>
-                {% if session_titles %}
-                    <ul class="sessions-list" data-flag="sessions_list" >
-                        {% for session in session_titles %}
-                        <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
-                            <h4>Session {{ session.number }}</h4>
-                            <h2>{{ session.title }}</h2>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <ul class="sessions-list" data-flag="sessions_list" >
-                        <li data-flag="sessionList" data-number_sessionList="set_up">
-                            <h4>Setting up the table...</h4>
-                    </ul>
-                {% endif %}
+                <div class="scroll-max">
+                    <h2>Session Log</h2>
+                    {% if session_titles %}
+                        <ul class="sessions-list" data-flag="sessions_list" >
+                            {% for session in session_titles %}
+                            <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+                                <h4>Session {{ session.number }}</h4>
+                                <h2>{{ session.title }}</h2>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <ul class="sessions-list" data-flag="sessions_list" >
+                            <li data-flag="sessionList" data-number_sessionList="set_up">
+                                <h4>Setting up the table...</h4>
+                        </ul>
+                    {% endif %}
+                </div>
             </div>
             <div class="notes">
-                <div class="comment-container">
-                    <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
-                        <div class="form-group">
-                        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-                        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-                        <div id="Quill_sessionNew">
-                        </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row checkbox">
-                                <input type='checkbox' class="note_checkbox" data-flag="newQuillPrivate" name='note_private' value='False'>
-                                <label for='note_private'>Private - Insert as draft.</label>
+                <div class="scroll-max">
+                    <div class="comment-container">
+                        <form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
+                            <div class="form-group">
+                            <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+                            <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+                            <div id="Quill_sessionNew">
                             </div>
-                            <div class="row checkbox">
-                                <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
-                                <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
                             </div>
-                            <div class="row button-row">
-                                <button class="button primary" type="submit">Submit</button>
+                            <div class="form-group">
+                                <div class="row checkbox">
+                                    <input type='checkbox' class="note_checkbox" data-flag="newQuillPrivate" name='note_private' value='False'>
+                                    <label for='note_private'><strong>Draft</strong> - Visible only to you until published</label>
+                                </div>
+                                <div class="row checkbox">
+                                    <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
+                                    <label for='note_to_dm'><strong>Private</strong> - Visible only to you and the DM</label>
+                                </div>
+                                <div class="row button-row">
+                                    <button class="button primary" type="submit">Submit</button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
-                    {% if session_titles %}
-                        <!-- Session Title Cards -->
-                        {% for session in session_titles %}
-                            <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
-                                <h2>Session {{ session.number }}: {{ session.title }}</h2>
-                                <div>
-                                    <!-- Session Notes -->
-                                    <ul class="note_list" data-idSession="{{ session.number }}">
-                                        {% for note in note_dict[session.number] %}
+                        </form>
+                    </div>
+                    <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
+                        {% if session_titles %}
+                            <!-- Session Title Cards -->
+                            {% for session in session_titles %}
+                                <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
+                                    <h2>Session {{ session.number }}: {{ session.title }}</h2>
+                                    <div>
+                                        <!-- Session Notes -->
+                                        <ul class="note_list" data-idSession="{{ session.number }}">
+                                            {% for note in note_dict[session.number] %}
 
-                                        
-                                            {% if note.private == True and note.user_id == current_user.id %}
-                                                <li class="span_cont" data-id_noteCont="{{ note.id }}">
-                                                    <span class="span_cont note-item">
-                                                        <span class="note-author">
-                                                            <div class="author-image {{ note.charname }}" style="background-image: url('{{ character_images[note.charname] }}');"></div>
-                                                            <!-- {{ note.date_added }} || -->
-                                                        </span>
-                                                            <span class="note-content note-private">
-                                                                <h3>{{ note.charname }}:</h3>
-                                                                <h4>Only you can see this:</h4>
-                                                                <span class="note-ql" data-id_noteText="{{ note.id }}">
-                                                                </span>
-                                                            </span>
-                                                            <!-- Edit Button -->
-                                                            <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
-                                                                <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
-                                                            </a>
-                                                    </span>
-                                                        <!-- Edit form -->
-                                                        <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
-                                                            <div class="form-group" >
-                                                            
-                                                                <input type="hidden" id='note_user_id' name='note_user_id' value='{{ current_user.id }}'>
-                                                                <input type="hidden" id='note_game_id' name='note_game_id' value='{{ id }}'>
-                                                                <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <div class="row checkbox">
-                                                                    <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
-                                                                    <label for='note_private'>Private - Visible only to you and the DM.</label>
-                                                                </div>
-                                                                <div class="row checkbox">
-                                                                    <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
-                                                                    <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
-                                                                </div>
-                                                                <div class="row button-row">
-                                                                    <button class="button primary" type="submit">Submit</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                        <!-- Edit Note Context Menu -->
-                                                        <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
-                                                            <ul class="note_edit_menu_items">
-                                                                <li class="note_edit_menu_item">
-                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
-                                                                        Edit Note
-                                                                    </a>
-                                                                </li>
-                                                                <li class="note_edit_menu_item">
-                                                                    <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
-                                                                        Delete Note
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                </li>
-                                            {% endif %}
                                             
-                                            {% if note.private != True %}
-                                                {# to GM notes #}
-                                                {% if note.to_gm == True and note.user_id == current_user.id or note.to_gm == True and game.dm_id == current_user.id %}
-                                                <li class="span_cont" data-id_noteCont="{{ note.id }}">
-                                                    <span class="span_cont note-item">
-                                                        <span class="note-author">
-                                                            <div class="author-image" style="background-image: url('{{ character_images[note.charname] }}');"></div>
-                                                            <!-- {{ note.date_added }}-->
-                                                        </span>
-                                                        
-                                                        <span class="note-content note-dm">
-                                                            <h3>{{ note.charname }}:</h3>
-                                                            {% if note.user_id == current_user.id %}
-                                                                <h4>Only you and the DM can see this:</h4>
-                                                            {% else %}
-                                                                <h4>This note is DM only</h4>
-                                                            {% endif %}
-                                                            <span class="note-ql" data-id_noteText="{{ note.id }}">
-                                                            </span>
-                                                        </span>
-                                                {# Normal notes. #}
-                                                {# must be elif, because the "else" is to display nothing #}
-                                                {% elif note.to_gm != True %}
+                                                {% if note.private == True and note.user_id == current_user.id %}
                                                     <li class="span_cont" data-id_noteCont="{{ note.id }}">
                                                         <span class="span_cont note-item">
                                                             <span class="note-author">
-                                                                {% for name, image in character_images.items() %}
-                                                                    {% if name == note.charname %}
-                                                                        <div class="author-image" style="background-image: url('{{ character_images[note.charname] }}');"></div>
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                                
+                                                                <div class="author-image {{ note.charname }}" style="background-image: url('{{ character_images[note.charname] }}');"></div>
                                                                 <!-- {{ note.date_added }} || -->
                                                             </span>
-                                                                <span class="note-content">
+                                                                <span class="note-content note-private">
+                                                                    <h4><span class="far fa-eye-slash"></span> Only you can see this</h4>
                                                                     <h3>{{ note.charname }}:</h3>
+                                                                    
                                                                     <span class="note-ql" data-id_noteText="{{ note.id }}">
                                                                     </span>
                                                                 </span>
-                                                            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
                                                                 <!-- Edit Button -->
                                                                 <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
                                                                     <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
                                                                 </a>
-                                                            {% endif %}
                                                         </span>
-                                                        
-                                                        {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                                                            <!-- Edit form -->
                                                             <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
                                                                 <div class="form-group" >
                                                                 
@@ -237,26 +158,21 @@ document.addEventListener("DOMContentLoaded", function() {
                                                                     <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
                                                                     </div>
                                                                 </div>
-                                                                
                                                                 <div class="form-group">
-                                                                    {# make sure the user can't make the tutorial notes private #}
-                                                                    {% if note.user_id == current_user.id %}
                                                                     <div class="row checkbox">
                                                                         <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
                                                                         <label for='note_private'>Private - Visible only to you and the DM.</label>
                                                                     </div>
                                                                     <div class="row checkbox">
-                                                                        <input type='checkbox' class="note_checkbox" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='False'>
+                                                                        <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
                                                                         <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
                                                                     </div>
-                                                                    {% endif %}
                                                                     <div class="row button-row">
                                                                         <button class="button primary" type="submit">Submit</button>
                                                                     </div>
                                                                 </div>
                                                             </form>
-
-                                                            <!-- Edit Note Menu -->
+                                                            <!-- Edit Note Context Menu -->
                                                             <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
                                                                 <ul class="note_edit_menu_items">
                                                                     <li class="note_edit_menu_item">
@@ -271,16 +187,110 @@ document.addEventListener("DOMContentLoaded", function() {
                                                                     </li>
                                                                 </ul>
                                                             </div>
-                                                        {% endif %}
                                                     </li>
                                                 {% endif %}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
+                                                
+                                                {% if note.private != True %}
+                                                    {# to GM notes #}
+                                                    {% if note.to_gm == True and note.user_id == current_user.id or note.to_gm == True and game.dm_id == current_user.id %}
+                                                    <li class="span_cont" data-id_noteCont="{{ note.id }}">
+                                                        <span class="span_cont note-item">
+                                                            <span class="note-author">
+                                                                <div class="author-image" style="background-image: url('{{ character_images[note.charname] }}');"></div>
+                                                                <!-- {{ note.date_added }}-->
+                                                            </span>
+                                                            
+                                                            <span class="note-content note-dm">
+                                                                {% if note.user_id == current_user.id %}
+                                                                    <h4><span class="far fa-eye-slash"></span> Only you and the DM can see this</h4>
+                                                                {% else %}
+                                                                    <h4><span class="far fa-lock-alt"></span> This note is DM only</h4>
+                                                                {% endif %}
+                                                                <h3>{{ note.charname }}:</h3>                                                       
+                                                                <span class="note-ql" data-id_noteText="{{ note.id }}">
+                                                                </span>
+                                                            </span>
+                                                    {# Normal notes. #}
+                                                    {# must be elif, because the "else" is to display nothing #}
+                                                    {% elif note.to_gm != True %}
+                                                        <li class="span_cont" data-id_noteCont="{{ note.id }}">
+                                                            <span class="span_cont note-item">
+                                                                <span class="note-author">
+                                                                    {% for name, image in character_images.items() %}
+                                                                        {% if name == note.charname %}
+                                                                            <div class="author-image" style="background-image: url('{{ character_images[note.charname] }}');"></div>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    
+                                                                    <!-- {{ note.date_added }} || -->
+                                                                </span>
+                                                                    <span class="note-content">
+                                                                        <h3>{{ note.charname }}:</h3>
+                                                                        <span class="note-ql" data-id_noteText="{{ note.id }}">
+                                                                        </span>
+                                                                    </span>
+                                                                {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                                                                    <!-- Edit Button -->
+                                                                    <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
+                                                                        <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
+                                                                    </a>
+                                                                {% endif %}
+                                                            </span>
+                                                            
+                                                            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                                                                <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
+                                                                    <div class="form-group" >
+                                                                    
+                                                                        <input type="hidden" id='note_user_id' name='note_user_id' value='{{ current_user.id }}'>
+                                                                        <input type="hidden" id='note_game_id' name='note_game_id' value='{{ id }}'>
+                                                                        <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="form-group">
+                                                                        {# make sure the user can't make the tutorial notes private #}
+                                                                        {% if note.user_id == current_user.id %}
+                                                                        <div class="row checkbox">
+                                                                            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
+                                                                            <label for='note_private'>Private - Visible only to you and the DM.</label>
+                                                                        </div>
+                                                                        <div class="row checkbox">
+                                                                            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='False'>
+                                                                            <label for='note_to_dm'>DM only - Only visable to you and the DM</label>
+                                                                        </div>
+                                                                        {% endif %}
+                                                                        <div class="row button-row">
+                                                                            <button class="button primary" type="submit">Submit</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+
+                                                                <!-- Edit Note Menu -->
+                                                                <div data-contextMenuId="{{ note.id }}" data-flag="contextMenu" class="note_edit_menu hidden">
+                                                                    <ul class="note_edit_menu_items">
+                                                                        <li class="note_edit_menu_item">
+                                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="edit">
+                                                                                Edit Note
+                                                                            </a>
+                                                                        </li>
+                                                                        <li class="note_edit_menu_item">
+                                                                            <a href="#" data-editMenuId="{{ note.id }}" class="note_edit_menu_link button primary" data-id_note="{{ note.id }}" data-action="delete">
+                                                                                Delete Note
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            {% endif %}
+                                                        </li>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

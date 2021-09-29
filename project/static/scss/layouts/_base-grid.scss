@@ -38,7 +38,7 @@
             max-width: 80em;
 
             @media screen and (min-width: $break1) {
-                margin: var(--xl);
+                margin: 0 var(--xl);
             }
         }
     }
