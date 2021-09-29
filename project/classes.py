@@ -13,12 +13,6 @@ class Players(db.Model):
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
-    head = [
-        'id',
-        'users_id',
-        'games_id'
-    ]
-
     def __repr__(self):
         return '< Player: %r >' % self
 
@@ -33,16 +27,6 @@ class Users(UserMixin, db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     characters = db.relationship('Characters', backref='user', lazy=True)
-
-    values =['user.id', 'user.name', 'user.email', 'user.hash', 'user.realname', 'user.date_added', 'user.characters']
-    head =[
-        'ID', 
-        'User Name', 
-        'Email', 
-        'Hash', 
-        'Real Name', 
-        'Date Added',
-        'Characters']
 
     def __repr__(self):
         return '< User.id: %r >' % self.id
@@ -64,15 +48,6 @@ class Games(db.Model):
 
     players = db.relationship('Users', secondary='players', lazy='subquery',
         backref=db.backref('games', lazy=True))
-
-    head = [
-        'ID' 
-        ,'Name' 
-        ,'Secret' 
-        ,'Date Added' 
-        ,'DM ID'
-        ,'img_id'
-        ,'Players']
 
     def __repr__(self):
         return '<Game %r>' % self.name
@@ -145,19 +120,6 @@ class NPCs(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
 
-    # loot = db.relationship('Loot', backref='NPC', lazy=True)
-
-    head = [
-        'ID',
-        'Name',
-        'Secret Name',
-        'Bio',
-        'Secret Bio',
-        'Date Added',
-        'Game ID',
-        'Place ID'
-    ]
-
     def __repr__(self):
         return '<NPC %r>' % self.name
 
@@ -171,16 +133,6 @@ class Places(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     NPCs = db.relationship('NPCs', backref='place', lazy=True)
 
-    head = [
-        'ID',
-        'Name',
-        'Bio',
-        'Secret Bio',
-        'Date Added',
-        'Game ID',
-        'NPCs'
-    ]
-
     def __repr__(self):
         return '<Place %r>' % self.name
 
@@ -192,15 +144,6 @@ class Loot(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-
-    head = [
-        'ID',
-        'Name',
-        'Bio',
-        'Value(CP)',
-        'Date Added',
-        'Owner ID'
-    ]
 
     def __repr__(self):
         return '<Loot %r>' % self.name
