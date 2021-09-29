@@ -13,23 +13,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    min-height: 100%;
     flex-grow: 1;
 
-    overflow-y: scroll;
+    padding: var(--md) 0;
 
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
+    @media screen and (min-width: $break2) {
+        width: 100%;
+        height: calc(100vh - 5.7em);
+        
+    }
+
+    
 
     h1 {
         --headlineColor: var(--reverse);
         --textBorderShadow: 2px 2px 0 $brand;
 
         text-align: center;
-        @include size-1();
+        @include size-2();
         font-family: $display;
         font-weight: 700;
 
@@ -43,6 +44,26 @@
     align-self: flex-start;
 }
 
+.header-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+
+    @media screen and (min-width: $break2) {
+        display: grid;
+        width: 100%;
+        grid-template-columns: max-content 1fr;
+    }
+
+    h1 {
+        width: 100%;
+        text-align: center;
+    }
+
+}
+
 .notes-container {
 
     display: flex;
@@ -50,6 +71,18 @@
 
     @media screen and (max-width: $break2) {
         flex-wrap: wrap;
+    }
+
+    .scroll-max {
+
+        @media screen and (min-width: $break2) {
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 100%;
+
+            max-height: calc(100vh - 17em);
+        }
+            
     }
 
     .session-log {
@@ -133,6 +166,7 @@
         position: relative;
         z-index: 1;
         padding-top: var(--lg);
+
         overflow: hidden;
 
         background: var(--boxBackground);
@@ -332,6 +366,11 @@ form.wysiwyg-form {
         align-items: flex-start;
         justify-content: flex-start;
 
+        h4 {
+            @include size-6();
+            color: var(--accentColor);
+        }
+
         h3 {
             @include size-4();
             font-family: $display;
@@ -346,13 +385,11 @@ form.wysiwyg-form {
             font-family: $serif;
             max-width: 75ch;
 
-            span {
-                &.ql-size-large {
-                    font-size: 1.5em;
-                }
-                &.ql-size-huge {
-                    font-size: 2.0em;
-                }
+            .ql-size-large {
+                font-size: 1.5em;
+            }
+            .ql-size-huge {
+                font-size: 2.0em;
             }
 
         }
