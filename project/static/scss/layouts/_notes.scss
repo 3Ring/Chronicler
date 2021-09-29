@@ -13,16 +13,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    min-height: 100%;
     flex-grow: 1;
 
-    overflow-y: hidden;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
+    width: 100%;
+    height: calc(100vh - 5.7em);
+    padding: var(--md) 0;
 
     h1 {
         --headlineColor: var(--reverse);
@@ -78,7 +73,7 @@
             overflow-y: auto;
             width: 100%;
 
-            max-height: calc(100vh - #{$navHeight});
+            max-height: calc(100vh - 17em);
         }
             
     }

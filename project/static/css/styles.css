@@ -634,7 +634,7 @@ input:-moz-placeholder {
   background-size: cover;
 }
 .chronicler > header {
-  padding: var(--sm);
+  padding: var(--xs) var(--sm);
   width: 100%;
 }
 .chronicler > main {
@@ -672,7 +672,7 @@ input:-moz-placeholder {
   font-size: 0.688em;
   letter-spacing: 0;
   line-height: 1.333;
-  margin: var(--xs);
+  margin: var(--xxxs);
 }
 .chronicler > footer p b,
 .chronicler > footer p strong {
@@ -738,7 +738,7 @@ nav ul:first-child li {
   margin-right: var(--sm);
 }
 nav ul:first-child li img {
-  max-height: var(--xl);
+  max-height: var(--lg);
 }
 nav ul:last-child li {
   margin-left: var(--sm);
@@ -1108,14 +1108,10 @@ nav ul:last-child li:first-child a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 100%;
   flex-grow: 1;
-  overflow-y: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
+  width: 100%;
+  height: calc(100vh - 5.7em);
+  padding: var(--md) 0;
 }
 .game-container h1 {
   --headlineColor: var(--reverse);
@@ -1190,7 +1186,7 @@ nav ul:last-child li:first-child a {
     overflow-x: hidden;
     overflow-y: auto;
     width: 100%;
-    max-height: calc(100vh - calc(var(--spacing) * 13.5));
+    max-height: calc(100vh - 17em);
   }
 }
 .notes-container .session-log {
