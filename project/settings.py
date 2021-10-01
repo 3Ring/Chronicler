@@ -21,7 +21,7 @@ if os.environ.get("HEROKU_HOSTING"):
 # local
 elif os.environ.get("DOCKER_FLAG"):
     print("connecting to local through docker...")
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:" + db_password + "@bonsqldb:5432/bon"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:" + db_password + "@chronicler_host:5432/chronicler_db"
 else:
     print("connecting to local...")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///litechronicler.db'

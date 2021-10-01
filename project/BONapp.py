@@ -67,12 +67,12 @@ def initdb_p():
 
     # Connect to PostgreSQL DBMS
 
-    con = psycopg2.connect("host='bonsqldb' user='postgres' password='" + db_password + "'")
+    con = psycopg2.connect(f"host='chronicler_host' user='postgres' password='{db_password}'")
     con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
     # Obtain a DB Cursor
     cursor          = con.cursor()
-    name_Database   = "bon"
+    name_Database   = "chronicler_db"
 
     # Create table statement
 
@@ -224,7 +224,7 @@ def notes(id):
 
         else:
             for session in session_titles:
-                notes = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).all()
+                notes = Notes.query.filter_by(game_id=id).filter_by(session_number=session.number).order_by(Notes.date_added).all()
                 logs[str(session.number)] = notes
 
             if len(session_titles) > 1:
@@ -245,7 +245,7 @@ def notes(id):
             js_logs[session] = [note.id, note.note]
     js_note_dict = json.dumps(js_logs)
 
-    return render_template('notes.html'
+    return render_template('notes/main.html'
         , tutorial=tutorial
         , character_images=character_images
         , js_note_dict=js_note_dict

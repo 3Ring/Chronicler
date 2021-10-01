@@ -1,0 +1,16 @@
+<div class="game-container" style="background-image: url({{ game.image }});">
+    <div class="container">
+        <div class="header-container">
+            <div class="new-session">
+                {% if game.dm_id == current_user.id %}
+                    <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
+                {% endif %}
+            </div>
+            <h1>{{ game.name }}</h1>
+        </div>
+        <div class="notes-container">
+            {% include 'notes/session_log.html' %}
+            {% include 'notes/session_notes.html' %}
+        </div>
+    </div>
+</div>

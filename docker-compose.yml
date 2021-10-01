@@ -1,37 +1,94 @@
+# version: "3.8"
+
+# services: 
+#     bonsqldb:
+#         image: postgres:9.6.23
+#         container_name: bonsqldb
+#         restart: always
+#         healthcheck:
+#             test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+#             timeout: 45s
+#             interval: 10s
+#             retries: 10
+#         volumes: 
+#             - bonvolume3:/var/lib/postgresql/data
+#         environment:
+#             - POSTGRES_USER=root
+#             - POSTGRES_PASSWORD=${SQL_ROOT_PASSWORD:-unsecured_password}
+#         ports:
+#             - 5432:5432
+#         cap_add:
+#          - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
+
+#     rest-server:
+#         build: 
+#             context: .
+#         container_name: rest-server
+#         restart: always
+#         environment: 
+#             - DB_PASS=${SQL_ROOT_PASSWORD:-unsecured_password}
+#             - ADMIN_PASS=${ADMIN_PASS:-password123}
+#             - DOCKER_FLAG=1
+#             - PYTHONUNBUFFERED=1
+#         ports:
+#             - 5000:5000
+#         volumes:
+#             - ./:/app
+
+# volumes:
+#     bonvolume3:
+#         name: bonvolume3
+
+# networks: 
+#     default:
+#         name: bonback
+#         driver: bridge
+
 version: "3.8"
 
 services: 
-    bonsqldb:
+    chronicler_host:
         image: postgres:9.6.23
-        container_name: bonsqldb
+        container_name: chronicler_host
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+            timeout: 45s
+            interval: 10s
+            retries: 10
+        restart: always
         volumes: 
-            - bonvolume2:/var/lib/postgresql/data
+            - chronicler_volume3:/var/lib/postgresql/data
         environment:
-            POSTGRES_PASSWORD: ${SQL_ROOT_PASSWORD:-unsecured_password}
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=${SQL_ROOT_PASSWORD:-unsecured_password}
         ports:
             - 5432:5432
         cap_add:
-        - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
+            - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
 
     rest-server:
         build: 
             context: .
         container_name: rest-server
+        restart: always
+        depends_on:
+            chronicler_host:
+                condition: service_healthy
         environment: 
-            DB_PASS: ${SQL_ROOT_PASSWORD:-unsecured_password}
-            ADMIN_PASS: ${ADMIN_PASS:-password123}
-            DOCKER_FLAG: 1
-            PYTHONUNBUFFERED: 1
+            - DB_PASS=${SQL_ROOT_PASSWORD:-unsecured_password}
+            - ADMIN_PASS=${ADMIN_PASS:-password123}
+            - DOCKER_FLAG=1
+            - PYTHONUNBUFFERED=1
         ports:
             - 5000:5000
         volumes:
             - ./:/app
 
 volumes:
-    bonvolume2:
-        name: bonvolume2
+    chronicler_volume3:
+        name: chronicler_volume3
 
 networks: 
     default:
-        name: bonback
+        name: chronicler_back
         driver: bridge

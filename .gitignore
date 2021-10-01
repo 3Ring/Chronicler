@@ -2,6 +2,7 @@ project/node_modules/
 .dockerignore
 project/test.py
 test.py
+test2.py
 project/ignored
 project/templates/test.html
 project/liteBON.db

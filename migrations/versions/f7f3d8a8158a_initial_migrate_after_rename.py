@@ -1,8 +1,8 @@
-"""empty message
+"""initial migrate after rename
 
-Revision ID: a05185dbccf4
+Revision ID: f7f3d8a8158a
 Revises: 
-Create Date: 2021-09-14 20:25:17.245889
+Create Date: 2021-09-30 14:09:35.735554
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a05185dbccf4'
+revision = 'f7f3d8a8158a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -53,7 +53,9 @@ def upgrade():
     sa.Column('date_added', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('game_id', sa.Integer(), nullable=False),
+    sa.Column('img_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['game_id'], ['games.id'], ),
+    sa.ForeignKeyConstraint(['img_id'], ['images.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -101,7 +103,7 @@ def upgrade():
     sa.Column('note', sa.Text(), nullable=True),
     sa.Column('session_number', sa.Integer(), nullable=True),
     sa.Column('private', sa.Boolean(), nullable=True),
-    sa.Column('in_character', sa.Boolean(), nullable=True),
+    sa.Column('to_gm', sa.Boolean(), nullable=True),
     sa.Column('date_added', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('character', sa.Integer(), nullable=False),

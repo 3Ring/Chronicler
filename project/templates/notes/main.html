@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% include 'notes/top_script.html' %}
+{% include 'notes/game_container.html' %}
+
+{% if game.dm_id == current_user.id %}
+    {% include 'notes/new_session_form' %}
+{% endif %}
+
+{% endblock %}

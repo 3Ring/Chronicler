@@ -5,15 +5,13 @@
 
 // return correct note element when passed its ID
 function get_note_element(note_id_number) {
-    let flag = "span[data-id_noteText='"+note_id_number+"']"
-    , element = document.querySelector(flag);
+    let element = document.querySelector(`li[data-id_noteCont="${note_id_number}"]`);
     return element
 }
 
 // return correct session container element when passed the session number
 function get_session_element(session_number) {
-    let flag = "ul[data-idSession='"+session_number+"']"
-    , element = document.querySelector(flag);
+    let element = document.querySelector(`ul[data-idSession='${session_number}']`);
     return element
 }
 

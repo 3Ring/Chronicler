@@ -13,6 +13,7 @@ class Players(db.Model):
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
+    self_title = "player"
     def __repr__(self):
         return '< Player: %r >' % self
 
@@ -28,8 +29,10 @@ class Users(UserMixin, db.Model):
 
     characters = db.relationship('Characters', backref='user', lazy=True)
 
+    self_title = "user"
     def __repr__(self):
         return '< User.id: %r >' % self.id
+
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,7 +44,7 @@ class Games(db.Model):
     dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
     image = str
-
+    self_title = "game"
     places = db.relationship('Places', backref='game', lazy=True)
     NPCs = db.relationship('NPCs', backref='game', lazy=True)
 
@@ -60,7 +63,7 @@ class Sessions(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-
+    self_title = "session"
     header = "session."
 
 
@@ -77,7 +80,7 @@ class Notes(db.Model):
     character = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-
+    self_title = "note"
     header = "note."
 
 class Images(db.Model):
@@ -85,6 +88,7 @@ class Images(db.Model):
     img = db.Column(db.Text, nullable=False)
     name = db.Column(db.Text, nullable=False)
     mimetype = db.Column(db.Text, nullable=False)
+    self_title = "image"
 
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -95,7 +99,7 @@ class Characters(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
-
+    self_title = "character"
     # @classmethod
     # def create(cls, **kw):
     #     obj = cls(**kw)
@@ -119,7 +123,7 @@ class NPCs(db.Model):
     
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
-
+    self_title = "NPC"
     def __repr__(self):
         return '<NPC %r>' % self.name
 
@@ -132,7 +136,7 @@ class Places(db.Model):
     
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     NPCs = db.relationship('NPCs', backref='place', lazy=True)
-
+    self_title = "place"
     def __repr__(self):
         return '<Place %r>' % self.name
 
@@ -144,7 +148,7 @@ class Loot(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-
+    self_title = "loot"
     def __repr__(self):
         return '<Loot %r>' % self.name
 

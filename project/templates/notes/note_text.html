@@ -1,0 +1,42 @@
+
+
+{# note #}
+<li class="span_cont" data-id_noteCont="{{ note.id }}">
+    <span class="span_cont note-item">
+        <span class="note-author">
+            <div class="author-image {{ note.charname }}" style="background-image: url('{{ character_images[note.charname] }}');"></div>
+            <!-- {{ note.date_added }} || -->
+        </span>
+        {% if note.private == True%}
+            <span class="note-content note-private">
+                <h4><span class="far fa-eye-slash"></span> Only you can see this</h4>
+        {% elif note.to_gm == True%}
+            <span class="note-content note-dm">
+            {% if current_user.id != game.dm_id %}
+                <h4><span class="far fa-eye-slash"></span> Only you and the DM can see this</h4>
+            {% else %}
+                <h4><span class="far fa-lock-alt"></span> This note is DM only</h4>
+            {% endif %}
+        {% else %}
+            <span class="note-content">
+        {% endif %}
+            <h3>{{ note.charname }}:</h3>
+            <span class="note-ql" data-id_noteText="{{ note.id }}">
+            </span>
+        </span>
+
+            {# can edit note #}
+
+            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+                {% include 'notes/edit_button.html' %}
+            {% endif %}
+
+            {#  #}
+    </span>
+    {# can edit note #}
+
+        {% include 'notes/quill/edit_quill.html' %}
+        {% include 'notes/note_context_menu.html' %}
+
+    {#  #}
+</li>

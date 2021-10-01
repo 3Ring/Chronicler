@@ -12,7 +12,10 @@ function NewQuill(event, quill) {
     // capture data
     let new_note_html = quill.root.innerHTML
     , new_note_private = element__newQuill_private.value
-    , new_note_to_dm = element__newQuill_to_dm.value
+    , new_note_to_dm = false;
+    if (element__newQuill_to_dm) {
+        new_note_to_dm = element__newQuill_to_dm.value
+    }
 
     // check to make sure note isn't empty
     if (quill.getText() == '\n') {

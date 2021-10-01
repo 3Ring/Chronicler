@@ -201,8 +201,7 @@ function edit_note_func(id_num, event) {
 function delete_note(id_num) {
 
     // Local Variables
-    let flag__containerNote = "li[data-id_noteCont='" + id_num + "']"
-    , element__containerNote = document.querySelector(flag__containerNote);
+    let element__containerNote = document.querySelector(`li[data-id_noteCont='${id_num}']`);
 
     // add hidden class to note element
     element__containerNote.classList.add(className__hidden);
