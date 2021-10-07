@@ -116,12 +116,15 @@ def nuke():
 # #
 
 def priv_convert(priv):
-    if priv == 'True':
-        private_ = True
+    if type(priv) == bool:
+        return priv
+    elif type(priv) == str:
+        if priv.lower() == 'true':
+            return True
+        else:
+            return False
     else:
-        private_ = False
-    
-    return private_
+        return False
 
 # function to deal with notes' Jinja functions while going through websockets
 def note_conditionals(html, model):
@@ -311,5 +314,16 @@ def new_game_training_wheels(game):
         db.session.add(Note_obj)
         db.session.commit()
 
-def test2():
-    print("test2")
+def make_character_images(character_id):
+    character = Characters.query.filter_by( id = character_id ).first()
+    image = Images.query.filter_by(id=character.img_id).first()
+    # set defaults if no image exists
+    
+    if image == None:
+        if character.name == "DM":
+            return "/static/images/default_dm.jpg"
+        else:
+            return "/static/images/default_character.jpg"
+    else:
+        decoder2 = f"data:{image.mimetype};base64, "
+        return decoder2 + image.img

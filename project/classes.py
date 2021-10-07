@@ -63,8 +63,6 @@ class Sessions(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    self_title = "session"
-    header = "session."
 
 
 class Notes(db.Model):

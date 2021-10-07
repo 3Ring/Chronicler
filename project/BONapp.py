@@ -182,29 +182,14 @@ def create():
         return redirect(url_for('main.notes', id=game.id))
 
 
-def make_character_images(game_id):
-    image_dict = {}
-    character_list = Characters.query.filter_by(game_id=game_id).all()
-    for character in character_list:
-        image = Images.query.filter_by(id=character.img_id).first()
-        # set defaults if no image exists
-        
-        if image == None:
-            if character.name == "DM":
-                image_dict[character.name] = imageLink__defaultDm
-            else:
-                image_dict[character.name] = imageLink__defaultCharacter
-        else:
-            decoder2 = f"data:{image.mimetype};base64, "
-            image_dict[character.name] = decoder2 + image.img
-    return image_dict
+from .helpers import make_character_images
 
 @main.route('/notes/<id>', methods = ['GET'])
 @login_required
 def notes(id):
     # figure out how many sessions there are and if they have any notes attached to them
     session_titles=Sessions.query.filter_by(games_id=id).order_by(Sessions.number).all()
-    character_images = make_character_images(id)
+
 
     # get game info
     game=Games.query.filter_by(id=id).first()
@@ -232,7 +217,20 @@ def notes(id):
             # Set as strings so that they can be used as dict keys
             for session in session_titles:
                 session.number=str(session.number)
-    
+    # add images to notes
+    for session, note in logs.items():
+
+
+        if type(logs[session]) == list:
+            for note in logs[session]:
+
+                note.char_img = make_character_images(note.character)
+        else:
+
+            session.char_img = make_character_images(session.character)
+
+
+
     # connvert notes to JSON so that the js script attached to notes.html can insert the rich text.
     # This has to be done because otherwise the html won't be able to read the mark up
     js_logs = {}
@@ -247,7 +245,6 @@ def notes(id):
 
     return render_template('notes/main.html'
         , tutorial=tutorial
-        , character_images=character_images
         , js_note_dict=js_note_dict
         , edit_img=imageLink__buttonEdit
         , note_dict=logs

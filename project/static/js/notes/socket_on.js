@@ -3,6 +3,11 @@
 // 
 // //
 
+// helper function
+// apply active tag to new session insert
+function apply_socket_active_tag(element) {
+    console.log(element)
+}
 // this is to add logic to notes populated throuck websocket
 function filled_note_logic (note_id) {
     let socket_inserted_element_note_edit_form = document.querySelector(`form[data-id_formedit='${note_id}']`);
@@ -15,12 +20,14 @@ function filled_note_logic (note_id) {
 // Display new Session
 socket.on('fill_new_session', function(new_session, new_list, session_number) {
 
+    // location.reload()
     // remove filler session title if first session
     let filler_session = document.querySelector(`li[data-number_sessionList="set_up"]`)
     if ( filler_session) {
         filler_session.remove();
     }
     // Local Variables
+    
     let element__sessionsContainer = document.querySelector(flag__sessionContainer)
     , element__sessionsList = document.querySelector("ul[data-flag='sessions_list']");
 
@@ -37,8 +44,13 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
         set_new_session_form_highest ( session_number );
     }
 
-    // apply logic
     element__new_list = document.querySelector("li[data-number_sessionList='" + session_number + "']")
+    // hide all elements except the newest
+    display_sessionCont(element__new_list);
+    element__new_list.classList.add(className__active_sessionList)
+
+    // apply logic
+    
     element__new_list.addEventListener("click", function () {
 
         apply_sessionHighlightLogic_fromElement(element__new_list);
@@ -47,11 +59,14 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
         display_sessionCont(element__new_list);
         set_currentSessionVariable_fromElement(element__new_list);
     })
+
+
+
 });
 
 
 // display new note
-socket.on('fill_new_note', function(new_note, private, to_dm, note_id, session_number) {
+socket.on('fill_new_note', function(new_note, note_text, private, to_dm, note_id, session_number) {
     // local Variables
     element = document.querySelector(`ul[data-idSession='${session_number}']`);
 
@@ -60,6 +75,11 @@ socket.on('fill_new_note', function(new_note, private, to_dm, note_id, session_n
 
     // apply logic
     filled_note_logic(note_id);
+
+    // insert note body
+    let element__notes_body = document.querySelector( `span[data-id_noteText="${note_id}"]` );
+    element__notes_body.innerHTML = note_text;
+
 
 });
 

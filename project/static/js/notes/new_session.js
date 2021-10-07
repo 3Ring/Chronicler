@@ -120,7 +120,7 @@ function newSession__submitListener() {
             // send new session data to server through socket.io
             socket.emit('send_new_session'
                 , game_id
-                , element__formNewSession_inputNumber.value
+                , current__session_number
                 , element__formNewSession_inputTitle.value
                 , element__formNewSession_inputSynopsis.value);
 
