@@ -22,6 +22,7 @@ def send_new_session(games_id, number, title, synopsis=None):
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=games_id)
     db.session.add(new)
     db.session.flush()
+    print(f"new number = {new.number}")
     db.session.commit()
 
     # convert data to html element

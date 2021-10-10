@@ -32,7 +32,9 @@ socket.on('fill_new_session', function(new_session, new_list, session_number) {
     , element__sessionsList = document.querySelector("ul[data-flag='sessions_list']");
 
     remove_activeFlags_sessionList();
-    
+    if (session_number > current__session_number) {
+        current__session_number = session_number
+    }
     
 
     // Insert into document

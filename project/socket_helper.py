@@ -743,175 +743,6 @@ def group_by_depth(if_condtions):
             final.append(_list)
         return final      
 
-
-    # # print("\n\n", commands, "\n\n", html_list)
-    # # print(html_list, "\n\n\n\nhtml_list")
-    # socket = []
-    # i = key
-    # j = key + 1
-    # gatekeeper = True
-    # # list of condtions. 
-    # # every time a true conditon is passed, the list is appended so it will be <ifs[if_depth] = type >
-    # # if it hits the start of a new conditional and fails the list will be appended with False
-    
-    # # for z, item in enumerate(html_list):
-    # #     print(f"{z}: {item} ", end=" ")
-
-    # # print(f"if_starts: {if_starts}, if_ends: {if_ends}, if_pairs: {if_pairs}")
-    #         # print(f" key: {key}  line: {html_list[key]}")
-    # while i < len(html_list):
-
-    # # for line in html_list:
-    # #     print(line)
-    #     ## if line is in commands
-    #         # if "if" is passed send remaining list to apply_commands
-    #         # else go to next condition:
-    #             # if elif:
-    #                 # if passed:
-    #             # else:
-    #                 # if else:
-    #                 # else:
-    #                     # 
-    #         # if command is true continue
-    #     ## else: 
-    #         # append line
-            
-            
-                
-    #             # else: ignore following lines unless it's an elif or else
-    #                 # if "elif" is passed return apply_commands()
-    #                 # else: 
-    #                     # if else is passed return apply_commands()
-    #                     # else: 
-    #                         # if endif is encountered, return html
-    #                         # else return html
-    #     if i in commands.keys():
-    #         print(command_pairs)
-    #         print(i, gatekeeper, commands[i])
-    #         # print(f"command_pairs[i]: {command_pairs[i][1]}")
-    #         if commands[i][0] == "if" and command_pairs[i][1]==depth:
-    #             # print("true")
-
-    #             if switch(commands[i]):
-    #                 # print("another true")
-    #                 # print(endifs)
-    #                 # print(f"{keymaster} {j} {endifs[-1]}")
-    #                 # print(f"{keymaster} {html_list[j:endifs[-1]]}")
-    #                 gatekeeper = True
-    #                 # commands.pop(i)
-    #                 # print(f"command_pairs[i]: {command_pairs[i][1]}")
-    #                 print(f" sent list if {html_list[j:command_pairs[i]]}")
-    #                 socket.append(apply_commands(commands, command_pairs, html_list, key=j, depth=depth+1))
-    #                 i = command_pairs[i] + 1
-    #                 continue
-    #             else:
-    #                 gatekeeper = False
-    #         elif commands[i][0] == "elif":
-    #             if command_pairs[i][1] == depth:
-    #                 # keymaster = switch(commands[i])
-    #                 print(i, gatekeeper, commands[i])
-    #                 if switch(commands[i]):
-    #                     gatekeeper = True
-    #                     # commands.pop(i)
-    #                     print(f" sent list if {html_list[j:command_pairs[i]]}")
-    #                     socket.append(apply_commands(commands, command_pairs, html_list, key=j, depth=depth+1))
-    #                     i = command_pairs[i] + 1
-    #                     continue
-    #         elif commands[i][0] == "else":
-    #             if command_pairs[i][1] == depth:
-    #                 print(i, gatekeeper, commands[i])
-    #                 # keymaster = switch(commands[i])
-    #                 if switch(commands[i]):
-    #                     gatekeeper = True
-    #                     # commands.pop(i)
-    #                     print(f" sent list if {html_list[j:command_pairs[i]]}")
-    #                     socket.append(apply_commands(commands, command_pairs, html_list, key=j, depth=depth+1))
-    #                     i = command_pairs[i] + 1
-    #                     continue
-    #         # elif commands[i][0] == "endif":
-    #         #     raise "nesting error"
-            
-    #     elif gatekeeper:
-    #         socket.append(html_list[i])
-    #         # print(f"added {html_list[i]}")
-    #     i+=1
-    #     j+=1
-    # return socket
-
-
-
-
-
-    # ifs = []
-    # if_depth = 0
-    # allowed_if_depth = 1
-    # print(html_list)
-    # # print(commands)
-    # gatekeeper = True
-    # for i, line in enumerate(html_list):
-    #     if i == 100:
-    #         break
-    #     print(f"=================\n{ifs}\n", i, gatekeeper, line)
-    #     print(f"depth: {if_depth}, allowed: {allowed_if_depth}")
-    #     if i in commands.keys():
-    #         print(f"start command, {commands[i]}, {if_depth} , {allowed_if_depth}")
-    #         _type = commands[i][0]
-    #         # print("type", _type)
-
-    #         if _type == "endif":
-    #             print(f"endif, {commands[i]}, {if_depth} , {allowed_if_depth}")
-    #             if allowed_if_depth in [if_depth, if_depth + 1]:
-    #                 allowed_if_depth += -1
-    #                 ifs.pop(if_depth-1)
-    #             if_depth += -1
-    #             print(f"end endif, {commands[i]}, {if_depth} , {allowed_if_depth}")
-                
-    #             # print(f"depth {if_depth} allowed {allowed_if_depth}")
-
-    #         # if allowed_if_depth < if_depth:
-    #         #     print(gatekeeper, "                   ", line)
-    #         #     print("too deep early")
-
-    #         elif _type == "if":
-    #             ifs.append(False)
-    #             if_depth += 1
-    #             if allowed_if_depth < if_depth:
-    #                 # print("too deep late")
-    #                 continue
-    #             keymaster = switch(commands[i])
-    #             gatekeeper = keymaster
-    #             if gatekeeper:
-    #                 print(f"if, {commands[i]}, {if_depth} , {allowed_if_depth}")
-    #                 print(ifs, if_depth)
-    #                 ifs[if_depth-1] = "if"
-    #                 allowed_if_depth += 1
-    #         elif allowed_if_depth == if_depth and gatekeeper == False and ifs[if_depth-1] == False:
-    #             # print(f"\n\n\n what?~\n\n\n {allowed_if_depth} == {if_depth} and {gatekeeper} == False and {ifs[if_depth]}")
-                
-    #             if _type == "elif":
-    #                 keymaster = switch(commands[i])
-    #                 gatekeeper = keymaster
-    #                 if gatekeeper:
-    #                     ifs[if_depth-1] = "elif"
-    #                     allowed_if_depth += 1
-    #                     print(f"elif, {commands[i]}, {if_depth} , {allowed_if_depth}")
-    #             elif _type == "else":
-    #                 keymaster = gatekeeper = True
-    #                 if gatekeeper:
-    #                     allowed_if_depth += 1
-    #                     print(f"else, {commands[i]}, {if_depth} , {allowed_if_depth}")
-    #     elif allowed_if_depth <= if_depth:
-    #         continue
-    #     elif gatekeeper:
-    #         socket.append(line)
-    #     print(gatekeeper, "                   ", line)
-    #     print(f"depth: {if_depth}, allowed: {allowed_if_depth}")
-    #     print(ifs)
-        
-
-    # print("\n\nsocket", socket)
-    # return socket
-
 def remove_jinja_comments(html):
 
     new = []
@@ -964,10 +795,16 @@ def pass_model_variables(html, model, game_id, **additional_keys):
     return html
 
 
-def finalize(html, model, flag, game_id, **arg):
+def finalize(html, model, flag, game_id, **kwarg):
+    print(f"html: {html} \n model: {model} \n flag: {flag} \n game_id: {game_id} \n")
+    # for key, value in kwarg:
+    #     print(f"kwargs == key: {key} value: {value}")
+    print(kwarg)
+
     commands = {}
     for i, line in enumerate(html):
             conditional_list = get_jinja_conditional_list(line)
+            print(f"conditional_list: {conditional_list}")
             if conditional_list:
 
                 start_or_end = check_for_start_or_end(conditional_list)
@@ -980,34 +817,37 @@ def finalize(html, model, flag, game_id, **arg):
 
     if if_statements != 0:
         raise "nesting error. statements are not even"
+    print(f"commands: {commands}")
+    if conditional_list:
+        grouped_commands = group_commands(commands)
+        print(f"grouped_commands {grouped_commands}")
+        copied_commands = []
+        for line in grouped_commands:
+            copied_commands.append(line)
+        print(f"copied_commands: {copied_commands}")
+        commands_by_depth = group_by_depth(grouped_commands)
+        print(f"commands_by_depth {commands_by_depth}")
+        appended_commands = append_commands(copied_commands, commands_by_depth)
+        print(f"appended commands {appended_commands}")
+        section = apply_commands(commands, appended_commands, html)
+        # print(f"section top: {section}")
+        # for i, item in enumerate(section):
+        #     print(f" {i}: {item}")
+        cleaned_section = []
+        while len(section) > 0:
+            temp = section[0]
+            section.pop(0)
+            for sub in temp:
+                cleaned_section.append(sub)
+        # print(f"cleaned section: {cleaned_section}")
 
-    grouped_commands = group_commands(commands)
-    print(f"grouped_commands {grouped_commands}")
-    copied_commands = []
-    for line in grouped_commands:
-        copied_commands.append(line)
-    print(f"copied_commands: {copied_commands}")
-    commands_by_depth = group_by_depth(grouped_commands)
-    print(f"commands_by_depth {commands_by_depth}")
-    appended_commands = append_commands(copied_commands, commands_by_depth)
-    print(f"appended commands {appended_commands}")
-    section = apply_commands(commands, appended_commands, html)
-    # print(f"section top: {section}")
-    # for i, item in enumerate(section):
-    #     print(f" {i}: {item}")
-    cleaned_section = []
-    while len(section) > 0:
-        temp = section[0]
-        section.pop(0)
-        for sub in temp:
-            cleaned_section.append(sub)
-    # print(f"cleaned section: {cleaned_section}")
-
-    generic_socket_list = convert_to_socket(cleaned_section, model, flag)
+        generic_socket_list = convert_to_socket(cleaned_section, model, flag)
+    else:
+        generic_socket_list = convert_to_socket(html, model, flag)
     # print(f"generic_socket_list: {generic_socket_list}")
     # for item in generic_socket_list:
     #     print(item)
-    final_socket_list = pass_model_variables(generic_socket_list, model, game_id, **arg)
+    final_socket_list = pass_model_variables(generic_socket_list, model, game_id, **kwarg)
     # print(f"final_socket_list: {final_socket_list}")
     final_socket = stringify_and_add_whiteSpace(final_socket_list)
     # print(f"final_socket: {final_socket}")
