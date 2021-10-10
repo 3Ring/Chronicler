@@ -1,0 +1,23 @@
+<div class="session-log">
+    <div class="scroll-max">
+        <h2>Session Log</h2>
+        <ul class="sessions-list" data-flag="sessions_list" >
+        {% if session_titles %}
+            {% for session in session_titles %}
+{# translate_hook session #}
+{# translate_section session nav #}
+                <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+                    <h4>Session {{ session.number }}</h4>
+                    <h2>{{ session.title }}</h2>
+                </li>
+{# endsection session #}
+{# socket_ignore session #}
+            {% endfor %}
+        {% else %}
+            <li data-flag="sessionList" data-number_sessionList="set_up">
+                <h4>Setting up the table...</h4>
+            </li>
+        {% endif %}
+        </ul>
+    </div>
+</div>

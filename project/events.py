@@ -32,10 +32,10 @@ def send_new_session(games_id, number, title, synopsis=None):
 
 
 @socketio.on('send_new_note')
-def send_new_note(user_id, game_id, session_number, note, priv=False, to_dm=False):
+def send_new_note(user_id, game_id, session_number, note, priv=False, to_gm=False):
 
     private2 = priv_convert(priv)
-    to_dm = priv_convert(to_dm)
+    to_gm = priv_convert(to_gm)
     dm_id = Games.query.filter_by(id = game_id).first().id
     
     current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
@@ -43,16 +43,17 @@ def send_new_note(user_id, game_id, session_number, note, priv=False, to_dm=Fals
     session_number=session_number
 
     # this will cause issues if a player has more than one character for now
-    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private2, to_gm=to_dm, character=current_char.id , user_id=user_id, game_id=game_id)
+    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private2, to_gm=to_gm, character=current_char.id , user_id=user_id, game_id=game_id)
     new.char_img = char_img
     db.session.add(new)
     db.session.flush()
-    db.session.commit()
+    # db.session.commit()
 
     # convert data to html element
     element = translate_jinja(new, "note", game_id, u_id=new.user_id, d_id=dm_id, char_img=char_img)
-    print(new.user_id, new.private, new.to_gm, new.id, new.session_number)
-    print(private2, new.private)
+    # print(f" returned element: {element}")
+    # print(new.user_id, new.private, new.to_gm, new.id, new.session_number)
+    # print(private2, new.private)
     emit('fill_new_note', (element["no_sections"], new.note, new.private, new.to_gm, new.id, new.session_number), broadcast=True)
     
 

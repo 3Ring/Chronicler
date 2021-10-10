@@ -1,0 +1,17 @@
+<div class="notes">
+    <div class="scroll-max">
+        <div class="comment-container">
+
+            {% include 'notes/widgets/session_quill.html' %}
+
+        </div>
+        <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
+            {% if session_titles %}
+                <!-- Session Title Cards -->
+                {% for session in session_titles %}
+                    {% include 'notes/page/session_elements/session.html' %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
