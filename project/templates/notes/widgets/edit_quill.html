@@ -11,7 +11,7 @@
         {# isn't tutorial #}
         {% if note.user_id != tutorial.id %}
         <div class="row checkbox">
-            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='False'>
+            <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='{{ note.private }}'>
             <label for='note_private'><strong>Draft</strong> - Visible only to you until published</label>
         </div>
         {% endif %}
@@ -20,7 +20,7 @@
         {# isn't dm #}
         {% if current_user.id != game.dm_id %}
         <div class="row checkbox">
-            <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
+            <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='{{ note.to_gm }}'>
             <label for='note_to_dm'><strong>Privileged</strong> - Visible only to you and the DM</label>
         </div>
         {% endif %}

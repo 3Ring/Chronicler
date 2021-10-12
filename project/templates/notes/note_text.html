@@ -20,13 +20,13 @@
         {% else %}
             <span class="note-content">
         {% endif %}
-                <h3>{{ note.charname }}:</h3>
-                <span class="note-ql" data-id_noteText="{{ note.id }}">
-                </span>
+            <h3>{{ note.charname }}:</h3>
+            <span class="note-ql" data-id_noteText="{{ note.id }}">
             </span>
-            {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
-                {% include 'notes/widgets/edit_button.html' %}
-            {% endif %}
+        </span>
+        {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+            {% include 'notes/widgets/edit_button.html' %}
+        {% endif %}
     </span>
         {% include 'notes/widgets/edit_quill.html' %}
         {% include 'notes/widgets/note_context_menu.html' %}

@@ -27,6 +27,7 @@ function NewQuill(event, quill) {
         socket.emit('send_new_note'
             , user_id
             , game_id
+            , dm_id
             , current__session_number
             , new_note_html
             , new_note_private

@@ -17,7 +17,7 @@ function init(DM="") {
     NewQuill_submitListener(quill);
 
     // set current session
-    setActiveSession__onPageLoad();
+    setActiveSession__onPageLoad(); 
     clickListener__sessionList ();
     if (DM == "DM") {
         // newSession functions

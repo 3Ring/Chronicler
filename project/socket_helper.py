@@ -587,14 +587,15 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
     while i < len(html_list):
 
-        # print(f"{i}========================================yes{i}stack start{i}================")
-        # print(f"key: {key}, depth: {depth}")
-        # print(f"line: {html_list[i]}, gatekeeper: {gatekeeper}")
+        print(f"{i}========================================yes{i}stack start{i}================")
+        print(f"key: {key}, depth: {depth}")
+        print(f"line: {html_list[i]}, gatekeeper: {gatekeeper}")
         if i in commands.keys():
-            # print(f"i: {i}, command_meta[{i}]: {command_meta[i]} commands[{i}]: {commands[i]}")
+            print(f"i: {i}, command_meta[{i}]: {command_meta[i]} commands[{i}]: {commands[i]}")
 
             if commands[i][0] == "if" and command_meta[i]["depth"] == depth:
                 if not gatekeeper:
+                    print(f"key -1 {key-1}")
                     if key - 1 in command_meta.keys():
                     
 
@@ -608,25 +609,25 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
                 elif switch(commands[i]):
 
-                    # print("if switch passed")
+                    print("if switch passed")
                     gatekeeper = True
 
                     if len(sub_socket) > 0:
-                        # print(f"attached sub_socket with a length of {len(sub_socket)}")
+                        print(f"attached sub_socket with a length of {len(sub_socket)}")
                         socket.append(sub_socket)
                         sub_socket = []
-                    #     print(f"\nappended socket {socket}")
-                    # else:
-                    #     print("none attached")
+                        print(f"\nappended socket {socket}")
+                    else:
+                        print("none attached")
 
-                    # print(f"sending: key: {j}, depth: {depth+1}")
-                    # print(f"\n\n...................send stack....................")
+                    print(f"sending: key: {j}, depth: {depth+1}")
+                    print(f"\n\n...................send stack....................")
                     temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
-                    # print(f"-------------------return stack------------------\n\n")
-                    # print(f"key: {key}, depth: {depth}")
+                    print(f"-------------------return stack------------------\n\n")
+                    print(f"key: {key}, depth: {depth}")
                     for _list in temp:
                         socket.append(_list)
-                    # print(f"\nappended socket {socket}")
+                    print(f"\nappended socket {socket}")
 
                     i = command_meta[i]["end"] + 1
                     j = i + 1
@@ -681,21 +682,24 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                 j = i + 1
                 print(f"i is now: {i}")
                 continue
-            elif commands[i][0] == "endif" and depth != 0:
-                if gatekeeper == True:
-                    depth += -1
             else:
                 gatekeeper = False
+                if commands[i] == ["endif"] and depth == command_meta[i]["depth"]:
+                    gatekeeper = True
+                # elif commands[i] == ["endif"] and depth != 0:
+                #     if gatekeeper == True:
+                #         depth += -1
+
 
             
         elif gatekeeper:
             sub_socket.append(html_list[i])
             
             print(f"len sub_socket {len(sub_socket)}")
-            # print(f"added {html_list[i]}")
+            print(f"added {html_list[i]}")
         i+=1
         j+=1
-    # print(f"inside apply_commands socket: {socket}")
+    print(f"inside apply_commands socket: {socket}")
     socket.append(sub_socket)
     sub_socket = []
     print(f"\nappended socket {socket}")
@@ -796,15 +800,15 @@ def pass_model_variables(html, model, game_id, **additional_keys):
 
 
 def finalize(html, model, flag, game_id, **kwarg):
-    print(f"html: {html} \n model: {model} \n flag: {flag} \n game_id: {game_id} \n")
+    # print(f"html: {html} \n model: {model} \n flag: {flag} \n game_id: {game_id} \n")
     # for key, value in kwarg:
     #     print(f"kwargs == key: {key} value: {value}")
-    print(kwarg)
+    # print(kwarg)
 
     commands = {}
     for i, line in enumerate(html):
             conditional_list = get_jinja_conditional_list(line)
-            print(f"conditional_list: {conditional_list}")
+            # print(f"conditional_list: {conditional_list}")
             if conditional_list:
 
                 start_or_end = check_for_start_or_end(conditional_list)
@@ -817,18 +821,20 @@ def finalize(html, model, flag, game_id, **kwarg):
 
     if if_statements != 0:
         raise "nesting error. statements are not even"
-    print(f"commands: {commands}")
+    # print(f"commands: {commands}")
     if conditional_list:
         grouped_commands = group_commands(commands)
-        print(f"grouped_commands {grouped_commands}")
+        # print(f"grouped_commands {grouped_commands}")
         copied_commands = []
         for line in grouped_commands:
             copied_commands.append(line)
+        print(f"len {len(html)}")
         print(f"copied_commands: {copied_commands}")
         commands_by_depth = group_by_depth(grouped_commands)
         print(f"commands_by_depth {commands_by_depth}")
         appended_commands = append_commands(copied_commands, commands_by_depth)
         print(f"appended commands {appended_commands}")
+        # print(f"html {html}")
         section = apply_commands(commands, appended_commands, html)
         # print(f"section top: {section}")
         # for i, item in enumerate(section):
@@ -850,7 +856,7 @@ def finalize(html, model, flag, game_id, **kwarg):
     final_socket_list = pass_model_variables(generic_socket_list, model, game_id, **kwarg)
     # print(f"final_socket_list: {final_socket_list}")
     final_socket = stringify_and_add_whiteSpace(final_socket_list)
-    # print(f"final_socket: {final_socket}")
+    print(f"final_socket: {final_socket}")
     return final_socket
     
 

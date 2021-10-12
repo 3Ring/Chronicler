@@ -76,7 +76,9 @@ function click_listener() {
                 // deploy context menu
                 // if statement is because the user can click the container which would throw an error otherwise
                 if ( e.target.getAttribute("data-id_editImage") ) {
-                    toggle_menu_on( document.querySelector( `div[data-contextMenuId="${ e.target.getAttribute("data-id_editImage") }"]` ) );
+                    let target_id = e.target.getAttribute("data-id_editImage")
+                    let target_element = document.querySelector( `div[data-contextMenuId="${ target_id }"]` )
+                    toggle_menu_on( target_element );
                 } 
             };
         } 
@@ -162,37 +164,40 @@ function toggle_form_off(id_num) {
 // Note edit: capture form data and send data to server
 function edit_note_func(id_num, event) {
     // local variables
-    let flag__notes_noteText = "span[data-id_noteText='"+id_num+"']"
-    flag__formEdit_parent = "div[data-crumb='" + id_num + "']"
-    , flag__formEdit_private = "input[data-id_noteCheckboxPrivate='"+id_num+"']"
-    , flag__notes_editImage = "span[data-id_editImage='"+id_num+"']"
-
-    , element__notes_editImage = document.querySelector(flag__notes_editImage)
-    , element__notes_noteText = document.querySelector(flag__notes_noteText)
-    , element__notes_checkboxPrivate = document.querySelector(flag__formEdit_private);
-
+    // let element__notes_editImage = document.querySelector(`span[data-id_editImage='${id_num}']`);
+    
     // stop page reload
     event.preventDefault();
-    // find element
-    let element__editorParent = document.querySelector(flag__formEdit_parent)
-    , element__formEdit_Editor = element__editorParent.firstElementChild
+    // find element and capture data
+    // text
+    let element__editorParent = document.querySelector(`div[data-crumb="${id_num}"]`)
+    , element__formEdit_Editor = element__editorParent.firstElementChild;
+    let note_text = element__formEdit_Editor.innerHTML;
+    // private
+    let element__notes_checkboxPrivate = document.querySelector(`input[data-id_noteCheckboxPrivate="${id_num}"]`);
+    note_private = element__notes_checkboxPrivate.value
+    // if the note isn't from the dm: the to dm value
+    if (user_id != dm_id) {
+        let element__notes_checkboxToDm = document.querySelector(`input[data-id_noteCheckboxToDm="${id_num}"]`)
+        var note_to_dm = element__notes_checkboxToDm.value;
+    }   else    {
+        var note_to_dm = false;
+    }
+    
 
-    // capture data
-    , note_text = element__formEdit_Editor.innerHTML
-    , note_private = "False";
-    if ( element__notes_checkboxPrivate ) {
-        note_private = element__notes_checkboxPrivate.value;
-    } 
     // send to server
     socket.emit("edit_note"
         , note_text
         , note_private
+        , note_to_dm
+        , dm_id
         , game_id
         , user_id
         , id_num);
 
     // remove form
     toggle_form_off(id_num);
+    let element__notes_noteText = document.querySelector(`span[data-id_noteText="${id_num}"]`);
     element__notes_noteText.classList.remove(className__hidden);
     return false;
 };

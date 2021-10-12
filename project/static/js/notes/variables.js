@@ -3,7 +3,6 @@ const socket = io()
 , className__hidden = "hidden"
 , className__active = "--active"
 , className__active_sessionList = "current";
-
 var menu_deployed = false
 , current__session_number = 0
 
