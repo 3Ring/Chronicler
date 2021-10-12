@@ -6,9 +6,7 @@ from flask_socketio import SocketIO
 from .settings import app
 
 db = SQLAlchemy(app)
-# print("check1")
-socketio = SocketIO(app, logger=True, engineio_logger=True)
-# print("check2")
+socketio = SocketIO(app)
 
 def create_app():
 
@@ -16,13 +14,10 @@ def create_app():
     from .classes import Users
 
     db.init_app(app)
-    # print("check3")
     socketio.init_app(app)
-    # print("check4")
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app) 
-    # print("check5")
 
     # provide login_manager with a unicode user ID
     @login_manager.user_loader

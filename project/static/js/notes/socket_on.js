@@ -3,11 +3,6 @@
 // 
 // //
 
-// helper function
-// apply active tag to new session insert
-function apply_socket_active_tag(element) {
-    console.log(element)
-}
 // this is to add logic to notes populated throuck websocket
 function filled_note_logic (note_id_number) {
     let socket_inserted_element_note_edit_form = document.querySelector(`form[data-id_formedit='${note_id_number}']`);
@@ -117,15 +112,17 @@ function fill_new_note(new_note, session_number, note_id_number, note_text)    {
 // display new note
 socket.on('fill_new_note', function(new_note, note_text, draft, to_dm, note_id, session_number, u_id) {
 
+    let origin_index = 0, dm_index= 1, other_index = 2
+
     if ( user_id == u_id ) {
-        fill_new_note(new_note, session_number, note_id, note_text);
+        fill_new_note(new_note[origin_index], session_number, note_id, note_text);
     } else if ( user_id == dm_id) {
         if ( ! draft ) {
-            fill_new_note(new_note, session_number, note_id, note_text);
+            fill_new_note(new_note[dm_index], session_number, note_id, note_text);
         }
     } else {
         if ( ! draft && ! to_dm ) {
-            fill_new_note(new_note, session_number, note_id, note_text);
+            fill_new_note(new_note[other_index], session_number, note_id, note_text);
         }
     }
 
@@ -148,12 +145,15 @@ function insert_socket(editted_note, note_id_number, note_text)    {
 
 function remove_socket(note_id_number)    {
     var old_note_location = document.querySelector(`li[data-id_notecont="${note_id_number}"]`);
-    old_note_location.remove();
+    if (old_note_location) {
+        old_note_location.remove();
+    }
 }
 
 // display note edit
-socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note_id_number, session_number, u_id, changed, was_not_private, was_draft) {
+socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note_id_number, u_id, changed, was_not_private, was_draft) {
 
+    let origin_index = 0, dm_index= 1, other_index = 2
     // user is note origin
     if ( user_id == u_id ) {
         // note privacy has been changed
@@ -161,20 +161,20 @@ socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note
             // note is now draft
             if ( draft ) {
                 // insert new socket
-                insert_socket(editted_note, note_id_number, note_text);
+                insert_socket(editted_note[origin_index], note_id_number, note_text);
             // note is now to dm
             } else if ( to_dm ) {
                 // insert new socket
-                insert_socket(editted_note, note_id_number, note_text);
+                insert_socket(editted_note[origin_index], note_id_number, note_text);
             // note is no longer draft
             }   else    {
                 // insert new socket
-                insert_socket(editted_note, note_id_number, note_text);
+                insert_socket(editted_note[origin_index], note_id_number, note_text);
             }
         // privacy is the same
         }   else    {
             // insert new socket
-            insert_socket(editted_note, note_id_number, note_text);
+            insert_socket(editted_note[origin_index], note_id_number, note_text);
         }
     // user is game master
     }   else if ( user_id ==  dm_id ) {
@@ -185,11 +185,11 @@ socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note
                 // went from being draft to being for dm_only
                 if ( to_dm && !draft ) {
                     // fill dm socket
-                    fill_note_made_public(editted_note, note_id_number, note_text); 
+                    fill_note_made_public(editted_note[dm_index], note_id_number, note_text); 
                 // went from being draft to being open
                 }   else if ( !draft )    {
                     // fill socket
-                    fill_note_made_public(editted_note, note_id_number, note_text);  
+                    fill_note_made_public(editted_note[dm_index], note_id_number, note_text);  
                 }
             // note was not draft
             }   else    {
@@ -200,11 +200,11 @@ socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note
                     // was open. is now to_dm
                 }   else if ( was_not_private ) {
                     // insert socket
-                    insert_socket(editted_note, note_id_number, note_text);
+                    insert_socket(editted_note[dm_index], note_id_number, note_text);
                 // was to_dm now open
                 }   else {
                     // insert socket
-                    insert_socket(editted_note, note_id_number, note_text);
+                    insert_socket(editted_note[dm_index], note_id_number, note_text);
                 }
             }
         // note privacy hasn't changed
@@ -213,31 +213,25 @@ socket.on('fill_note_edit', function(editted_note, note_text, draft, to_dm, note
                 // do nothing
             }   else if ( to_dm )   {
                 // insert dm socket
-                insert_socket(editted_note, note_id_number, note_text);
+                insert_socket(editted_note[dm_index], note_id_number, note_text);
             }   else    {
                 // insert socket
-                insert_socket(editted_note, note_id_number, note_text);
+                insert_socket(editted_note[dm_index], note_id_number, note_text);
             }
         }
     // user is neither orgin or game master
     }   else    {
         if ( changed ) {
             // note changed to draft or to_dm
-            if ( was_not_private ) {
+            if ( draft || to_dm ) {
                 // remove note
                 remove_socket(note_id_number);
-            // note changed from private to not private
-            }   else {
-                // fill new note
-                fill_note_made_public(editted_note, note_id_number, note_text); 
-            }   
-        // wasn't changed and wasn't private
-        }   else if ( was_not_private )    {
-            // insert socket
-            insert_socket(editted_note, note_id_number, note_text);
-        // was and still is private
-        }   else {
-            // do nothing
+            } else {
+                fill_note_made_public(editted_note[other_index], note_id_number, note_text);
+            }
+        // wasn't changed and isn't private
+        } else if ( ! draft && ! to_dm ) {
+            insert_socket(editted_note[other_index], note_id_number, note_text);
         }
     }
 
@@ -264,7 +258,6 @@ function fill_note_made_public(new_note, note_id_number, note_text) {
 
 // make and insert temp element into DOM as placeholder for other users if changing to from private to not private
 socket.on('make_filler', function(note_id_number, ordered_session_note_list, list_location, session_number, text, is_draft, to_dm, dm_id, game_id, user_id, note_id) {
-    console.log("make_filler")
     let found = false;
     let top_of_session_flag = false;
     while (!found) {
@@ -286,7 +279,7 @@ socket.on('make_filler', function(note_id_number, ordered_session_note_list, lis
     if ( top_of_session_flag ) {
         found.insertAdjacentHTML('beforeend', placeholder);
     } else {
-        found.insertAdjacentHTML('afterend', placeholder);
+        found.insertAdjacentHTML('beforebegin', placeholder);
     }
     socket.emit("filled", text, is_draft, to_dm, dm_id, game_id, user_id, note_id)
 })

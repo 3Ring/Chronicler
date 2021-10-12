@@ -98,15 +98,6 @@ class Characters(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
     self_title = "character"
-    # @classmethod
-    # def create(cls, **kw):
-    #     obj = cls(**kw)
-    #     db.session.add(obj)
-    #     db.session.commit()
-    #     return obj
-    # image = Images.query.with_entities(Images.img).filer_by(id = img_id).first()
-    # print(image)
-
 
     def __repr__(self):
         return '<Character %r>' % self.name

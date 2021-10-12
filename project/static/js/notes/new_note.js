@@ -75,8 +75,6 @@ function insert_rich_note(note_session) {
         // insert rich note
         if (element__notes_noteText) {
             element__notes_noteText.innerHTML = note_rich;
-        } else {
-            console.log("skipped ", i)
-        }
+        } else {}
     }
 }

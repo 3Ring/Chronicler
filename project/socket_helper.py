@@ -3,13 +3,14 @@ from project.helpers import priv_convert
 from project.classes import Users
 
 if_statements = 0
-# tutorial_id = Users.query.filter_by(email = "app@chronicler.gg").first().id
-tutorial_id = 1
+tutorial_id = Users.query.filter_by(email = "app@chronicler.gg").first().id
+# tutorial_id = 1
 user_id = None
 dm_id = None
+current_user = None
 
 # main funtion
-def translate_jinja(model, flag, game_id, u_id=None, d_id=None, **kwarg):
+def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **kwarg):
     '''takes html from chronicler and returns handles: if, elif, else
     model: class instance you want to use for variable replacement
     flag: string with the name of the model
@@ -21,20 +22,19 @@ def translate_jinja(model, flag, game_id, u_id=None, d_id=None, **kwarg):
     global tutorial_id
     global user_id
     global dm_id
+    global current_user
 
     user_id = u_id
     dm_id = d_id
+    current_user = c_user
 
     # compile html pages into one list
     html_list = build_notes_template("main.html")
 
-    # returns a dict
     final_sockets = find_sections_to_translate(html_list, flag)
-    # print(f"final sockets: {final_sockets}")
     finished = {}
     for name, html in final_sockets.items():
         finished[name] = finalize(html, model, flag, game_id, **kwarg)
-    # print(f"final sockets[name]: {finished}")
     return finished
 
 
@@ -103,6 +103,7 @@ def build_notes_template_get(filename):
 def build_notes_template_read(html_list):
     # flag = "{% include 'notes/"
     # end_flag = "' %}"
+
     for i, line in enumerate(html_list):
 
         path = get_socket_arg(line, "{% include 'notes/", "' %}")
@@ -415,6 +416,7 @@ def make_generic_variable(line, flag):
 
 def convert_flag_to_generic(model, flag, **lists):
 
+
     generic_list = []
     index = 0
     for key, _list in lists.items():
@@ -427,18 +429,17 @@ def convert_flag_to_generic(model, flag, **lists):
     if list_type == "conditional":
         
         for item in _list:
-
             if item.lower() == "true" or item.lower() == "false":
                 generic_list.append(priv_convert(item))
             elif item == "current_user.id":
-                generic_list.append(user_id)
+                generic_list.append(current_user)
             elif item == "tutorial.id":
                 generic_list.append(tutorial_id)
             elif item == "game.dm_id":
                 generic_list.append(dm_id)
             elif item[:len(flag)] == flag:
-                generic_str = "model" + item[len(flag):]
-                exec(f"generic_list.append({generic_str})")
+                generic_str = eval(f"model{item[len(flag):]}")
+                generic_list.append(generic_str)
             else:
                 generic_list.append(item)
     else:
@@ -532,8 +533,6 @@ def group_commands(commands):
 
 
 def append_commands(grouped, by_depth):
-    # print(f"grouped, {grouped}")
-    # print("\n\n\nby depth", by_depth)
     expression_index = 0
     depth = 1
     html_index = 2
@@ -545,7 +544,7 @@ def append_commands(grouped, by_depth):
         # depth list
         ends.append([])
         for meta in depth_list:
-            # print(f"i, meta: {i}, {meta}")
+
             if meta[_type] == "if":
                 # statement list
                 ends[i].append([])
@@ -556,12 +555,12 @@ def append_commands(grouped, by_depth):
                 ends[i][-1].append(meta[html_index])
             if meta[_type] == 'endif':
                 ends[i][-1].append(meta[html_index])
-        # print(f"ends: {ends[i]}")
+
 
 
     for command_list in grouped:
 
-        # print(f"command_list[depth]: {command_list[depth]}")
+
         i = command_list[html_index]
         command_meta[i] = {}
         command_meta[i]["type"] = command_list[_type]
@@ -571,9 +570,6 @@ def append_commands(grouped, by_depth):
             if i in statement_list:
                 command_meta[i]["end"] = statement_list[-1]
                 break
-        # print(f"command_meta[{i}]: {command_meta[i]}")
-    
-    # print(f"full: {command_meta}")
     return command_meta
         
 def apply_commands(commands, command_meta, html_list, key=0, depth=0):
@@ -587,15 +583,11 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
     while i < len(html_list):
 
-        print(f"{i}========================================yes{i}stack start{i}================")
-        print(f"key: {key}, depth: {depth}")
-        print(f"line: {html_list[i]}, gatekeeper: {gatekeeper}")
         if i in commands.keys():
-            print(f"i: {i}, command_meta[{i}]: {command_meta[i]} commands[{i}]: {commands[i]}")
 
             if commands[i][0] == "if" and command_meta[i]["depth"] == depth:
                 if not gatekeeper:
-                    print(f"key -1 {key-1}")
+
                     if key - 1 in command_meta.keys():
                     
 
@@ -609,29 +601,21 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
                 elif switch(commands[i]):
 
-                    print("if switch passed")
                     gatekeeper = True
 
                     if len(sub_socket) > 0:
-                        print(f"attached sub_socket with a length of {len(sub_socket)}")
+
                         socket.append(sub_socket)
                         sub_socket = []
-                        print(f"\nappended socket {socket}")
-                    else:
-                        print("none attached")
 
-                    print(f"sending: key: {j}, depth: {depth+1}")
-                    print(f"\n\n...................send stack....................")
                     temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
-                    print(f"-------------------return stack------------------\n\n")
-                    print(f"key: {key}, depth: {depth}")
                     for _list in temp:
                         socket.append(_list)
-                    print(f"\nappended socket {socket}")
+
 
                     i = command_meta[i]["end"] + 1
                     j = i + 1
-                    print(f"i is now: {i}")
+
                     continue
                 else:
 
@@ -639,70 +623,54 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
             elif commands[i][0] == "elif"  and command_meta[i]["depth"] == depth:
 
                 if switch(commands[i]):
-                    print("elif switch passed")
+
                     gatekeeper = True
 
                     if len(sub_socket) > 0:
                         socket.append(sub_socket)
                         sub_socket = []
-                    print(f"\nappended socket {socket}")
-                    print(f"len(sub_socket): {len(sub_socket)}")
-                    print(f"sending: key: {j}, depth: {depth + 1}")
-                    print(f"\n\n...................send stack....................")
                     temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
-                    print(f"-------------------return stack------------------\n\n")
-                    print(f"key: {key}, depth: {depth}")
+
                     for _list in temp:
                         socket.append(_list)
-                    print(f"\nappended socket {socket}")
+
                     i = command_meta[i]["end"] + 1
                     j = i + 1
-                    print(f"i is now: {i}")
+
                     continue
                 else:
                     gatekeeper = False
             elif commands[i][0] == "else" and command_meta[i]["depth"] == depth:
 
-                print("else switch passed")
                 gatekeeper = True
 
                 if len(sub_socket) > 0:
                     socket.append(sub_socket)
                     sub_socket = []
-                print(f"len(sub_socket): {len(sub_socket)}")
-                print(f"sending: key: {j}, depth: {depth + 1}")
-                print(f"\n\n...................send stack....................")
                 temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
-                print(f"-------------------return stack------------------\n\n")
-                print(f"key: {key}, depth: {depth}")
                 for _list in temp:
                     socket.append(_list)
-                print(f"\nappended socket {socket}")
+
                 i = command_meta[i]["end"] + 1
                 j = i + 1
-                print(f"i is now: {i}")
+
                 continue
             else:
                 gatekeeper = False
                 if commands[i] == ["endif"] and depth == command_meta[i]["depth"]:
                     gatekeeper = True
-                # elif commands[i] == ["endif"] and depth != 0:
-                #     if gatekeeper == True:
-                #         depth += -1
 
 
             
         elif gatekeeper:
             sub_socket.append(html_list[i])
             
-            print(f"len sub_socket {len(sub_socket)}")
-            print(f"added {html_list[i]}")
         i+=1
         j+=1
-    print(f"inside apply_commands socket: {socket}")
+
     socket.append(sub_socket)
     sub_socket = []
-    print(f"\nappended socket {socket}")
+
     return socket
 
 def group_by_depth(if_condtions):
@@ -761,7 +729,6 @@ def remove_jinja_comments(html):
 def convert_to_socket(html, model, flag):
 
     htmlWithout_jinja_comments = remove_jinja_comments(html)
-    # print(f"htmlWithout: {htmlWithout_jinja_comments}")
     generic_socket = []
     for line in htmlWithout_jinja_comments:
         generic_socket.append(convert_flag_to_generic(model, flag, socket_list=line))
@@ -788,7 +755,7 @@ def pass_model_variables(html, model, game_id, **additional_keys):
             # replace jinja variables
             # if 
             html[i] = html[i].replace(model_key, str(value))
-            html[i] = html[i].replace(currentU_key, str(user_id))
+            html[i] = html[i].replace(currentU_key, str(current_user))
             html[i] = html[i].replace(gameID_key, str(game_id))
         for key2, value in additional_keys.items():
             arg_key = "{{ " + "model." + str(key2) + " }}"
@@ -800,15 +767,11 @@ def pass_model_variables(html, model, game_id, **additional_keys):
 
 
 def finalize(html, model, flag, game_id, **kwarg):
-    # print(f"html: {html} \n model: {model} \n flag: {flag} \n game_id: {game_id} \n")
-    # for key, value in kwarg:
-    #     print(f"kwargs == key: {key} value: {value}")
-    # print(kwarg)
 
     commands = {}
     for i, line in enumerate(html):
             conditional_list = get_jinja_conditional_list(line)
-            # print(f"conditional_list: {conditional_list}")
+
             if conditional_list:
 
                 start_or_end = check_for_start_or_end(conditional_list)
@@ -816,47 +779,44 @@ def finalize(html, model, flag, game_id, **kwarg):
                 if start_or_end:
 
                     update_statements(start_or_end)
+
+
                 generic_conditional_list = convert_flag_to_generic(model, flag, conditional_list=conditional_list)
+                
                 commands[i] = generic_conditional_list
 
     if if_statements != 0:
         raise "nesting error. statements are not even"
-    # print(f"commands: {commands}")
+
     if conditional_list:
         grouped_commands = group_commands(commands)
-        # print(f"grouped_commands {grouped_commands}")
+
         copied_commands = []
         for line in grouped_commands:
             copied_commands.append(line)
-        print(f"len {len(html)}")
-        print(f"copied_commands: {copied_commands}")
+
         commands_by_depth = group_by_depth(grouped_commands)
-        print(f"commands_by_depth {commands_by_depth}")
+
         appended_commands = append_commands(copied_commands, commands_by_depth)
-        print(f"appended commands {appended_commands}")
-        # print(f"html {html}")
+
         section = apply_commands(commands, appended_commands, html)
-        # print(f"section top: {section}")
-        # for i, item in enumerate(section):
-        #     print(f" {i}: {item}")
+
         cleaned_section = []
         while len(section) > 0:
             temp = section[0]
             section.pop(0)
             for sub in temp:
                 cleaned_section.append(sub)
-        # print(f"cleaned section: {cleaned_section}")
+
 
         generic_socket_list = convert_to_socket(cleaned_section, model, flag)
     else:
         generic_socket_list = convert_to_socket(html, model, flag)
-    # print(f"generic_socket_list: {generic_socket_list}")
-    # for item in generic_socket_list:
-    #     print(item)
+
     final_socket_list = pass_model_variables(generic_socket_list, model, game_id, **kwarg)
-    # print(f"final_socket_list: {final_socket_list}")
+
     final_socket = stringify_and_add_whiteSpace(final_socket_list)
-    print(f"final_socket: {final_socket}")
+
     return final_socket
     
 

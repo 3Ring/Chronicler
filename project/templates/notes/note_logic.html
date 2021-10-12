@@ -11,7 +11,7 @@
 {# note is to_gm #}
 
     {% elif note.to_gm %} 
-        {% if note.user_id == current_user.id or note.user_id == game.dm_id %}
+        {% if note.user_id == current_user.id or current_user.id == game.dm_id %}
             {% include 'notes/note_text.html' %}
         {% endif %}
 

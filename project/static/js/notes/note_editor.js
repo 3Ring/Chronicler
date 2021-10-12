@@ -100,6 +100,7 @@ function click_listener() {
                 } else {
                     let id_num = e.target.getAttribute("data-id_note");
                     delete_note(id_num);
+                    menu_deployed = false;
                 }
             }
         } else {
@@ -175,7 +176,11 @@ function edit_note_func(id_num, event) {
     let note_text = element__formEdit_Editor.innerHTML;
     // private
     let element__notes_checkboxPrivate = document.querySelector(`input[data-id_noteCheckboxPrivate="${id_num}"]`);
-    note_private = element__notes_checkboxPrivate.value
+    if ( element__notes_checkboxPrivate ) {
+        note_private = element__notes_checkboxPrivate.value;
+    } else {
+        note_private = false;
+    }
     // if the note isn't from the dm: the to dm value
     if (user_id != dm_id) {
         let element__notes_checkboxToDm = document.querySelector(`input[data-id_noteCheckboxToDm="${id_num}"]`)

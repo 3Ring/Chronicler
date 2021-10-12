@@ -1,7 +1,7 @@
 from .__init__ import db, socketio
 from .classes import *
 from flask_socketio import emit
-from .helpers import make_character_images, translate, priv_convert
+from .helpers import make_character_images, priv_convert
 from .socket_helper import translate_jinja
 
 # variables
@@ -22,7 +22,6 @@ def send_new_session(games_id, number, title, synopsis=None):
     new=Sessions(number=number, title=title, synopsis=synopsis, games_id=games_id)
     db.session.add(new)
     db.session.flush()
-    print(f"new number = {new.number}")
     db.session.commit()
 
     # convert data to html element
@@ -49,14 +48,19 @@ def send_new_note(user_id, game_id, dm_id, session_number, note, priv=False, to_
     db.session.flush()
     db.session.commit()
 
-    print(f"from new user_id: {user_id}, dm_id: {dm_id}")
-    # convert data to html element
-    element = translate_jinja(new, "note", game_id, u_id=new.user_id, d_id=dm_id, char_img=char_img)
-    # print(f" returned element: {element}")
-    # print(new.user_id, new.private, new.to_gm, new.id, new.session_number)
-    # print(private2, new.private)
+    note_for_current_user = translate_jinja(new, "note", game_id, u_id=user_id, d_id=dm_id, c_user=user_id, char_img=char_img)["no_sections"]
 
-    emit('fill_new_note', (element["no_sections"], new.note, new.private, new.to_gm, new.id, new.session_number, user_id), broadcast=True)
+    note_for_dm = translate_jinja(new, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=dm_id, char_img=char_img)["no_sections"]
+
+    note_for_other = translate_jinja(new, "note", game_id, u_id=False, d_id=False, c_user=-1, char_img=char_img)["no_sections"]
+ 
+    element_list = [ 
+        note_for_current_user
+        , note_for_dm
+        , note_for_other
+    ]
+
+    emit('fill_new_note', (element_list, new.note, new.private, new.to_gm, new.id, new.session_number, user_id), broadcast=True)
     
 def send_editted_note(note, text, user_id, game_id, dm_id, _private, changed, was_not_private, was_draft, _to_dm):
 
@@ -70,11 +74,18 @@ def send_editted_note(note, text, user_id, game_id, dm_id, _private, changed, wa
     db.session.flush()
     db.session.commit()
 
-    print(f"from edit user_id: {user_id}, dm_id: {dm_id}")
-    editted_note= translate_jinja(note, "note", game_id, u_id=user_id, d_id=dm_id, char_img=char_img)
-    print(f"fill note edit {(editted_note, _private, note.session_number, note.id)}")
-    emit('fill_note_edit', (editted_note["no_sections"], note.note, note.private, note.to_gm, note.id, note.session_number, user_id, changed, was_not_private, was_draft), broadcast=True)
+    note_for_current_user = translate_jinja(note, "note", game_id, u_id=user_id, d_id=dm_id, c_user=user_id, char_img=char_img)["no_sections"]
 
+    note_for_dm = translate_jinja(note, "note", game_id, u_id=user_id, d_id=dm_id, c_user=dm_id, char_img=char_img)["no_sections"]
+
+    note_for_other = translate_jinja(note, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=-1, char_img=char_img)["no_sections"]
+ 
+    editted_note_list = [ 
+        note_for_current_user
+        , note_for_dm
+        , note_for_other
+    ]
+    emit('fill_note_edit', (editted_note_list, note.note, note.private, note.to_gm, note.id, user_id, changed, was_not_private, was_draft), broadcast=True)
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, to_dm, dm_id, game_id, user_id, note_id):
@@ -95,17 +106,15 @@ def edit_note(text, is_private, to_dm, dm_id, game_id, user_id, note_id):
         was_draft = True
     else:
         was_draft = False
+
     # these are separated to make sure that if the filler needs to be made then that is done by the client before emitting the new note.
     if note.to_gm == True and _to_dm == False or note.private == True and _private == False:
-        ordered_session_note_list = Notes.query.filter_by(session_number = note.session_number).order_by(Notes.date_added).all()
+        ordered_session_note_list = Notes.query.filter_by(session_number = note.session_number).order_by(Notes.date_added.desc()).all()
         _id_list = []
         list_location = 0
-        print(f"\n\n note_id: {note_id}, \nordered_session_note_list: {ordered_session_note_list}")
         for i, _list in enumerate(ordered_session_note_list):
             _id_list.append(_list.id)
-            print(f"{i}: _list.id = {_list.id}, note_id = {note_id}")
             if _list.id == int(note_id):
-                print(f"i= {i}")
                 list_location = i
 
         emit("make_filler", (note_id, _id_list, list_location, note.session_number, text, _private, _to_dm, dm_id, game_id, user_id, note_id), broadcast=True)
