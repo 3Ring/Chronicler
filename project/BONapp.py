@@ -58,37 +58,37 @@ def index():
     return redirect(url_for('auth.login'))
 
 # create database
-@main.route('/initdb')
-def initdb_p():
+# @main.route('/initdb')
+# def initdb_p():
 
-    # import psycopg2
-    from .helpers import init_training_wheels_db
-    # from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+#     # import psycopg2
+#     from .helpers import init_training_wheels_db
+#     # from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-    # # Connect to PostgreSQL DBMS
+#     # # Connect to PostgreSQL DBMS
 
-    # con = psycopg2.connect(f"host='chronicler_host' user='postgres' password='{db_password}'")
-    # con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+#     # con = psycopg2.connect(f"host='chronicler_host' user='postgres' password='{db_password}'")
+#     # con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
-    # # Obtain a DB Cursor
-    # cursor          = con.cursor()
-    # name_Database   = "chronicler_db"
+#     # # Obtain a DB Cursor
+#     # cursor          = con.cursor()
+#     # name_Database   = "chronicler_db"
 
-    # # Create table statement
+#     # # Create table statement
 
-    # cursor.execute(f"DROP DATABASE IF EXISTS {name_Database};")
-    # sqlCreateDatabase = "create database "+name_Database+";"
-    # cursor.execute(sqlCreateDatabase)
-    # print(f"{name_Database} created")
-    # return "need to run db upgrade"
+#     # cursor.execute(f"DROP DATABASE IF EXISTS {name_Database};")
+#     # sqlCreateDatabase = "create database "+name_Database+";"
+#     # cursor.execute(sqlCreateDatabase)
+#     # print(f"{name_Database} created")
+#     # return "need to run db upgrade"
 
-    # Create a table in PostgreSQL database
+#     # Create a table in PostgreSQL database
 
-    # This is really hackish. I would like to run flask db upgrade automatically but this will do for now
-    # exits until db upgrade is
+#     # This is really hackish. I would like to run flask db upgrade automatically but this will do for now
+#     # exits until db upgrade is
 
-    init_training_wheels_db()
-    return 'init localhost database'
+#     init_training_wheels_db()
+#     return 'init localhost database'
 
 
     
