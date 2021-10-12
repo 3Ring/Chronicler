@@ -3,8 +3,8 @@ from project.helpers import priv_convert
 from project.classes import Users
 
 if_statements = 0
-tutorial_id = Users.query.filter_by(email = "app@chronicler.gg").first().id
-# tutorial_id = 1
+# tutorial_id = Users.query.filter_by(email = "app@chronicler.gg").first().id
+tutorial_id = 1
 user_id = None
 dm_id = None
 current_user = None
