@@ -3,8 +3,8 @@ from project.helpers import priv_convert
 from project.classes import Users
 
 if_statements = 0
-tutorial_id = Users.query.filter_by(email = "app@chronicler.gg").first().id
-# tutorial_id = 1
+def get_tutorial_id():
+    return Users.query.filter_by(email = "app@chronicler.gg").first().id
 user_id = None
 dm_id = None
 current_user = None
@@ -19,7 +19,7 @@ def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **k
     **arg any other variables to be subbed in ex: char_img = 123'''
     
     global if_statements
-    global tutorial_id
+    tutorial_id = get_tutorial_id()
     global user_id
     global dm_id
     global current_user
@@ -434,7 +434,7 @@ def convert_flag_to_generic(model, flag, **lists):
             elif item == "current_user.id":
                 generic_list.append(current_user)
             elif item == "tutorial.id":
-                generic_list.append(tutorial_id)
+                generic_list.append(get_tutorial_id())
             elif item == "game.dm_id":
                 generic_list.append(dm_id)
             elif item[:len(flag)] == flag:

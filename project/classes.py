@@ -4,7 +4,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FileField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash
 from .__init__ import db
+
 
 
 class Players(db.Model):
@@ -24,12 +26,19 @@ class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    hash = db.Column(db.String(120), nullable=False)
+    hashed_password = db.Column(db.String(120), nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     characters = db.relationship('Characters', backref='user', lazy=True)
 
     self_title = "user"
+
+    @classmethod
+    def create(cls, name, email, password):
+        new_user = cls(name=name, email=email, hash=generate_password_hash(password, method='sha256'))
+        db.session.add(new_user)
+        db.session.commit()
+
     def __repr__(self):
         return '< User.id: %r >' % self.id
 
@@ -150,7 +159,7 @@ class Loot(db.Model):
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
-    hash = PasswordField("Password", validators=[DataRequired ()])
+    password = PasswordField("Password", validators=[DataRequired ()])
     confirm = PasswordField("Confirm Password", validators=[DataRequired ()])
     realname = StringField("Real Name (Optional)")
     reveal = BooleanField("Show Passwords")

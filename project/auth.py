@@ -1,86 +1,116 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
+from flask_login import current_user
+
 from .classes import *
-from . import db
+
+
+
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/login')
-def login():
-    form = LoginForm()
-    try:
-        if session['login_fail'] == True:
-            fail = 'alert-warning'
-        else:
-            fail = 'alert-success'
-        return render_template('login.html',
-            form=form,
-            fail=fail)
-    except:
-        return render_template('login.html',
-            form=form)
+#######################################
+###            Login               ####
+#######################################
 
+@auth.route('/login', methods=['GET'])
+def login():
+    """if user isn't logged in direct them to login page. 
+    If the user is already logged in they will be directed to the index
+    """
+
+    if current_user.is_active:
+        return redirect(url_for('main.index'))
+
+    form = LoginForm()
+    return render_template('login.html',
+        form=form)
+
+def login_failure(message=None):
+    """Redirect user to login page with flashed message"""
+    if message:
+        flash(message)
+    return redirect('auth.login')
 
 @auth.route('/login', methods=['POST'])
 def login_post():
-    # (todo) make this work off email or username
-    email = request.form.get('email')
-    password = request.form.get('password')
-    remember = request.form.get('remember')
+    """checks data and logs in user if correct
+    redirects user to index if they are already logged in
+    """
 
-    user = Users.query.filter_by(email=email).first()
+    # redirect
+    if current_user.is_active:
+        return redirect(url_for('main.index'))
+    
+    # check data
+    form = LoginForm()
+    user_in_db = Users.query.filter_by(email=form.email.data).first()
+    if not user_in_db or not check_password_hash(user_in_db.hashed_password, form.password.data):
+        return login_failure('Please check your login details and try again.')
 
-    # check if the user actually exists
-    # take the user-supplied password, hash it, and compare it to the hashed password in the database
-    if not user or not check_password_hash(user.hash, password):
-        session['login_fail'] = True
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
-
-    # if the above check passes, then we know the user has the right credentials
-    session['login_fail'] = False
-    login_user(user, remember=remember)
+    # login user
+    login_user(user_in_db, remember=form.remember.data)
     return redirect(url_for('main.index'))
 
 
+#######################################
+###           Register             ####
+#######################################
 
-
-@auth.route("/register", methods=['GET', 'POST'])
+@auth.route("/register", methods=['GET'])
 def register():
-    # redirect user to main page after registring
-    # clear variables and set wtforms
-    name = None
+    """direct user to registration page"""
+
     form = UserForm()
-    if request.method == 'POST':
-        if form.hash.data != form.confirm.data:
-            flash("passwords do not match")
-            return render_template('register.html',
-                form = form,
-                name = name,
-                )
-        else:
-            user = Users.query.filter_by(email=form.email.data).first()
-            if user == None:
-                name = form.name.data
-                # if email is unique add information to db
-                user = Users(name=form.name.data, email=form.email.data, hash=generate_password_hash(form.hash.data, method='sha256'))
-                db.session.add(user)
-                db.session.commit()
-                flash("Welcome to the table %s!" % form.realname.data)
-                return redirect (url_for('auth.login'))
-            else:
-                # if email is already in db alert user
-                flash("%s is already in use!" % form.email.data)
-                return render_template('register.html',
-                    form = form,
-                    name = name,
-                    )
+    return render_template(
+        "register.html"
+        , form=form
+        )
+
+def register_failure(message=None):
+    """redirect user back to /register on failure with flashed message"""
+
+    if message:
+        flash(message)
+    return redirect(url_for('auth.register'))
+    
+def register_success(message=None):
+    """redirect user to /login on successful registration"""
+
+    if message:
+        flash(message)
+    return redirect(url_for('auth.login'))
+
+@auth.route("/register", methods=['POST'])
+def register_post():
+    """register new users
+
+    checks to make sure form is filled out correctly and redirects them to /login or back to /register
+    (this is a redundancy as this is done client side as well)
+    """
+
+    form = UserForm()
+    # check if all required data was submitted
+    if not form.password.data or not form.email.data or not form.name.data or not form.confirm.data:
+        return register_failure("missing form data")
+    # check that passwords match
+    elif form.password.data != form.confirm.data:
+        return register_failure("passwords do not match")
     else:
-        return render_template("register.html", 
-            form=form,
-            name=name,
-            )
+        user = Users.query.filter_by(email=form.email.data).first()
+        # check to make sure email is unique
+        if user == None:
+            user = Users(name=form.name.data, email=form.email.data, hashed_password=generate_password_hash(form.password.data, method='sha256'))
+            return register_success("Welcome to the table %s!" % form.name.data)
+        else:
+            # if email is already in db alert user
+            return register_failure("%s is already in use!" % form.email.data)
+            
+
+#######################################
+###            Logout              ####
+#######################################
 
 @auth.route('/logout')
 @login_required

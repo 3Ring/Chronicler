@@ -8,6 +8,7 @@ from . import db
 from werkzeug.security import generate_password_hash
 from flask import request
 
+
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
     for i, letter in enumerate(filename):
@@ -24,7 +25,7 @@ def render_picture(data):
     render_pic = base64.b64encode(data).decode('ascii') 
     return render_pic
 
-def upload(filename):
+def upload(filename, testing=False):
     try:
         pic = request.files[filename]
     except:
@@ -53,7 +54,8 @@ def upload(filename):
     db.session.add(img)
     db.session.flush()
     _id = img.id
-    db.session.commit()
+    if testing != False:
+        db.session.commit()
     return _id 
 
 def attach_game_image_or_default_from_Images_model(model):

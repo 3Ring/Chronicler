@@ -4,14 +4,14 @@
     <script type="text/javascript" charset="utf-8">
     document.addEventListener("DOMContentLoaded", function(event) {
         reveal = document.getElementById('reveal')
-        hash = document.getElementById('hash')
+        password = document.getElementById('password')
         confirm = document.getElementById('confirm')
         document.getElementById('reveal').onclick = function() {
             if (reveal.checked) {
-                hash.type = 'text'
+                password.type = 'text'
                 confirm.type = 'text'
             } else {
-                hash.type = 'password'
+                password.type = 'password'
                 confirm.type = 'password'
             }
         }
@@ -42,8 +42,8 @@
                 {{ form.email(class="form-control") }}
             </div>
             <div class="row">
-                {{ form.hash.label(class="form-label") }}
-                {{ form.hash(class="form-control") }}
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
             </div>
             
             <div class="row">

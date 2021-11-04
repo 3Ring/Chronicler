@@ -57,41 +57,6 @@ def index():
 
     return redirect(url_for('auth.login'))
 
-# create database
-# @main.route('/initdb')
-# def initdb_p():
-
-#     # import psycopg2
-#     from .helpers import init_training_wheels_db
-#     # from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-
-#     # # Connect to PostgreSQL DBMS
-
-#     # con = psycopg2.connect(f"host='chronicler_host' user='postgres' password='{db_password}'")
-#     # con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-
-#     # # Obtain a DB Cursor
-#     # cursor          = con.cursor()
-#     # name_Database   = "chronicler_db"
-
-#     # # Create table statement
-
-#     # cursor.execute(f"DROP DATABASE IF EXISTS {name_Database};")
-#     # sqlCreateDatabase = "create database "+name_Database+";"
-#     # cursor.execute(sqlCreateDatabase)
-#     # print(f"{name_Database} created")
-#     # return "need to run db upgrade"
-
-#     # Create a table in PostgreSQL database
-
-#     # This is really hackish. I would like to run flask db upgrade automatically but this will do for now
-#     # exits until db upgrade is
-
-#     init_training_wheels_db()
-#     return 'init localhost database'
-
-
-    
 
 @main.route('/join/<int:id>', methods = ['POST', 'GET'])
 @login_required
@@ -310,7 +275,7 @@ def test_tables():
             games = Games.query.all()
         elif userform.usersubmit.data:
 
-            user = Users(name=userform.name.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.hash.data, method='sha256'))
+            user = Users(name=userform.name.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.password.data, method='sha256'))
             db.session.add(user)
             db.session.commit()
             users = Users.query.all()

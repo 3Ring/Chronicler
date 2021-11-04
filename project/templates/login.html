@@ -5,11 +5,11 @@
         <form method="POST" action="/login">
             <h1>Log In</h1>
             {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <p>
-                {{ messages[0] }}
-            </p>
-            {% endif %}
+                {% if messages %}
+                    <p>
+                        {{ messages[0] }}
+                    </p>
+                {% endif %}
             {% endwith %}
             {{ form.hidden_tag() }}
             <div class="row">
