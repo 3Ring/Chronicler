@@ -1,5 +1,5 @@
 // Variables
-const socket = ("https://www.chronicler.gg", {
+const socket = io("https://www.chronicler.gg", {
     withCredentials: true
     // extraHeaders: {
     //   "my-custom-header": "abcd"
