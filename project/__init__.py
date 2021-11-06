@@ -13,7 +13,7 @@ from .factory_helpers import config, ready_db, clean_slate, show_db_columns, fir
 
 db = SQLAlchemy()
 migrate_ = Migrate()
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins = '*')
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 db_password = os.environ.get('DB_PASS')

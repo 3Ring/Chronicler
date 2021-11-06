@@ -1,5 +1,10 @@
 // Variables
-const socket = io("https://chronicler.gg")
+const socket = io("https://chronicler.gg")(httpServer, {
+    cors: {
+      origin: "https://www.chronicler.gg",
+      methods: ["GET", "POST"]
+    }
+  })
 , className__hidden = "hidden"
 , className__active = "--active"
 , className__active_sessionList = "current";
