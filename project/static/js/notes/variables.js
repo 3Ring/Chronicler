@@ -1,9 +1,9 @@
 // Variables
-const socket = io("https://chronicler.gg")(httpServer, {
-    cors: {
-      origin: "https://www.chronicler.gg",
-      methods: ["GET", "POST"]
-    }
+const socket = ("https://www.chronicler.gg", {
+    withCredentials: true
+    // extraHeaders: {
+    //   "my-custom-header": "abcd"
+    // }
   })
 , className__hidden = "hidden"
 , className__active = "--active"
