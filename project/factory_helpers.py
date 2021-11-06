@@ -64,12 +64,13 @@ def ready_db(app):
     if it is the first run the .get_admin() will traceback so it will move on to the except which initialized the db
     """
     db_not_initiated = False
-    from .classes import Users
+    # from .classes import Users
     with app.app_context():
 
         try:
             # _ = Users.get_admin()
-            # print('2')
+            print('2')
+            # flask_migrate.migrate()
             flask_migrate.upgrade()
         except:
             print('3')
