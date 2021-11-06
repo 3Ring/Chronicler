@@ -35,7 +35,7 @@ def create_app(test_config=None):
         app.config.update(test_config)
     else:
         readied = ready_db(app)
-        if readied == "not initiated":
+        if readied == "not initiated" and not os.environ.get("HEROKU_HOSTING"):
             first_run(app, db, db_password)
     socketio.init_app(app)
     login_manager.init_app(app) 
