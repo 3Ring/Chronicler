@@ -5,6 +5,7 @@ from flask import url_for
 from werkzeug.utils import redirect
 from project.__init__ import create_app, db
 from flask_migrate import init, migrate, upgrade
+from project.classes import Users
 import pytest
 
 from project.factory_helpers import add_admin_to_db
@@ -15,7 +16,7 @@ def db_init_for_tests(db, path):
     init(directory=path)
     migrate(directory=path)
     upgrade(directory=path)
-    add_admin_to_db(db)
+    add_admin_to_db(db, Users)
 
 @pytest.fixture
 def app(test_email=None):
@@ -43,8 +44,6 @@ def runner(app):
 
 class AuthActions:
     
-    
-
     email_user = "register_test_email@chronicler.gg"
     email_admin = "app@chronicler.gg"
     password_user = "test123"

@@ -2,20 +2,20 @@ import os
 
 from flask_login import LoginManager
 from flask_migrate import Migrate
-import flask_migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask import Flask
 
-from .factory_helpers import create_postgres_connection, add_admin_to_db, config, Chronicler_db_init, ready_db
+from .factory_helpers import config, ready_db, clean_slate, show_db_columns, first_run
 
 
 db = SQLAlchemy()
-_migrate = Migrate()
+migrate_ = Migrate()
 socketio = SocketIO()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 db_password = os.environ.get('DB_PASS')
+
 @login_manager.user_loader
 def load_user(user_id):
     """provide login_manager with a unicode user ID"""
@@ -29,13 +29,14 @@ def create_app(test_config=None):
     app = Flask(__name__)
     config(app)
     db.init_app(app)
-    _migrate.init_app(app, db)
+    migrate_.init_app(app, db)
+    # clean_slate(db_password)
     if test_config is not None:
         app.config.update(test_config)
     else:
-        with app.app_context():
-            ready_db(db, db_password)
-
+        readied = ready_db(app)
+        if readied == "not initiated":
+            first_run(app, db, db_password)
     socketio.init_app(app)
     login_manager.init_app(app) 
 

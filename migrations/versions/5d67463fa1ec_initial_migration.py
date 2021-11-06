@@ -1,8 +1,8 @@
-"""changing User.hash to User.hashed_password for clarity
+"""initial migration
 
-Revision ID: bbe747dfc85d
-Revises: f7f3d8a8158a
-Create Date: 2021-11-04 23:17:18.120682
+Revision ID: 5d67463fa1ec
+Revises: 
+Create Date: 2021-11-06 17:14:18.996493
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bbe747dfc85d'
-down_revision = 'f7f3d8a8158a'
+revision = '5d67463fa1ec'
+down_revision = None
 branch_labels = None
 depends_on = None
 

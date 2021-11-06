@@ -1,9 +1,9 @@
 from flask_login import current_user
 from project.classes import Users
 
-url_logins = ["http://localhost/login", "http://localhost/auth.login", "auth.login", "/login"]
-url_indexs = ["http://localhost/", "http://localhost/main.index", "/main.index", "/"]
-url_logouts = ["http://localhost/logout", "http://localhost/auth.logout", "/auth.logout", "/logout"]
+url_logins = ["http://localhost/login", "/login"]
+url_indexs = ["http://localhost/", "/"]
+url_logouts = ["http://localhost/logout", "/logout"]
 
 test_name = "test_user"
 test_email = "register_test_email@chronicler.gg"

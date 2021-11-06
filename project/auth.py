@@ -31,17 +31,13 @@ def login_failure(message=None):
     """Redirect user to login page with flashed message"""
     if message:
         flash(message)
-    return redirect('auth.login')
+    return redirect(url_for('auth.login'))
 
 @auth.route('/login', methods=['POST'])
 def login_post():
     """checks data and logs in user if correct
     redirects user to index if they are already logged in
     """
-
-    # redirect
-    if current_user.is_active:
-        return redirect(url_for('main.index'))
     
     # check data
     form = LoginForm()
