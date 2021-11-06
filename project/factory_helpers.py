@@ -48,14 +48,13 @@ def config(app):
     app.config['SQLALCHEMY_ECHO'] = False
 
 
-def add_admin_to_db(db, Users):
+def add_admin_to_db(app, db, Users):
     """add 'chronicler helper' to db as admin account."""
 
     admin_pass = os.environ.get("ADMIN_PASS")
-    chronicler_user = Users(name = "Chronicler", email="app@chronicler.gg", hashed_password=generate_password_hash(admin_pass, method='sha256'))
-    db.session.add(chronicler_user)
-    db.session.commit()
-    print(f"{chronicler_user.name} added to database..")
+    with app.app_context():
+        Users.create(name = "Chronicler", email="app@chronicler.gg", password=admin_pass)
+    print("Chronicler added to database..")
 
 def ready_db(app):
     """Sets up db
@@ -68,12 +67,8 @@ def ready_db(app):
     with app.app_context():
 
         try:
-            # _ = Users.get_admin()
-            print('2')
-            # flask_migrate.migrate()
             flask_migrate.upgrade()
         except:
-            print('3')
             db_not_initiated = True
 
     if db_not_initiated:
