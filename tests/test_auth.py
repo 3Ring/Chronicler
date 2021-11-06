@@ -13,15 +13,16 @@ def make_user(name=test_name, email=test_email, hashed_password=test_password):
     return Users(name=name, email=email, hashed_password=hashed_password)
 
 def follow_redirects(request):
-    keys = []
-    for key, _ in request.headers:
-        keys.append(key)
-    if "Location" in keys:
+    if "Location" in request.headers.keys():
         return [request.headers["Location"]]
     else:
         redirects = []
         for redirect in request.history:
-            redirects.append(redirect.headers["Location"])
+            if "Location" in redirect.headers.keys():
+                redirects.append(redirect.headers["Location"])
+            else:
+                redirects.append(redirect.location)
+
         return redirects
 
 def login_failure(responses):
@@ -55,18 +56,36 @@ def register_failure(responses, email=None):
 def register_success(responses, email=None):
     if email == None:
         email = test_email
-    if not current_user.is_anonymous == True:
+    if current_user.is_authenticated == True:
+        print("fail. authenticated")
         return False
     elif Users.query.filter_by(email=email).first() == None:
+        print("fail. not found")
         return False
-    elif len(Users.query.filer_by(email=email).all()) > 1:
+    elif len(Users.query.filter_by(email=email).all()) > 1:
+        print("fail. not unique")
         return False
     for response in responses:
         if response in url_logins:
             return True
+    print("fail. not in urls")
     return False
 
-
+def logout_success(responses, email):
+    if current_user.is_authenticated == True:
+        print("fail. authenticated")
+        return False
+    elif Users.query.filter_by(email=email).first() == None:
+        print("fail. not found")
+        return False
+    elif len(Users.query.filter_by(email=email).all()) > 1:
+        print("fail. not unique")
+        return False
+    for response in responses:
+        if response in url_logins:
+            return True
+    print("fail. not in urls")
+    return False
 def test_login_logout(client, auth):
     """Using admin account: Make sure login and logout works."""
 
@@ -81,20 +100,19 @@ def test_login_logout(client, auth):
 
 
         # incorrect pw or email redirects back to login page
-        # login_wrong_pw = auth.login(form, auth.email_admin, f"{auth.password_admin}x")
-        login_wrong_pw = auth.login(auth.email_admin, f"{auth.password_admin}x")
+        login_wrong_pw = auth.login(email=auth.email_admin, password=f"{auth.password_admin}x")
         assert login_failure(follow_redirects(login_wrong_pw))
-        login_missing_pw = auth.login(auth.email_admin, "")
+        login_missing_pw = auth.login(email=auth.email_admin, password="")
         assert login_failure(follow_redirects(login_missing_pw))
-        login_wrong_email = auth.login(f"{auth.email_admin}x", auth.password_admin)
+        login_wrong_email = auth.login(email=f"{auth.email_admin}x", password=auth.password_admin)
         assert login_failure(follow_redirects(login_wrong_email))
-        login_missing_email = auth.login("", auth.password_admin)
+        login_missing_email = auth.login(email="", password=auth.password_admin)
         assert login_failure(follow_redirects(login_missing_email))
-        login_missing_both = auth.login("", "")
+        login_missing_both = auth.login(email="", password="")
         assert login_failure(follow_redirects(login_missing_both))
 
         # correct login redirects to index
-        login_correct = auth.login(auth.email_admin, auth.password_admin)
+        login_correct = auth.login(email=auth.email_admin, password=auth.password_admin)
         assert login_success(follow_redirects(login_correct))
 
         # user is redirected to index if attempting to go to login page
@@ -149,80 +167,17 @@ def test_register_story(client, auth):
         assert register_failure(follow_redirects(register_email_not_unique))
         
         # correct registration
-        user_correct = make_user()
-        register_correct = auth.register(user_correct)
-        assert register_success(follow_redirects(register_correct))
+        story_user = make_user()
+        story_register = auth.register(story_user)
+        assert register_success(follow_redirects(story_register))
 
 
         # user logs in
-        locations = auth.login(model=user_correct)
-        assert login_success(follow_redirects(locations))
-        #     print(dir(item))
-        #     print(f"type = {type(item)}")
-        # for item in story_login.history:
-        #     for thing in dir(item):
-        #         print(f"new {thing}")
-        #         print(f"{thing} == {story_login.history[thing]}")
-        #     print(item["Location"])
-        # assert story_login.headers["Location"] == url_index
-        # assert url_index in story_login.history
-        # story_logout = auth.logout()
-        # assert story_logout.headers["Location"] == url_login
+        story_login = auth.login(model=story_user)
+        assert login_success(follow_redirects(story_login))
 
+        story_logout = auth.logout()
+        assert logout_success(follow_redirects(story_logout), story_user.email)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    #     response = client.post(url_for('auth.login'), data=dict(
-    #     username=email,
-    #     password=password,
-    #     remember=True
-    # ), follow_redirects=True)
-
-
-        # assert _id == current_user.id
-    # assert b'Welcome!' in rv.data
-
-    # rv = logout(client)
-    # assert b'Successfully logged out' in rv.data
-
-    # rv = login(client, f"{email}x", password)
-    # assert b'Invalid username' in rv.data
-
-    # rv = login(client, email, f'{password}x')
-    # assert b'Invalid password' in rv.data
-
-# def test_login_logout(client):
-#     """Make sure login and logout works."""
-
-#     # username = "app@chronicler.gg"
-#     # password = os.environ.get("ADMIN_PASS")
-#     # login
-#     # rv = login(client, username, password)
-#     # assert b'Welcome!' in rv.data
-#     assert True
-
-
-#     # logout
-#     rv = logout(client)
-#     assert b'Successfully logged out' in rv.data
-
-#     # incorrect username
-#     rv = login(client, f"{username}x", password)
-#     assert b'Please check your login details and try again' in rv.data
-
-#     # incorrect password
-#     rv = login(client, username, "password")
-#     assert b'Please check your login details and try again' in rv.data
+        story_login_again = auth.login(model=story_user)
+        assert login_success(follow_redirects(story_login_again))

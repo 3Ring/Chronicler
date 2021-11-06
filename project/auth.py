@@ -101,7 +101,7 @@ def register_post():
         user = Users.query.filter_by(email=form.email.data).first()
         # check to make sure email is unique
         if user == None:
-            user = Users(name=form.name.data, email=form.email.data, hashed_password=generate_password_hash(form.password.data, method='sha256'))
+            Users.create(name=form.name.data, email=form.email.data, password=form.password.data)
             return register_success("Welcome to the table %s!" % form.name.data)
         else:
             # if email is already in db alert user

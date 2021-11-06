@@ -1,12 +1,13 @@
 import os
 
 from flask_login import LoginManager
-from flask_migrate import Migrate, upgrade, downgrade
+from flask_migrate import Migrate
+import flask_migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask import Flask
 
-from .factory_helpers import create_postgres_connection, create_db_and_add_tutorial, config, Chronicler_db_init
+from .factory_helpers import create_postgres_connection, add_admin_to_db, config, Chronicler_db_init, ready_db
 
 
 db = SQLAlchemy()
@@ -31,13 +32,9 @@ def create_app(test_config=None):
     _migrate.init_app(app, db)
     if test_config is not None:
         app.config.update(test_config)
-        # first_run(db)
-    with app.app_context():
-        if os.environ.get("FIRST RUN") == True:
-            create_postgres_connection(db_password)
-            Chronicler_db_init(db)
-        else:
-            pass
+    else:
+        with app.app_context():
+            ready_db(db, db_password)
 
     socketio.init_app(app)
     login_manager.init_app(app) 
@@ -49,6 +46,5 @@ def create_app(test_config=None):
     # blueprint for non-auth parts of app
     from .BONapp import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
 
     return app

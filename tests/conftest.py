@@ -7,7 +7,7 @@ from project.__init__ import create_app, db
 from flask_migrate import init, migrate, upgrade
 import pytest
 
-from project.factory_helpers import create_db_and_add_tutorial
+from project.factory_helpers import add_admin_to_db
 
 admin_pass = os.environ.get("ADMIN_PASS")
 def db_init_for_tests(db, path):
@@ -15,7 +15,7 @@ def db_init_for_tests(db, path):
     init(directory=path)
     migrate(directory=path)
     upgrade(directory=path)
-    create_db_and_add_tutorial(db)
+    add_admin_to_db(db)
 
 @pytest.fixture
 def app(test_email=None):
@@ -68,7 +68,7 @@ class AuthActions:
         if confirm == None:
             confirm = model.hashed_password
         return self._client.post(
-            url_for('auth.register'), data={"name": model.name, "email": model.email, "hashed_password": model.hashed_password, "confirm": confirm}, follow_redirects=True
+            "http://localhost/register", data={"name": model.name, "email": model.email, "password": model.hashed_password, "confirm": confirm}, follow_redirects=True
         )
 
     def logout(self):

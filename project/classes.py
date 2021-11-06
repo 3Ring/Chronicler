@@ -8,7 +8,6 @@ from werkzeug.security import generate_password_hash
 from .__init__ import db
 
 
-
 class Players(db.Model):
     __tablename__ = 'players'
     id = db.Column(db.Integer, primary_key=True)
@@ -33,12 +32,20 @@ class Users(UserMixin, db.Model):
 
     self_title = "user"
 
+    @staticmethod
+    def get_admin():
+        """Returns admin User object"""
+        
+        return Users.query.filter_by(email="app@chronicler.gg").first()
+        
     @classmethod
     def create(cls, name, email, password):
-        new_user = cls(name=name, email=email, hash=generate_password_hash(password, method='sha256'))
+        """adds new User to db"""
+
+        new_user = cls(name=name, email=email, hashed_password=generate_password_hash(password, method='sha256'))
         db.session.add(new_user)
         db.session.commit()
-
+    
     def __repr__(self):
         return '< User.id: %r >' % self.id
 

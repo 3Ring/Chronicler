@@ -271,9 +271,10 @@ def init_training_wheels_db():
     new = Users.query.filter_by(id=chronicler_user.id).first()
     print(f"{new.name} added to the db!")
 
-# add tutorial notes and session zero to game
-def new_game_training_wheels(game):
 
+def new_game_training_wheels(game):
+    """add tutorial notes and session zero to game"""
+    
     tutorial_user=Users.query.filter_by(email="app@chronicler.gg").first()
     # add tutorial character
     tutorial_character = Characters(name="Chronicler Helper", user_id=tutorial_user.id, game_id=game.id)
