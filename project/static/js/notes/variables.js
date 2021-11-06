@@ -1,5 +1,5 @@
 // Variables
-const socket = io()
+const socket = io("https://chronicler.gg")
 , className__hidden = "hidden"
 , className__active = "--active"
 , className__active_sessionList = "current";
