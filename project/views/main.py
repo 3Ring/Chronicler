@@ -45,7 +45,8 @@ def join(id_):
         if len(games) > 1:
             for game in games:
                 img = Images.query_from_id(game.img_id)
-                game.image = attach_game_image_or_default_from_Images_model(img)
+                if img:
+                    game.image = attach_game_image_or_default_from_Images_model(img)
         return render_template("join.html"
             , games=games
         )
