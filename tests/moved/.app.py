@@ -1,7 +1,7 @@
 import unittest
 import requests
 import os
-from project.classes import *
+from project.models import *
 from project.__init__ import db
 from tests.test_helpers import make_string_testset
 from werkzeug.security import generate_password_hash

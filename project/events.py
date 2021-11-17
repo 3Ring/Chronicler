@@ -1,8 +1,9 @@
-from .__init__ import db, socketio
-from .classes import *
 from flask_socketio import emit
-from .helpers import make_character_images, priv_convert
-from .socket_helper import translate_jinja
+
+from project.__init__ import db, socketio
+from project.models import Sessions, Characters, Notes
+from project.helpers import make_character_images, priv_convert
+from project.socket_helper import translate_jinja
 
 # variables
 class__buttonEdit = "note_edit_button"
@@ -19,10 +20,7 @@ idPrefix__newSessionCard = "session_card_"
 def send_new_session(games_id, number, title, synopsis=None):
 
     # convert message to model and add to db
-    new=Sessions(number=number, title=title, synopsis=synopsis, games_id=games_id)
-    db.session.add(new)
-    db.session.flush()
-    db.session.commit()
+    new=Sessions.create(number=number, title=title, synopsis=synopsis, games_id=games_id)
 
     # convert data to html element
     elements = translate_jinja(new, "session", games_id)
@@ -42,7 +40,7 @@ def send_new_note(user_id, game_id, dm_id, session_number, note, priv=False, to_
     session_number=session_number
 
     # this will cause issues if a player has more than one character for now
-    new=Notes(charname=current_char.name, session_number=session_number, note=note, private=private2, to_gm=to_gm, character=current_char.id , user_id=user_id, game_id=game_id)
+    new=Notes.create(charname=current_char.name, session_number=session_number, note=note, private=private2, to_gm=to_gm, character=current_char.id , user_id=user_id, game_id=game_id)
     new.char_img = char_img
     db.session.add(new)
     db.session.flush()

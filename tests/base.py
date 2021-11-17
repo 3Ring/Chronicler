@@ -2,7 +2,7 @@ from flask_testing import TestCase
 
 from project import app, db
 from project.helpers import init_training_wheels_db
-from project.classes import *
+from project.models import *
 
 
 class BaseConfig(object):

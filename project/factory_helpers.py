@@ -48,7 +48,7 @@ def config(app):
     app.config['SQLALCHEMY_ECHO'] = False
 
 
-def add_admin_to_db(app, db, Users):
+def add_admin_to_db(app, Users):
     """add 'chronicler helper' to db as admin account."""
 
     admin_pass = os.environ.get("ADMIN_PASS")
@@ -91,7 +91,7 @@ def first_run(app, db, db_password):
     cursor.execute(sqlCreateDatabase)
     print(f"{name_Database} created")
 
-    from .classes import Users
+    from project.models import Users
 
     with app.app_context():
         try:
@@ -102,7 +102,7 @@ def first_run(app, db, db_password):
             print("Upgrading..")
             flask_migrate.upgrade()
             print("adding admin to database..")
-            add_admin_to_db(db, Users)
+            add_admin_to_db(app, Users)
         except:
             raise RuntimeError(
                 "Migration directory already exists. If you wish to reinitialize the Flask Migrate please delete Migrations folder"

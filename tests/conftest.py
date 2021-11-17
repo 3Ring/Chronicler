@@ -5,32 +5,32 @@ from flask import url_for
 from werkzeug.utils import redirect
 from project.__init__ import create_app, db
 from flask_migrate import init, migrate, upgrade
-from project.classes import Users
+from project.models import Users
 import pytest
 
 from project.factory_helpers import add_admin_to_db
 
 admin_pass = os.environ.get("ADMIN_PASS")
-def db_init_for_tests(db, path):
+def db_init_for_tests(app, path):
     """Progrmatically create the db and add the admin/Tutorial"""
     init(directory=path)
     migrate(directory=path)
     upgrade(directory=path)
-    add_admin_to_db(db, Users)
+    add_admin_to_db(app, Users)
 
 @pytest.fixture
 def app(test_email=None):
 
-    app = create_app({
+    _app = create_app({
         'TESTING': True
         ,'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:' 
         # ,'SQLALCHEMY_ECHO': True
     })
 
-    with app.app_context():
+    with _app.app_context():
         with tempfile.TemporaryDirectory() as tdp:
-            db_init_for_tests(db, tdp)
-        yield app
+            db_init_for_tests(_app, tdp)
+        yield _app
 
 @pytest.fixture
 def client(app):

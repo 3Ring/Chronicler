@@ -5,7 +5,9 @@
 var user_id = {{current_user.id}}
 , dm_id = {{ game.dm_id }}
 , game_id = {{id}}
-, js_dict = JSON.parse({{js_note_dict|tojson }});
+, js_dict = JSON.parse({{js_note_dict|tojson }})
+, heroku = {{ heroku|tojson }};
+
 </script>
 <script src="{{ url_for('static', filename='js/notes/variables.js') }}"></script>
 

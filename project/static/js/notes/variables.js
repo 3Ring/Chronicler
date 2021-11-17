@@ -1,11 +1,18 @@
 // Variables
-const socket = io("https://www.chronicler.gg", {
+
+
+var socket = null;
+if (heroku) {
+  socket = io("https://www.chronicler.gg", {
     withCredentials: true
     // extraHeaders: {
     //   "my-custom-header": "abcd"
     // }
-  })
-, className__hidden = "hidden"
+  });
+} else {
+  socket = io();
+};
+const className__hidden = "hidden"
 , className__active = "--active"
 , className__active_sessionList = "current";
 var menu_deployed = false

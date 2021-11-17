@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Blueprint, render_template, redirect, url_for, flash
+from werkzeug.security import check_password_hash
 from flask_login import login_user, logout_user, login_required
 from flask_login import current_user
 
-from .classes import *
+from project.models import *
+from project import forms
 
 
 
@@ -23,7 +24,7 @@ def login():
     if current_user.is_active:
         return redirect(url_for('main.index'))
 
-    form = LoginForm()
+    form = forms.LoginForm()
     return render_template('login.html',
         form=form)
 
@@ -40,13 +41,13 @@ def login_post():
     """
     
     # check data
-    form = LoginForm()
-    user_in_db = Users.query.filter_by(email=form.email.data).first()
-    if not user_in_db or not check_password_hash(user_in_db.hashed_password, form.password.data):
+    form = forms.LoginForm()
+    user_found = Users.query.filter_by(email=form.email.data).first()
+    if not user_found or not check_password_hash(user_found.hashed_password, form.password.data):
         return login_failure('Please check your login details and try again.')
 
     # login user
-    login_user(user_in_db, remember=form.remember.data)
+    login_user(user_found, remember=form.remember.data)
     return redirect(url_for('main.index'))
 
 
@@ -58,7 +59,7 @@ def login_post():
 def register():
     """direct user to registration page"""
 
-    form = UserForm()
+    form = forms.UserForm()
     return render_template(
         "register.html"
         , form=form
@@ -86,7 +87,7 @@ def register_post():
     (this is a redundancy as this is done client side as well)
     """
 
-    form = UserForm()
+    form = forms.UserForm()
     # check if all required data was submitted
     if not form.password.data or not form.email.data or not form.name.data or not form.confirm.data:
         return register_failure("missing form data")
@@ -97,7 +98,7 @@ def register_post():
         user = Users.query.filter_by(email=form.email.data).first()
         # check to make sure email is unique
         if user == None:
-            Users.create(name=form.name.data, email=form.email.data, password=form.password.data)
+            user = Users.create(name=form.name.data, email=form.email.data, password=form.password.data)
             return register_success("Welcome to the table %s!" % form.name.data)
         else:
             # if email is already in db alert user

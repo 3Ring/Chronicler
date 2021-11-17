@@ -1,5 +1,5 @@
 from flask_login import current_user
-from project.classes import Users
+from project.models import Users
 
 url_logins = ["http://localhost/login", "/login"]
 url_indexs = ["http://localhost/", "/"]
@@ -171,7 +171,6 @@ def test_register_story(client, auth):
         story_register = auth.register(story_user)
         assert register_success(follow_redirects(story_register))
 
-
         # user logs in
         story_login = auth.login(model=story_user)
         assert login_success(follow_redirects(story_login))
@@ -181,3 +180,4 @@ def test_register_story(client, auth):
 
         story_login_again = auth.login(model=story_user)
         assert login_success(follow_redirects(story_login_again))
+

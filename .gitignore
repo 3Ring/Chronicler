@@ -19,3 +19,4 @@ credits.txt
 */.vscode
 project/litechronicler.db
 *.vscode
+*/.pytest_cache

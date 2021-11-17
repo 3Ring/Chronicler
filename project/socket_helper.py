@@ -1,6 +1,6 @@
 import os
 from project.helpers import priv_convert
-from project.classes import Users
+from project.models import Users
 
 if_statements = 0
 def get_tutorial_id():

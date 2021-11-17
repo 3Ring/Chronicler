@@ -1,12 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
-    
-
-    <!-- {% if current_user.is_anonymous %}
-    <h2 class="welcome_message">Welcome to my collaborative note taking app for dnd and other tabletop games! Log in or Register to get started</h2>
-    {% endif %} -->
 
 
 {% if current_user.is_authenticated%}
@@ -44,7 +38,7 @@
                         <ul>
                             {% for game in dm_games %}
                             <li>
-                                <a href="{{ url_for('main.notes', id=game.id) }}">
+                                <a href="{{ url_for('main.notes', game_id=game.id) }}">
                                     <img class="index_game_image" src="{{game.image}}">
                                     {{game.name}}
                                 </a>
@@ -67,7 +61,7 @@
                         <ul>
                             {% for game in games %}
                             <li>
-                                <a href="{{ url_for('main.notes', id=game.id) }}">
+                                <a href="{{ url_for('main.notes', game_id=game.id) }}">
                                     <img class="index_game_image" src="{{game.image}}">
                                     {{game.name}}
                                 </a>
@@ -84,12 +78,10 @@
             </div>
 
             <a class="new-game button primary" href="{{ url_for('main.create') }}">
-                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/dm_games.jpeg')}}"> -->
                 <span class="far fa-plus-square"></span> Create a Game
             </a>
 
-            <a class="new-game button primary" href="{{ url_for('main.join', id=0) }}">
-                <!-- <img class="index_start_image" src="{{url_for('static', filename='images/player_games.jpg')}}"> -->
+            <a class="new-game button primary" href="{{ url_for('main.join', id_=0) }}">
                 <span class="fas fa-search-location"></span> Find a Game
             </a>
         </div>            
