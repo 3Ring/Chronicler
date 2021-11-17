@@ -42,9 +42,10 @@ def join(id_):
     """serve list of games that User can join"""
     if id_ == 0:
         games=Games.query.filter(Games.dm_id != current_user.id).all()
-        for game in games:
-            img = Images.query_from_id(game.img_id)
-            game.image = attach_game_image_or_default_from_Images_model(img)
+        if len(games) > 1:
+            for game in games:
+                img = Images.query_from_id(game.img_id)
+                game.image = attach_game_image_or_default_from_Images_model(img)
         return render_template("join.html"
             , games=games
         )
