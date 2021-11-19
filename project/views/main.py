@@ -71,7 +71,7 @@ def joining_post(id_):
     """add new character to game"""
 
     charform=forms.CharForm()
-    game=Games.query.filter_by(id=id_).first()
+    game=Games.query_from_id(id_)
     game.image = game.image_object.img
 
     if not charform.charsubmit.data:
@@ -79,7 +79,10 @@ def joining_post(id_):
     image_id_or_failure_message = Images.upload("img")
     if type(image_id_or_failure_message) != int:
         return joining_failure(image_id_or_failure_message)
-    Characters.create(name=charform.name.data, img_id=image_id_or_failure_message, bio=charform.bio.data, user_id=current_user.id, game_id=id_)
+    elif image_id_or_failure_message == -1:
+        Characters.create(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id_)
+    else:
+        Characters.create(name=charform.name.data, img_id=image_id_or_failure_message, bio=charform.bio.data, user_id=current_user.id, game_id=id_)
     Players.create(users_id=current_user.id, games_id=id_)
     return joining_success(id_, f"{charform.name.data} has joined the {game.name}!")
 
@@ -89,7 +92,7 @@ def joining_failure(id_, message):
 
 def joining_success(id_, message):
     flash(message)
-    return redirect(url_for('main.notes', id=id_))
+    return redirect(url_for('main.notes', game_id=id_))
 
 
 
@@ -101,17 +104,20 @@ def joining_success(id_, message):
 @login_required
 def create():
     form = forms.CreateGameForm()
-    if request.method.get == "GET":
+    if request.method == "GET":
         return render_template('create.html',
             gameform=form
             )
     else:
-        if not forms.gamesubmit.data:
+        if not form.gamesubmit.data:
             return CreateGame.redirect_on_failure("No game data sent to server")
         image_id_or_exception = Images.upload("img") 
         if type(image_id_or_exception) != int:
             return CreateGame.redirect_on_failure(image_id_or_exception)
-        game = Games.create(name=form.name.data, dm_id=current_user.id, img_id=image_id_or_exception, published=form.published.data)
+        if image_id_or_exception == -1:
+            game = Games.create(name=form.name.data, dm_id=current_user.id, published=form.published.data)
+        else:
+            game = Games.create(name=form.name.data, dm_id=current_user.id, img_id=image_id_or_exception, published=form.published.data)
 
         Characters.create(name="DM", user_id=current_user.id, game_id=game.id)
         Players.create(users_id=current_user.id, games_id=game.id)
@@ -126,7 +132,7 @@ class CreateGame():
     
     @staticmethod
     def redirect_on_success(id_):
-        return redirect(url_for('main.notes', id=id_))
+        return redirect(url_for('main.notes', game_id=id_))
 
 
 
@@ -192,5 +198,4 @@ def profile():
 def nuked():
     nuke()
     return "nuked"
-
 

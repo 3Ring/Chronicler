@@ -47,18 +47,38 @@ class Users(SABaseMixin, db.Model, UserMixin):
 
     self_title = "user"
 
+
+
     @staticmethod
     def get_admin():
         """Returns admin User object"""
         
         return Users.query.filter_by(email="app@chronicler.gg").first()
         
+    @staticmethod
+    def add_to_bug_report_page(email):
+        """Creates a User character and adds them to the bug report page
+        it's done this way because the bug report page uses the "notes" page's code so it requires a "Character".
+        """
+
+        user = Users.query_by_email(email)
+        Characters.create(name=user.name, user_id=user.id, game_id=-1)
+        return
+
+    @classmethod
+    def query_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
+    
     @classmethod
     def create(cls, **kw):
-        """adds new User to db"""
+        """adds new User to database and hashes their password.
+        it also adds the user to bug reports
+        """
         kw["hashed_password"] = generate_password_hash(kw["password"], method='sha256')
         kw.pop("password")
-        super().create(**kw)
+        user = super().create(**kw)
+        cls.add_to_bug_report_page(kw["email"])
+        return user
 
 class Games(SABaseMixin , db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -86,7 +106,7 @@ class Games(SABaseMixin , db.Model):
 
     @staticmethod
     def get_index_lists(User) -> dict:
-        """Returns a dictionaty containing the game lists that the player is in.
+        """Returns a dictionary containing the game lists that the player is in.
 
         Where dict['player_list'] is a list of Game objects the User is listed as a player in, 
         and dict['dm_list'] is a list of Game objects the User is listed in as the 'DM'. """
@@ -123,9 +143,19 @@ class Games(SABaseMixin , db.Model):
     @classmethod
     def create(cls, **kw):
         """adds new Game to db"""
-        super().create(**kw)
+        obj = super().create(**kw)
         # add tutorial notes and session zero to game
-        cls.new_game_training_wheels()
+        cls.new_game_training_wheels(obj)
+        return obj
+
+    def delete_self(self):
+        remove_attached_notes()
+        remove_attached_sessions()
+        
+        db.session.query(Notes).filter_by(game_id=self.id).delete()
+        db.session.commit()
+
+        pass
 
     def new_game_training_wheels(self):
         """add tutorial notes and session zero to game"""
@@ -218,6 +248,9 @@ class Notes(SABaseMixin, db.Model):
         elif self.charname == "DM":
             self.char_img = "/static/images/default_dm.jpg"
 
+    def delete_self(self):
+        db.session.query(Notes).filter_by(id=self.id).delete()
+        db.session.commit()
 
 
 def allowed_file(filename):
@@ -310,6 +343,13 @@ class Characters(SABaseMixin, db.Model):
     
     self_title = "character"
 
+    @classmethod
+    def create(cls, **kw):
+        """Creates a new character and adds player to relational table"""
+        character = super().create(**kw)
+        Players.create(users_id=kw["user_id"], games_id=kw["game_id"])
+        return character
+        
     @orm.reconstructor
     def init_on_load(self):
         if self.img_id == None:
@@ -338,7 +378,7 @@ class Places(SABaseMixin, db.Model):
     secret_bio = db.Column(db.Text)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
     NPCs = db.relationship('NPCs', backref='place', lazy=True)
     self_title = "place"
 

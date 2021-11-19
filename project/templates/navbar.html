@@ -7,6 +7,7 @@
     {% if current_user.is_authenticated %}
     <ul>
         <li><a class="nav-link" href="{{ url_for('main.profile') }}"><span class="far fa-user-circle"></span> Profile</a></li>
+        <li><a class="nav-link" href="{{ url_for('bugs.bugs_page') }}"><span class="fas fa-sign-out-alt"></span> Bugs</a></li>
         <li><a class="nav-link" href="{{ url_for('auth.logout') }}"><span class="fas fa-sign-out-alt"></span> Logout</a></li>
     </ul>
     {% else %}

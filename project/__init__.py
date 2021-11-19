@@ -43,13 +43,15 @@ def create_app(test_config=None):
     socketio.init_app(app)
     login_manager.init_app(app) 
     
-    # blueprint for auth routes of app
+
     from project.views.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
-    # blueprint for non-auth parts of app
     from project.views.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    from project.views.bugs import bugs as bugs_blueprint
+    app.register_blueprint(bugs_blueprint)
 
     # register events file with application
     from project import events
