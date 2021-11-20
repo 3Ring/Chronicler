@@ -6,8 +6,6 @@ from flask_login import current_user
 from project.models import *
 from project import forms
 
-
-
 auth = Blueprint('auth', __name__)
 
 
