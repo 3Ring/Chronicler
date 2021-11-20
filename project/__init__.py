@@ -28,18 +28,18 @@ def load_user(user_id):
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
 
-    # from project.models import Users
+    from project.models import Users
     app = Flask(__name__)
     config(app)
     db.init_app(app)
     migrate_.init_app(app, db, compare_type=True)
     if test_config is not None:
         app.config.update(test_config)
-    # else:
-    #     readied = ready_db(app)
-    #     if readied == "not initiated" and not os.environ.get("HEROKU_HOSTING"):
-    #         first_run(app, db, db_password)
-    #         add_admin_to_db(app, Users)
+    else:
+        readied = ready_db(app)
+        if readied == "not initiated" and not os.environ.get("HEROKU_HOSTING"):
+            first_run(app, db, db_password)
+            add_admin_to_db(app, Users)
     socketio.init_app(app)
     login_manager.init_app(app) 
     
