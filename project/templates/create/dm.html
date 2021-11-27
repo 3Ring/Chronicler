@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="form-container">
+{% if game %}
+<h1>{{game.name}}</h1>
+<img src="{{game.image}}">
+{% endif %}
+        <form  enctype="multipart/form-data" method='POST'>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                        <p>
+                            {{ message }}
+                            <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></button>
+                        </p>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <h1>Personalize your "DM" avatar</h1>
+            <div class="row">
+                {{ form.hidden_tag() }}
+                {{ form.name.label }}
+                {{ form.name(value="DM") }}
+            </div>
+                
+            <div class="row">
+                {{ form.img.label }}
+                {{ form.img }}  
+                <img src="{{dm_default_image}}">
+            </div>
+            
+            <div class="row">
+                {{ form.dm_char_submit (class="button primary") }}
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

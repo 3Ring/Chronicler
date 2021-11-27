@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="app-container">
+            <h1>{{game.name}}:</h1>
+        <div class="games">
+            <div class="game">
+                <h2>Edit game:</h2>
+                <form  enctype="multipart/form_edit-data" method='POST'>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <p>
+                                    {{ message }}
+                                    <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+                                </p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="row">
+                        {{ form_edit.hidden_tag() }}
+                        {{ form_edit.name.label }}
+                        {{ form_edit.name }}
+                    </div>
+                    <div class="row">
+                        {{ form_edit.img.label }}
+                        {{ form_edit.img }}
+                    </div>
+                    {% if not game.published %}
+                        <div class="row checkbox">
+                            {{ form_edit.published }}
+                            {{ form_edit.published.label }}
+                        </div>
+                        {% else %}
+                        <div class="row checkbox">
+                            {{ form_edit.private }}
+                            {{ form_edit.private.label }}
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        {{ form_edit.game_edit_submit (class="button primary") }}
+                    </div>
+                </form>
+            </div>
+            <div class="game">
+                <h2>Remove Ownership:</h2>
+                <p>this will remove you from the game but will allow current participants to access it</p>
+                <form method='POST'>
+                    <div class="row checkbox">
+                        {{ form_remove.will }}
+                        {{ form_remove.will.label }}
+                    </div>
+                    <div class="row">
+                        {{ form_remove.game_remove_submit (class="button primary") }}
+                    </div>
+                </form>
+                <h2>Delete Game:</h2>
+                <p>this will permantently delete the game and remove it forever from the database.</p>
+                <p>Users will still be able to see their data from the game, but it will be accessed through an "orphanage game"</p>
+                <form method='POST'>
+                    <div class="row">
+                        {{ form_delete.game_delete_submit (class="button primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

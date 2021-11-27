@@ -96,7 +96,7 @@ def nuke():
     print("Characters")
     db.session.commit()
 
-    db.session.query(Players).delete()
+    db.session.query(BridgeUserGames).delete()
     print("Players")
     db.session.commit()
 
@@ -120,7 +120,7 @@ def nuke():
 # 
 # #
 
-def priv_convert(priv):
+def private_convert(priv):
     if type(priv) == bool:
         return priv
     elif type(priv) == str:

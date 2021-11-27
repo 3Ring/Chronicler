@@ -1,0 +1,98 @@
+
+<div class="game-container" style="background-image: url({{ game.image }});">
+    <div class="container">
+        <div class="header-container">
+            <div class="new-session">
+                {% if game.dm_id == current_user.id %}
+                    <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
+                {% endif %}
+            </div>
+            <h1>{{ game.name }}</h1>
+        </div>
+        <div class="notes-container">
+            <div class="session-log">
+                <div class="scroll-max">
+                    <h2>Session Log</h2>
+                    <ul class="sessions-list" data-flag="sessions_list" >
+                    {% if session_titles %}
+                        {% for session in session_titles %}
+            {# translate_hook session #}
+            {# translate_section session nav #}
+                            <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+                                <h4>Session {{ session.number }}</h4>
+                                <h2>{{ session.title }}</h2>
+                            </li>
+            {# endsection session #}
+            {# socket_ignore session #}
+                        {% endfor %}
+                    {% else %}
+                        <li data-flag="sessionList" data-number_sessionList="set_up">
+                            <h4>Setting up the table...</h4>
+                        </li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="notes">
+                <div class="scroll-max">
+                    <div class="comment-container">
+            
+                        {% include 'notes/widgets/session_quill.html' %}
+            
+                    </div>
+                    <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
+                        {% if session_titles %}
+                            <!-- Session Title Cards -->
+                            {% for session in session_titles %}
+                            {# endignore session #}
+                            {# translate_section session card #}
+                            
+                            <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
+                                <h2>Session {{ session.number }}: {{ session.title }}</h2>
+                                <div>
+                                    <!-- Session Notes -->
+                                    <ul class="note_list" data-idSession="{{ session.number }}">
+            
+                            {# socket_ignore session #}
+                                        {% for note in note_dict[session.number] %}
+                                            {# translate_hook note #}
+                            
+                                            {# note is a draft #}
+                                            
+                                                {% if note.private == True %}
+                                                    {% if note.user_id == current_user.id %}
+                                                        {% include 'notes/note_text.html' %}
+                                                    {% endif %}
+                                            
+                                            
+                                            {# note is to_dm #}
+                                            
+                                                {% elif note.to_dm %} 
+                                                    {% if note.user_id == current_user.id or current_user.id == game.dm_id %}
+                                                        {% include 'notes/note_text.html' %}
+                                                    {% endif %}
+                                            
+                                            
+                                            {# note is public #}
+                                            
+                                                {% else %}
+                                                    {% include 'notes/note_text.html' %}    
+                                                {% endif %}
+                                            
+                                            {# end_translate_hook note #}
+                                        {% endfor %}
+                            {# endignore session #}
+            
+                                    </ul>
+                                </div>
+                            </div>
+                            {# endsection session #}
+                            {# end_translate_hook session #}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

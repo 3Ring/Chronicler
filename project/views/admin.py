@@ -1,242 +1,194 @@
+from flask import Blueprint, render_template, redirect, url_for, flash
+from werkzeug.security import check_password_hash
+from flask_login import login_user, logout_user, login_required
+from flask_login import current_user
 
+from project.models import *
+from project import forms
 
-@main.route('/test_tables', methods = ['GET', 'POST'])
+admin = Blueprint('admin', __name__)
+def find_claimed_characters():
+    # get full player list
+    full_player_list = BridgeUserGames.query.all()
+    # get list of characters in bridge
+    bridge_list = BridgeGameCharacters.query.all()
+    added = {}
+    for bridge in bridge_list:
+        for player in full_player_list:
+            if player.game_id == bridge.game_id:
+                added[player.id] = bridge.character_id
+    return added
+
+@admin.route("/dashboard")
 @login_required
-def test_tables():
+def dashboard():
+    if current_user.id != Users.get_admin().id:
+        return redirect("main.index")
+    return render_template("admin_dashboard.html")
 
-    # make sure that only the admin can access this site
-    if not current_user.id == 1:
-        return redirect(url_for('main.profile'))
+@admin.route("/remove_gameid")
+@login_required
+def remove_gameid():
+    chars = Characters.query.all()
+    if len(chars) > 0:
+        print("more than one")
+        for i, char in enumerate(chars):
+            print(f"character #{i}")
+            if "game_id" in char.__table__.columns:
+                if char.game_id == -2:
+                    print("error character")
+                    continue
+                test = BridgeGameCharacters.query.filter_by(game_id=char.game_id, character_id=char.id).first()
+                if test:
+                    print("already in bridge")
+                    continue
+                done = BridgeGameCharacters.create(game_id=char.game_id, character_id=char.id)
+                print(f"created: {done}")
+    flash("remove_game_id done")
+    return redirect("admin.dashboard")
+
+
+
+
+
+
+
+
+
+
+
+"""empty message
+
+Revision ID: ce267715952f
+Revises: 83616baa15f1
+Create Date: 2021-11-23 16:54:31.093542
+
+"""
+from alembic import op
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+
+# revision identifiers, used by Alembic.
+revision = 'ce267715952f'
+down_revision = '83616baa15f1'
+branch_labels = None
+depends_on = None
+
+
+
+
+    # if current_user.id != Users.get_admin().id:
+    #     return redirect(url_for("main.index"))
     
-    # set variable so Flask can build the site
-    uservalues=Users().values
-    userheads = Users().head
-    users = Users.query.all()
-    gameheads = Games().head
-    games = Games.query.all()
-    characterheads = Characters().head
-    characters = Characters.query.all()
-    npcheads = NPCs().head
-    npcs = NPCs.query.all()
-    placeheads = Places().head
-    places = Places.query.all()
-    lootheads = Loot().head
-    loots = Loot.query.all()
-    noteheads = Notes().head
-    notes = Notes.query.all()
-    playersheads=Players().head
-    players = Players.query.all()
-    sessionheads=Sessions().head
-    sessions=Sessions.query.all()
+    # full_player_list = Players.query.all()
+    # final_claimed = []
+    
+    # for i, player in enumerate(full_player_list):
+    #     try:
+    #         _ = claimed[player.id]
+    #         final_claimed.append(BridgeCharacters.query.filter_by(character_id=claimed[player.id]).first())
+    #         full_player_list[i] = None
+    #     except:
+    #         pass
+    # final_final = []
+    # character_final = []
+    # for player in full_player_list:
+    #     if not player:
+    #         continue
+    #     character_final.append(Characters.query.filter_by(game_id=player.game_id, user_id=player.user_id).first())
 
-    userform = UserForm()
-    gameform = GameForm()
-    charform = CharForm()
-    npcform = NPCForm()
-    placeform = PlaceForm()
-    lootform = LootForm()
-    playerform = PlayerForm()
-    noteform = NoteForm()
-    delform = DeleteForm()
-    sessionform=SessionForm()
+    # characters = Characters.query.all()
+    # for bridge in final_claimed:
+    #     final_final.append(Characters.get_from_id(bridge.character_id))
 
-    if request.method == 'POST':
-        if gameform.gamesubmit.data:
+    
+    
 
-            game = Games(name=gameform.name.data, imglink=gameform.imglink.data, sessions=gameform.sessions.data, secret=gameform.secret.data, dm_id=gameform.dm_id.data)
-            db.session.add(game)
-            db.session.commit()
-            games = Games.query.all()
-        elif userform.usersubmit.data:
-
-            user = Users(name=userform.name.data, email=userform.email.data, realname=userform.realname.data, hash=generate_password_hash(userform.password.data, method='sha256'))
-            db.session.add(user)
-            db.session.commit()
-            users = Users.query.all()
-
-        elif charform.charsubmit.data:
-            char = Characters(name=charform.name.data, imglink=charform.imglink.data, bio=charform.bio.data, platinum=charform.platinum.data, gold=charform.gold.data, silver=charform.silver.data, copper=charform.copper.data, experience=charform.experience.data, strength=charform.strength.data, dexterity=charform.dexterity.data, constitution=charform.constitution.data, wisdom=charform.wisdom.data, intelligence=charform.intelligence.data, charisma=charform.charisma.data, user_id=charform.user_id.data, game_id=charform.game_id.data)
-            db.session.add(char)
-            db.session.commit()
-            characters = Characters.query.all()
-
-        elif npcform.npcsubmit.data:
-            npc = NPCs(name=npcform.name.data, secret_name=npcform.secret_name.data, bio=npcform.bio.data, secret_bio=npcform.secret_bio.data, game_id=npcform.game_id.data, place_id=npcform.place_id.data)
-            db.session.add(npc)
-            db.session.commit()
-            npcs = NPCs.query.all()
-
-        elif placeform.placesubmit.data:
-            place = Places(name=placeform.name.data, bio=placeform.bio.data, secret_bio=placeform.secret_bio.data, game_id=placeform.game_id.data)
-            db.session.add(place)
-            db.session.commit()
-            places = Places.query.all()
-
-        elif lootform.lootsubmit.data:
-            loot = Loot(name=lootform.name.data, bio=lootform.bio.data, copper_value=lootform.copper_value.data, owner_id=lootform.owner_id.data)
-            db.session.add(loot)
-            db.session.commit()
-            loots = Loot.query.all()
-
-        elif noteform.notesubmit.data:
-            note = Notes(note=noteform.note.data, private=noteform.private.data, in_character=noteform.in_character.data, session_number=noteform.session_number.data, character=noteform.character.data, game_id=noteform.game_id.data, charname=noteform.charname.data, user_id=noteform.user_id.data)
-            db.session.add(note)
-            db.session.commit()
-            notes = Notes.query.all()
-
-        elif playerform.playersubmit.data:
-            player = Players(users_id=playerform.users_id.data, games_id=playerform.games_id.data)
-            db.session.add(player)
-            db.session.commit()
-            players = Players.query.all()
-
-        elif sessionform.sessionsubmit.data:
-            session = Sessions(number=sessionform.number.data, title=sessionform.title.data, synopsis=sessionform.synopsis.data, games_id=sessionform.games_id.data)
-            db.session.add(session)
-            db.session.commit()
-            sessions = Sessions.query.all()
-
-    delform.user_group_id.choices = [(g.id) for g in Users.query.order_by('id')]
-    delform.game_group_id.choices = [(g.id) for g in Games.query.order_by('id')]
-    delform.character_group_id.choices = [(g.id) for g in Characters.query.order_by('id')]
-    delform.npc_group_id.choices = [(g.id) for g in NPCs.query.order_by('id')]
-    delform.place_group_id.choices = [(g.id) for g in Places.query.order_by('id')]
-    delform.loot_group_id.choices = [(g.id) for g in Loot.query.order_by('id')]
-    delform.note_group_id.choices = [(g.id) for g in Notes.query.order_by('id')]
-    delform.session_group_id.choices = [(g.id) for g in Sessions.query.order_by('id')]
-    delform.player_group_id.choices = [(g.id) for g in Players.query.order_by('id')]
+    # email = Users.query_by_email("app@chronicler.gg")
+    # print(email)
+    # email.delete_self(confirm=True, orphan=False)
+    # admin.email = "app@chronicler.gg"
+    # db.session.commit()
+    # print(admin)
 
 
-    return render_template('test_tables.html',
-        uservalues=uservalues,
-        userheads = userheads,
-        gameheads = gameheads,
-        characterheads = characterheads,
-        npcheads = npcheads,
-        placeheads = placeheads,
-        lootheads = lootheads,
-        noteheads=noteheads,
-        playersheads=playersheads,
-        sessionheads=sessionheads,
-        users = users,
-        games = games,
-        players=players,
-        characters = characters,
-        npcs = npcs,
-        places = places,
-        loots = loots,
-        notes = notes,
-        sessions=sessions,
-        delform = delform,
-        userform = userform,
-        gameform = gameform,
-        charform=charform,
-        npcform=npcform,
-        placeform=placeform,
-        lootform=lootform,
-        noteform=noteform,
-        playerform=playerform,
-        sessionform=sessionform)
+    # if first_char:
+    #     d, i = True, 1
+    #     while d:
+    #         char = Characters.get_from_id(i)
+    #         if not char:
+                # placeholder = Characters.create(id = i, name = 'placeholder', user_id= 1, game_id = 1)
+                # notes = Notes.query.filter_by(origin_character_id = 1).all()
+                # for note in notes:
+                #     note.origin_character_id = i
+                #     print(note.id)
+                #     db.session.commit()
+                # bridge1 = BridgeCharacters.query.filter_by(character_id= 1).all()
+                # for item in bridge1:
+                #     item.character_id= i
+                #     print(item.id)
+                #     db.session.commit()
+                # placeholder = Characters.query.filter_by(name='placeholder').first()
+                # placeholder.delete_self(confirm=True)
+                
 
-@main.route('/confirming', methods = ['POST'])
-@login_required
-def post_test_tables():
-    delete = DeleteForm()
-    if delete.note_group_id.data:
-        delete_id = delete.note_group_id.data
-        deleted = Notes.query.filter_by(id = delete_id).first()
-        db.session.query(Notes).filter(Notes.id==delete_id).delete()
-        flash("Note %s: '%s' has been successfully deleted" % (deleted.id, deleted.note))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.session_group_id.data:
-        delete_id = delete.session_group_id.data
-        deleted = Sessions.query.filter_by(id = delete_id).first()
-        db.session.query(Sessions).filter(Sessions.id==delete_id).delete()
-        flash("Session %s: '%s' has been successfully deleted" % (deleted.number, deleted.title))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.user_group_id.data:
-        delete_id = delete.user_group_id.data
-        deleted = Users.query.filter_by(id = delete_id).first()
-        db.session.query(Users).filter(Users.id==delete_id).delete()
-        flash("User %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.game_group_id.data:
-        delete_id = delete.game_group_id.data
-        deleted = Games.query.filter_by(id = delete_id).first()
-        db.session.query(Games).filter(Games.id==delete_id).delete()
-        flash("Game %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.character_group_id.data:
-        delete_id = delete.character_group_id.data
-        deleted = Characters.query.filter_by(id = delete_id).first()
-        db.session.query(Characters).filter(Characters.id==delete_id).delete()
-        flash("Character %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.npc_group_id.data:
-        delete_id = delete.npc_group_id.data
-        deleted = NPCs.query.filter_by(id = delete_id).first()
-        db.session.query(NPCs).filter(NPCs.id==delete_id).delete()
-        flash("NPC %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.place_group_id.data:
-        delete_id = delete.place_group_id.data
-        deleted = Places.query.filter_by(id = delete_id).first()
-        db.session.query(Places).filter(Places.id==delete_id).delete()
-        flash("Place %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.loot_group_id.data:
-        delete_id = delete.loot_group_id.data
-        deleted = Loot.query.filter_by(id = delete_id).first()
-        db.session.query(Loot).filter(Loot.id==delete_id).delete()
-        flash("Loot %s: '%s' has been successfully deleted" % (deleted.id, deleted.name))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    elif delete.player_group_id.data:
-        delete_id = delete.player_group_id.data
-        deleted = Players.query.filter_by(id = delete_id).first()
-        db.session.query(Players).filter(Players.id==delete_id).delete()
-        flash("Player %s: '%s' has been successfully deleted" % (deleted.id, deleted.users_id))
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
 
-@main.route('/confirm', methods = ['POST'])
-@login_required
-def confirm():
-    form = ConForm()
-    if session['table_to_edit'] == 'Users':
-        row_to_delete = Users.query.filter_by(id = session.get('id_to_delete')).first()
-    elif session['table_to_edit'] == 'Games':
-        row_to_delete = Games.query.filter_by(id = session.get('id_to_delete')).first()
-    elif session['table_to_edit'] == 'Characters':
-        row_to_delete = Characters.query.filter_by(id = session.get('id_to_delete')).first()
-    elif session['table_to_edit'] == 'NPCs':
-        row_to_delete = NPCs.query.filter_by(id = session.get('id_to_delete')).first()
-    elif session['table_to_edit'] == 'Places':
-        row_to_delete = Places.query.filter_by(id = session.get('id_to_delete')).first()
-    elif session['table_to_edit'] == 'Loot':
-        row_to_delete = Loot.query.filter_by(id = session.get('id_to_delete')).first()
+            #     first_char.id = i
+            #     db.session.commit()
+            #     d = False
+            # i += 1
+    # Characters.create(id = 1, name = "Chronicler Helper", user_id = 1, game_id=1)
+    # first_char = Characters.get_from_id(1)
+    # print(first_char)
+    # delete = Users.get_from_id(-1)
+    # # delete.delete_self(confirm=True)
+    # # Users.create(id = -1, name = 'Chronicler Helper', email="app@chronicler.com", password="password123")
+    # delete.name = "Chronicler Helper"
+    # delete.email = "app@chronicler.com"
+    # delete.change_pw("password123")
+    # print(delete)
+    # print(Users.get_admin())
+    # first_game = Games.get_from_id(1)
 
-    # if the cancel button is pressed
-    if form.cancel.data:
-        return redirect(url_for('main.test_tables'))
-    # if data is submitted correctly and matches
-    elif form.todelete.data == row_to_delete.name:
-        # delete user
-        flash("%s has been successfully deleted" % session['name_to_delete'])
-        db.session.delete(row_to_delete)
-        db.session.commit()
-        return redirect(url_for('main.test_tables'))
-    # if data is entered incorrectly
-    else:
-        form = ConForm()
-        flash("names do not match, check to make sure you are deleting the correct thing")
-        return render_template('confirm.html',
-            form = form,
-            name = session['name_to_delete'])
+
+    # first_game.move_self(name=first_game.name
+    #                     , secret = first_game.secret
+    #                     , published = first_game.published
+    #                     , date_added = first_game.date_added
+    #                     , dm_id = first_game.dm_id
+    #                     , img_id = first_game.img_id\
+    #                     , image_object = first_game.image_object
+    #                     , image = first_game.image
+    #                     )
+
+
+
+    # print(first_game)
+
+    # delete = Games.get_from_id(88)
+    # print(delete)
+    # delete.delete_self(confirm = True)
+    # print(delete)
+    # all_games = Games.query.all()
+    # all_characters = Characters.query.all()
+    # for game in all_games:
+    #     print(game)
+    # first = Games.get_from_id(1)
+    # def move_game_id(current_id):
+    #     pass
+    #     # dependencies
+    #     bc = BridgeCharacters.query.filter_by(game_id = current_id).all()
+    #     notes = Notes
+    # new_place = Characters.get_from_id(i)
+    # print(f"first char id = {first_char.id} and now it's {new_place.id}")
+
+
+
+
+    # helpers = Characters.query.filter_by(name="Chronicler Helper").all()
+    # for helper in helpers:
+    #     print(helper.id)
+        # helper.delete_self(confirm = True)
+    
+                            # , final_claimed = all_games
+                            # )

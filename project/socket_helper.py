@@ -1,10 +1,10 @@
 import os
-from project.helpers import priv_convert
+from project.helpers import private_convert
 from project.models import Users
 
 if_statements = 0
 def get_tutorial_id():
-    return Users.query.filter_by(email = "app@chronicler.gg").first().id
+    return Users.get_admin().id
 user_id = None
 dm_id = None
 current_user = None
@@ -29,7 +29,7 @@ def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **k
     current_user = c_user
 
     # compile html pages into one list
-    html_list = build_notes_template("main.html")
+    html_list = build_notes_template("blueprint.html")
 
     final_sockets = find_sections_to_translate(html_list, flag)
     finished = {}
@@ -64,7 +64,7 @@ def get_socket_arg(line, start, end):
 # acquire and build template function
 # 
 # compiles templates recursively into one list
-# file name is the filename in the notes directory of templates ex: "main.html"
+# file name is the filename in the notes directory of templates ex: "blueprint.html"
 # this will only work in notes.html but can be easily changed for another page if needed
 def build_notes_template(filename):
 
@@ -430,7 +430,7 @@ def convert_flag_to_generic(model, flag, **lists):
         
         for item in _list:
             if item.lower() == "true" or item.lower() == "false":
-                generic_list.append(priv_convert(item))
+                generic_list.append(private_convert(item))
             elif item == "current_user.id":
                 generic_list.append(current_user)
             elif item == "tutorial.id":

@@ -4,11 +4,13 @@ import json
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
-from project import forms
-from project.models import Games, Players, Users, Images, Characters, Sessions, Notes
-from project.helpers import nuke, attach_game_image_or_default_from_Images_model
+from project import form_validators, forms
+from project.defaults import Character
+from project.models import BridgeGameCharacters, Games, BridgeUserGames, Users, Images, Characters, Sessions, Notes, NPCs
+from project.helpers import attach_game_image_or_default_from_Images_model
 
 
+# admin_pass = os.environ.
 # Variables
 imageLink__buttonEdit = "/static/images/edit_button_image.png"
 main = Blueprint('main', __name__)
@@ -44,21 +46,21 @@ def join(id_):
         games=Games.query.filter(Games.dm_id != current_user.id).all()
         if len(games) > 1:
             for game in games:
-                img = Images.query_from_id(game.img_id)
+                img = Images.get_from_id(game.img_id)
                 if img:
                     game.image = attach_game_image_or_default_from_Images_model(img)
         return render_template("join.html"
             , games=games
         )
     else:
-        return redirect(url_for('main.joining_get', id_=id_))
+        return redirect(url_for('main.joining', id_=id_))
 
 @main.route('/joining/<int:id_>', methods = ['GET'])
 @login_required
-def joining_get(id_):
+def joining(id_):
     """serve new character form to User"""
 
-    charform=forms.CharForm()
+    charform=forms.CharCreate()
     game=Games.query.filter_by(id=id_).first()
 
     return render_template('joining.html',
@@ -70,9 +72,9 @@ def joining_get(id_):
 def joining_post(id_):
     """add new character to game"""
 
-    charform=forms.CharForm()
-    game=Games.query_from_id(id_)
-    game.image = game.image_object.img
+    charform=forms.CharCreate()
+    game=Games.get_from_id(id_)
+    
 
     if not charform.charsubmit.data:
         return joining_failure("No character data sent to server", "alert-danger")
@@ -83,7 +85,7 @@ def joining_post(id_):
         Characters.create(name=charform.name.data, bio=charform.bio.data, user_id=current_user.id, game_id=id_)
     else:
         Characters.create(name=charform.name.data, img_id=image_id_or_failure_message, bio=charform.bio.data, user_id=current_user.id, game_id=id_)
-    Players.create(users_id=current_user.id, games_id=id_)
+    BridgeUserGames.create(users_id=current_user.id, games_id=id_)
     return joining_success(id_, f"{charform.name.data} has joined the {game.name}!")
 
 def joining_failure(id_, message):
@@ -94,58 +96,30 @@ def joining_success(id_, message):
     flash(message)
     return redirect(url_for('main.notes', game_id=id_))
 
-
-
-#######################################
-###            Create Game         ####
-#######################################
-
-@main.route('/create', methods=["GET", "POST"])
-@login_required
-def create():
-    form = forms.CreateGameForm()
-    if request.method == "GET":
-        return render_template('create.html',
-            gameform=form
-            )
-    else:
-        if not form.gamesubmit.data:
-            return CreateGame.redirect_on_failure("No game data sent to server")
-        image_id_or_exception = Images.upload("img") 
-        if type(image_id_or_exception) != int:
-            return CreateGame.redirect_on_failure(image_id_or_exception)
-        if image_id_or_exception == -1:
-            game = Games.create(name=form.name.data, dm_id=current_user.id, published=form.published.data)
-        else:
-            game = Games.create(name=form.name.data, dm_id=current_user.id, img_id=image_id_or_exception, published=form.published.data)
-
-        Characters.create(name="DM", user_id=current_user.id, game_id=game.id)
-        Players.create(users_id=current_user.id, games_id=game.id)
-        return CreateGame.redirect_on_success(game.id)
-
-class CreateGame():
-
-    @staticmethod
-    def redirect_on_failure(message):
-        flash(message)
-        return redirect(url_for('main.create'))
-    
-    @staticmethod
-    def redirect_on_success(id_):
-        return redirect(url_for('main.notes', game_id=id_))
-
-
-
 #######################################
 ###            Notes               ####
 #######################################
 
+def get_game_character_list(game):
+    if current_user.id == game.dm_id:
+        character_list = [Games.get_dm_from_gameID(game.id)]
+        npcs = NPCs.get_list(current_user.id)
+        for npc in npcs:
+            character_list.append(npc)
+    else:
+        character_list = [Characters.get_game_character_list(current_user.id, game.id)]
+    choices = [(character) for character in character_list]
+    return choices
+
+
 @main.route('/notes/<int:game_id>', methods = ['GET'])
 @login_required
 def notes(game_id):
-
+    print("dm", Games.get_dm_from_gameID(game_id).name)
     tutorial = Users.get_admin()
-    game=Games.query_from_id(game_id)
+    game=Games.get_from_id(game_id)
+    character_list = get_game_character_list(game)
+
     session_list=Sessions.get_list_from_gameID(game_id)
     
     game_notes_by_session = {}
@@ -161,8 +135,7 @@ def notes(game_id):
     heroku = False
     if os.environ.get("HEROKU_HOSTING"):
         heroku = True
-        
-    return render_template('notes/main.html'
+    return render_template('notes/blueprint.html'
         , tutorial=tutorial
         , js_note_dict=js_note_dict
         , edit_img=imageLink__buttonEdit
@@ -171,6 +144,7 @@ def notes(game_id):
         , session_titles=session_list
         , game=game
         , heroku=heroku
+        , character_list = character_list
     )
 
 def convert_to_JSON(game_notes_by_session) -> dict:
@@ -181,21 +155,26 @@ def convert_to_JSON(game_notes_by_session) -> dict:
     for session in game_notes_by_session:
         js_logs[session] = []
         for note in game_notes_by_session[session]:
-            js_logs[session].append([note.id, note.note])
+            js_logs[session].append([note.id, note.text])
     return json.dumps(js_logs)
 
+@main.route('/test')
+def test():
+    # Users.create(id=-1, name = "Chronicler", email="app@chronicler.gg", password=os.environ.get('ADMIN_PASS'))
+    # print(Users.query.filter_by(name="test").first())
+    # print(Characters.query.filter_by(id=-1).first())
+    chars = Characters.query.with_entities(Characters.id, Characters.game_id).all()
+    for char in chars:
+        print(char.id)
+        BridgeGameCharacters.create(game_id=char.game_id, character_id=char.id)
+    bridge = BridgeGameCharacters.query.all()
+    print(bridge)
+    print(Characters.query.with_entities(Characters.game_id).all())
 
-@main.route('/profile')
-@login_required
-def profile():
-    user = Users.query_from_id(current_user.id)
-    return render_template('profile.html'
-        , user=user
-    )
-
-@main.route('/nuked', methods=["GET"])
-@login_required
-def nuked():
-    nuke()
-    return "nuked"
+    return ""
+# @main.route('/nuked', methods=["GET"])
+# @login_required
+# def nuked():
+#     nuke()
+#     return "nuked"
 

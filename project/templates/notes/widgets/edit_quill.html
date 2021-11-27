@@ -20,7 +20,7 @@
         {# isn't dm #}
         {% if current_user.id != game.dm_id %}
         <div class="row checkbox">
-            <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='{{ note.to_gm }}'>
+            <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" data-id_noteCheckboxToDm="{{ note.id }}" name='note_to_dm' value='{{ note.to_dm }}'>
             <label for='note_to_dm'><strong>Privileged</strong> - Visible only to you and the DM</label>
         </div>
         {% endif %}

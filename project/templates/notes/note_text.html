@@ -10,7 +10,7 @@
         {% if note.private == True %}
             <span class="note-content note-private">
                 <h4><span class="far fa-eye-slash"></span> Only you can see this</h4>
-        {% elif note.to_gm == True %}
+        {% elif note.to_dm == True %}
             <span class="note-content note-dm">
             {% if current_user.id != game.dm_id %}
                 <h4><span class="far fa-eye-slash"></span> Only you and the DM can see this</h4>

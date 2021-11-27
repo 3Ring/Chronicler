@@ -20,3 +20,5 @@ credits.txt
 project/litechronicler.db
 *.vscode
 */.pytest_cache
+notes.txt
+latest.dump

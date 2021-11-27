@@ -1,38 +1,85 @@
-from datetime import datetime
-import base64
 
+import base64
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy import orm, text
 from flask import request
 
-from .__init__ import db
+# from project.form_validators import Character
 
-imageLink__defaultGame = "/static/images/default_game.jpg"
-decoder = "data:;base64,"
+from .__init__ import db
+from project import defaults as d
 
 
 #######################################
 ###           Base classes         ####
 #######################################
 
-class SABaseMixin(object):
+class SAWithImageMixin():
 
-    id = db.Column(db.Integer, primary_key=True)
-    removed = db.Column(db.Boolean, default=False, server_default=text("FALSE"))
+    def attach_image(self):
+
+        self.image_object = Images.get_from_id(self.img_id)
+        if self.image_object:
+            self.image = self.image_object.img_string
+        return
+
+    @orm.reconstructor
+    def init_on_load(self):
+
+        self.attach_image()
+
+
+class SAAdmin():
 
     @classmethod
-    def query_from_id(cls, id_: int):
+    def get_admin(cls):
+        return cls.query.filter_by(id=d.Admin.id).first()
+
+class SABaseMixin():
+
+    id = db.Column(db.Integer, primary_key=True)
+    removed = db.Column(db.Boolean
+                        , default=d.Base.removed
+                        , server_default=text(d.Base.server_removed)
+                        )
+
+    @classmethod
+    def get_from_id(cls, id_: int):
         return cls.query.filter_by(id = id_).first()
 
     @classmethod
-    def create(cls, **kw):
-        """adds new User to database"""
+    def create_simple(cls, **kw):
+        """adds new item to database
+
+        this version is never used to create other classes
+        """
         obj = cls(**kw)
         db.session.add(obj)
         db.session.commit()
         return obj
+
+    @classmethod
+    def create(cls, with_follow_up=False, **kw):
+        """adds new item to database
+
+        this is inherited by all Chronicler SQLAlchemy classes 
+        and can be used to also populate join tables
+
+        :param with_follow_up:
+        if set to `True` this will also execute all secondary 
+        scripts associated with the various tables
+        """
+        obj = cls(**kw)
+        db.session.add(obj)
+        db.session.commit()
+        return obj
+
+    @classmethod
+    def get_orphanage(cls):
+        """Returns orphan class object"""
+        return cls.get_from_id(d.Orphanage.id)
 
     def remove_self(self):
         self.removed=True
@@ -72,9 +119,30 @@ class SABaseMixin(object):
             db.session.query(self.__class__).filter_by(id=self.id).delete()
             db.session.commit()
 
+    def _get_new_id(self):
+        """returns new unused primary key"""
+        new = self.__class__.query.order_by(self.__class__.id.desc()).first().id
+        return new + 1
+
+    def _move_dependencies(self, new_id):
+        """this is here as a base case. and will be handled at the class level"""
+        return
+
+    def _copy_to_new_id(self, new_id, **kw):
+        """make placeholder in db for moving primary keys"""
+        self.__class__.create(id = new_id, **kw)
+
+    def move_self(self, **kw):
+        """changes primary_key and triggers foreign key changes to dependencies"""
+        new_id = self._get_new_id()
+        self._copy_to_new_id(new_id, **kw)
+        self._move_dependencies(new_id, self.id)
+        db.session.query(self.__class__).filter_by(id=self.id).delete()
+        db.session.commit()
+        return
+
     def __repr__(self) -> str:
         repr_ = f"{self.__tablename__}("
-        print("sup")
         for column in self.__table__.columns:
             repr_ += f"{column.key}={getattr(self, str(column.key))}, "
         repr_ = repr_[:-2] + ")"
@@ -86,20 +154,26 @@ class SABaseMixin(object):
 ###           Main tables          ####
 #######################################
 
-class Users(SABaseMixin, db.Model, UserMixin):
+class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     
     name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     hashed_password = db.Column(db.String(120), nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
+    date_added = db.Column(db.DateTime, default=d.User.date_added)
+    password = None
     self_title = "user"
+    image = d.User.image
 
-    @staticmethod
-    def get_admin():
-        """Returns admin User object"""
-        
-        return Users.query.filter_by(email="app@chronicler.gg").first()
+    def _get_pw(self):
+        return self.password
+
+    def _set_pw(self, password):
+        new = generate_password_hash(password, method='sha256')
+        self.hashed_password = new
+        self.password = password
+        db.session.commit()
+
+    password = property(_get_pw, _set_pw)
         
     @staticmethod
     def add_to_bug_report_page(email):
@@ -108,22 +182,37 @@ class Users(SABaseMixin, db.Model, UserMixin):
         """
 
         user = Users.query_by_email(email)
-        Characters.create(name=user.name, user_id=user.id, game_id=-1)
-        return
+        print(user)
+        avatar = Characters.create(name=user.name, user_id=user.id)
+        success = avatar.add_to_game(Games.get_bugs().id)
+        return success
 
     @classmethod
     def query_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
-    
+
     @classmethod
-    def create(cls, **kw):
+    def create_simple(cls, **kw):
+        """adds new User to database and hashes their password.
+        does not create dependencies
+        """
+        kw["hashed_password"] = generate_password_hash(kw["password"], method='sha256')
+        kw.pop("password")
+        user = super().create(**kw)
+        return user
+
+    @classmethod
+    def create(cls, with_follow_up=False, **kw):
         """adds new User to database and hashes their password.
         it also adds the user to bug reports
         """
         kw["hashed_password"] = generate_password_hash(kw["password"], method='sha256')
         kw.pop("password")
         user = super().create(**kw)
-        cls.add_to_bug_report_page(kw["email"])
+        if with_follow_up:
+            if not cls.add_to_bug_report_page(kw["email"]):
+                user.delete_self(confirm = True, orphan = False)
+
         return user
 
     def orphan_attached(self):
@@ -144,11 +233,11 @@ class Users(SABaseMixin, db.Model, UserMixin):
             dependencies = []
             dependencies.append(Games.query.filter_by(dm_id=self.id).all())
             dependencies.append(Characters.query.filter_by(user_id=self.id).all())
-            dependencies.append(Notes.query.filter_by(origin_user_id=self.id).all())
-            dependencies.append(Players.query.filter_by(user_id=self.id).all())
-            dependencies.append(Images.query.filter_by(user_id=self.id).all())
-            for list in dependencies:
-                self._delete_list(list, confirm=confirm)
+            dependencies.append(Notes.query.filter_by(user_id=self.id).all())
+            dependencies.append(BridgeUserGames.query.filter_by(user_id=self.id).all())
+            dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
+            super()._delete_attached(dependencies=dependencies, confirm=confirm)
+        return
 
     def delete_self(self, confirm: bool = False, orphan: bool = True):
         """deletes user from database.
@@ -160,34 +249,101 @@ class Users(SABaseMixin, db.Model, UserMixin):
         """
         if confirm:
             if orphan:
-                self.orphan_attached(confirm=confirm)
+                self.orphan_attached()
             else:
                 self.delete_attached(confirm=confirm)
             return super().delete_self(confirm=confirm)
         return
 
-class Games(SABaseMixin , db.Model):
+class Images(SABaseMixin, db.Model):
+
+    img_string = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)
+    self_title = "image"
+
+
+    @staticmethod
+    def _allowed_file(filename):
+        ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+        for i, letter in enumerate(filename):
+            if letter == '/':
+                altered = (filename[i+1:]).lower()
+                break
+        
+        if altered in ALLOWED_EXTENSIONS:
+            return True
+        return False
+
+    @staticmethod
+    def _render_picture(data):
+
+        render_pic = base64.b64encode(data).decode('ascii') 
+        return render_pic
+
+    @staticmethod
+    def _add_decoder(img_string: str, mimetype: str):
+        """adds decoder prefix for base 64 image strings"""
+        decoder = f"data:{mimetype};base64,"
+        return decoder + img_string
+
+    @staticmethod
+    def upload(pic, secure_name, mimetype):
+        pic.stream.seek(0)
+        data = pic.stream.read()
+        render_file = Images._render_picture(data)
+        img_string = Images._add_decoder(render_file, mimetype)
+        img = Images.create(img_string=img_string, name=secure_name, mimetype=mimetype)
+        id_ = img.id
+
+        return id_ 
+
+    @classmethod
+    def get_image_user_admin(cls) -> object:
+        pass
+
+    @classmethod
+    def get_image_user_orphan(cls) -> object:
+        pass
+
+    @classmethod
+    def get_image_games_bugs(cls) -> object:
+        pass
+
+    @classmethod
+    def get_image_games_orphan(cls) -> object:
+        pass
+
+    def _delete_attached(self, dependencies: list = [], confirm: bool = False):
+        """deletes all attached items
+        
+        :param dependencies: list containing lists of dependencies
+        :param confirm: confirmation to make sure this wasn't 
+                        used on accident when "remove_self" method was intended
+        """
+        if confirm:
+            games = Games.query.filter_by(img_id=self.id).all()
+            for game in games:
+                game.img_id = None
+                db.session.commit()
+            super()._delete_attached(dependencies=dependencies, confirm=confirm)
+
+class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     name = db.Column(db.String(50), nullable=False)
-    secret = db.Column(db.Integer, default=0, server_default=text("0"))
-    published = db.Column(db.Boolean, default=False, server_default=text("FALSE"), nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    published = db.Column(db.Boolean
+                                , default=d.Game.published
+                                , server_default=text(d.Game.server_published)
+                                , nullable=False
+                                )
+    date_added = db.Column(db.DateTime, default=d.Game.date_added)
 
     dm_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
-    image = imageLink__defaultGame
+    image_object = object
+    image = d.Game.image
     self_title = "game"
-    # places = db.relationship('Places', backref='game', lazy=True)
-    # NPCs = db.relationship('NPCs', backref='game', lazy=True)
 
-    # players = db.relationship('Users', secondary='players', lazy='subquery',
-    #     backref=db.backref('games', lazy=True))
-
-    @orm.reconstructor
-    def init_on_load(self):
-        self.image_object = Images.query_from_id(self.img_id)
-        if self.image_object is not None:
-            self.image = Images._add_decoder(self.image_object)
 
 
     @staticmethod
@@ -202,34 +358,85 @@ class Games(SABaseMixin , db.Model):
         game_lists["player_list"]=Games.query.filter(
             Games.dm_id != User.id,
             Games.id.in_(
-            Players.query.with_entities(Players.game_id).
-            filter(Players.user_id.in_(
+            BridgeUserGames.query.with_entities(BridgeUserGames.game_id).
+            filter(BridgeUserGames.user_id.in_(
             Users.query.with_entities(
             Users.id).filter_by(
             id=User.id))))
         ).all()
         game_lists["dm_list"]=Games.query.filter_by(dm_id=User.id).all()
-
-        for game in game_lists["player_list"]:
-            img = Images.query.filter_by(id=game.img_id).first()
-            if not img:
-                game.image = imageLink__defaultGame
-            else:
-                game.image = decoder + img.img
-        for game in game_lists["dm_list"]:
-            img = Images.query.filter_by(id=game.img_id).first()
-            if not img:
-                game.image = imageLink__defaultGame
-            else:
-                game.image = decoder + img.img
         return game_lists
 
+    def _move_dependencies(self, new_id, old_id):
+            dependencies = []
+            dependencies.append(Notes.query.filter_by(game_id = old_id).all())
+            dependencies.append(BridgeGameCharacters.query.filter_by(game_id = old_id).all())
+            dependencies.append(BridgeGameItems.query.filter_by(game_id = old_id).all())
+            dependencies.append(Sessions.query.filter_by(game_id = old_id).all())
+            dependencies.append(BridgeUserGames.query.filter_by(game_id = old_id).all())
+            dependencies.append(BridgeGameNPCs.query.filter_by(game_id = old_id).all())
+            dependencies.append(BridgeGamePlaces.query.filter_by(game_id = old_id).all())
+            dependencies.append(Characters.query.filter_by(game_id = old_id).all())
+            for list_ in dependencies:
+                for item in list_:
+                    item.game_id = new_id
+                    db.session.commit()
+            return
+
     @classmethod
-    def create(cls, **kw):
-        """adds new Game to db"""
+    def get_game_list_dm(cls, user_id: int) -> list:
+        """returns a list of all games where user_id == Games.dm_id"""
+        return cls.query.filter_by(dm_id=user_id).all()
+
+    @classmethod
+    def get_dm_from_gameID(cls, game_id: int):
+        """returns user of game"""
+        
+        game = cls.get_from_id(game_id)
+        return Users.get_from_id(game.dm_id)
+
+    @classmethod
+    def get_dm_avatar(cls, game_id: int):
+        """returns dm avatar for game"""
+        game = cls.get_from_id(game_id)
+        char_list =  Characters.get_game_character_list(game.dm_id, game_id)
+        for char in char_list:
+            if char.dm == True:
+                return char
+        return False
+
+    @classmethod
+    def get_game_list_player(cls, user_id: int) -> list:
+        """returns a list of all games the user has a character in"""
+
+        # get list of users characters where the user is not a dm
+        # for each character get a list of games that character is attached to
+
+
+        return
+
+    @classmethod
+    def get_bugs(cls):
+        return cls.query.filter_by(id = d.Orphanage.id).first()
+
+    @classmethod
+    def create(cls, with_follow_up=True, **kw):
+        """adds new Game to database
+        
+        :param with_follow_up: if set to `True` the tutorial notes will be added.
+
+        :param name: `String(50), nullable=False)`
+        :param published: `Boolean, default=False, nullable=False`
+        :param date_added: `DateTime, default=datetime.utcnow`
+
+        :param dm_id: = `Integer, ForeignKey('users.id'), nullable=False`
+        :param img_id: = `Integer, ForeignKey('images.id')`
+        """
         obj = super().create(**kw)
-        # add tutorial notes and session zero to game
-        cls.new_game_training_wheels(obj)
+        if with_follow_up:
+            # add tutorial notes and session zero to game
+            cls.new_game_training_wheels(obj)
+            BridgeUserGames.create(owner=True, user_id=obj.dm_id, game_id=obj.id)
         return obj
 
     def _delete_attached(self, confirm: bool = False):
@@ -242,11 +449,11 @@ class Games(SABaseMixin , db.Model):
             dependencies = []
             dependencies.append(Notes.query.filter_by(game_id=self.id).all())
             dependencies.append(Sessions.query.filter_by(game_id=self.id).all())
-            dependencies.append(Players.query.filter_by(game_id=self.id).all())
-            dependencies.append(BridgeCharacters.query.filter_by(game_id=self.id).all())
-            dependencies.append(BridgeNPCs.query.filter_by(game_id=self.id).all())
-            dependencies.append(BridgePlaces.query.filter_by(game_id=self.id).all())
-            dependencies.append(BridgeItems.query.filter_by(game_id=self.id).all())
+            dependencies.append(BridgeUserGames.query.filter_by(game_id=self.id).all())
+            dependencies.append(BridgeGameCharacters.query.filter_by(game_id=self.id).all())
+            dependencies.append(BridgeGameNPCs.query.filter_by(game_id=self.id).all())
+            dependencies.append(BridgeGamePlaces.query.filter_by(game_id=self.id).all())
+            dependencies.append(BridgeGameItems.query.filter_by(game_id=self.id).all())
 
             return super()._delete_attached(dependencies, confirm=confirm)
 
@@ -255,12 +462,9 @@ class Games(SABaseMixin , db.Model):
         """add tutorial notes and session zero to game"""
         
         tutorial_user=Users.get_admin()
-        # add tutorial character
-        tutorial_character = Characters.create(name="Chronicler Helper", user_id=tutorial_user.id, game_id=self.id)
-        Sessions.create(number=0, title="The Adventure Begins!", game_id=self.id)
-
-
-        tutorial_notes = []
+        
+        tutorial_character = Characters.get_admin()
+        session = Sessions.create(number=0, title="The Adventure Begins!", game_id=self.id)
         note_texts = [
             # note 1
             '''
@@ -283,16 +487,96 @@ class Games(SABaseMixin , db.Model):
             <p><strong class="ql-size-huge"><u>Intro Note 5:</u></strong></p><p>This is the last note in the session!</p><p><br></p><p><em>Then why is it at the top?</em></p><p><br></p><p>Chronicler is designed to be a collaborative note taking application. That means that it's meant to be used while you are playing together! We think it's better if the newest notes appear at the top of the page.</p><p><br></p><p>Don't worry, you can change this if you like....<strong>(eventually)</strong></p>
             '''
         ]
+        for text in note_texts:
+            Notes.create(charname=tutorial_character.name
+                            , text=text, session_number=session.number
+                            , user_id=tutorial_user.id
+                            , origin_character_id=tutorial_character.id
+                            , game_id=self.id
+                            )
 
-        for note in note_texts:
-            tutorial_notes.append(Notes.create(charname="Chronicler Helper", note=note, session_number=0, user_id=tutorial_user.id, character=tutorial_character.id, game_id=self.id))
+class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
+
+    name = db.Column(db.String(50), nullable=False)
+    bio = db.Column(db.Text)
+    dm = db.Column(db.Boolean, default=d.Character.dm, server_default=text(d.Character.server_dm))
+    date_added = db.Column(db.DateTime, default=d.Character.date_added)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
+    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+    img_object = d.Character.img_object
+    image = d.Character.image
+    
+    
+    self_title = "character"
+
+    def get_my_games(self) -> list:
+        return BridgeGameCharacters.join(self.id, "character_id", "game_id")
+
+    def add_to_game(self, game_id: int):
+        bridge = BridgeGameCharacters.create(character_id = self.id, game_id=game_id)
+        return bridge
+
+    def _delete_attached(self, confirm: bool = False):
+        """deletes all attached items
+        
+        :param confirm: confirmation to make sure this wasn't 
+                        used on accident when "remove_self" method was intended
+        """ 
+        if confirm:
+            dependencies = []
+            dependencies.append(Notes.query.filter_by(origin_character_id=self.id).all())
+            dependencies.append(BridgeGameCharacters.query.filter_by(character_id=self.id).all())
+            # dependencies.append(
+            return super()._delete_attached(dependencies, confirm=confirm)
+    
+    @staticmethod
+    def get_game_character_list(user_id: int, game_id: int) -> list:
+        """returns a list of all the character objects the user owns in specified game"""
+
+        game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
+        user_characters = []
+        for character in game_characters:
+            if character.user_id == user_id:
+                user_characters.append(character)
+        return user_characters
+
+
+    @classmethod
+    def get_dm_characters(cls, user_id: int) -> list:
+        
+        return
+    @classmethod
+    def create(cls, **kw):
+        """adds new Character to database
+
+        :param id: `Integer, primary_key=True`
+        :param removed: `Boolean default=False`
+                    Set to true when character is removed by user.
+        :param name: `String(50), nullable=False`
+        :param bio: `Text` not implimented for now
+        :param dm: `Boolean, default=False`
+                 Set to true if character is dm avatar
+        :param date_added: `DateTime, default=datetime.utcnow`
+
+        :param user_id: `Integer, db.ForeignKey('users.id'), nullable=False`
+        :param img_id: = `Integer, ForeignKey('images.id')`
+        """
+        obj = super().create(**kw)
+        return obj
+
+    @orm.reconstructor
+    def init_on_load(self):
+        """this is for the character select logic"""
+        self.is_npc = False
 
 class Sessions(SABaseMixin, db.Model):
 
     number = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(100), nullable=False)
     synopsis = db.Column(db.Text)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=d.Session.date_added)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
@@ -305,16 +589,15 @@ class Sessions(SABaseMixin, db.Model):
 
 class Notes(SABaseMixin, db.Model):
 
-    # make not nullable
-    charname=db.Column(db.String(50))
-    note = db.Column(db.Text)
+    charname=db.Column(db.String(50), nullable=False)
+    text = db.Column(db.Text)
     session_number = db.Column(db.Integer)
     private = db.Column(db.Boolean)
-    to_gm = db.Column(db.Boolean)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    char_img = "/static/images/default_character.jpg"
+    to_dm = db.Column(db.Boolean)
+    date_added = db.Column(db.DateTime, default=d.Note.date_added)
+    char_img = d.Note.char_img
 
-    origin_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     origin_character_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
@@ -327,161 +610,18 @@ class Notes(SABaseMixin, db.Model):
 
     @orm.reconstructor
     def init_on_load(self):
-        character_object = Characters.query.filter_by(name=self.charname, game_id=self.game_id).first()
-        self.image_object = Images.query_from_id(character_object.img_id)
-        if self.image_object is not None:
-            self.char_img = Images._add_decoder(self.image_object.img)
-        elif self.charname == "DM":
+        if self.charname == "DM":
             self.char_img = "/static/images/default_dm.jpg"
-
-class Images(SABaseMixin, db.Model):
-
-    # should be changed to "img_string"
-    img = db.Column(db.Text, nullable=False)
-    name = db.Column(db.Text, nullable=False)
-    mimetype = db.Column(db.Text, nullable=False)
-    self_title = "image"
-    # need to fix this with config file and add all past images to users
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), default=1, server_default=text("1"), nullable=False)
-
-    @staticmethod
-    def _allowed_file(filename):
-        ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
-        for i, letter in enumerate(filename):
-            if letter == '/':
-                altered = (filename[i+1:]).lower()
-                break
-        
-        if altered in ALLOWED_EXTENSIONS:
-            return True
-        return False
-
-    @staticmethod
-    def _render_picture(data):
-
-        render_pic = base64.b64encode(data).decode('ascii') 
-        return render_pic
-
-    @staticmethod
-    def _add_decoder(image_object):
-        """adds decoder prefix for base 64 image strings"""
-        decoder2 = f"data:{image_object.mimetype};base64,"
-        return decoder2 + image_object.img
-
-    @staticmethod
-    def upload(filename):
-        try:
-            pic = request.files[filename]
-        except:
-            return 'Invalid file or filename'
-
-        if not pic:
-            return -1
-
-        if len(pic.stream.read()) > 3000000:
-            return 'image is too large. limit to images 1MB or less.'
-
-        mimetype = pic.mimetype
-        if not Images._allowed_file(mimetype):
-            return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
-
-        secure = secure_filename(pic.filename)
-        
-        if not secure or not mimetype:
-            return 'Bad upload!'
-
-        pic.stream.seek(0)
-        data = pic.stream.read()
-        render_file = Images._render_picture(data)
-
-        img = Images.create(img=render_file, name=secure, mimetype=mimetype)
-        id_ = img.id
-
-        return id_ 
-
-    @staticmethod
-    def make_character_images(character_id):
-        character = Characters.query_from_id(character_id)
-        image = Images.query_from_id(character.id)
-        # set defaults if no image exists
-        
-        if image == None:
-            if character.name == "DM":
-                return "/static/images/default_dm.jpg"
-            else:
-                return "/static/images/default_character.jpg"
         else:
-            decoder2 = f"data:{image.mimetype};base64, "
-            return decoder2 + image.img
+            character_object = Characters.get_from_id(self.origin_character_id)
+            self.char_img = character_object.image
 
-class Characters(SABaseMixin, db.Model):
-
-    name = db.Column(db.String(50), nullable=False)
-    bio = db.Column(db.Text)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
-    image = "/static/images/default_character.jpg"
-    
-    self_title = "character"
-
-    @classmethod
-    def create(cls, **kw):
-        """Creates a new character and adds player to relational table"""
-        character = super().create(**kw)
-        Players.create(user_id=kw["user_id"], game_id=kw["game_id"])
-        return character
-
-    def _delete_attached(self, confirm: bool = False):
-        """deletes all attached items
-        
-        :param confirm: confirmation to make sure this wasn't 
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            dependencies = []
-            dependencies.append(Notes.query.filter_by(origin_character_id=self.id).all())
-            dependencies.append(BridgeCharacters.query.filter_by(character_id=self.id).all())
-            return super()._delete_attached(dependencies, confirm=confirm)
-
-    @orm.reconstructor
-    def init_on_load(self):
-        if self.img_id == None:
-            self.image_object = None
-        else:
-            self.image_object = Images.query_from_id(self.img_id)
-            self.image = Images._add_decoder(self.image_object.img)
-
-class NPCs(SABaseMixin, db.Model):
-    __tablename__ = "npcs"
-
-    name = db.Column(db.String(40), nullable=False)
-    secret_name = db.Column(db.String(40))
-    bio = db.Column(db.Text, default='A Mysterious Individual')
-    secret_bio = db.Column(db.Text)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    
-
-    place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
-    self_title = "NPC"
-
-    def _delete_attached(self, confirm: bool = False):
-        """deletes all attached items
-        
-        :param confirm: confirmation to make sure this wasn't 
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            dependencies = []
-            dependencies.append(BridgeNPCs.query.filter_by(npc_id=self.id).all())
-            return super()._delete_attached(dependencies, confirm=confirm)
 class Places(SABaseMixin, db.Model):
 
     name = db.Column(db.String(40), nullable=False)
-    bio = db.Column(db.Text, default='A Place of Mystery')
+    bio = db.Column(db.Text, default=d.Place.bio)
     secret_bio = db.Column(db.Text)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=d.Place.date_added)
     
     self_title = "place"
 
@@ -493,17 +633,50 @@ class Places(SABaseMixin, db.Model):
         """
         if confirm:
             dependencies = []
-            dependencies.append(BridgePlaces.query.filter_by(place_id=self.id).all())
+            dependencies.append(BridgeGamePlaces.query.filter_by(place_id=self.id).all())
             return super()._delete_attached(dependencies, confirm=confirm)
+
+class NPCs(SABaseMixin, db.Model):
+    __tablename__ = "npcs"
+
+    name = db.Column(db.String(40), nullable=False)
+    secret_name = db.Column(db.String(40))
+    bio = db.Column(db.Text, default=d.NPC.bio)
+    secret_bio = db.Column(db.Text)
+    date_added = db.Column(db.DateTime, default=d.NPC.date_added)
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
+    self_title = "NPC"
+
+    def _delete_attached(self, confirm: bool = False):
+        """deletes all attached items
+        
+        :param confirm: confirmation to make sure this wasn't 
+                        used on accident when "remove_self" method was intended
+        """
+        if confirm:
+            dependencies = []
+            dependencies.append(BridgeGameNPCs.query.filter_by(npc_id=self.id).all())
+            return super()._delete_attached(dependencies, confirm=confirm)
+
+    @classmethod
+    def get_list(cls, user_id):
+        return cls.query.filter_by(user_id = user_id).order_by(cls.name)
+
+    @orm.reconstructor
+    def init_on_load(self):
+        """this is for the character select logic"""
+        self.is_npc = True
 
 class Items(SABaseMixin, db.Model):
 
     name = db.Column(db.String(40), nullable=False)
-    bio = db.Column(db.Text, default='An item shrouded in mystery')
+    bio = db.Column(db.Text, default=d.Item.bio)
     copper_value = db.Column(db.Integer, default=0)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=d.Item.date_added)
 
-    owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    # owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
     self_title = "loot"
 
     def _delete_attached(self, confirm: bool = False):
@@ -514,47 +687,94 @@ class Items(SABaseMixin, db.Model):
         """
         if confirm:
             dependencies = []
-            dependencies.append(BridgeItems.query.filter_by(item_id=self.id).all())
+            dependencies.append(BridgeGameItems.query.filter_by(item_id=self.id).all())
             return super()._delete_attached(dependencies, confirm=confirm)
+
+
+#######################################
+###       Bridge Base classes      ####
+#######################################
+class BridgeBase():
+
+    @classmethod
+    def _switch(cls, model, input_column_name: str):
+        return cls.query.filter_by(**{input_column_name: model.id}).all()
+        
+    @classmethod
+    def join(cls, model_id, input_column_name: str, output_column_name: str) -> list:
+        """Uses bridge table and returns all objects from connected table that the model's id is associated with
+        will return an incorrect list if not used with correct Bridge Class
+
+        :param model_id: id that you want to use for the search
+        :param input_column_name: name of Bridge column associated with the input model
+        :param output_column_name: name of Brige column associated with the associated models
+        """
+        bridge_list = cls._switch(model_id, input_column_name)
+        my_items = []
+        for bridge in bridge_list:
+            my_items.append(getattr(bridge, output_column_name))
+#         return my_items
 
 
 #######################################
 ###       Many-to-many tables      ####
 #######################################
 
-class Players(SABaseMixin, db.Model):
-    """multi-relational database joining Users and Games"""
+class BridgeUserImages(SABaseMixin, BridgeBase, db.Model):
+    """multi-relational database joining character item assets"""
+    __tablename__ = "bridgeimages"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
+    
+class BridgeUserGames(SABaseMixin, BridgeBase, db.Model):
+    """multi-relational database joining Users and Games.
+    
+    :param owner: `Boolean, default=False` set to true if the user_id is the owner of the game.
+
+    :param user_id: `Integer, ForeignKey('users.id'), nullable=False`
+    :param user_id: `Integer, ForeignKey('games.id'), nullable=False`
+    """
     __tablename__ = 'players'
 
+    owner = db.Column(db.Boolean
+                        , default=d.BridgeUserGame.owner
+                        , server_default=text(d.BridgeUserGame.server_owner)
+                        )
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
     self_title = "player"
 
-class BridgeCharacters(SABaseMixin, db.Model):
+class BridgeGameCharacters(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character game assets"""
     __tablename__ = "bridgecharacters"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     character_id = db.Column(db.Integer, db.ForeignKey("characters.id"))
+    dm = db.Column(db.Boolean
+                    , default=d.BridgeCharacter.dm
+                    , server_default=text(d.BridgeCharacter.server_dm)
+                    )
 
-class BridgeNPCs(SABaseMixin, db.Model):
-    """multi-relational database joining NPC game assets"""
-    __tablename__ = "bridgenpcs"
-
-    game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
-    npc_id = db.Column(db.Integer, db.ForeignKey("npcs.id"))
-
-class BridgePlaces(SABaseMixin, db.Model):
+class BridgeGamePlaces(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining Place game assets"""
     __tablename__ = "bridgeplaces"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     place_id = db.Column(db.Integer, db.ForeignKey("places.id"))
 
-class BridgeItems(SABaseMixin, db.Model):
+class BridgeGameNPCs(SABaseMixin, BridgeBase, db.Model):
+    """multi-relational database joining NPC game assets"""
+    __tablename__ = "bridgenpcs"
+
+    game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
+    npc_id = db.Column(db.Integer, db.ForeignKey("npcs.id"))
+
+class BridgeGameItems(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character item assets"""
     __tablename__ = "bridgeitems"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
+

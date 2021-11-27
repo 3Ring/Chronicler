@@ -7,12 +7,14 @@ function NewQuill(event, quill) {
 
     // Local Variables
     let element__newQuill_private = document.querySelector(flag__newQuillPrivate)
-    , element__newQuill_to_dm = document.querySelector(`input[data-flag="newQuillDm"`) 
-
+    , element__newQuill_to_dm = document.querySelector(`input[data-flag="newQuillDm"]`) 
+    , element__newQuill_speaking_as = document.querySelector(`select[name="speaking_as"]`)
     // capture data
     let new_note_html = quill.root.innerHTML
     , new_note_private = element__newQuill_private.value
-    , new_note_to_dm = false;
+    , new_note_to_dm = false
+    , speaking_as = element__newQuill_speaking_as.value;
+
     if (element__newQuill_to_dm) {
         new_note_to_dm = element__newQuill_to_dm.value
     }
@@ -28,6 +30,7 @@ function NewQuill(event, quill) {
             , user_id
             , game_id
             , dm_id
+            , speaking_as
             , current__session_number
             , new_note_html
             , new_note_private

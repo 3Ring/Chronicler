@@ -1,8 +1,8 @@
 from flask_socketio import emit
 
 from project.__init__ import db, socketio
-from project.models import Sessions, Characters, Notes
-from project.helpers import make_character_images, priv_convert
+from project.models import BridgeGameCharacters, Sessions, Characters, Notes
+from project.helpers import make_character_images, private_convert
 from project.socket_helper import translate_jinja
 
 # variables
@@ -17,40 +17,62 @@ idPrefix__newSessionCard = "session_card_"
 
 # Create, store and return new session on new session event
 @socketio.on('send_new_session')
-def send_new_session(games_id, number, title, synopsis=None):
-
+def send_new_session(game_id, number, title, synopsis=None):
+    print("here in session")
     # convert message to model and add to db
-    new=Sessions.create(number=number, title=title, synopsis=synopsis, games_id=games_id)
+    new=Sessions.create(number=number, title=title, synopsis=synopsis, game_id=game_id)
 
     # convert data to html element
-    elements = translate_jinja(new, "session", games_id)
+    elements = translate_jinja(new, "session", game_id)
 
     # return data to client
     emit('fill_new_session', (elements["card"], elements["nav"], str(number)), broadcast=True)
 
 
 @socketio.on('send_new_note')
-def send_new_note(user_id, game_id, dm_id, session_number, note, priv=False, to_gm=False):
+def send_new_note(user_id, game_id, dm_id, character_id, session_number, note, private_=False, to_dm=False):
 
-    private2 = priv_convert(priv)
-    to_gm = priv_convert(to_gm)
-    
-    current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
-    char_img = make_character_images(current_char.id)
+    private2 = private_convert(private_)
+    to_dm = private_convert(to_dm)
+
+    user_char_list = Characters.query.filter_by(user_id=user_id).all()
+    print("user list", user_char_list)
+    bridge_char_list = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
+    print("bridge list", bridge_char_list)
+    current_char_id = character_id
+
+    # for char in user_char_list:
+    #     for bridge_char in bridge_char_list:
+    #         if char.id == bridge_char.character_id:
+    #             current_char_id = char.id
+    #             print("current", current_char_id)
+    #             break
+    #     if current_char_id != -1:
+    #         break
+    current_char=Characters.get_from_id(current_char_id)
+    print("current final", current_char)
+    # char_img = make_character_images(current_char.id)
     session_number=session_number
 
     # this will cause issues if a player has more than one character for now
-    new=Notes.create(charname=current_char.name, session_number=session_number, note=note, private=private2, to_gm=to_gm, character=current_char.id , user_id=user_id, game_id=game_id)
-    new.char_img = char_img
-    db.session.add(new)
-    db.session.flush()
-    db.session.commit()
+    new=Notes.create(charname=current_char.name
+                    , session_number=session_number
+                    , text=note
+                    , private=private2
+                    , to_dm=to_dm
+                    , origin_character_id=current_char.id
+                    , user_id=user_id
+                    , game_id=game_id
+                    )
+    # db.session.add(new)
+    # db.session.flush()
+    # db.session.commit()
 
-    note_for_current_user = translate_jinja(new, "note", game_id, u_id=user_id, d_id=dm_id, c_user=user_id, char_img=char_img)["no_sections"]
+    note_for_current_user = translate_jinja(new, "note", game_id, u_id=user_id, d_id=dm_id, c_user=user_id, char_img=current_char.image)["no_sections"]
 
-    note_for_dm = translate_jinja(new, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=dm_id, char_img=char_img)["no_sections"]
+    note_for_dm = translate_jinja(new, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=dm_id, char_img=current_char.image)["no_sections"]
 
-    note_for_other = translate_jinja(new, "note", game_id, u_id=False, d_id=False, c_user=-1, char_img=char_img)["no_sections"]
+    note_for_other = translate_jinja(new, "note", game_id, u_id=False, d_id=False, c_user=-1, char_img=current_char.image)["no_sections"]
  
     element_list = [ 
         note_for_current_user
@@ -58,16 +80,16 @@ def send_new_note(user_id, game_id, dm_id, session_number, note, priv=False, to_
         , note_for_other
     ]
 
-    emit('fill_new_note', (element_list, new.note, new.private, new.to_gm, new.id, new.session_number, user_id), broadcast=True)
+    emit('fill_new_note', (element_list, new.text, new.private, new.to_dm, new.id, new.session_number, user_id), broadcast=True)
     
 def send_editted_note(note, text, user_id, game_id, dm_id, _private, changed, was_not_private, was_draft, _to_dm):
 
     current_char=Characters.query.filter_by(user_id=user_id, game_id=game_id).first()
     char_img = make_character_images(current_char.id)
-    note.note = text
+    note.text = text
     note.private = _private
     note.char_img = char_img
-    note.to_gm = _to_dm
+    note.to_dm = _to_dm
 
     db.session.flush()
     db.session.commit()
@@ -76,27 +98,27 @@ def send_editted_note(note, text, user_id, game_id, dm_id, _private, changed, wa
 
     note_for_dm = translate_jinja(note, "note", game_id, u_id=user_id, d_id=dm_id, c_user=dm_id, char_img=char_img)["no_sections"]
 
-    note_for_other = translate_jinja(note, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=-1, char_img=char_img)["no_sections"]
+    note_for_other = translate_jinja(note, "note", game_id, u_id=dm_id, d_id=dm_id, c_user=-99, char_img=char_img)["no_sections"]
  
     editted_note_list = [ 
         note_for_current_user
         , note_for_dm
         , note_for_other
     ]
-    emit('fill_note_edit', (editted_note_list, note.note, note.private, note.to_gm, note.id, user_id, changed, was_not_private, was_draft), broadcast=True)
+    emit('fill_note_edit', (editted_note_list, note.text, note.private, note.to_dm, note.id, user_id, changed, was_not_private, was_draft), broadcast=True)
 
 @socketio.on('edit_note')
 def edit_note(text, is_private, to_dm, dm_id, game_id, user_id, note_id):
 
-    _to_dm = priv_convert(to_dm)
-    _private = priv_convert(is_private)
+    _to_dm = private_convert(to_dm)
+    _private = private_convert(is_private)
 
     note = Notes.query.filter_by(id=note_id).first()
-    if note.private != _private or note.to_gm != _to_dm:
+    if note.private != _private or note.to_dm != _to_dm:
         changed = True
     else:
         changed = False
-    if note.private == False and note.to_gm == False:
+    if note.private == False and note.to_dm == False:
         was_not_private = True
     else:
         was_not_private = False
@@ -106,7 +128,7 @@ def edit_note(text, is_private, to_dm, dm_id, game_id, user_id, note_id):
         was_draft = False
 
     # these are separated to make sure that if the filler needs to be made then that is done by the client before emitting the new note.
-    if note.to_gm == True and _to_dm == False or note.private == True and _private == False:
+    if note.to_dm == True and _to_dm == False or note.private == True and _private == False:
         ordered_session_note_list = Notes.query.filter_by(session_number = note.session_number).order_by(Notes.date_added.desc()).all()
         _id_list = []
         list_location = 0

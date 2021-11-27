@@ -10,24 +10,24 @@ from project.settings import app
 
 class TestHelpers(unittest.TestCase):
     # priv_convert
-    from project.helpers import priv_convert
+    from project.helpers import private_convert
     def test_priv_convert_one(self):
-        one = self.priv_convert("False")
+        one = self.private_convert("False")
         assert one == False
     def test_priv_convert_two(self):
-        two = self.priv_convert("True")
+        two = self.private_convert("True")
         assert two == True
     def test_priv_convert_three(self):
-        three = self.priv_convert(True)
+        three = self.private_convert(True)
         assert three == True
     def test_priv_convert_four(self):
-        four = self.priv_convert(False)
+        four = self.private_convert(False)
         assert four == False
     def test_priv_convert_five(self):
-        five = self.priv_convert("p")
+        five = self.private_convert("p")
         assert five == False
     def test_priv_convert_six(self):
-        six = self.priv_convert("")
+        six = self.private_convert("")
         assert six == False
 
     # images

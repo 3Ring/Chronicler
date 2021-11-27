@@ -1,18 +1,15 @@
-from flask import Blueprint, redirect
+from flask import Blueprint, redirect, url_for
 from flask_login import login_required
 
 from project.models import Users, Games
 
 bugs = Blueprint('bugs', __name__)
 
-@bugs.route("/bug_page")
+@bugs.route("/bugs_page")
 @login_required
-def bug_page():
+def bugs_page():
 
-    game = Games.query_from_id(-1)
-    if game:
-        return redirect("main.notes", game_id=-1)
-    admin = Users.get_admin()
-    Games.create(id=-1, name="Bugs and suggestions", dm_id=admin.id)
-    
+    _bugs = Games.get_bugs()
+    if _bugs:
+        return redirect(url_for("main.notes", game_id=_bugs.id))
     

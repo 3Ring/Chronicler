@@ -1,32 +1,73 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FileField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length, Optional, ValidationError
+from project import form_validators
 
+def password(form, field, message=None):
+    if message is None:
+        message = f"Password must be at least 8 characters long"
+    if len(field.data) < 8:
+        raise ValidationError(message)
+
+def image(form, field, filename):
+    message = form_validators.Image.upload_and_parse(filename)
+    if len(field.data) < 8:
+        raise ValidationError(message)
 # Form models
-class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
+class UserCreate(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()
+                            , Length(min=2, max=20, message=f"Game name must be between %(min)d and %(max)d characters")])
     email = StringField("Email", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired ()])
-    confirm = PasswordField("Confirm Password", validators=[DataRequired ()])
-    realname = StringField("Real Name (Optional)")
+    password = PasswordField("Password", validators=[DataRequired(), password])
+    confirm = PasswordField("Confirm Password", validators=[DataRequired()])
     reveal = BooleanField("Show Passwords")
     usersubmit = SubmitField("Submit")
 
-class LoginForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired ()])
+class Login(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()
+                                , Length(min=2, max=20, message=f"Game name must be between %(min)d and %(max)d characters")])
+    password = PasswordField("Password", validators=[DataRequired(), password])
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
 
-class CreateGameForm(FlaskForm):
-    name = StringField("Name of your game")
+class GameCreate(FlaskForm):
+    name = StringField("Name of your game", validators=[DataRequired()
+                                        , Length(min=1, max=50, message=f"Game name must be between %(min)d and %(max)d characters")])
     img = FileField("(Optional) Game Image")
     published = BooleanField("Publish? (Allow game to be searchable)")
     gamesubmit = SubmitField("Submit")
 
-class CharForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
+class GameEdit(FlaskForm):
+    name = StringField("Change your game's name", validators=[Optional()
+                                                    , Length(min=1, max=50, message=f"New name must be between %(min)d and %(max)d characters")])
+    img = FileField("Game Image")
+    private = BooleanField("Unpublish? (Do not allow game to be searchable)")
+    published = BooleanField("Publish? (Allow game to be searchable)")
+    game_edit_submit = SubmitField("Submit")
+
+class GameRemove(FlaskForm):
+    will = BooleanField("Transfer Game ownership to another specific user?")
+    heir = SelectField(u'Users', coerce=int)
+    name = StringField("Confirm here")
+    game_remove_submit = SubmitField("Remove")
+
+class GameDelete(FlaskForm):
+    name = StringField("Confirm here")
+    game_delete_submit = SubmitField("Delete")
+
+class CharCreate(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()
+                                , Length(min=1, max=50, message=f"New name must be between %(min)d and %(max)d characters")])
     img = FileField("(Optional) Character Image")
     bio = TextAreaField("Bio")
     charsubmit = SubmitField("Submit")
+
+class DMCreate(FlaskForm):
+    name = StringField('(Optional) Name different than default of "DM"', validators=[Optional()
+                                , Length(min=1, max=50, message=f"New name must be between %(min)d and %(max)d characters")])
+    img = FileField("(Optional) personalized dm Image")
+    dm_char_submit = SubmitField("Submit")
+
+class DMNote(FlaskForm):
+    characters = SelectField('Characters')
