@@ -1,8 +1,7 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 
-from project.models import Users
-# , Games
+from project.models import Characters, Users, Games
 
 
 profile = Blueprint('profile', __name__)
@@ -23,7 +22,13 @@ def account():
 @profile.route('/profile/characters')
 @login_required
 def characters():
-    return render_template('profile/characters.html')
+    my_characters = Characters.get_list_from_userID(current_user.id)
+    print(my_characters)
+    if not my_characters:
+        return redirect(url_for("create.character"))
+    return render_template('profile/characters.html'
+                            , my_characters = my_characters
+                            )
 
 @profile.route('/profile/games')
 @login_required
@@ -41,7 +46,7 @@ def player():
 @login_required
 def dm():
     # see list of games
-    dm_games = Games.get_game_list_dm(current_user.id)
+    dm_games = Games.get_personal_game_list_dm(current_user.id)
     return render_template('profile/games/dm.html'
                             , dm_games = dm_games
                             )

@@ -3,12 +3,12 @@ import base64
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
-from sqlalchemy import orm, text
+from sqlalchemy import orm, text, event
 from flask import request
-
+from flask_login import current_user
 # from project.form_validators import Character
 
-from .__init__ import db
+from project.__init__ import db
 from project import defaults as d
 
 
@@ -24,12 +24,6 @@ class SAWithImageMixin():
         if self.image_object:
             self.image = self.image_object.img_string
         return
-
-    @orm.reconstructor
-    def init_on_load(self):
-
-        self.attach_image()
-
 
 class SAAdmin():
 
@@ -83,6 +77,18 @@ class SABaseMixin():
 
     def remove_self(self):
         self.removed=True
+        self.name = (self.name + "<deleted>")
+        db.session.commit()
+
+    def edit(self, **kw):
+        for key, value in kw.items():
+            # print(key, value)
+            # print(self.__table__.columns)
+            # print(f"{self.__table__}.{key}")
+            # if str(f"{self.__table__}.{key}") in str(self.__table__.columns):
+            #     print("yes")
+            self.key = value
+            db.session.commit()
 
     def _delete_attached(self, dependencies: list = [], confirm: bool = False):
         """deletes all attached items
@@ -384,7 +390,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             return
 
     @classmethod
-    def get_game_list_dm(cls, user_id: int) -> list:
+    def get_personal_game_list_dm(cls, user_id: int) -> list:
         """returns a list of all games where user_id == Games.dm_id"""
         return cls.query.filter_by(dm_id=user_id).all()
 
@@ -406,7 +412,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         return False
 
     @classmethod
-    def get_game_list_player(cls, user_id: int) -> list:
+    def get_personal_game_list_player(cls, user_id: int) -> list:
         """returns a list of all games the user has a character in"""
 
         # get list of users characters where the user is not a dm
@@ -418,6 +424,15 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     @classmethod
     def get_bugs(cls):
         return cls.query.filter_by(id = d.Orphanage.id).first()
+
+    @classmethod
+    def get_published(cls):
+        published_list = cls.query.filter(Games.published == True).all()
+        final_list = []
+        for game in published_list:
+            if game.dm_id != current_user.id:
+                final_list.append(game)
+        return final_list
 
     @classmethod
     def create(cls, with_follow_up=True, **kw):
@@ -495,6 +510,10 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
                             , game_id=self.id
                             )
 
+    @orm.reconstructor
+    def init_on_load(self):
+        self.attach_image()
+
 class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     name = db.Column(db.String(50), nullable=False)
@@ -512,6 +531,7 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     self_title = "character"
 
     def get_my_games(self) -> list:
+        """returns a list of all games self is attached to"""
         return BridgeGameCharacters.join(self.id, "character_id", "game_id")
 
     def add_to_game(self, game_id: int):
@@ -534,21 +554,43 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     @staticmethod
     def get_game_character_list(user_id: int, game_id: int) -> list:
         """returns a list of all the character objects the user owns in specified game"""
-
+        print(f"game_id = {game_id}")
         game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
-        user_characters = []
-        for character in game_characters:
-            if character.user_id == user_id:
-                user_characters.append(character)
-        return user_characters
+        # user_characters = []
+        # for character in game_characters:
+        #     if character.user_id == user_id:
+        #         user_characters.append(character)
+        return game_characters
 
+    @classmethod
+    def get_list_from_userID(cls, user_id: int, include_dm: bool = False, include_removed: bool = False) -> list:
+        """Returns a list of all characters attached to the provided user_id.
+        
+        :param user_id: id of user.
+        :param include_dm: if set to `True` dm avatars will be inluded in the list.
+        :param include_removed: if set to `True` removed characters will be included.
+        """
+        my_characters = cls.query.filter_by(user_id = user_id).order_by(cls.name)
+        if include_removed:
+            return my_characters
+        without_removed = []
+        for r in my_characters:
+            if not r.removed:
+                without_removed.append(r)
+        if include_dm:
+            return without_removed
+        without_dm = []
+        for c in without_removed:
+            if not c.dm:
+                without_dm.append(c)
+        return without_dm
 
     @classmethod
     def get_dm_characters(cls, user_id: int) -> list:
         
         return
     @classmethod
-    def create(cls, **kw):
+    def create(cls, follow_up=False, **kw):
         """adds new Character to database
 
         :param id: `Integer, primary_key=True`
@@ -564,12 +606,14 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         :param img_id: = `Integer, ForeignKey('images.id')`
         """
         obj = super().create(**kw)
+
         return obj
 
     @orm.reconstructor
     def init_on_load(self):
         """this is for the character select logic"""
         self.is_npc = False
+        self.attach_image()
 
 class Sessions(SABaseMixin, db.Model):
 
@@ -606,15 +650,26 @@ class Notes(SABaseMixin, db.Model):
 
     @classmethod
     def get_list_from_session_number(cls, session_number, game_id):
-        return cls.query.filter_by(game_id=game_id).filter_by(session_number=session_number).order_by(Notes.date_added).all()
+        return cls.query.filter_by(game_id=game_id).filter_by(session_number=session_number).order_by(Notes.date_added)
 
-    @orm.reconstructor
-    def init_on_load(self):
-        if self.charname == "DM":
-            self.char_img = "/static/images/default_dm.jpg"
-        else:
-            character_object = Characters.get_from_id(self.origin_character_id)
-            self.char_img = character_object.image
+    @staticmethod
+    def attach_char_img(target):
+        character_object = Characters.get_from_id(target.origin_character_id)
+        if character_object:
+            img = Images.get_from_id(character_object.img_id)
+            if img:
+                target.char_img = img.img_string
+        return
+
+@event.listens_for(Notes, 'refresh')
+def init_on_refresh(target, args, kwargs):
+    """attach image string to instanced class"""
+    Notes.attach_char_img(target)
+
+@event.listens_for(Notes, 'load')
+def init_on_refresh(target, context):
+    """attach image string to instanced class"""
+    Notes.attach_char_img(target)
 
 class Places(SABaseMixin, db.Model):
 
@@ -636,7 +691,7 @@ class Places(SABaseMixin, db.Model):
             dependencies.append(BridgeGamePlaces.query.filter_by(place_id=self.id).all())
             return super()._delete_attached(dependencies, confirm=confirm)
 
-class NPCs(SABaseMixin, db.Model):
+class NPCs(SAWithImageMixin, SABaseMixin, db.Model):
     __tablename__ = "npcs"
 
     name = db.Column(db.String(40), nullable=False)
@@ -645,6 +700,7 @@ class NPCs(SABaseMixin, db.Model):
     secret_bio = db.Column(db.Text)
     date_added = db.Column(db.DateTime, default=d.NPC.date_added)
     
+    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
     self_title = "NPC"
@@ -668,6 +724,7 @@ class NPCs(SABaseMixin, db.Model):
     def init_on_load(self):
         """this is for the character select logic"""
         self.is_npc = True
+        self.attach_image()
 
 class Items(SABaseMixin, db.Model):
 
@@ -697,8 +754,8 @@ class Items(SABaseMixin, db.Model):
 class BridgeBase():
 
     @classmethod
-    def _switch(cls, model, input_column_name: str):
-        return cls.query.filter_by(**{input_column_name: model.id}).all()
+    def _get_column_attr(cls, model_id, input_column_name: str):
+        return cls.query.filter_by(**{input_column_name: model_id}).all()
         
     @classmethod
     def join(cls, model_id, input_column_name: str, output_column_name: str) -> list:
@@ -709,12 +766,43 @@ class BridgeBase():
         :param input_column_name: name of Bridge column associated with the input model
         :param output_column_name: name of Brige column associated with the associated models
         """
-        bridge_list = cls._switch(model_id, input_column_name)
-        my_items = []
+        bridge_list = cls._get_column_attr(model_id, input_column_name)
+        my_keys = []
+        print(bridge_list)
+        print("list", BridgeGameCharacters.query.filter_by(game_id=model_id).all())
+        if not bridge_list:
+            return False
         for bridge in bridge_list:
-            my_items.append(getattr(bridge, output_column_name))
-#         return my_items
+            my_keys.append(getattr(bridge, output_column_name))
+        print(my_keys)
+        model = cls._switch(output_column_name)
+        if not model:
+            return False
+        my_items = []
+        if not my_keys:
+            return False
+        for key in my_keys:
+            my_items.append(model.get_from_id(key))
+        return my_items
 
+    @classmethod
+    def _switch(cls, fkey_name):
+
+        if fkey_name == "user_id":
+            return Users
+        elif fkey_name == "img_id":
+            return Images
+        elif fkey_name == "game_id":
+            return Games
+        elif fkey_name == "character_id":
+            return Characters
+        elif fkey_name == "place_id":
+            return Places
+        elif fkey_name == "npc_id":
+            return NPCs
+        elif fkey_name == "item_id":
+            return Items
+        return False
 
 #######################################
 ###       Many-to-many tables      ####
@@ -756,6 +844,17 @@ class BridgeGameCharacters(SABaseMixin, BridgeBase, db.Model):
                     , default=d.BridgeCharacter.dm
                     , server_default=text(d.BridgeCharacter.server_dm)
                     )
+    
+    @classmethod
+    def create(cls, **kw):
+        """adds new BridgeGameCharacter to database
+        
+        :param dm: `Boolean` set to `True` if character is dm avatar.
+        
+        :param game_id: `Integer, db.ForeignKey("characters.id")`
+        :param character: `Integer, db.ForeignKey("games.id")`
+        """
+        return super().create(**kw)
 
 class BridgeGamePlaces(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining Place game assets"""

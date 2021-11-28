@@ -38,7 +38,7 @@
                         <ul>
                             {% for game in dm_games %}
                             <li>
-                                <a href="{{ url_for('main.notes', game_id=game.id) }}">
+                                <a href="{{ url_for('notes.game', game_id=game.id) }}">
                                     <img class="index_game_image" src="{{game.image}}">
                                     {{game.name}}
                                 </a>
@@ -61,7 +61,7 @@
                         <ul>
                             {% for game in games %}
                             <li>
-                                <a href="{{ url_for('main.notes', game_id=game.id) }}">
+                                <a href="{{ url_for('notes.game', game_id=game.id) }}">
                                     <img class="index_game_image" src="{{game.image}}">
                                     {{game.name}}
                                 </a>
@@ -81,7 +81,7 @@
                 <span class="far fa-plus-square"></span> Create a Game
             </a>
 
-            <a class="new-game button primary" href="{{ url_for('main.join', id_=0) }}">
+            <a class="new-game button primary" href="{{ url_for('main.join') }}">
                 <span class="fas fa-search-location"></span> Find a Game
             </a>
         </div>            

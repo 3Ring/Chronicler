@@ -292,6 +292,7 @@ class Base_items():
                         , bio = cls.d.NPCOrphanage.bio
                         , secret_bio = cls.d.NPCOrphanage.secret_bio
                         , date_added = cls.d.NPCOrphanage.date_added
+                        , img_id = cls.d.NPCOrphanage.img_id
                         , place_id = cls.d.NPCOrphanage.place_id
                         , user_id = cls.d.NPCOrphanage.user_id
                         )

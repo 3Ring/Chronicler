@@ -24,6 +24,11 @@
             <h1>Create Character!</h1>
             <div class="row">
                 {{ charform.hidden_tag() }}
+                {{ charform.character.label }}
+                {{ charform.character }}
+            </div>
+            <div class="row">
+                {{ charform.hidden_tag() }}
                 {{ charform.name.label }}
                 {{ charform.name }}
             </div>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <form enctype="multipart/form-data" method='POST' action='/edit/character/{{character.id}}'>
+        <h1>{{character.name}}</h1>
+        <div class="row">
+            {{ charform.hidden_tag() }}
+            {{ charform.name.label }}
+            {{ charform.name (value = character.name) }}
+        </div>
+            
+        <div class="row">
+            <img style="height: 200px;" src="{{character.image}}")>
+            {{ charform.img.label }}
+            {{ charform.img }} 
+        </div>
+        
+        <div class="row">
+            {{ charform.bio.label }}
+            {{ charform.bio }}
+        </div>
+        
+        <div class="row">
+            {{ charform.char_submit (class="button primary") }}
+        </div>
+    </form>
+    <form method='POST' action='/edit/character/{{character.id}}'>
+        <h1>Delete {{character.name}}</h1>
+        <div class="row">
+            {{ delform.hidden_tag() }}
+            {{ delform.confirm.label }}
+            {{ delform.confirm }}
+        </div>
+        <div class="row">
+            {{ delform.char_del_submit (class="button primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

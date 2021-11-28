@@ -1,11 +1,64 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from project import forms
+from project import form_validators
 
-from project.models import Users, Games
-
+from project.models import Characters, Users, Games, Images
+from project import defaults as d
+from project.__init__ import db
 
 edit = Blueprint('edit', __name__)
+
+
+
+#######################################
+###            Character           ####
+#######################################
+
+@edit.route('/edit/character/<int:character_id>', methods = ['GET'])
+@login_required
+def character(character_id):
+    charform = forms.CharCreate()
+    delform = forms.CharDelete()
+    character = Characters.get_from_id(character_id)
+    charform.bio.data = character.bio
+    return render_template("edit/character.html"
+                            , charform=charform
+                            , character = character
+                            , delform = delform
+    )
+
+@edit.route('/edit/character/<int:character_id>', methods = ['POST'])
+@login_required
+def character_post(character_id):
+    charform = forms.CharCreate()
+    delform = forms.CharDelete()
+    character = Characters.get_from_id(character_id)
+    if delform.char_del_submit.data:
+        print("yes")
+        confirm = form_validators.Character.remove(delform, character)
+        if not confirm:
+            return redirect(url_for("edit.character", character_id=character_id))
+        character.remove_self()
+    elif charform.char_submit.data:
+        success = form_validators.Character.create(charform)
+        if not success:
+            return redirect(url_for("edit.character", character_id=character_id))
+        elif success == "no image":
+            img_id = character.img_id
+        else:
+            img_id = Images.upload(success["pic"], success["secure_name"], success["mimetype"]) 
+        character.name=charform.name.data
+        character.bio = charform.bio.data
+        character.img_id = img_id
+        db.session.commit()
+        # character.edit(name=charform.name.data, bio=charform.bio.data, img_id=img_id)
+    return redirect(url_for("profile.characters"))
+
+
+# #######################################
+# ###               DM               ####
+# #######################################
 
 @edit.route('/edit/games/dm/<int:game_id>', methods = ['GET'])
 @login_required

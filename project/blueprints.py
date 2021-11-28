@@ -20,4 +20,9 @@ def init_blueprints(app):
 
     from project.views.create import create as create_blueprint
     app.register_blueprint(create_blueprint)
+
+    from project.views.notes import notes as notes_blueprint
+    app.register_blueprint(notes_blueprint)
+
     return
+    

@@ -172,8 +172,10 @@ function edit_note_func(id_num, event) {
     // find element and capture data
     // text
     let element__editorParent = document.querySelector(`div[data-crumb="${id_num}"]`)
+    , element__newQuill_speaking_as = document.querySelector(`select[name="speaking_as"]`)
     , element__formEdit_Editor = element__editorParent.firstElementChild;
-    let note_text = element__formEdit_Editor.innerHTML;
+    let note_text = element__formEdit_Editor.innerHTML
+    , speaking_as = element__newQuill_speaking_as.value;
     // private
     let element__notes_checkboxPrivate = document.querySelector(`input[data-id_noteCheckboxPrivate="${id_num}"]`);
     if ( element__notes_checkboxPrivate ) {
@@ -196,6 +198,7 @@ function edit_note_func(id_num, event) {
         , note_private
         , note_to_dm
         , dm_id
+        , speaking_as
         , game_id
         , user_id
         , id_num);

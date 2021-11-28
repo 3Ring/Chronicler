@@ -1,4 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="container">
+
+        <div>
+        <a href="{{ url_for('create.character') }}"><h1>Create a new character:</h1></a>
+        </div>
+        {% if my_characters %}
+        <h1>Your Characters</h1>
+            <div>
+                {% for character in my_characters %}
+                    <div>
+                        <h1>{{ character.name }}</h1>
+                        <a href="{{ url_for('edit.character', character_id = character.id) }}">Edit {{ character.name }}</a>
+                    </div>
+                    <div>
+                        <h2>Image: </h2>
+                        <img style="height: 180px;" src="{{ character.image }}">
+                    </div>
+                    <div>
+                        <h2>Bio:</h2>
+                        <p>{{ character.bio }}</p>
+                    </div>
+                {% endfor %}
+        </div>
+        {% endif %}
+
+
+</div>
 {% endblock %}

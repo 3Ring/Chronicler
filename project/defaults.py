@@ -148,6 +148,7 @@ class NPCOrphanage(Orphanage, NPC):
     secret_name = None
     bio = "Orphanage"
     secret_bio = None
+    img_id = Orphanage.id
     place_id = Orphanage.id
     user_id = Orphanage.id
     

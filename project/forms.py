@@ -1,7 +1,9 @@
+from re import S
+# from flask.app import Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FileField
 from wtforms.validators import DataRequired, Length, Optional, ValidationError
-from project import form_validators
+# from project import form_validators
 
 def password(form, field, message=None):
     if message is None:
@@ -9,10 +11,10 @@ def password(form, field, message=None):
     if len(field.data) < 8:
         raise ValidationError(message)
 
-def image(form, field, filename):
-    message = form_validators.Image.upload_and_parse(filename)
-    if len(field.data) < 8:
-        raise ValidationError(message)
+# def image(form, field, filename):
+#     message = form_validators.Image.upload_and_parse(filename)
+#     if len(field.data) < 8:
+#         raise ValidationError(message)
 # Form models
 class UserCreate(FlaskForm):
     name = StringField("Name", validators=[DataRequired()
@@ -57,11 +59,16 @@ class GameDelete(FlaskForm):
     game_delete_submit = SubmitField("Delete")
 
 class CharCreate(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()
+    character = SelectField("Characters")
+    name = StringField("Name", validators=[Optional()
                                 , Length(min=1, max=50, message=f"New name must be between %(min)d and %(max)d characters")])
     img = FileField("(Optional) Character Image")
     bio = TextAreaField("Bio")
-    charsubmit = SubmitField("Submit")
+    char_submit = SubmitField("Submit")
+
+class CharDelete(FlaskForm):
+    confirm = StringField("Confirm by typing the name of the character you want to delete here")
+    char_del_submit = SubmitField("Delete")
 
 class DMCreate(FlaskForm):
     name = StringField('(Optional) Name different than default of "DM"', validators=[Optional()
@@ -71,3 +78,5 @@ class DMCreate(FlaskForm):
 
 class DMNote(FlaskForm):
     characters = SelectField('Characters')
+
+

@@ -17,7 +17,6 @@ def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **k
     u_id: current_user.id
     d_id: dm_id
     **arg any other variables to be subbed in ex: char_img = 123'''
-    
     global if_statements
     tutorial_id = get_tutorial_id()
     global user_id
@@ -416,11 +415,9 @@ def make_generic_variable(line, flag):
 
 def convert_flag_to_generic(model, flag, **lists):
 
-
     generic_list = []
     index = 0
     for key, _list in lists.items():
-
         index += 1
         if key == "conditional_list":
             list_type = "conditional"
@@ -767,7 +764,6 @@ def pass_model_variables(html, model, game_id, **additional_keys):
 
 
 def finalize(html, model, flag, game_id, **kwarg):
-
     commands = {}
     for i, line in enumerate(html):
             conditional_list = get_jinja_conditional_list(line)
@@ -786,7 +782,7 @@ def finalize(html, model, flag, game_id, **kwarg):
                 commands[i] = generic_conditional_list
 
     if if_statements != 0:
-        raise "nesting error. statements are not even"
+        raise BaseException("nesting error. statements are not even")
 
     if conditional_list:
         grouped_commands = group_commands(commands)

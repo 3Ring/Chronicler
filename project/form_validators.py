@@ -10,12 +10,6 @@ def _failure(message=None):
         flash(message)
     return
 
-def _success(message=None):
-    """redirect user to /login on successful registration"""
-    if message:
-        flash(message)
-    return
-
 
 class User():
     """server side validation for user data"""
@@ -214,6 +208,48 @@ class Game():
 
 
 class Character():
+
+    @staticmethod
+    def remove(form, character):
+        print(form.confirm.data.lower().strip(), character.name.lower().strip())
+        if type(form.confirm.data) != str:
+            _failure("server didn't understand data")
+            return False
+        
+        elif form.confirm.data.lower().strip() != character.name.lower().strip():
+            _failure("names do not match")
+            return False
+        return True
+
+
+    @staticmethod
+    def create(form):
+        """validates dm avatar creation data and uploads img if exists
+        
+        returns are different based on outcome
+
+        :param form: the WTForm used
+
+        :return False: return if form wasn't able to be validated
+        :return 'no image': return if no image was uploaded
+        :return dict['pic']: the streamable filestorage of the image.
+        :return dict['secure_name']: secure version of the filename
+        :return dict['mimetype']: content type
+        """
+        
+        if not form:
+            _failure("No data sent to server")
+            return False
+        if not form.char_submit.data:
+            _failure("No game data sent to server")
+            return False
+        img_data = Image.upload_and_parse(form.img.name)
+        if not img_data:
+            return "no image"
+        elif type(img_data) is str:
+            _failure(img_data)
+            return False
+        return img_data
 
     @staticmethod
     def dm_create(form):
