@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, session
 from werkzeug.security import check_password_hash
 from flask_login import login_user, logout_user, login_required
 from flask_login import current_user
@@ -27,7 +27,12 @@ def login():
     return render_template('login.html',
         form=form)
 
+def _login_failure():
+    return redirect(url_for("auth.login"))
 
+def _login_success(user, form):
+    login_user(user, remember=form.remember.data)
+    return redirect(url_for("auth.login"))
 
 @auth.route('/login', methods=['POST'])
 def login_post():
@@ -37,15 +42,44 @@ def login_post():
     
     # check data
     form = forms.Login()
-    user_found = form_validators.User.login(form)
-    
-    if not user_found:
-        return redirect(url_for("auth.login"))
-
+    if not form_validators.User.user(form):
+        return _login_failure()
+    user = Users.get_from_email(form.email.data)
+    if not user:
+        return _login_failure()
+    if not form_validators.User.check_password(form.password.data, user.hashed_password):
+        return _login_failure()
     # login user
-    login_user(user_found, remember=form.remember.data)
-    return redirect(url_for('main.index'))
+    return _login_success(user, form)
 
+def _reauth_failure():
+    return redirect(url_for("auth.reauth"))
+
+def _reauth_success(user, form):
+    login_user(user, remember=form.remember.data)
+    return redirect(url_for(session["reauth"]))
+
+@auth.route('/reauth', methods=['GET'])
+@login_required
+def reauth():
+
+    form = forms.Login()
+    return render_template('login.html',
+        form=form)
+
+@auth.route('/reauth', methods=['POST'])
+@login_required
+def reauth_post():
+
+    form = forms.Login()
+    if not form_validators.User.user(form):
+        return _login_failure()
+    user = Users.get_from_email(form.email.data)
+    if not user:
+        return _reauth_failure()
+    if not form_validators.User.check_password(form.password.data, user.hashed_password):
+        return _reauth_failure()
+    return _reauth_success(user, form)
 
 #######################################
 ###           Register             ####
@@ -60,6 +94,12 @@ def register():
         , form=form
         )
 
+def _register_failure():
+    return redirect(url_for('auth.register'))
+
+def _register_success():
+    return redirect(url_for('auth.login'))
+
 @auth.route("/register", methods=['POST'])
 def register_post():
     """register new users
@@ -71,9 +111,12 @@ def register_post():
     form = forms.UserCreate()
     
     if not form_validators.User.register(form):
-            return redirect(url_for('auth.register'))
+        return _register_failure()
+    if Users.get_from_email(form.email.data):
+        flash(f"{form.email.data} is already in use!")
+        return _register_failure()
     Users.create(name=form.name.data, email=form.email.data, password=form.password.data)
-    return redirect(url_for('auth.login'))
+    return _register_success()
 
             
 

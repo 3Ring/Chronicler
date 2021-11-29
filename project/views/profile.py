@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, redirect, url_for, flash, session
+from flask_login import LoginManager, login_required, current_user, fresh_login_required
 
+from project import forms
 from project.models import Characters, Users, Games
 
 
@@ -14,16 +15,29 @@ def dashboard():
         , user=user
     )
 
-@profile.route('/profile/account')
+@profile.route('/profile/account', methods=["GET"])
 @login_required
 def account():
-    return render_template('profile/account.html')
+    session["reauth"] = "edit.account"
+    user = Users.get_from_id(current_user.id)
+    return render_template("profile/account.html"
+                            , user=user
+                            )
+
+@profile.route('/profile/delete', methods=["GET"])
+@fresh_login_required
+def delete():
+    form = forms.UserDelete()
+    user = Users.get_from_id(current_user.id)
+    return render_template("profile/delete.html"
+                            , user=user
+                            , form=form
+                            )
 
 @profile.route('/profile/characters')
 @login_required
 def characters():
     my_characters = Characters.get_list_from_userID(current_user.id)
-    print(my_characters)
     if not my_characters:
         return redirect(url_for("create.character"))
     return render_template('profile/characters.html'

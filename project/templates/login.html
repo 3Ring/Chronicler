@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <p>
+        {{ messages[0] }}
+    </p>
+{% endif %}
+{% endwith %}
 <div class="container">
     <div class="form-container">
-        <form method="POST" action="/login">
+        <form method="POST">
             <h1>Log In</h1>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <p>
-                        {{ messages[0] }}
-                    </p>
-                {% endif %}
-            {% endwith %}
+
             {{ form.hidden_tag() }}
             <div class="row">
                 {{ form.email.label(class="form-label") }}

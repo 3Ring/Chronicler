@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <script type="text/javascript" charset="utf-8">
+    document.addEventListener("DOMContentLoaded", function(event) {
+        reveal = document.getElementById('reveal')
+        password = document.getElementById('password')
+        confirm = document.getElementById('confirm')
+        document.getElementById('reveal').onclick = function() {
+            if (reveal.checked) {
+                password.type = 'text'
+                confirm.type = 'text'
+            } else {
+                password.type = 'password'
+                confirm.type = 'password'
+            }
+        }
+    })
+    </script>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <p>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
+        </p>   
+        
+    </div>
+{% endfor %}
+<div class="container">
+    <div class="form-container">
+        <form method='POST'>
+            <h1>Change Account info:</h1>
+
+            {{ edit_form.hidden_tag() }}
+            <div class="row">
+                {{ edit_form.name.label(class="form-label") }}
+                {{ edit_form.name(class="form-control", value=user.name) }}
+            </div>
+            <div class="row">
+                {{ edit_form.email.label(class="form-label") }}
+                {{ edit_form.email(class="form-control", value=user.email) }}
+            </div>
+            <div class="row">
+                {{ edit_form.password.label(class="form-label") }}
+                {{ edit_form.password(class="form-control", autocomplete="new-password") }}
+            </div>
+            
+            <div class="row">
+                {{ edit_form.confirm.label(class="form-label") }}
+                {{ edit_form.confirm(class="form-control", autocomplete="new-password") }}
+                
+            </div>
+            <div class="row checkbox">
+                {{ edit_form.reveal }} {{ edit_form.reveal.label}}
+            </div>
+            <div class="row">
+                {{ edit_form.user_edit_submit(class="button primary") }}
+            </div>
+        </form>
+    </div>
+    <div class="form-container">
+        <form method='POST'>
+            <h1>Delete Account:</h1>
+
+            {{ del_form.hidden_tag() }}
+            <h2>This will take you to another page to confirm and delegate assets</h2>
+            <div class="row">
+                {{ del_form.user_delete_submit(class="button primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, redirect, url_for, session
+from flask_login import login_required, fresh_login_required, current_user
 from project import forms
 from project import form_validators
 
@@ -9,7 +9,36 @@ from project.__init__ import db
 
 edit = Blueprint('edit', __name__)
 
+#######################################
+###            Account             ####
+#######################################
 
+@edit.route('/edit/account', methods=["GET"])
+@fresh_login_required
+def account():
+
+    edit_form = forms.UserEdit()
+    del_form = forms.UserDelete()
+    # form.name.data = current_user.name
+    # form.email.data = current_user.email
+    # form.password.data = ""
+    return render_template('edit/account.html'
+                            , user=current_user
+                            , form = edit_form
+                            , del_form = del_form
+                            )
+
+@edit.route('/edit/account', methods=["POST"])
+@fresh_login_required
+def account_post():
+
+    edit_form = forms.UserCreate()
+    del_form = forms.UserDelete()
+    if del_form.user_delete_submit.data:
+        return redirect(url_for('profile.delete'))
+    if not form_validators.User.edit(edit_form):
+        return redirect(url_for('edit.account'))
+    return redirect(url_for('profile.account'))
 
 #######################################
 ###            Character           ####

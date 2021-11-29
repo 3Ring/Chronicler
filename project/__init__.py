@@ -15,6 +15,9 @@ migrate_ = Migrate()
 socketio = SocketIO(cors_allowed_origins = '*')
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+login_manager.refresh_view = 'auth.reauth'
+login_manager.login_message = "Please log in to access this page."
+login_manager.needs_refresh_message = "Please reverify your credentials"
 
 
 @login_manager.user_loader

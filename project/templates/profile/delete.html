@@ -10,14 +10,5 @@
         
     </div>
 {% endfor %}
-<div class="container">
-    <h1>Account Details:</h1>
-    <h2>Name:</h2>
-    <h3>{{user.name}}</h3>
-    <h2>Email:</h2>
-    <h3>{{user.email}}</h3>
-    <h2>Image: (currently only used in bug reports)</h2>
-    <img src="{{user.image}}">
-    <a href="{{url_for('edit.account') }}">Edit/delete account</a>
-</div>
+
 {% endblock %}

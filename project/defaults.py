@@ -15,9 +15,20 @@ class Base:
     orphin_email = os.environ.get("ORPHAN_EMAIL")
     admin_password = os.environ.get("ADMIN_PASS")
 
+class Images:
+    orphanage = "/static/images/orphanage.jpg"
+    user_admin = "/static/images/_user_admin.jpg"
+    user_list = ["/static/images/ChromnIcon2.png", "/static/images/ChromnIcon3.png", "/static/images/ChromnIcon4.png", "/static/images/ChromnIcon5.png", "/static/images/ChromnIcon6.png", "/static/images/ChromnIcon7.png"]
+    game = "/static/images/default_game.jpg"
+    game_bugs = "/static/images/_bugs.jpg"
+    games_dm = "/static/images/dm_games.jpeg"
+    games_player = "/static/images/player_games.jpg"
+    character_player = "/static/images/default_character.jpg"
+    character_dm = "/static/images/default_dm.jpg"
+    
 class Orphanage:
     id = int(os.environ.get("ORPHANAGE_ID"))
-    image = "project\static\images\orphanage.jpg"
+    image = Images.orphanage
 
 class Admin:
     id = int(os.environ.get("ADMIN_ID"))
@@ -28,19 +39,19 @@ class Admin:
 
 
 class User(Base):
-    image = "project\static\images\ChromnIcon2.png"
+    image = Images.user_list[0]
 
 class UserAdmin(Admin, User):
     password = Base.admin_password
     name = "Admin User"
     email = Base.admin_email
-    image = "project\static\images\_user_admin.jpg"
+    image = Images.user_admin
 
 class UserOrphanage(Orphanage, User):
     name = "Orphan User"
     password = Base.admin_password
     email = Base.orphin_email
-    image = "project\static\images\orphan.jpg"
+    image = Images.orphanage
 
 #######################################
 ###            Games              ####
@@ -50,7 +61,7 @@ class UserOrphanage(Orphanage, User):
 class Game(Base):
     published = False
     server_published = "FALSE"
-    image = "/static/images/default_game.jpg"
+    image = Images.game
     image_object = None
     dm_id = Orphanage.id
     img_id = None
@@ -58,7 +69,7 @@ class Game(Base):
 class GameBugs(Admin, Game):
     name = "Bug Reports and Comments"
     dm_id = Admin.id
-    image = "project\static\images\_bugs.jpg"
+    image = Images.game_bugs
 
 class GameOrphanage(Orphanage, Game):
     name = "Orphan Game"
@@ -74,7 +85,7 @@ class Character(Base):
     img_id = None
     img_object = object
     server_dm = "FALSE"
-    image = "/static/images/default_character.jpg"
+    image = Images.character_player
 
 class CharacterTutorial(Admin, Character):
     name = "Chronicler Helper"
@@ -104,7 +115,7 @@ class SessionOrphanage(Orphanage, Session):
 #######################################
 
 class Note(Base):
-    char_img = "/static/images/default_character.jpg"
+    char_img = Images.character_player
 
 class NoteOrphanage(Orphanage, Note):
     charname = "Orphanage"

@@ -25,6 +25,15 @@ class UserCreate(FlaskForm):
     reveal = BooleanField("Show Passwords")
     usersubmit = SubmitField("Submit")
 
+class UserEdit(FlaskForm):
+    name = StringField("Change Name", validators=[DataRequired()
+                            , Length(min=2, max=20, message=f"Game name must be between %(min)d and %(max)d characters")])
+    email = StringField("Change Email", validators=[DataRequired()])
+    password = PasswordField("Change Password", validators=[DataRequired(), password])
+    confirm = PasswordField("Confirm New Password", validators=[DataRequired()])
+    reveal = BooleanField("Show Passwords")
+    user_edit_submit = SubmitField("Submit")
+
 class Login(FlaskForm):
     name = StringField("Name", validators=[DataRequired()
                                 , Length(min=2, max=20, message=f"Game name must be between %(min)d and %(max)d characters")])
@@ -32,6 +41,10 @@ class Login(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
+
+class UserDelete(FlaskForm):
+    confirm = StringField("Confirm here")
+    user_delete_submit = SubmitField("Delete")
 
 class GameCreate(FlaskForm):
     name = StringField("Name of your game", validators=[DataRequired()

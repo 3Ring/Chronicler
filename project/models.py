@@ -2,9 +2,9 @@
 import base64
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 from sqlalchemy import orm, text, event
-from flask import request
+# from flask import request
 from flask_login import current_user
 # from project.form_validators import Character
 
@@ -77,7 +77,6 @@ class SABaseMixin():
 
     def remove_self(self):
         self.removed=True
-        self.name = (self.name + "<deleted>")
         db.session.commit()
 
     def edit(self, **kw):
@@ -179,7 +178,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         self.password = password
         db.session.commit()
 
-    password = property(_get_pw, _set_pw)
         
     @staticmethod
     def add_to_bug_report_page(email):
@@ -187,14 +185,14 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         it's done this way because the bug report page uses the "notes" page's code so it requires a "Character".
         """
 
-        user = Users.query_by_email(email)
+        user = Users.get_from_email(email)
         print(user)
         avatar = Characters.create(name=user.name, user_id=user.id)
         success = avatar.add_to_game(Games.get_bugs().id)
         return success
 
     @classmethod
-    def query_by_email(cls, email):
+    def get_from_email(cls, email):
         return cls.query.filter_by(email=email).first()
 
     @classmethod
@@ -659,6 +657,8 @@ class Notes(SABaseMixin, db.Model):
             img = Images.get_from_id(character_object.img_id)
             if img:
                 target.char_img = img.img_string
+            elif character_object.dm:
+                target.char_img = d.Images.character_dm
         return
 
 @event.listens_for(Notes, 'refresh')

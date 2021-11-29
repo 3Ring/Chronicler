@@ -104,7 +104,7 @@ depends_on = None
     
     
 
-    # email = Users.query_by_email("app@chronicler.gg")
+    # email = Users.get_from_email("app@chronicler.gg")
     # print(email)
     # email.delete_self(confirm=True, orphan=False)
     # admin.email = "app@chronicler.gg"

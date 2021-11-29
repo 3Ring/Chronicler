@@ -2,75 +2,108 @@ from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from flask import flash, request
 
-from project.models import Users as m_Users
 
-def _failure(message=None):
-    """redirect user back to /register on failure with flashed message"""
+def _failure(message, super_message=None):
+    if super_message:
+        message=super_message
     if message:
         flash(message)
-    return
+    return False
+
+def _success(message, super_message=None):
+    if super_message:
+        message=super_message
+    if message:
+        flash(message)
+    return True
+
+def _missing_form(form):
+    if not form:
+        return True
+
+def _is_email(email):
+    if not email:
+        return "server didn't receive an email address"
+    elif type(email) is not str:
+        return "email address was not in text format"
+    elif "@" not in email or "." not in email:
+        return f"{email} is an invalid address"
+    return True
+
+def _matching_password(password, confirm):
+    password_error = _password(password)
+    if type(password_error) is str:
+        return password_error
+    elif password != confirm:
+        return "passwords do not match"
+    return True
 
 
+def _password(password):
+    if not password:
+        return "server didn't receive a password"
+    elif type(password) is not str:
+        return "password was not in text format"
+    elif len(password) < 8:
+        return "password must be at least 8 characters"
+    return True
 class User():
     """server side validation for user data"""
 
+    @staticmethod
+    def remove(form, user, failure_message=None, success_message=None):
+        print(form.confirm.data.lower().strip(), user.email.lower().strip())
+        if not _is_email(form.confirm.data):
+            return _failure("server didn't understand data", failure_message)
+        elif form.confirm.data.lower().strip() != user.email.lower().strip():
+            return _failure("names do not match", failure_message)
+        return _success(success_message)
+
     @classmethod
-    def register(cls, form):
-        if not form:
-            cls._failure("No data sent to server")
-            return False
-        error_name = cls.name(form.name.data)
+    def register(cls, form, failure_message=None, success_message=None):
+        if _missing_form(form):
+            return _failure(failure_message)
+        error_name = cls._name(form.name.data)
         if type(error_name) is str:
-            cls._failure(error_name)
-            return False
-        error_email = cls._register_email(form.email.data)
+            return _failure(error_name, failure_message)
+        error_email = _is_email(form.email.data)
         if type(error_email) is str:
-            cls._failure(error_email)
-            return False
-        
-        error_password = cls.set_password(form.password.data, form.confirm.data)
+            return _failure(error_email, failure_message)
+        error_password = _matching_password(form.password.data, form.confirm.data)
         if type(error_password) is str:
-            cls._failure(error_password)
-            return False
-        cls._success(f"Welcome to the table {form.name.data}!")
-        return True
-
-    @staticmethod
-    def _failure(message=None):
-        """redirect user back to /register on failure with flashed message"""
-        if message:
-            flash(message)
-        return
-    
-    @staticmethod
-    def _success(message=None):
-        """redirect user to /login on successful registration"""
-        if message:
-            flash(message)
-        return
+            return _failure(error_password, failure_message)
+        return _success(f"Welcome to the table {form.name.data}!", success_message)
 
     @classmethod
-    def login(cls, form):
-        message = 'Please check your login details and try again.'
-        user = m_Users.query_by_email(form.email.data)
-        if not user:
-            cls._failure("not user")
+    def edit(cls, form, failure_message=None, success_message=None):
+        if _missing_form(form):
             return False
-        if not form:
-            cls._failure("No data sent to server")
-            return False
-        error_email = cls.email(form.email.data)
+        if form.name.data:
+            error_name = cls._name(form.name.data)
+            if type(error_name) is str:
+                return _failure(error_name, failure_message)
+        if form.email.data:
+            error_email = _is_email(form.email.data)
+            if type(error_email) is str:
+                return _failure(error_email, failure_message)
+        if form.password.data:
+            error_password = _matching_password(form.password.data, form.confirm.data)
+            if type(error_password) is str:
+                return _failure(error_password, failure_message)
+        return _success("Changes saved", success_message)
+
+    @classmethod
+    def user(cls, form, failure_message=None, success_message=None):
+        if _missing_form(form):
+            return _failure(failure_message)
+        error_email = _is_email(form.email.data)
         if type(error_email) is str:
-            cls._failure(error_email)
-            return False
-        error_password = cls.check_password(form.password.data, user.hashed_password)
-        if type(error_password) is str:
-            cls._failure("password")
-            return False
-        return user
+            return _failure(failure_message)
+        return _success(success_message)
+
 
     @staticmethod
-    def name(name):
+    def _name(name):
         if not name:
             return "server didn't receive a name"
         elif type(name) is not str:
@@ -81,57 +114,21 @@ class User():
             return "name must be at least 2 characters"
         return True
 
-    @staticmethod
-    def email(email):
-        if not email:
-            return "server didn't receive an email address"
-        elif type(email) is not str:
-            return "email address was not in text format"
-        elif "@" not in email:
-            return f"{email} is an invalid address"
-        return True
-
-    @classmethod 
-    def _register_email(cls, email):
-        error = cls.email(email)
-        if type(error) is str:
-            return error
-        elif m_Users.query_by_email(email):
-            return f"{email} is already in use!"
-        return True
-
-    @staticmethod
-    def _password(password):
-        if not password:
-            return "server didn't receive a password"
-        elif type(password) is not str:
-            return "password was not in text format"
-        elif len(password) < 8:
-            return "password must be at least 8 characters"
-        return True
-
     @classmethod
-    def check_password(cls, password, hashed):
-        password_error = cls._password(password)
+    def check_password(cls, password, hashed, failure_message=None, success_message=None):
+        password_error = _password(password)
         if type(password_error) is str:
-            return password_error
+            return _failure(password_error, failure_message)
         elif not check_password_hash(hashed, password):
-            return "incorrect password"
-        return True
+            return _failure("incorrect password", failure_message)
+        return _success(success_message)
 
-    @classmethod
-    def set_password(cls, password, confirm):
-        password_error = cls._password(password)
-        if type(password_error) is str:
-            return password_error
-        elif password != confirm:
-            return "passwords do not match"
-        return True
+
         
 class Image():
 
     @classmethod
-    def upload_and_parse(cls, filename: str) -> dict:
+    def _upload_and_parse(cls, filename: str) -> dict:
         """checks and parses image upload data
         
         :param filename: file name string ex 'img' 
@@ -171,7 +168,6 @@ class Image():
             if letter == '/':
                 altered = (filename[i+1:]).lower()
                 break
-        
         if altered in ALLOWED_EXTENSIONS:
             return True
         return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
@@ -179,7 +175,7 @@ class Image():
 class Game():
 
     @staticmethod
-    def create(form):
+    def create(form, failure_message=None, success_message=None):
         """validates game creation data and uploads img if exists
         
         returns are different based on outcome
@@ -192,38 +188,32 @@ class Game():
         :return dict['secure_name']: secure version of the filename
         :return dict['mimetype']: content type
         """
-        if not form:
-            _failure("No data sent to server")
-            return False
+        if _missing_form(form):
+            return _failure(failure_message)
         if not form.gamesubmit.data:
-            _failure("No game data sent to server")
-            return False
-        img_data = Image.upload_and_parse(form.img.name)
+            return _failure(failure_message)
+        img_data = Image._upload_and_parse(form.img.name)
         if not img_data:
             return "no image"
         elif type(img_data) is str:
-            _failure(img_data)
-            return False
+            return _failure(img_data)
         return img_data
 
 
 class Character():
 
     @staticmethod
-    def remove(form, character):
+    def remove(form, character, failure_message=None, success_message=None):
         print(form.confirm.data.lower().strip(), character.name.lower().strip())
         if type(form.confirm.data) != str:
-            _failure("server didn't understand data")
-            return False
-        
+            return _failure("server didn't understand data", failure_message)
         elif form.confirm.data.lower().strip() != character.name.lower().strip():
-            _failure("names do not match")
-            return False
-        return True
+            return _failure("names do not match", failure_message)
+        return _success(success_message)
 
 
     @staticmethod
-    def create(form):
+    def create(form, failure_message=None, success_message=None):
         """validates dm avatar creation data and uploads img if exists
         
         returns are different based on outcome
@@ -236,23 +226,21 @@ class Character():
         :return dict['secure_name']: secure version of the filename
         :return dict['mimetype']: content type
         """
-        
-        if not form:
-            _failure("No data sent to server")
-            return False
+
+        if _missing_form(form):
+            return _failure(failure_message)
         if not form.char_submit.data:
-            _failure("No game data sent to server")
-            return False
-        img_data = Image.upload_and_parse(form.img.name)
+            return _failure(failure_message)
+        img_data = Image._upload_and_parse(form.img.name)
         if not img_data:
             return "no image"
         elif type(img_data) is str:
-            _failure(img_data)
-            return False
+            return _failure(img_data)
+        _success(success_message)
         return img_data
 
     @staticmethod
-    def dm_create(form):
+    def dm_create(form, failure_message=None, success_message=None):
         """validates dm avatar creation data and uploads img if exists
         
         returns are different based on outcome
@@ -265,17 +253,13 @@ class Character():
         :return dict['secure_name']: secure version of the filename
         :return dict['mimetype']: content type
         """
-        
-        if not form:
-            _failure("No data sent to server")
-            return False
+        if _missing_form(form):
+            return _failure(failure_message)
         if not form.dm_char_submit.data:
-            _failure("No game data sent to server")
-            return False
-        img_data = Image.upload_and_parse(form.img.name)
+            return _failure(failure_message)
+        img_data = Image._upload_and_parse(form.img.name)
         if not img_data:
             return "no image"
         elif type(img_data) is str:
-            _failure(img_data)
-            return False
+            return _failure(img_data)
         return img_data
