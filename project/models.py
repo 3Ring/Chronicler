@@ -89,6 +89,12 @@ class SABaseMixin():
             self.key = value
             db.session.commit()
 
+    def _remove_attached(self, dependencies: list = []):
+        for list_ in dependencies:
+            for item in list_:
+                item.remove_self()
+        return 
+
     def _delete_attached(self, dependencies: list = [], confirm: bool = False):
         """deletes all attached items
         
@@ -97,21 +103,21 @@ class SABaseMixin():
                         used on accident when "remove_self" method was intended
         """
         if confirm:
-            for list in dependencies:
-                self._delete_list(list, confirm=confirm)
+            for list_ in dependencies:
+                for item in list_:
+                    item.delete_self(confirm=confirm)
         return 
 
-    def _delete_list(self, item_list: list, confirm: bool = False):
-        """deletes all items in argument list
+    # def _delete_list(self, item_list: list, confirm: bool = False):
+    #     """deletes all items in argument list
         
-        :param item_list: list of SQLAlchemy objects to delete
-        :param confirm: confirmation to make sure this wasn't 
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            for item in item_list:
-                item.delete_self(confirm=confirm)
-        return
+    #     :param item_list: list of SQLAlchemy objects to delete
+    #     :param confirm: confirmation to make sure this wasn't 
+    #                     used on accident when "remove_self" method was intended
+    #     """
+    #     if confirm:
+
+    #     return
 
     def delete_self(self, confirm: bool = False):
         """deletes SQLAlchemy model from database.
@@ -178,7 +184,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         self.password = password
         db.session.commit()
 
-        
+
     @staticmethod
     def add_to_bug_report_page(email):
         """Creates a User character and adds them to the bug report page
@@ -191,10 +197,19 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         success = avatar.add_to_game(Games.get_bugs().id)
         return success
 
+
     @classmethod
     def get_from_email(cls, email):
         return cls.query.filter_by(email=email).first()
 
+    @classmethod
+    def get_player_list(cls, game_id: int) -> list:
+        users = []
+        bridge = BridgeUserGames.query.filter_by(game_id=game_id).all()
+        for user in bridge:
+            users.append(cls.get_from_id(user.user_id))
+        return users
+        
     @classmethod
     def create_simple(cls, **kw):
         """adds new User to database and hashes their password.
@@ -222,10 +237,22 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     def orphan_attached(self):
         """changes the dm ID to the admin"""
 
-        admin = Users.get_admin()
+        orphanage = Users.get_orphanage()
         games_list = Games.query.filter_by(dm_id=self.id).all()
         for game in games_list:
-            game.dm_id = admin.id
+            game.dm_id = orphanage.id
+
+    def remove_self(self):
+        self._remove_attached()
+
+    def _remove_attached(self):
+        dependencies = []
+        dependencies.append(Games.query.filter_by(dm_id=self.id).all())
+        dependencies.append(Characters.query.filter_by(user_id=self.id).all())
+        dependencies.append(Notes.query.filter_by(user_id=self.id).all())
+        dependencies.append(BridgeUserGames.query.filter_by(user_id=self.id).all())
+        dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
+        super()._remove_attached(dependencies=dependencies)
 
     def delete_attached(self, confirm: bool = False):
         """deletes all attached items

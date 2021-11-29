@@ -24,7 +24,7 @@ def account():
     # form.password.data = ""
     return render_template('edit/account.html'
                             , user=current_user
-                            , form = edit_form
+                            , edit_form = edit_form
                             , del_form = del_form
                             )
 
