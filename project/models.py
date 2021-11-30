@@ -2,9 +2,9 @@
 import base64
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
-# from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename
 from sqlalchemy import orm, text, event
-# from flask import request
+from flask import request
 from flask_login import current_user
 # from project.form_validators import Character
 
@@ -319,14 +319,21 @@ class Images(SABaseMixin, db.Model):
         return decoder + img_string
 
     @staticmethod
-    def upload(pic, secure_name, mimetype):
+    def upload(filename) -> int:
+        """uploads image data from filename. File name needs to be validated first
+        
+        :param filename: file name string ex 'img' 
+                        this correlates to the 'name' value in the file form input field.
+        """
+        pic = request.files[filename]
+        mimetype = pic.mimetype
+        secure_name = secure_filename(pic.filename)
         pic.stream.seek(0)
         data = pic.stream.read()
         render_file = Images._render_picture(data)
         img_string = Images._add_decoder(render_file, mimetype)
         img = Images.create(img_string=img_string, name=secure_name, mimetype=mimetype)
         id_ = img.id
-
         return id_ 
 
     @classmethod
@@ -448,7 +455,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def get_bugs(cls):
-        return cls.query.filter_by(id = d.Orphanage.id).first()
+        return cls.get_admin()
 
     @classmethod
     def get_published(cls):

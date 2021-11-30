@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session
+from flask import Blueprint, render_template, redirect, url_for, session, flash
 from flask_login import login_required, fresh_login_required, current_user
 from project import forms
 from project import form_validators
@@ -64,7 +64,6 @@ def character_post(character_id):
     delform = forms.CharDelete()
     character = Characters.get_from_id(character_id)
     if delform.char_del_submit.data:
-        print("yes")
         confirm = form_validators.Character.remove(delform, character)
         if not confirm:
             return redirect(url_for("edit.character", character_id=character_id))
@@ -86,8 +85,10 @@ def character_post(character_id):
 
 
 # #######################################
-# ###               DM               ####
+# ###            DM Game             ####
 # #######################################
+
+
 
 @edit.route('/edit/games/dm/<int:game_id>', methods = ['GET'])
 @login_required
@@ -110,18 +111,55 @@ def game_dm(game_id):
                             , form_delete = form_delete
                             )
 
-def handle_game_edit(form):
-    print("edit")
+def _game_dm_failure(game_id):
+    return redirect(url_for("edit.game_dm", game_id=game_id))
+
+def _game_dm_success(game_id):
+    return redirect(url_for("edit.game_dm", game_id=game_id))
+
+def validate_edit(form):
     if form.name.data:
-        pass
+        if not form_validators.Game.name(form.name.data):
+            return False
+    if form.img.data:
+        if not form_validators.Game.image(form.img.name):
+            return False
+    if type(form.private.data) is not bool:
+        flash("Data corrupted")
+        return False
+    if type(form.published.data) is not bool:
+        flash("Data corrupted")
+        return False
+    return True
+def delete_old_image(image_id):
+    if image_id:
+        image = Images.get_from_id(image_id)
+        image.delete_self(confirm=True)
     return
 
+def handle_game_edit(form, game_id):
+
+    if not validate_edit(form):
+        return _game_dm_failure(game_id)
+    game = Games.get_from_id(game_id)
+    if form.img.data:
+        img_id = Images.upload(form.img.name)
+        old_id = game.img_id
+        game.img_id = img_id
+    if form.name.data:
+        game.name = form.name.data
+    if form.published.data:
+        game.published = True
+    if form.private.data:
+        game.published = False
+    db.session.commit()
+    delete_old_image(old_id)
+    return _game_dm_success(game_id)
+
 def handle_game_remove(form):
-    print("remove")
     return
 
 def handle_game_delete(form):
-    print("delete")
     return
 
 @edit.route('/edit/games/dm/<int:game_id>', methods = ['POST'])
@@ -132,7 +170,7 @@ def game_dm_post(game_id):
     form_delete = forms.GameDelete()
 
     if form_edit.game_edit_submit.data:
-        handle_game_edit(form_edit)
+        handle_game_edit(form_edit, game_id)
     elif form_remove.game_remove_submit.data:
         handle_game_remove(form_remove)
     elif form_delete.game_delete_submit.data:

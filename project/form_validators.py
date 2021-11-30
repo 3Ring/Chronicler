@@ -47,6 +47,7 @@ def _password(password):
     elif len(password) < 8:
         return "password must be at least 8 characters"
     return True
+
 class User():
     """server side validation for user data"""
 
@@ -127,39 +128,60 @@ class User():
         
 class Image():
 
+    # @classmethod
+    # def image_exists(cls, filename):
+    #     try:
+    #         test = request.files[filename]
+    #         return True
+    #     except:
+    #         return False
+
     @classmethod
-    def _upload_and_parse(cls, filename: str) -> dict:
-        """checks and parses image upload data
-        
-        :param filename: file name string ex 'img' 
-                        this correlates to the 'name' value in the file form input field.
-        
-        :return dict['pic']: the streamable filestorage of the image.
-        :return dict['secure_name']: secure version of the filename
-        :return dict['mimetype']: content type
-        """
-        try:
-            pic = request.files[filename]
-        except:
-            return 'Invalid image file or filename. Images must be in .jpg or .png format'
-        if not pic:
-            return False
+    def _valid(cls, filename):
+        pic = request.files[filename]
         if len(pic.stream.read()) > 3000000:
             return 'image is too large. limit to images 1MB or less.'
-        
-        mimetype = pic.mimetype
-        if not mimetype:
+        if not pic.mimetype:
             return 'Invalid image file or filename. Images must be in .jpg or .png format'
-        allowed = cls._allowed_file(mimetype)
-        if type(allowed) is str:
-            return allowed
-        secure_name = secure_filename(pic.filename)
-        if not secure_name:
-            return "Bad Upload!"
-        return {"pic": pic
-                , "secure_name": secure_name
-                , "mimetype": mimetype
-                }
+        if not cls._allowed_file(pic.mimetype):
+            return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
+        if not secure_filename(pic.filename):
+            return _failure("Bad Upload!")
+        return True
+
+    # @classmethod
+    # def _upload_and_parse(cls, filename: str) -> dict:
+    #     """checks and parses image upload data
+        
+    #     :param filename: file name string ex 'img' 
+    #                     this correlates to the 'name' value in the file form input field.
+        
+    #     :return dict['pic']: the streamable filestorage of the image.
+    #     :return dict['secure_name']: secure version of the filename
+    #     :return dict['mimetype']: content type
+    #     """
+    #     try:
+    #         pic = request.files[filename]
+    #     except:
+    #         return 'Invalid image file or filename. Images must be in .jpg or .png format'
+    #     if not pic:
+    #         return False
+    #     if len(pic.stream.read()) > 3000000:
+    #         return 'image is too large. limit to images 1MB or less.'
+        
+    #     mimetype = pic.mimetype
+    #     if not mimetype:
+    #         return 'Invalid image file or filename. Images must be in .jpg or .png format'
+    #     allowed = cls._allowed_file(mimetype)
+    #     if type(allowed) is str:
+    #         return allowed
+    #     secure_name = secure_filename(pic.filename)
+    #     if not secure_name:
+    #         return "Bad Upload!"
+    #     return {"pic": pic
+    #             , "secure_name": secure_name
+    #             , "mimetype": mimetype
+    #             }
 
     @staticmethod
     def _allowed_file(filename):
@@ -174,8 +196,8 @@ class Image():
 
 class Game():
 
-    @staticmethod
-    def create(form, failure_message=None, success_message=None):
+    @classmethod
+    def create(cls, form, failure_message=None, success_message=None):
         """validates game creation data and uploads img if exists
         
         returns are different based on outcome
@@ -192,13 +214,37 @@ class Game():
             return _failure(failure_message)
         if not form.gamesubmit.data:
             return _failure(failure_message)
-        img_data = Image._upload_and_parse(form.img.name)
-        if not img_data:
-            return "no image"
-        elif type(img_data) is str:
-            return _failure(img_data)
-        return img_data
+        return cls.image(form, failure_message, success_message)
 
+    @staticmethod
+    def edit(form, failure_message=None, success_message=None):
+
+        if _missing_form(form):
+            return _failure(failure_message)
+        if not form.game_edit_submit.data:
+            return _failure(failure_message)
+        return _success(success_message)
+
+    @staticmethod
+    def name(name, failure_message=None, success_message=None):
+        if not name:
+            return _failure("server didn't receive a name", failure_message)
+        elif type(name) is not str:
+            return _failure("name was not in text format", failure_message)
+        elif len(name) > 50:
+            return _failure("name cannot be over 20 characters", failure_message)
+        elif len(name) < 2:
+            return _failure("name must be at least two characters", failure_message)
+        return _success(success_message)
+    
+    @staticmethod
+    def image(image, failure_message=None, success_message=None):
+        if not image:
+            return _failure("server didn't receive an image", failure_message)
+        img_data = Image._valid(image)
+        if type(img_data) is str:
+            return _failure(img_data, failure_message)
+        return _success(success_message)
 
 class Character():
 

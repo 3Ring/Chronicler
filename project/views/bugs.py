@@ -11,5 +11,5 @@ def bugs_page():
 
     _bugs = Games.get_bugs()
     if _bugs:
-        return redirect(url_for("notes.game", game_id=_bugs.id))
+        return redirect(url_for("notes.game", game_id=25))
     
