@@ -1,48 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-            
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var options = document.getElementsByTagName("select");
+        if (options) {
+            let el = document.createElement("option");
+            el.setAttribute("selected", true);
+            el.setAttribute('disabled', true);
+            el.innerHTML = "Choose Your Character"
+            options[0].insertAdjacentElement("afterbegin", el);
+        }
+    });
+</script>
 
+{% include 'main/flash.html' %}
 
 <div class="container">
     <div class="form-container">
 
-<!-- <img src="{{game.image}}"> -->
-        
-        <form  enctype="multipart/form-data" method='POST' action='/joining/{{game.id}}'>
+        <img src="{{game.image}}">
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
-                        <p>
-                            {{ message }}
-                            <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></button>
-                        </p>
-                    </div>
-                {% endif %}
-            {% endwith %}
+        {% if my_characters %}
+        <form method='POST'>
 
-            <h1>Create Character!</h1>
+            <h1>Add Character From Your Characters</h1>
             <div class="row">
-                {{ charform.hidden_tag() }}
-                {{ charform.character.label }}
-                {{ charform.character }}
+                {{ addform.hidden_tag() }}
+                {{ addform.character.label }}
+                {{ addform.character }}
             </div>
+            <div class="row">
+                {{ addform.char_add_submit (class="button primary") }}
+            </div>
+        </form>
+        <h1>or</h1>
+        {% endif %}
+        
+        <form enctype="multipart/form-data" method='POST'>
+
+            <h1>Create a New Character!</h1>
             <div class="row">
                 {{ charform.hidden_tag() }}
                 {{ charform.name.label }}
                 {{ charform.name }}
             </div>
-                
+
             <div class="row">
                 {{ charform.img.label }}
-                {{ charform.img }}  
+                {{ charform.img }}
             </div>
-            
+
             <div class="row">
                 {{ charform.bio.label }}
                 {{ charform.bio }}
             </div>
-            
+
             <div class="row">
                 {{ charform.char_submit (class="button primary") }}
             </div>

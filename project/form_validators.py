@@ -5,21 +5,24 @@ from flask import flash, request
 
 def _failure(message, super_message=None):
     if super_message:
-        message=super_message
+        message = super_message
     if message:
         flash(message)
     return False
 
+
 def _success(message, super_message=None):
     if super_message:
-        message=super_message
+        message = super_message
     if message:
         flash(message)
     return True
 
+
 def _missing_form(form):
     if not form:
         return True
+
 
 def _is_email(email):
     if not email:
@@ -29,6 +32,7 @@ def _is_email(email):
     elif "@" not in email or "." not in email:
         return f"{email} is an invalid address"
     return True
+
 
 def _matching_password(password, confirm):
     password_error = _password(password)
@@ -48,7 +52,8 @@ def _password(password):
         return "password must be at least 8 characters"
     return True
 
-class User():
+
+class User:
     """server side validation for user data"""
 
     @staticmethod
@@ -63,7 +68,7 @@ class User():
     @classmethod
     def register(cls, form, failure_message=None, success_message=None):
         if _missing_form(form):
-            return _failure(failure_message)
+            return _failure("no data received", failure_message)
         error_name = cls._name(form.name.data)
         if type(error_name) is str:
             return _failure(error_name, failure_message)
@@ -102,7 +107,6 @@ class User():
             return _failure(failure_message)
         return _success(success_message)
 
-
     @staticmethod
     def _name(name):
         if not name:
@@ -116,7 +120,9 @@ class User():
         return True
 
     @classmethod
-    def check_password(cls, password, hashed, failure_message=None, success_message=None):
+    def check_password(
+        cls, password, hashed, failure_message=None, success_message=None
+    ):
         password_error = _password(password)
         if type(password_error) is str:
             return _failure(password_error, failure_message)
@@ -125,24 +131,16 @@ class User():
         return _success(success_message)
 
 
-        
-class Image():
-
-    # @classmethod
-    # def image_exists(cls, filename):
-    #     try:
-    #         test = request.files[filename]
-    #         return True
-    #     except:
-    #         return False
-
+class Image:
     @classmethod
     def _valid(cls, filename):
         pic = request.files[filename]
         if len(pic.stream.read()) > 3000000:
-            return 'image is too large. limit to images 1MB or less.'
+            return "image is too large. limit to images 1MB or less."
         if not pic.mimetype:
-            return 'Invalid image file or filename. Images must be in .jpg or .png format'
+            return (
+                "Invalid image file or filename. Images must be in .jpg or .png format"
+            )
         if not cls._allowed_file(pic.mimetype):
             return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
         if not secure_filename(pic.filename):
@@ -152,10 +150,10 @@ class Image():
     # @classmethod
     # def _upload_and_parse(cls, filename: str) -> dict:
     #     """checks and parses image upload data
-        
-    #     :param filename: file name string ex 'img' 
+
+    #     :param filename: file name string ex 'img'
     #                     this correlates to the 'name' value in the file form input field.
-        
+
     #     :return dict['pic']: the streamable filestorage of the image.
     #     :return dict['secure_name']: secure version of the filename
     #     :return dict['mimetype']: content type
@@ -168,7 +166,7 @@ class Image():
     #         return False
     #     if len(pic.stream.read()) > 3000000:
     #         return 'image is too large. limit to images 1MB or less.'
-        
+
     #     mimetype = pic.mimetype
     #     if not mimetype:
     #         return 'Invalid image file or filename. Images must be in .jpg or .png format'
@@ -185,21 +183,21 @@ class Image():
 
     @staticmethod
     def _allowed_file(filename):
-        ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+        ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg"]
         for i, letter in enumerate(filename):
-            if letter == '/':
-                altered = (filename[i+1:]).lower()
+            if letter == "/":
+                altered = (filename[i + 1 :]).lower()
                 break
         if altered in ALLOWED_EXTENSIONS:
             return True
         return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
 
-class Game():
 
+class Game:
     @classmethod
     def create(cls, form, failure_message=None, success_message=None):
         """validates game creation data and uploads img if exists
-        
+
         returns are different based on outcome
 
         :param form: the WTForm used
@@ -214,7 +212,10 @@ class Game():
             return _failure(failure_message)
         if not form.gamesubmit.data:
             return _failure(failure_message)
-        return cls.image(form, failure_message, success_message)
+        if form.img.data:
+            return cls.image(form.img.name, failure_message, success_message)
+        else:
+            return _success(success_message)
 
     @staticmethod
     def edit(form, failure_message=None, success_message=None):
@@ -236,18 +237,18 @@ class Game():
         elif len(name) < 2:
             return _failure("name must be at least two characters", failure_message)
         return _success(success_message)
-    
+
     @staticmethod
-    def image(image, failure_message=None, success_message=None):
-        if not image:
+    def image(filename, failure_message=None, success_message=None):
+        if not filename:
             return _failure("server didn't receive an image", failure_message)
-        img_data = Image._valid(image)
+        img_data = Image._valid(filename)
         if type(img_data) is str:
             return _failure(img_data, failure_message)
         return _success(success_message)
 
-class Character():
 
+class Character:
     @staticmethod
     def remove(form, character, failure_message=None, success_message=None):
         print(form.confirm.data.lower().strip(), character.name.lower().strip())
@@ -257,55 +258,75 @@ class Character():
             return _failure("names do not match", failure_message)
         return _success(success_message)
 
+    @classmethod
+    def add(cls, form, failure_message=None, success_message=None):
+        """validates character add data
+
+        :param form: the WTForm used
+        :return False: return if form wasn't able to be validated
+        :return True: return if form was able to be validated
+        """
+
+        if _missing_form(form):
+            return _failure("server didn't receive any form data", failure_message)
+        error_id = cls._id(form.character.data)
+        if type(error_id) is str:
+            return _failure(error_id, failure_message)
+        return _success(success_message)
 
     @staticmethod
     def create(form, failure_message=None, success_message=None):
-        """validates dm avatar creation data and uploads img if exists
-        
-        returns are different based on outcome
+        """validates character creation data
 
         :param form: the WTForm used
-
         :return False: return if form wasn't able to be validated
-        :return 'no image': return if no image was uploaded
-        :return dict['pic']: the streamable filestorage of the image.
-        :return dict['secure_name']: secure version of the filename
-        :return dict['mimetype']: content type
+        :return True: return if form was able to be validated
         """
-
         if _missing_form(form):
             return _failure(failure_message)
         if not form.char_submit.data:
             return _failure(failure_message)
-        img_data = Image._upload_and_parse(form.img.name)
-        if not img_data:
-            return "no image"
-        elif type(img_data) is str:
-            return _failure(img_data)
-        _success(success_message)
-        return img_data
+        if form.img.data:
+            return Game.image(form.img.name, failure_message, success_message)
+        else:
+            return _success(success_message)
 
     @staticmethod
     def dm_create(form, failure_message=None, success_message=None):
-        """validates dm avatar creation data and uploads img if exists
-        
-        returns are different based on outcome
+        """validates dm avatar creation data
 
         :param form: the WTForm used
-
         :return False: return if form wasn't able to be validated
-        :return 'no image': return if no image was uploaded
-        :return dict['pic']: the streamable filestorage of the image.
-        :return dict['secure_name']: secure version of the filename
-        :return dict['mimetype']: content type
+        :return True: return if form was able to be validated
         """
         if _missing_form(form):
             return _failure(failure_message)
         if not form.dm_char_submit.data:
             return _failure(failure_message)
-        img_data = Image._upload_and_parse(form.img.name)
-        if not img_data:
-            return "no image"
-        elif type(img_data) is str:
-            return _failure(img_data)
-        return img_data
+        if form.img.data:
+            return Game.image(form.img.name, failure_message, success_message)
+        else:
+            return _success(success_message)
+
+    @staticmethod
+    def _id(id_):
+        if not id_:
+            return "Server didn't receive any data"
+        if type(id_) is not int:
+            try:
+                _ = int(id_)
+            except:
+                return "id needs to be of type: int"
+        return True
+
+    @staticmethod
+    def _name(name):
+        if not name:
+            return "Server didn't receive any name data"
+        if type(name) is not str:
+            return "name was not in text format"
+        if len(name) > 50:
+            return "Character name must be under 50 characters in length"
+        if len(name) < 1:
+            return "Character name must be at least 1 character in length"
+        return True

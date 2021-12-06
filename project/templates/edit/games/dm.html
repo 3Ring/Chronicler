@@ -47,17 +47,19 @@
                 </form>
             </div>
             <div class="game">
+                {% if heir %}
                 <h2>Remove Ownership:</h2>
                 <p>this will remove you from the game but will allow current participants to access it</p>
                 <form method='POST'>
-                    <div class="row checkbox">
-                        {{ form_remove.will }}
-                        {{ form_remove.will.label }}
+                    <div class="row">
+                        {{ form_remove.heir.label }}
+                        {{ form_remove.heir }}
                     </div>
                     <div class="row">
                         {{ form_remove.game_remove_submit (class="button primary") }}
                     </div>
                 </form>
+                {% endif %}
                 <h2>Delete Game:</h2>
                 <p>this will permantently delete the game and remove it forever from the database.</p>
                 <p>Users will still be able to see their data from the game, but it will be accessed through an "orphanage game"</p>

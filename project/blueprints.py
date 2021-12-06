@@ -24,5 +24,8 @@ def init_blueprints(app):
     from project.views.notes import notes as notes_blueprint
     app.register_blueprint(notes_blueprint)
 
+    from project.views.join import join as join_blueprint
+    app.register_blueprint(join_blueprint)
+    
     return
     

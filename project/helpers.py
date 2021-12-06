@@ -1,4 +1,3 @@
-
 import os
 import base64
 from werkzeug.utils import secure_filename
@@ -10,53 +9,54 @@ from flask import request
 
 
 # def allowed_file(filename):
-    # ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
-    # for i, letter in enumerate(filename):
-    #     if letter == '/':
-    #         altered = (filename[i+1:]).lower()
-    #         break
-    
-    # if altered in ALLOWED_EXTENSIONS:
-    #     return True
-    # return False
+# ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+# for i, letter in enumerate(filename):
+#     if letter == '/':
+#         altered = (filename[i+1:]).lower()
+#         break
+
+# if altered in ALLOWED_EXTENSIONS:
+#     return True
+# return False
 
 # def render_picture(data):
 
-#     render_pic = base64.b64encode(data).decode('ascii') 
+#     render_pic = base64.b64encode(data).decode('ascii')
 #     return render_pic
 
 # def upload(filename, testing=False):
-    # try:
-    #     pic = request.files[filename]
-    # except:
-    #     return 'Invalid file or filename'
+# try:
+#     pic = request.files[filename]
+# except:
+#     return 'Invalid file or filename'
 
-    # if not pic:
-    #     return -1
+# if not pic:
+#     return -1
 
-    # if len(pic.stream.read()) > 3000000:
-    #     return 'image is too large. limit to images 1MB or less.'
+# if len(pic.stream.read()) > 3000000:
+#     return 'image is too large. limit to images 1MB or less.'
 
-    # mimetype = pic.mimetype
-    # if not allowed_file(mimetype):
-    #     return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
+# mimetype = pic.mimetype
+# if not allowed_file(mimetype):
+#     return "Not allowed file type. Image must be of type: .png .jpg or .jpeg"
 
-    # secure = secure_filename(pic.filename)
-    
-    # if not secure or not mimetype:
-    #     return 'Bad upload!'
+# secure = secure_filename(pic.filename)
 
-    # pic.stream.seek(0)
-    # data = pic.stream.read()
-    # render_file = render_picture(data)
+# if not secure or not mimetype:
+#     return 'Bad upload!'
 
-    # img = Images(img=render_file, name=secure, mimetype=mimetype)
-    # db.session.add(img)
-    # db.session.flush()
-    # _id = img.id
-    # if testing != False:
-    #     db.session.commit()
-    # return _id 
+# pic.stream.seek(0)
+# data = pic.stream.read()
+# render_file = render_picture(data)
+
+# img = Images(img=render_file, name=secure, mimetype=mimetype)
+# db.session.add(img)
+# db.session.flush()
+# _id = img.id
+# if testing != False:
+#     db.session.commit()
+# return _id
+
 
 def attach_game_image_or_default_from_Images_model(model):
     keys = ["img", "mimetype"]
@@ -69,6 +69,7 @@ def attach_game_image_or_default_from_Images_model(model):
     else:
         image = "/static/images/default_game.jpg"
     return image
+
 
 def nuke():
 
@@ -116,20 +117,22 @@ def nuke():
 
 
 # Functions to dynamically create html elements
-# 
-# 
+#
+#
 # #
+
 
 def private_convert(priv):
     if type(priv) == bool:
         return priv
     elif type(priv) == str:
-        if priv.lower() == 'true':
+        if priv.lower() == "true":
             return True
         else:
             return False
     else:
         return False
+
 
 # # function to deal with notes' Jinja functions while going through websockets
 # def note_conditionals(html, model):
@@ -142,7 +145,7 @@ def private_convert(priv):
 
 
 #     # examine each line to remove jinja and insert images at correct locations
-#     for line in html_list: 
+#     for line in html_list:
 #         line = line.strip()
 #         if model.charname == "DM":
 #             if line == player_image:
@@ -196,12 +199,12 @@ def private_convert(priv):
 #             <a data-editButtonAnchorId="{{ note.id }}" class="edit-note">
 #                 <span data-flag="editButtons" data-id_editImage="{{ note.id }}" class='note_edit_button far fa-edit' src="/static/images/edit_button_image.png"></span>
 #             </a>
-            
+
 #         </span>
 
 #             <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
 #                 <div class="form-group" >
-                
+
 #                     <input type="hidden" id='note_user_id' name='note_user_id' value='{{ note.user_id }}'>
 #                     <input type="hidden" id='note_game_id' name='note_game_id' value='{{ note.game_id }}'>
 #                     <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
@@ -244,7 +247,7 @@ def private_convert(priv):
 #         html = [html]
 #     elif header == "session.":
 #         html = [htmlTemplate__newSession, htmlTemplate__newSessionList]
-        
+
 #     # populate the dict with the model's key/value pairs
 #     columns = {}
 #     for column in model.__table__.columns:
@@ -277,7 +280,7 @@ def private_convert(priv):
 
 # def new_game_training_wheels(game):
 #     """add tutorial notes and session zero to game"""
-    
+
 #     tutorial_user=Users.query.filter_by(email="app@chronicler.gg").first()
 #     # add tutorial character
 #     tutorial_character = Characters(name="Chronicler Helper", user_id=tutorial_user.id, game_id=game.id)
@@ -315,16 +318,17 @@ def private_convert(priv):
 
 #     for note in note_texts:
 #         tutorial_notes.append(Notes(charname="Chronicler Helper", note=note, session_number=0, user_id=tutorial_user.id, character=tutorial_character.id, game_id=game.id))
-    
+
 #     for Note_obj in tutorial_notes:
 #         db.session.add(Note_obj)
 #         db.session.commit()
 
+
 def make_character_images(character_id):
-    character = Characters.query.filter_by( id = character_id ).first()
+    character = Characters.query.filter_by(id=character_id).first()
     image = Images.query.filter_by(id=character.img_id).first()
     # set defaults if no image exists
-    
+
     if image == None:
         if character.name == "DM":
             return "/static/images/default_dm.jpg"

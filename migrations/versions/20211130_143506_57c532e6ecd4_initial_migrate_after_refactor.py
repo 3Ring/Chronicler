@@ -1,8 +1,8 @@
-"""initial migration after refactor
+"""initial migrate after refactor
 
-Revision ID: ceaaca513778
+Revision ID: 57c532e6ecd4
 Revises: 
-Create Date: 2021-11-28 13:53:29.382053
+Create Date: 2021-11-30 14:35:06.101123
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ceaaca513778'
+revision = '57c532e6ecd4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -69,6 +69,7 @@ def upgrade():
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('bio', sa.Text(), nullable=True),
     sa.Column('dm', sa.Boolean(), server_default=sa.text('FALSE'), nullable=True),
+    sa.Column('copy', sa.Boolean(), server_default=sa.text('FALSE'), nullable=False),
     sa.Column('date_added', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('img_id', sa.Integer(), nullable=True),

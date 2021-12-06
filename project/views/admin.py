@@ -6,7 +6,9 @@ from flask_login import current_user
 from project.models import *
 from project import forms
 
-admin = Blueprint('admin', __name__)
+admin = Blueprint("admin", __name__)
+
+
 def find_claimed_characters():
     # get full player list
     full_player_list = BridgeUserGames.query.all()
@@ -19,12 +21,14 @@ def find_claimed_characters():
                 added[player.id] = bridge.character_id
     return added
 
+
 @admin.route("/dashboard")
 @login_required
 def dashboard():
     if current_user.id != Users.get_admin().id:
         return redirect("main.index")
     return render_template("admin_dashboard.html")
+
 
 @admin.route("/remove_gameid")
 @login_required
@@ -38,23 +42,18 @@ def remove_gameid():
                 if char.game_id == -2:
                     print("error character")
                     continue
-                test = BridgeGameCharacters.query.filter_by(game_id=char.game_id, character_id=char.id).first()
+                test = BridgeGameCharacters.query.filter_by(
+                    game_id=char.game_id, character_id=char.id
+                ).first()
                 if test:
                     print("already in bridge")
                     continue
-                done = BridgeGameCharacters.create(game_id=char.game_id, character_id=char.id)
+                done = BridgeGameCharacters.create(
+                    game_id=char.game_id, character_id=char.id
+                )
                 print(f"created: {done}")
     flash("remove_game_id done")
     return redirect("admin.dashboard")
-
-
-
-
-
-
-
-
-
 
 
 """empty message
@@ -69,126 +68,118 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'ce267715952f'
-down_revision = '83616baa15f1'
+revision = "ce267715952f"
+down_revision = "83616baa15f1"
 branch_labels = None
 depends_on = None
 
 
+# if current_user.id != Users.get_admin().id:
+#     return redirect(url_for("main.index"))
+
+# full_player_list = Players.query.all()
+# final_claimed = []
+
+# for i, player in enumerate(full_player_list):
+#     try:
+#         _ = claimed[player.id]
+#         final_claimed.append(BridgeCharacters.query.filter_by(character_id=claimed[player.id]).first())
+#         full_player_list[i] = None
+#     except:
+#         pass
+# final_final = []
+# character_final = []
+# for player in full_player_list:
+#     if not player:
+#         continue
+#     character_final.append(Characters.query.filter_by(game_id=player.game_id, user_id=player.user_id).first())
+
+# characters = Characters.query.all()
+# for bridge in final_claimed:
+#     final_final.append(Characters.get_from_id(bridge.character_id))
 
 
-    # if current_user.id != Users.get_admin().id:
-    #     return redirect(url_for("main.index"))
-    
-    # full_player_list = Players.query.all()
-    # final_claimed = []
-    
-    # for i, player in enumerate(full_player_list):
-    #     try:
-    #         _ = claimed[player.id]
-    #         final_claimed.append(BridgeCharacters.query.filter_by(character_id=claimed[player.id]).first())
-    #         full_player_list[i] = None
-    #     except:
-    #         pass
-    # final_final = []
-    # character_final = []
-    # for player in full_player_list:
-    #     if not player:
-    #         continue
-    #     character_final.append(Characters.query.filter_by(game_id=player.game_id, user_id=player.user_id).first())
-
-    # characters = Characters.query.all()
-    # for bridge in final_claimed:
-    #     final_final.append(Characters.get_from_id(bridge.character_id))
-
-    
-    
-
-    # email = Users.get_from_email("app@chronicler.gg")
-    # print(email)
-    # email.delete_self(confirm=True, orphan=False)
-    # admin.email = "app@chronicler.gg"
-    # db.session.commit()
-    # print(admin)
+# email = Users.get_from_email("app@chronicler.gg")
+# print(email)
+# email.delete_self(confirm=True, orphan=False)
+# admin.email = "app@chronicler.gg"
+# db.session.commit()
+# print(admin)
 
 
-    # if first_char:
-    #     d, i = True, 1
-    #     while d:
-    #         char = Characters.get_from_id(i)
-    #         if not char:
-                # placeholder = Characters.create(id = i, name = 'placeholder', user_id= 1, game_id = 1)
-                # notes = Notes.query.filter_by(origin_character_id = 1).all()
-                # for note in notes:
-                #     note.origin_character_id = i
-                #     print(note.id)
-                #     db.session.commit()
-                # bridge1 = BridgeCharacters.query.filter_by(character_id= 1).all()
-                # for item in bridge1:
-                #     item.character_id= i
-                #     print(item.id)
-                #     db.session.commit()
-                # placeholder = Characters.query.filter_by(name='placeholder').first()
-                # placeholder.delete_self(confirm=True)
-                
+# if first_char:
+#     d, i = True, 1
+#     while d:
+#         char = Characters.get_from_id(i)
+#         if not char:
+# placeholder = Characters.create(id = i, name = 'placeholder', user_id= 1, game_id = 1)
+# notes = Notes.query.filter_by(origin_character_id = 1).all()
+# for note in notes:
+#     note.origin_character_id = i
+#     print(note.id)
+#     db.session.commit()
+# bridge1 = BridgeCharacters.query.filter_by(character_id= 1).all()
+# for item in bridge1:
+#     item.character_id= i
+#     print(item.id)
+#     db.session.commit()
+# placeholder = Characters.query.filter_by(name='placeholder').first()
+# placeholder.delete_self(confirm=True)
 
 
-            #     first_char.id = i
-            #     db.session.commit()
-            #     d = False
-            # i += 1
-    # Characters.create(id = 1, name = "Chronicler Helper", user_id = 1, game_id=1)
-    # first_char = Characters.get_from_id(1)
-    # print(first_char)
-    # delete = Users.get_from_id(-1)
-    # # delete.delete_self(confirm=True)
-    # # Users.create(id = -1, name = 'Chronicler Helper', email="app@chronicler.com", password="password123")
-    # delete.name = "Chronicler Helper"
-    # delete.email = "app@chronicler.com"
-    # delete.change_pw("password123")
-    # print(delete)
-    # print(Users.get_admin())
-    # first_game = Games.get_from_id(1)
+#     first_char.id = i
+#     db.session.commit()
+#     d = False
+# i += 1
+# Characters.create(id = 1, name = "Chronicler Helper", user_id = 1, game_id=1)
+# first_char = Characters.get_from_id(1)
+# print(first_char)
+# delete = Users.get_from_id(-1)
+# # delete.delete_self(confirm=True)
+# # Users.create(id = -1, name = 'Chronicler Helper', email="app@chronicler.com", password="password123")
+# delete.name = "Chronicler Helper"
+# delete.email = "app@chronicler.com"
+# delete.change_pw("password123")
+# print(delete)
+# print(Users.get_admin())
+# first_game = Games.get_from_id(1)
 
 
-    # first_game.move_self(name=first_game.name
-    #                     , secret = first_game.secret
-    #                     , published = first_game.published
-    #                     , date_added = first_game.date_added
-    #                     , dm_id = first_game.dm_id
-    #                     , img_id = first_game.img_id\
-    #                     , image_object = first_game.image_object
-    #                     , image = first_game.image
-    #                     )
+# first_game.move_self(name=first_game.name
+#                     , secret = first_game.secret
+#                     , published = first_game.published
+#                     , date_added = first_game.date_added
+#                     , dm_id = first_game.dm_id
+#                     , img_id = first_game.img_id\
+#                     , image_object = first_game.image_object
+#                     , image = first_game.image
+#                     )
 
 
+# print(first_game)
 
-    # print(first_game)
-
-    # delete = Games.get_from_id(88)
-    # print(delete)
-    # delete.delete_self(confirm = True)
-    # print(delete)
-    # all_games = Games.query.all()
-    # all_characters = Characters.query.all()
-    # for game in all_games:
-    #     print(game)
-    # first = Games.get_from_id(1)
-    # def move_game_id(current_id):
-    #     pass
-    #     # dependencies
-    #     bc = BridgeCharacters.query.filter_by(game_id = current_id).all()
-    #     notes = Notes
-    # new_place = Characters.get_from_id(i)
-    # print(f"first char id = {first_char.id} and now it's {new_place.id}")
-
+# delete = Games.get_from_id(88)
+# print(delete)
+# delete.delete_self(confirm = True)
+# print(delete)
+# all_games = Games.query.all()
+# all_characters = Characters.query.all()
+# for game in all_games:
+#     print(game)
+# first = Games.get_from_id(1)
+# def move_game_id(current_id):
+#     pass
+#     # dependencies
+#     bc = BridgeCharacters.query.filter_by(game_id = current_id).all()
+#     notes = Notes
+# new_place = Characters.get_from_id(i)
+# print(f"first char id = {first_char.id} and now it's {new_place.id}")
 
 
+# helpers = Characters.query.filter_by(name="Chronicler Helper").all()
+# for helper in helpers:
+#     print(helper.id)
+# helper.delete_self(confirm = True)
 
-    # helpers = Characters.query.filter_by(name="Chronicler Helper").all()
-    # for helper in helpers:
-    #     print(helper.id)
-        # helper.delete_self(confirm = True)
-    
-                            # , final_claimed = all_games
-                            # )
+# , final_claimed = all_games
+# )

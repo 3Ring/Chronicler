@@ -3,20 +3,24 @@ from project.helpers import private_convert
 from project.models import Users
 
 if_statements = 0
+
+
 def get_tutorial_id():
     return Users.get_admin().id
+
+
 user_id = None
 dm_id = None
 current_user = None
 
 # main funtion
 def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **kwarg):
-    '''takes html from chronicler and returns handles: if, elif, else
+    """takes html from chronicler and returns handles: if, elif, else
     model: class instance you want to use for variable replacement
     flag: string with the name of the model
     u_id: current_user.id
     d_id: dm_id
-    **arg any other variables to be subbed in ex: char_img = 123'''
+    **arg any other variables to be subbed in ex: char_img = 123"""
     global if_statements
     tutorial_id = get_tutorial_id()
     global user_id
@@ -41,8 +45,8 @@ def translate_jinja(model, flag, game_id, u_id=None, d_id=None, c_user=None, **k
 # returns interior of string when start matched line prefix
 # otherwise it returns false
 def get_socket_arg(line, start, end):
-    if line[:len(start)] == start:
-        arg = line[len(start):(len(end) * -1)]
+    if line[: len(start)] == start:
+        arg = line[len(start) : (len(end) * -1)]
         args = arg.split(" ")
         return_args = []
         if len(args) > 1:
@@ -55,29 +59,30 @@ def get_socket_arg(line, start, end):
         if len(return_args) > 1:
             return return_args
         else:
-            return line[len(start):(len(end) * -1)]
+            return line[len(start) : (len(end) * -1)]
     else:
         return False
 
 
 # acquire and build template function
-# 
+#
 # compiles templates recursively into one list
 # file name is the filename in the notes directory of templates ex: "blueprint.html"
 # this will only work in notes.html but can be easily changed for another page if needed
 def build_notes_template(filename):
 
-    raw_html  = build_notes_template_get(filename)
+    raw_html = build_notes_template_get(filename)
     cleaned_list = build_notes_template_clean(raw_html)
     new_list = build_notes_template_read(cleaned_list)
     return new_list
+
 
 # helper function
 # takes raw html and jinja and converts it into a list. Removing trailing and ending whitespace
 def build_notes_template_clean(html):
     file_list = html.split("\n")
     cleaned = []
-    
+
     for line in file_list:
         stripped = line.strip()
         if stripped == "" or stripped == " ":
@@ -85,6 +90,7 @@ def build_notes_template_clean(html):
         else:
             cleaned.append(stripped)
     return cleaned
+
 
 # helper function
 # finds and opens the jinja template
@@ -109,17 +115,18 @@ def build_notes_template_read(html_list):
         if path:
             next_html = build_notes_template(path)
             list_1 = html_list[:i]
-            list_2 = html_list[i+1:]
+            list_2 = html_list[i + 1 :]
             final_list = list_1 + next_html + list_2
-            
+
             return build_notes_template_read(final_list)
     return html_list
+
 
 # ######
 
 
 # functions to get relevant sections(s)
-# 
+#
 # the flag is the model name ex: "note" or "session"
 def find_sections_to_translate(html_list, flag):
     scoped_html_list = set_socket_scope(html_list)
@@ -133,13 +140,15 @@ def find_sections_to_translate(html_list, flag):
 
     return sections
 
+
 # helper function
 # prunes all html except for those inside of the {# socket_scope #}
 def set_socket_scope(html):
 
     scope_start = html.index("{# socket_scope start #}")
     scope_end = html.index("{# socket_scope end #}")
-    return html[scope_start+1:scope_end]
+    return html[scope_start + 1 : scope_end]
+
 
 # helper function
 # finds the start of the relevant html
@@ -149,8 +158,9 @@ def find_html_start(html_list, flag):
         hook = "{# translate_hook " + flag + " #}"
         found = line.find(hook)
         if found != -1:
-            return i+1
+            return i + 1
     raise "socket flag not found"
+
 
 # helper function
 # finds end of relevant html
@@ -164,6 +174,7 @@ def find_html_end(html_list, flag):
             return i
     raise "socket flag not found"
 
+
 # helper functions
 # called by set_sections() to flag ignored sections
 def check_ignore_start(html_line, flag):
@@ -172,6 +183,8 @@ def check_ignore_start(html_line, flag):
         return True
     else:
         return False
+
+
 def check_ignore_stop(html_line, flag):
 
     if html_line == "{# endignore " + flag + " #}":
@@ -179,11 +192,11 @@ def check_ignore_stop(html_line, flag):
     else:
         return False
 
+
 # helper function
 # cuts out ignored sections and splits relevant areas into a list.
 # returns a list of length = 1 if nothing is ignored
 def set_sections(html_list, flag):
-
 
     section_end_flag = "{# endsection " + flag + " #}"
     ignored = False
@@ -210,20 +223,21 @@ def set_sections(html_list, flag):
         if new_section_discovered:
             if not_ignored == section_end_flag:
                 new_section_discovered = False
-                
+
             else:
                 section[new_section_discovered].append(not_ignored)
         else:
 
-            new_section_discovered = get_socket_arg(not_ignored, "{# translate_section ", " #}")
+            new_section_discovered = get_socket_arg(
+                not_ignored, "{# translate_section ", " #}"
+            )
 
-            
             if new_section_discovered:
                 if type(new_section_discovered) == list:
                     new_section_discovered = new_section_discovered[1]
                     section[new_section_discovered] = eval("new_section_discovered")
                     section[new_section_discovered] = []
-                
+
             # usually the section would be set as the first line
             # if there is already lines commited without a section, this will add those lines as the first list(section)
             else:
@@ -233,14 +247,13 @@ def set_sections(html_list, flag):
     return section
 
 
-
 def _or(arg_list):
     new_list = []
     if "or" in arg_list:
         for i, arg in enumerate(arg_list):
             if arg == "or":
                 new_list.append(arg_list[:i])
-                return_lists = _or( arg_list[i+1:] )
+                return_lists = _or(arg_list[i + 1 :])
                 for l in return_lists:
                     new_list.append(l)
                 return new_list
@@ -249,18 +262,19 @@ def _or(arg_list):
         return [arg_list]
 
 
-def _and( arg_list ):
+def _and(arg_list):
     new_list = []
     if "and" in arg_list:
         for i, arg in enumerate(arg_list):
             if arg == "and":
                 new_list.append(arg_list[:i])
-                return_lists = _and( arg_list[i+1:] )
+                return_lists = _and(arg_list[i + 1 :])
                 for l in return_lists:
                     new_list.append(l)
                 return new_list
     else:
         return [arg_list]
+
 
 def _and_or(arg_list):
 
@@ -280,7 +294,7 @@ def _and_or(arg_list):
             # make sure every expression is in a container, even if solo
             else:
                 or_lists[i] = [or_lists[i]]
-        
+
         for and_group in or_lists:
             for i, expression in enumerate(and_group):
                 if not _if(expression):
@@ -293,12 +307,12 @@ def _and_or(arg_list):
                 or_lists[i] = False
             else:
                 or_lists[i] = True
-        
+
         if True in or_lists:
             return True
         else:
             return False
-        
+
     else:
         and_lists = _and(arg_list)
         for i, l in enumerate(and_lists):
@@ -311,6 +325,7 @@ def _and_or(arg_list):
             return False
         else:
             return True
+
 
 def _if(arg):
     a = arg
@@ -373,6 +388,7 @@ def _if(arg):
         else:
             return False
 
+
 def switch(arg_list):
     if len(arg_list) > 0:
         if arg_list[0] == "if" or arg_list[0] == "elif":
@@ -384,14 +400,16 @@ def switch(arg_list):
 
     else:
         pass
+
+
 # functions to compile html pages together
-# 
-# 
+#
+#
 
 # returns a list of conditionals from jinja
 def get_jinja_conditional_list(line):
 
-    if line[0:2] == "{%" and line[len(line)-2:] == "%}":
+    if line[0:2] == "{%" and line[len(line) - 2 :] == "%}":
         conditional = line[2:-2]
         conditional.strip()
         conditional_list = conditional.split(" ")
@@ -404,6 +422,7 @@ def get_jinja_conditional_list(line):
         return conditional_list
     return False
 
+
 def make_generic_variable(line, flag):
     marker = f" {flag}."
     replacer = f" model."
@@ -411,7 +430,6 @@ def make_generic_variable(line, flag):
 
     return made_generic
 
-    
 
 def convert_flag_to_generic(model, flag, **lists):
 
@@ -424,7 +442,7 @@ def convert_flag_to_generic(model, flag, **lists):
         else:
             list_type = "socket"
     if list_type == "conditional":
-        
+
         for item in _list:
             if item.lower() == "true" or item.lower() == "false":
                 generic_list.append(private_convert(item))
@@ -434,18 +452,19 @@ def convert_flag_to_generic(model, flag, **lists):
                 generic_list.append(get_tutorial_id())
             elif item == "game.dm_id":
                 generic_list.append(dm_id)
-            elif item[:len(flag)] == flag:
+            elif item[: len(flag)] == flag:
                 generic_str = eval(f"model{item[len(flag):]}")
                 generic_list.append(generic_str)
             else:
                 generic_list.append(item)
     else:
-        
+
         if _list.find(f" {flag}.") != -1:
             return make_generic_variable(_list, flag)
         else:
             return _list
     return generic_list
+
 
 def stringify_and_add_whiteSpace(string_list):
     space_added = ""
@@ -454,11 +473,11 @@ def stringify_and_add_whiteSpace(string_list):
     stripped = space_added.strip()
     return stripped
 
+
 def check_for_start_or_end(conditional_list):
     for item in conditional_list:
         if item == "endif" or item == "if":
             return item
-
 
 
 def update_statements(condition):
@@ -476,10 +495,9 @@ def update_statements(condition):
         if_statements += change
 
 
-
 def group_commands(commands):
 
-    if_starts = [] 
+    if_starts = []
     # get locations of the end of if statements
     depth = -1
     e_index = 0
@@ -488,39 +506,39 @@ def group_commands(commands):
     pairs = {}
     for key, value in commands.items():
 
-        if value[0] == 'if':
+        if value[0] == "if":
             depth += 1
-            if_starts.append((s_index, depth, key, 'if'))
+            if_starts.append((s_index, depth, key, "if"))
             pairs[key] = {}
-            pairs[key]["type"] = 'if'
+            pairs[key]["type"] = "if"
             pairs[key]["depth"] = depth
             pairs[key]["index"] = s_index
             if depth > deepest:
                 deepest = depth
             s_index += 1
-        elif value[0] == 'elif':
+        elif value[0] == "elif":
 
-            if_starts.append((s_index, depth, key, 'elif'))
+            if_starts.append((s_index, depth, key, "elif"))
             pairs[key] = {}
-            pairs[key]["type"] = 'elif'
-            pairs[key]["depth"] = depth
-            pairs[key]["index"] = s_index
-            s_index += 1
-        
-        elif value == ['else']:
-
-            if_starts.append((s_index, depth, key, 'else'))
-            pairs[key] = {}
-            pairs[key]["type"] = 'else'
+            pairs[key]["type"] = "elif"
             pairs[key]["depth"] = depth
             pairs[key]["index"] = s_index
             s_index += 1
 
-        elif value == ['endif']:
-            
-            if_starts.append((e_index, depth, key, 'endif'))
+        elif value == ["else"]:
+
+            if_starts.append((s_index, depth, key, "else"))
             pairs[key] = {}
-            pairs[key]["type"] = 'endif'
+            pairs[key]["type"] = "else"
+            pairs[key]["depth"] = depth
+            pairs[key]["index"] = s_index
+            s_index += 1
+
+        elif value == ["endif"]:
+
+            if_starts.append((e_index, depth, key, "endif"))
+            pairs[key] = {}
+            pairs[key]["type"] = "endif"
             pairs[key]["depth"] = depth
             pairs[key]["index"] = e_index
             depth += -1
@@ -550,13 +568,10 @@ def append_commands(grouped, by_depth):
                 ends[i][-1].append(meta[html_index])
             elif meta[_type] == "else":
                 ends[i][-1].append(meta[html_index])
-            if meta[_type] == 'endif':
+            if meta[_type] == "endif":
                 ends[i][-1].append(meta[html_index])
 
-
-
     for command_list in grouped:
-
 
         i = command_list[html_index]
         command_meta[i] = {}
@@ -568,9 +583,9 @@ def append_commands(grouped, by_depth):
                 command_meta[i]["end"] = statement_list[-1]
                 break
     return command_meta
-        
-def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
+
+def apply_commands(commands, command_meta, html_list, key=0, depth=0):
 
     socket = []
     sub_socket = []
@@ -586,7 +601,6 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                 if not gatekeeper:
 
                     if key - 1 in command_meta.keys():
-                    
 
                         depth += 1
                         i += 1
@@ -594,7 +608,6 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                     else:
                         gatekeeper = True
                         continue
-
 
                 elif switch(commands[i]):
 
@@ -605,10 +618,15 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                         socket.append(sub_socket)
                         sub_socket = []
 
-                    temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
+                    temp = apply_commands(
+                        commands,
+                        command_meta,
+                        html_list[: command_meta[i]["end"]],
+                        key=j,
+                        depth=depth + 1,
+                    )
                     for _list in temp:
                         socket.append(_list)
-
 
                     i = command_meta[i]["end"] + 1
                     j = i + 1
@@ -617,7 +635,7 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                 else:
 
                     gatekeeper = False
-            elif commands[i][0] == "elif"  and command_meta[i]["depth"] == depth:
+            elif commands[i][0] == "elif" and command_meta[i]["depth"] == depth:
 
                 if switch(commands[i]):
 
@@ -626,7 +644,13 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                     if len(sub_socket) > 0:
                         socket.append(sub_socket)
                         sub_socket = []
-                    temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
+                    temp = apply_commands(
+                        commands,
+                        command_meta,
+                        html_list[: command_meta[i]["end"]],
+                        key=j,
+                        depth=depth + 1,
+                    )
 
                     for _list in temp:
                         socket.append(_list)
@@ -644,7 +668,13 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                 if len(sub_socket) > 0:
                     socket.append(sub_socket)
                     sub_socket = []
-                temp = apply_commands(commands, command_meta, html_list[:command_meta[i]["end"]], key=j, depth=depth+1)
+                temp = apply_commands(
+                    commands,
+                    command_meta,
+                    html_list[: command_meta[i]["end"]],
+                    key=j,
+                    depth=depth + 1,
+                )
                 for _list in temp:
                     socket.append(_list)
 
@@ -657,18 +687,17 @@ def apply_commands(commands, command_meta, html_list, key=0, depth=0):
                 if commands[i] == ["endif"] and depth == command_meta[i]["depth"]:
                     gatekeeper = True
 
-
-            
         elif gatekeeper:
             sub_socket.append(html_list[i])
-            
-        i+=1
-        j+=1
+
+        i += 1
+        j += 1
 
     socket.append(sub_socket)
     sub_socket = []
 
     return socket
+
 
 def group_by_depth(if_condtions):
     if len(if_condtions) == 0:
@@ -677,9 +706,9 @@ def group_by_depth(if_condtions):
     start = 0
     pop_list = []
     for i, line in enumerate(if_condtions):
-        if line[3] == 'if':
+        if line[3] == "if":
             start += 1
-        elif line[3] == 'endif':
+        elif line[3] == "endif":
             if start == 1:
                 commands.append(line)
                 pop_list.append(i)
@@ -690,13 +719,13 @@ def group_by_depth(if_condtions):
         if start != 1:
             continue
         else:
-            if line[3] == 'if':
+            if line[3] == "if":
                 commands.append(line)
                 pop_list.append(i)
-            elif line[3] == 'elif':
+            elif line[3] == "elif":
                 commands.append(line)
                 pop_list.append(i)
-            elif line[3] == 'else':
+            elif line[3] == "else":
                 commands.append(line)
                 pop_list.append(i)
 
@@ -710,7 +739,8 @@ def group_by_depth(if_condtions):
         final = [commands]
         for _list in temp:
             final.append(_list)
-        return final      
+        return final
+
 
 def remove_jinja_comments(html):
 
@@ -720,8 +750,9 @@ def remove_jinja_comments(html):
             pass
         else:
             new.append(line)
-    
+
     return new
+
 
 def convert_to_socket(html, model, flag):
 
@@ -733,13 +764,12 @@ def convert_to_socket(html, model, flag):
     return generic_socket
 
 
-
 def pass_model_variables(html, model, game_id, **additional_keys):
     html = html
     columns = {}
     for column in model.__table__.columns:
         columns[str(column.key)] = getattr(model, str(column.key))
-    
+
     # iterate through each key/value pair in the model instance's attributes
     i = 0
     while i < len(html):
@@ -750,7 +780,7 @@ def pass_model_variables(html, model, game_id, **additional_keys):
             gameID_key = "{{ " + "id" " }}"
 
             # replace jinja variables
-            # if 
+            # if
             html[i] = html[i].replace(model_key, str(value))
             html[i] = html[i].replace(currentU_key, str(current_user))
             html[i] = html[i].replace(gameID_key, str(game_id))
@@ -758,28 +788,29 @@ def pass_model_variables(html, model, game_id, **additional_keys):
             arg_key = "{{ " + "model." + str(key2) + " }}"
             html[i] = html[i].replace(arg_key, str(getattr(model, str(key2))))
 
-        i+=1
-    
+        i += 1
+
     return html
 
 
 def finalize(html, model, flag, game_id, **kwarg):
     commands = {}
     for i, line in enumerate(html):
-            conditional_list = get_jinja_conditional_list(line)
+        conditional_list = get_jinja_conditional_list(line)
 
-            if conditional_list:
+        if conditional_list:
 
-                start_or_end = check_for_start_or_end(conditional_list)
-                
-                if start_or_end:
+            start_or_end = check_for_start_or_end(conditional_list)
 
-                    update_statements(start_or_end)
+            if start_or_end:
 
+                update_statements(start_or_end)
 
-                generic_conditional_list = convert_flag_to_generic(model, flag, conditional_list=conditional_list)
-                
-                commands[i] = generic_conditional_list
+            generic_conditional_list = convert_flag_to_generic(
+                model, flag, conditional_list=conditional_list
+            )
+
+            commands[i] = generic_conditional_list
 
     if if_statements != 0:
         raise BaseException("nesting error. statements are not even")
@@ -804,16 +835,14 @@ def finalize(html, model, flag, game_id, **kwarg):
             for sub in temp:
                 cleaned_section.append(sub)
 
-
         generic_socket_list = convert_to_socket(cleaned_section, model, flag)
     else:
         generic_socket_list = convert_to_socket(html, model, flag)
 
-    final_socket_list = pass_model_variables(generic_socket_list, model, game_id, **kwarg)
+    final_socket_list = pass_model_variables(
+        generic_socket_list, model, game_id, **kwarg
+    )
 
     final_socket = stringify_and_add_whiteSpace(final_socket_list)
 
     return final_socket
-    
-
-
