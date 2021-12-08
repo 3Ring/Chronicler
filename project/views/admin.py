@@ -35,23 +35,23 @@ def dashboard():
 def remove_gameid():
     chars = Characters.query.all()
     if len(chars) > 0:
-        print("more than one")
+
         for i, char in enumerate(chars):
-            print(f"character #{i}")
+
             if "game_id" in char.__table__.columns:
                 if char.game_id == -2:
-                    print("error character")
+
                     continue
                 test = BridgeGameCharacters.query.filter_by(
                     game_id=char.game_id, character_id=char.id
                 ).first()
                 if test:
-                    print("already in bridge")
+
                     continue
                 done = BridgeGameCharacters.create(
                     game_id=char.game_id, character_id=char.id
                 )
-                print(f"created: {done}")
+
     flash("remove_game_id done")
     return redirect("admin.dashboard")
 

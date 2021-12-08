@@ -25,11 +25,11 @@ notes = Blueprint("notes", __name__)
 @notes.route("/notes/<int:game_id>", methods=["GET"])
 @login_required
 def game(game_id):
-    print("dm", Games.get_dm_from_gameID(game_id).name)
+
     tutorial = Users.get_admin()
     game = Games.get_from_id(game_id)
     character_list = get_game_character_list(game)
-    print(f"game character list: {character_list}")
+
 
     session_list = Sessions.get_list_from_gameID(game_id)
 
@@ -80,7 +80,7 @@ def convert_to_JSON(game_notes_by_session) -> dict:
 def get_game_character_list(game):
     if current_user.id == game.dm_id:
 
-        character_list = Characters.get_game_character_list(game.dm_id, game.id)
+        character_list = Characters.get_player_list_for_current_user_from_game(game.id)
         if character_list:
             for character in character_list:
                 if character.dm is True:
@@ -89,7 +89,6 @@ def get_game_character_list(game):
         for npc in npcs:
             choices.append(npc)
     else:
-        character_list = Characters.get_game_character_list(current_user.id, game.id)
+        character_list = Characters.get_player_list_for_current_user_from_game(game.id)
     choices = [character for character in character_list]
-    print("choices", choices)
     return choices

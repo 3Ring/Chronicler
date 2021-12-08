@@ -40,7 +40,7 @@ def delete():
 @profile.route("/profile/characters")
 @login_required
 def characters():
-    my_characters = Characters.get_list_from_userID(current_user.id)
+    my_characters = Characters.get_list_from_user(current_user.id)
     if not my_characters:
         return redirect(url_for("create.character"))
     return render_template("profile/characters.html", my_characters=my_characters)
@@ -55,7 +55,8 @@ def games():
 @profile.route("/profile/games/player")
 @login_required
 def player_landing():
-    player_games = Games.get_personal_game_list_player(current_user.id)
+    user = Users.get_from_id(current_user.id)
+    player_games = user.get_game_list_player()
     # claim game if abandoned
     return render_template(
         "profile/games/player_landing.html", player_games=player_games
@@ -65,6 +66,7 @@ def player_landing():
 @profile.route("/profile/games/player/<int:game_id>")
 @login_required
 def player(game_id):
+    session["reauth"] = "profile.player"
     game = Games.get_from_id(game_id)
     return render_template("profile/games/player.html", game=game)
 

@@ -44,7 +44,6 @@ def make_string_testset(type_dict, **kwargs):
         
         exec(f"{string_type} = " + "{}")
         for length_name, length_value in kwargs.items():
-            # print(f"strings['{string_type}_{length_name}'] = {type_dict[string_type][length_name]}" )
             exec(f"strings['{string_type}_{length_name}'] = {type_dict[string_type][length_name]}" )
 
     

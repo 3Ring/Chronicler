@@ -57,34 +57,26 @@ def register_success(responses, email=None):
     if email == None:
         email = test_email
     if current_user.is_authenticated == True:
-        print("fail. authenticated")
         return False
     elif Users.query.filter_by(email=email).first() == None:
-        print("fail. not found")
         return False
     elif len(Users.query.filter_by(email=email).all()) > 1:
-        print("fail. not unique")
         return False
     for response in responses:
         if response in url_logins:
             return True
-    print("fail. not in urls")
     return False
 
 def logout_success(responses, email):
     if current_user.is_authenticated == True:
-        print("fail. authenticated")
         return False
     elif Users.query.filter_by(email=email).first() == None:
-        print("fail. not found")
         return False
     elif len(Users.query.filter_by(email=email).all()) > 1:
-        print("fail. not unique")
         return False
     for response in responses:
         if response in url_logins:
             return True
-    print("fail. not in urls")
     return False
 def test_login_logout(client, auth):
     """Using admin account: Make sure login and logout works."""

@@ -18,7 +18,6 @@ idPrefix__newSessionCard = "session_card_"
 # Create, store and return new session on new session event
 @socketio.on("send_new_session")
 def send_new_session(game_id, number, title, synopsis=None):
-    print("here in session")
     # convert message to model and add to db
     new = Sessions.create(
         number=number, title=title, synopsis=synopsis, game_id=game_id
@@ -244,6 +243,7 @@ def edit_note(text, is_private, to_dm, character_id, dm_id, game_id, user_id, no
             user_id,
             game_id,
             dm_id,
+            character_id,
             _private,
             changed,
             was_not_private,

@@ -58,7 +58,7 @@ class User:
 
     @staticmethod
     def remove(form, user, failure_message=None, success_message=None):
-        print(form.confirm.data.lower().strip(), user.email.lower().strip())
+
         if not _is_email(form.confirm.data):
             return _failure("server didn't understand data", failure_message)
         elif form.confirm.data.lower().strip() != user.email.lower().strip():
@@ -247,11 +247,17 @@ class Game:
             return _failure(img_data, failure_message)
         return _success(success_message)
 
+    @staticmethod
+    def leave(form, failure_message=None, success_message=None):
+        if _missing_form(form):
+            return _failure("server didn't receive any data", failure_message)
+        if type(form.confirm.data) is not str:
+            return _failure("confirmation data corrupted", failure_message)
+        return _success(success_message)
 
 class Character:
     @staticmethod
     def remove(form, character, failure_message=None, success_message=None):
-        print(form.confirm.data.lower().strip(), character.name.lower().strip())
         if type(form.confirm.data) != str:
             return _failure("server didn't understand data", failure_message)
         elif form.confirm.data.lower().strip() != character.name.lower().strip():

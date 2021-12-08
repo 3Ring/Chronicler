@@ -1,3 +1,4 @@
+from os import fstat
 from flask import Blueprint, render_template, redirect, url_for, session, flash
 from flask_login import login_required, fresh_login_required, current_user
 from project import forms
@@ -69,6 +70,7 @@ def character(character_id):
 @edit.route("/edit/character/<int:character_id>", methods=["POST"])
 @fresh_login_required
 def character_post(character_id):
+    
     charform = forms.CharCreate()
     delform = forms.CharDelete()
     character = Characters.get_from_id(character_id)
@@ -106,6 +108,8 @@ no_choice = "No Choice"
 @edit.route("/edit/games/dm/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def game_dm(game_id):
+    if Player.not_authorized(game_id):
+        return redirect(url_for(Player.not_authorized))
     heir = False
     form_edit = forms.GameEdit()
     form_remove = forms.GameRemove()
@@ -118,10 +122,8 @@ def game_dm(game_id):
             form_remove.heir.choices.append(player.name)
             form_remove.heir.choices[i + 1].value = player.id
 
-    print(len(form_remove.heir.choices))
     if len(form_remove.heir.choices) > 1:
         heir = True
-    print(game)
     # visit game
     # edit game name
     # remove game
@@ -257,7 +259,6 @@ def add_remove(game_id):
     resources = Player.get_resources(game_id)
     game_characters = Games.get_personal_game_list_player(current_user.id)
     last_character = False
-    print("remove", resources["remove"])
     if len(resources["remove"]) == 1:
         last_character = resources["remove"][0]
 
@@ -273,19 +274,46 @@ def add_remove(game_id):
     )
 
 
+def manage_remove_character(game, character_id):
+    if not Games.remove_character_from_id(character_id):
+        return Player.failure(f'unable to remove character from {game.name}')
+    name = Characters.get_from_id(character_id).name
+    return Player.success(game.id, f'{name} removed from {game.name} successfully')
+
+
 @edit.route("/edit/games/player/add_remove/<int:game_id>", methods=["POST"])
 @fresh_login_required
 def add_remove_post(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
-
+    game = Games.get_from_id(game_id)
     addform = forms.CharAdd()
     charform = forms.CharCreate()
+    delform = forms.CharRemove()
+    if addform.char_add_submit.data:
+        message = Joining.handle_add(addform, game_id)
+        if type(message) is not str:
+            return Player.success(
+                game_id,
+                f"{addform.character.name} successfully added to {game.name}"
+            )
+        return Player.failure(game_id, message)
+    elif charform.char_submit.data:
+        message = Joining.handle_create(charform, game_id)
+        if type(message) is not str:
+            return Player.success(
+                game_id,
+                f"{addform.character.name} successfully added to {game.name}"
+            )
+    else:
+        return manage_remove_character(game, delform.character.data)
 
 
 @edit.route("/edit/games/player/leave/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def leave(game_id):
+    if Player.not_authorized(game_id):
+        return redirect(url_for(Player.not_authorized))
     game = Games.get_from_id(game_id)
     leaveform = forms.LeaveGame()
     return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
@@ -294,7 +322,23 @@ def leave(game_id):
 @edit.route("/edit/games/player/leave/<int:game_id>", methods=["POST"])
 @fresh_login_required
 def leave_post(game_id):
-    pass
+    if Player.not_authorized(game_id):
+        return redirect(url_for(Player.not_authorized))
+    leaveform = forms.LeaveGame()
+    return handle_leave(game_id, leaveform)
+
+
+def handle_leave(game_id, form):
+    message = form_validators.Game.leave(form)
+    if type(message) is str:
+        return Player.leave_failure(game_id, message)
+    game_name = Games.get_from_id(game_id).name.lower().strip()
+    confirm = form.confirm.data.lower().strip()
+    if confirm != game_name:
+        return Player.leave_failure(game_id, f'{confirm} does not match {game_name}')
+    Games.remove_player(current_user.id, game_id)
+    return Player.leave_success(game_id, f'You are no longer part of {game_name}')
+
 
 
 class Player(ViewsMixin):
@@ -302,9 +346,32 @@ class Player(ViewsMixin):
     not_authorized = "profile.player"
 
     @staticmethod
+    def success(game_id, message=None):
+        if message:
+            flash(message)
+        return redirect(url_for("edit.add_remove", game_id=game_id))
+
+    @staticmethod
+    def failure(game_id, message=None):
+        if message:
+            flash(message)
+        return redirect(url_for("edit.add_remove", game_id=game_id))
+
+    @staticmethod
+    def leave_success(game_id, message=None):
+        if message:
+            flash(message)
+        return redirect(url_for("profile.player", game_id=game_id))
+
+    @staticmethod
+    def leave_failure(game_id, message=None):
+        if message:
+            flash(message)
+        return redirect(url_for("edit.leave", game_id=game_id))
+
+    @staticmethod
     def not_authorized(game_id):
         user_list = Games.get_player_list_from_id(game_id)
-        print(user_list, current_user.id)
         for user in user_list:
             if current_user.id == user.id:
                 return False
@@ -315,26 +382,21 @@ class Player(ViewsMixin):
 
         addform = forms.CharAdd()
         removeform = forms.CharRemove()
-        my_characters = Characters.get_list_from_userID(current_user.id)
-        player_list = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
         add = []
-        remove = []
         ids = []
 
-        for player in player_list:
-            ids.append(player.character_id)
-        print("\n\n", ids, my_characters)
-        for character in my_characters:
-            if character.id in ids:
-                remove.append(character)
-            else:
+        remove_list = Characters.get_player_list_for_current_user_from_game(game_id)
+        add_list = Characters.get_list_from_user(current_user.id)
+        for player in remove_list:
+            ids.append(player.id)
+        for character in add_list:
+            if character.id not in ids:
                 add.append(character)
-
         addform.character.choices = [(g.id, g.name) for g in add]
-        removeform.character.choices = [(g.id, g.name) for g in remove]
+        removeform.character.choices = [(g.id, g.name) for g in remove_list]
         return {
             "my_characters": add,
             "removeform": removeform,
             "addform": addform,
-            "remove": remove,
+            "remove": remove_list,
         }

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% include 'main/flash.html' %}
+
 <form method='POST'>
     <h1>Leave {{game.name}}</h1>
     <h2>Your notes will remain for all to view</h2>

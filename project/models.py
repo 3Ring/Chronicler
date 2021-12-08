@@ -112,13 +112,14 @@ class SABaseMixin:
         db.session.commit()
         return True
 
+    def unremove_self(self):
+        self.removed = False
+        db.session.commit()
+        return True
+
     def edit(self, **kw):
         for key, value in kw.items():
-            # print(key, value)
-            # print(self.__table__.columns)
-            # print(f"{self.__table__}.{key}")
             # if str(f"{self.__table__}.{key}") in str(self.__table__.columns):
-            #     print("yes")
             self.key = value
             db.session.commit()
 
@@ -227,7 +228,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         """
 
         user = Users.get_from_email(email)
-        print(user)
         avatar = Characters.create(name=user.name, user_id=user.id)
         success = avatar.add_to_game(Games.get_bugs().id)
         return success
@@ -235,6 +235,12 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     @staticmethod
     def add_to_game(user_id: int, game_id: int) -> object:
         """adds user to join table and returns bridge object"""
+
+        check = BridgeUserGames.query.filter_by(user_id=user_id, game_id=game_id).first()
+        if check:
+            if check.removed:
+                check.unremove_self()
+            return check
         return BridgeUserGames.create(user_id=user_id, game_id=game_id)
 
     @classmethod
@@ -253,11 +259,10 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         player_list = []
         my_games = BridgeUserGames.join(self.id, "user_id", "game_id")
         if my_games:
-            print("my_games", my_games)
             for game in my_games:
                 if game.dm_id != self.id:
                     player_list.append(Games.get_from_id(game.id))
-        print("list", player_list)
+        print(player_list)
         return player_list
 
     def get_game_list_dm(self):
@@ -469,6 +474,19 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
                 break
         return join
 
+    @classmethod
+    def remove_player(cls, user_id: int, game_id: int):
+        bridge = BridgeUserGames.query.filter_by(user_id=user_id, game_id=game_id).first()
+        bridge.remove_self()
+
+    @classmethod
+    def remove_character_from_id(cls, character_id):
+        bridge = BridgeGameCharacters.query.filter_by(character_id=character_id).first()
+        if not bridge:
+            return False
+        bridge.remove_self()
+        return True
+
     def _move_dependencies(self, new_id, old_id):
         dependencies = []
         dependencies.append(Notes.query.filter_by(game_id=old_id).all())
@@ -501,7 +519,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     def get_dm_avatar(cls, game_id: int):
         """returns dm avatar for game"""
         game = cls.get_from_id(game_id)
-        char_list = Characters.get_game_character_list(game.dm_id, game_id)
+        char_list = Characters.get_player_list_for_current_user_from_game(game.dm_id, game_id)
         for char in char_list:
             if char.dm == True:
                 return char
@@ -656,10 +674,15 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         return BridgeGameCharacters.join(self.id, "character_id", "game_id")
 
     def add_to_game(self, game_id: int):
-        if BridgeGameCharacters.query.filter_by(
+        bridge = BridgeGameCharacters.query.filter_by(
             character_id=self.id, game_id=game_id
-        ).all():
-            raise BaseException("character already in game")
+        ).first()
+        if bridge:
+            if bridge.removed:
+                bridge.unremove_self()
+                return True
+            else:
+                raise BaseException("character already in game")
         if BridgeGameCharacters.create(character_id=self.id, game_id=game_id):
             return True
         return False
@@ -682,13 +705,15 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             return super()._delete_attached(dependencies, confirm=confirm)
 
     @staticmethod
-    def get_game_character_list(user_id: int, game_id: int) -> list:
+    def get_player_list_for_current_user_from_game(game_id: int, include_removed: bool = False) -> list:
         """returns a list of all the character objects the user owns in specified game"""
-        print(f"game_id = {game_id}")
         game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
         final = []
         for c in game_characters:
             if c.user_id == current_user.id:
+                if c.removed:
+                    if not include_removed:
+                        continue
                 final.append(c)
         return final
 
@@ -701,15 +726,19 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         return False
 
     @classmethod
-    def get_list_from_userID(
+    def get_list_from_user(
         cls, user_id: int, include_dm: bool = False, include_removed: bool = False
     ) -> list:
         """Returns a list of all characters attached to the provided user_id.
+
+        does not include characters in bug reports or orphanage
 
         :param user_id: id of user.
         :param include_dm: if set to `True` dm avatars will be inluded in the list.
         :param include_removed: if set to `True` removed characters will be included.
         """
+
+         
         my_characters = cls.query.filter_by(user_id=user_id).order_by(cls.name)
         if include_removed:
             return my_characters
@@ -917,7 +946,7 @@ class BridgeBase:
         return cls.query.filter_by(**{input_column_name: model_id}).all()
 
     @classmethod
-    def join(cls, model_id, input_column_name: str, output_column_name: str) -> list:
+    def join(cls, model_id, input_column_name: str, output_column_name: str, include_removed: bool = False) -> list:
         """Uses bridge table and returns all objects from connected table that the model's id is associated with
         will return an incorrect list if not used with correct Bridge Class
 
@@ -927,21 +956,28 @@ class BridgeBase:
         """
         bridge_list = cls._get_column_attr(model_id, input_column_name)
         my_keys = []
-        print(bridge_list)
-        print("list", BridgeGameCharacters.query.filter_by(game_id=model_id).all())
         if not bridge_list:
             return False
         for bridge in bridge_list:
+            print(f'bridge: {bridge}')
+            if bridge.removed:
+                if not include_removed:
+                    continue
             my_keys.append(getattr(bridge, output_column_name))
-        print(my_keys)
         model = cls._switch(output_column_name)
+        print(f'keys {my_keys}')
         if not model:
             return False
         my_items = []
         if not my_keys:
             return False
         for key in my_keys:
-            my_items.append(model.get_from_id(key))
+            item = model.get_from_id(key)
+            if item.removed:
+                if not include_removed:
+                    continue
+            my_items.append(item)
+        print(f'my items {my_items}')
         return my_items
 
     @classmethod
@@ -1014,7 +1050,6 @@ class BridgeUserGames(SABaseMixin, BridgeBase, db.Model):
 
 class BridgeGameCharacters(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character game assets"""
-
     __tablename__ = "bridgecharacters"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))

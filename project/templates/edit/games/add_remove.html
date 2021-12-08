@@ -8,7 +8,8 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         var options = document.getElementsByTagName("select");
-        if (options) {
+        console.log(options)
+        if (options.length > 0) {
             let el = document.createElement("option");
             el.setAttribute("selected", true);
             el.setAttribute('disabled', true);

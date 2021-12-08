@@ -46,7 +46,6 @@ def joining(game_id, game_name):
 def joining_post(game_id, game_name):
     """add new character to game"""
     game_id = int(game_id)
-
     addform = forms.CharAdd()
     charform = forms.CharCreate()
     if addform.char_add_submit.data:
@@ -62,7 +61,7 @@ class Joining(ViewsMixin):
     @staticmethod
     def make_add_list():
         form = forms.CharAdd()
-        my_characters = Characters.get_list_from_userID(current_user.id)
+        my_characters = Characters.get_list_from_user(current_user.id)
         form.character.choices = [(g.id, g.name) for g in my_characters]
         return {"my_characters": my_characters, "addform": form}
 
