@@ -16,8 +16,14 @@ function NewQuill(event, quill) {
   let new_note_html = quill.root.innerHTML,
     new_note_private = element__newQuill_private.value,
     new_note_to_dm = false,
-    speaking_as = element__newQuill_speaking_as.value;
-
+    // ! BUG PAGE CODE
+    if (element__newQuill_speaking_as) {
+      speaking_as = element__newQuill_speaking_as.value;
+    }
+    else {
+      
+    }
+    // ! END BUG PAGE
   if (element__newQuill_to_dm) {
     new_note_to_dm = element__newQuill_to_dm.value;
   }

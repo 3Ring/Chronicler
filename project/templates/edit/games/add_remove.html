@@ -8,11 +8,11 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         var options = document.getElementsByTagName("select");
-        console.log(options)
         if (options.length > 0) {
             let el = document.createElement("option");
             el.setAttribute("selected", true);
-            el.setAttribute('disabled', true);
+            el.setAttribute('hidden', true);
+            el.setAttribute('value', "");
             el.innerHTML = "Choose Your Character"
             options[0].insertAdjacentElement("afterbegin", el);
         }
@@ -93,7 +93,7 @@
 
             {% if last_character %}
                 <h1> {{last_character.name}} is your only charcter! if you want to remove them either add another character first or you can leave the game</h1>
-                <a> Leave game</a>
+                <a href='{{url_for("edit.leave", game_id=game.id)}}'> Leave game</a>
                 {% else %}
                 
             <form method='POST'>

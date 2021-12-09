@@ -22,14 +22,14 @@ from project.helpers import attach_game_image_or_default_from_Images_model
 notes = Blueprint("notes", __name__)
 
 
-@notes.route("/notes/<int:game_id>", methods=["GET"])
+@notes.route("/notes/<game_id>", methods=["GET"])
 @login_required
 def game(game_id):
-
+    game_id = int(game_id)
     tutorial = Users.get_admin()
     game = Games.get_from_id(game_id)
+    print(f"bugs is {game}")
     character_list = get_game_character_list(game)
-
 
     session_list = Sessions.get_list_from_gameID(game_id)
 

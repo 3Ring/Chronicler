@@ -1,24 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if current_user.is_authenticated%}
-
+{% include 'main/flash.html' %}
 <div class="container">
     <div class="app-container">
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    
-                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
-                        <p>
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
-                        </p>
-                    </div>
-                    
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+
                     
         {% if games or dm_games %}
             <h1>Your Games:</h1>
@@ -88,5 +74,4 @@
         </div>            
     </div>
 </div>
-{% endif %}
 {% endblock %}

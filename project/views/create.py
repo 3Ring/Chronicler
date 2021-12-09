@@ -47,6 +47,7 @@ def game_post():
         dm_id=current_user.id,
         published=form.published.data,
         img_id=img_id,
+        with_follow_up=True,
     )
 
     return redirect(url_for("create.dm", game_id=game.id))

@@ -2,12 +2,15 @@
     <div class="form-group">
     <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
     <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+
     <h2>Speaking as:</h2>
     <select name="speaking_as">
         {% for character in character_list %}
             <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
         {% endfor %}
     </select>
+
+
 
     <div id="Quill_sessionNew">
     </div>

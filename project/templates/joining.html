@@ -6,7 +6,8 @@
         if (options) {
             let el = document.createElement("option");
             el.setAttribute("selected", true);
-            el.setAttribute('disabled', true);
+            el.setAttribute('hidden', true);
+            el.setAttribute('value', "");
             el.innerHTML = "Choose Your Character"
             options[0].insertAdjacentElement("afterbegin", el);
         }

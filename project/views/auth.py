@@ -128,7 +128,10 @@ def register_post():
         flash(f"{form.email.data} is already in use!")
         return _register_failure()
     Users.create(
-        name=form.name.data, email=form.email.data, password=form.password.data
+        name=form.name.data,
+        email=form.email.data,
+        password=form.password.data,
+        with_follow_up=True,
     )
     return _register_success()
 

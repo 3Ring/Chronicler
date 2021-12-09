@@ -70,7 +70,7 @@ def character(character_id):
 @edit.route("/edit/character/<int:character_id>", methods=["POST"])
 @fresh_login_required
 def character_post(character_id):
-    
+
     charform = forms.CharCreate()
     delform = forms.CharDelete()
     character = Characters.get_from_id(character_id)
@@ -108,13 +108,18 @@ no_choice = "No Choice"
 @edit.route("/edit/games/dm/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def game_dm(game_id):
-    if Player.not_authorized(game_id):
-        return redirect(url_for(Player.not_authorized))
+    print(f"here")
+    if DM.not_authorized(game_id):
+        print(f"no")
+        print(f"dm {DM.not_authorized_url} {type(DM.not_authorized_url)}")
+        return redirect(url_for(DM.not_authorized_url))
     heir = False
+    print(f"1")
     form_edit = forms.GameEdit()
     form_remove = forms.GameRemove()
     form_delete = forms.GameDelete()
     game = Games.get_from_id(game_id)
+    print(f"2")
     player_list = Users.get_player_list(game_id)
     form_remove.heir.choices = [no_choice]
     for i, player in enumerate(player_list):
@@ -276,9 +281,9 @@ def add_remove(game_id):
 
 def manage_remove_character(game, character_id):
     if not Games.remove_character_from_id(character_id):
-        return Player.failure(f'unable to remove character from {game.name}')
+        return Player.failure(f"unable to remove character from {game.name}")
     name = Characters.get_from_id(character_id).name
-    return Player.success(game.id, f'{name} removed from {game.name} successfully')
+    return Player.success(game.id, f"{name} removed from {game.name} successfully")
 
 
 @edit.route("/edit/games/player/add_remove/<int:game_id>", methods=["POST"])
@@ -294,16 +299,14 @@ def add_remove_post(game_id):
         message = Joining.handle_add(addform, game_id)
         if type(message) is not str:
             return Player.success(
-                game_id,
-                f"{addform.character.name} successfully added to {game.name}"
+                game_id, f"{addform.character.name} successfully added to {game.name}"
             )
         return Player.failure(game_id, message)
     elif charform.char_submit.data:
         message = Joining.handle_create(charform, game_id)
         if type(message) is not str:
             return Player.success(
-                game_id,
-                f"{addform.character.name} successfully added to {game.name}"
+                game_id, f"{addform.character.name} successfully added to {game.name}"
             )
     else:
         return manage_remove_character(game, delform.character.data)
@@ -335,15 +338,25 @@ def handle_leave(game_id, form):
     game_name = Games.get_from_id(game_id).name.lower().strip()
     confirm = form.confirm.data.lower().strip()
     if confirm != game_name:
-        return Player.leave_failure(game_id, f'{confirm} does not match {game_name}')
+        return Player.leave_failure(game_id, f"{confirm} does not match {game_name}")
     Games.remove_player(current_user.id, game_id)
-    return Player.leave_success(game_id, f'You are no longer part of {game_name}')
+    return Player.leave_success(game_id, f"You are no longer part of {game_name}")
 
+
+class DM(ViewsMixin):
+    not_authorized_url = "profile.dm"
+
+    @staticmethod
+    def not_authorized(game_id):
+        dm_id = Games.get_dmID_from_gameID(game_id)
+        if current_user.id == dm_id:
+            return False
+        return True
 
 
 class Player(ViewsMixin):
 
-    not_authorized = "profile.player"
+    not_authorized_url = "profile.player"
 
     @staticmethod
     def success(game_id, message=None):
