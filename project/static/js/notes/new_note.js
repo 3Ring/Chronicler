@@ -8,22 +8,20 @@ function NewQuill(event, quill) {
   let element__newQuill_private = document.querySelector(flag__newQuillPrivate),
     element__newQuill_to_dm = document.querySelector(
       `input[data-flag="newQuillDm"]`
-    ),
-    element__newQuill_speaking_as = document.querySelector(
-      `select[name="speaking_as"]`
     );
+  var element__newQuill_speaking_as = document.querySelector(
+    `select[name="speaking_as"]`
+  );
   // capture data
   let new_note_html = quill.root.innerHTML,
     new_note_private = element__newQuill_private.value,
-    new_note_to_dm = false,
-    // ! BUG PAGE CODE
-    if (element__newQuill_speaking_as) {
-      speaking_as = element__newQuill_speaking_as.value;
-    }
-    else {
-      
-    }
-    // ! END BUG PAGE
+    new_note_to_dm = false;
+  // ! BUG PAGE CODE
+  if (element__newQuill_speaking_as) {
+    speaking_as = element__newQuill_speaking_as.value;
+  } else {
+  }
+  // ! END BUG PAGE
   if (element__newQuill_to_dm) {
     new_note_to_dm = element__newQuill_to_dm.value;
   }
