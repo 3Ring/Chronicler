@@ -468,7 +468,6 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     @staticmethod
     def get_player_list_from_id(game_id: int) -> list:
         join = BridgeUserGames.join(game_id, "game_id", "user_id")
-        print(f"join: {join}")
         game = Games.get_from_id(game_id)
         for i, user in enumerate(join):
             if user.id == game.dm_id:
@@ -574,20 +573,17 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def _fill_bugs(cls):
-        print(f"in fill")
         tutorial_user = Users.get_admin()
         tutorial_character = Characters.get_admin()
         from project.bugs_texts import _bug_sessions, _bug_texts
 
         for session in _bug_sessions:
-            print(f"creating {session}")
             Sessions.create(
                 number=session["number"],
                 title=session["title"],
                 game_id=session["game_id"],
             )
         for note in _bug_texts:
-            print(f"creating {note}")
             Notes.create(
                 charname=tutorial_character.name,
                 text=note["text"],
@@ -615,7 +611,6 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         """
         obj = super().create(**kw)
         if bug_report:
-            print(f"true here\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
             cls._fill_bugs()
         if with_follow_up:
             # add tutorial notes and session zero to game
@@ -758,7 +753,6 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     ) -> list:
         """returns a list of all the character objects the user owns in specified game"""
         game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
-        print(f"game_characters: {game_characters}")
         final = []
         for c in game_characters:
             if c.user_id == current_user.id:

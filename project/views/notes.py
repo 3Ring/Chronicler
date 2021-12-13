@@ -17,22 +17,37 @@ from project.models import (
     Notes,
     NPCs,
 )
+from project import defaults as d
 from project.helpers import attach_game_image_or_default_from_Images_model
 
 notes = Blueprint("notes", __name__)
 
 
-@notes.route("/notes/<game_id>", methods=["GET"])
+@notes.route("/notes/<int:game_id>", methods=["GET"])
 @login_required
 def game(game_id):
-    game_id = int(game_id)
     tutorial = Users.get_admin()
     game = Games.get_from_id(game_id)
-    print(f"bugs is {game}")
     character_list = get_game_character_list(game)
-
     session_list = Sessions.get_list_from_gameID(game_id)
+    notes = get_game_notes(session_list, game_id)
+    js_note_dict = convert_to_JSON(notes)
+    heroku = set_heroku()
+    return render_template(
+        "notes/blueprint.html",
+        tutorial=tutorial,
+        js_note_dict=js_note_dict,
+        edit_img="/static/images/edit_button_image.png",
+        note_dict=notes,
+        id=game_id,
+        bugs_id=d.GameBugs.id,
+        session_titles=session_list,
+        game=game,
+        heroku=heroku,
+        character_list=character_list,
+    )
 
+def get_game_notes(session_list: list, game_id: int):
     game_notes_by_session = {}
     if session_list is not None:
         for session in session_list:
@@ -40,25 +55,10 @@ def game(game_id):
                 session.number, game_id
             )
             game_notes_by_session[session.number] = session_note_list
-
-    js_note_dict = convert_to_JSON(game_notes_by_session)
-    # this is to set the address for Flask socket.io
-    heroku = set_heroku()
-    return render_template(
-        "notes/blueprint.html",
-        tutorial=tutorial,
-        js_note_dict=js_note_dict,
-        edit_img="/static/images/edit_button_image.png",
-        note_dict=game_notes_by_session,
-        id=game_id,
-        session_titles=session_list,
-        game=game,
-        heroku=heroku,
-        character_list=character_list,
-    )
-
+    return game_notes_by_session
 
 def set_heroku():
+    """this is to set the address for Flask socket.io"""
     heroku = False
     if os.environ.get("HEROKU_HOSTING"):
         heroku = True

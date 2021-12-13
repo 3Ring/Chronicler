@@ -108,18 +108,13 @@ no_choice = "No Choice"
 @edit.route("/edit/games/dm/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def game_dm(game_id):
-    print(f"here")
     if DM.not_authorized(game_id):
-        print(f"no")
-        print(f"dm {DM.not_authorized_url} {type(DM.not_authorized_url)}")
         return redirect(url_for(DM.not_authorized_url))
     heir = False
-    print(f"1")
     form_edit = forms.GameEdit()
     form_remove = forms.GameRemove()
     form_delete = forms.GameDelete()
     game = Games.get_from_id(game_id)
-    print(f"2")
     player_list = Users.get_player_list(game_id)
     form_remove.heir.choices = [no_choice]
     for i, player in enumerate(player_list):

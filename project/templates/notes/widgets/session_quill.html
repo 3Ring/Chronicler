@@ -1,19 +1,23 @@
-<form class="wysiwyg-form" data-flag="newQuill_FormSession" id="test_form_quill">
+<form class="wysiwyg-form <{% if game.id == bugs_id %} hidden{% endif %}" data-flag="newQuill_FormSession" id="test_form_quill">
     <div class="form-group">
-    <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
-    <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-
-    <h2>Speaking as:</h2>
-    <select name="speaking_as">
-        {% for character in character_list %}
+        <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
+        <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
+        {% if game.id != bugs_id %}
+        <!-- !bug page code (some in form class too) -->
+        <h2>Speaking as:</h2>
+        <select name="speaking_as">
+            {% for character in character_list %}
             <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
-        {% endfor %}
-    </select>
+            {% endfor %}
+        </select>
+        <!-- !end bugs -->
+        {% endif %}
 
 
 
-    <div id="Quill_sessionNew">
-    </div>
+
+        <div id="Quill_sessionNew">
+        </div>
     </div>
     <div class="form-group">
         <div class="row checkbox">
@@ -30,4 +34,5 @@
             <button class="button primary" type="submit">Submit</button>
         </div>
     </div>
+
 </form>

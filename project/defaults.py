@@ -111,6 +111,7 @@ class Character(Base):
 class CharacterTutorial(Admin, Character):
     name = "Chronicler Helper"
     bio = "A very happy helper"
+    avatar = True
     user_id = Admin.id
 
 

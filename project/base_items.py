@@ -150,6 +150,7 @@ class Base_items:
                 bio=cls.d.CharacterTutorial.bio,
                 date_added=cls.d.CharacterTutorial.date_added,
                 dm=cls.d.CharacterTutorial.dm,
+                avatar=cls.d.CharacterTutorial.avatar,
                 copy=cls.d.CharacterTutorial.copy,
                 user_id=cls.d.CharacterTutorial.user_id,
                 img_id=cls.d.CharacterTutorial.img_id,

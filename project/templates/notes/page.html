@@ -19,7 +19,11 @@
             {# translate_hook session #}
             {# translate_section session nav #}
                             <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
-                                <h4>Session {{ session.number }}</h4>
+                                {% if game.id != bugs_id %}
+                                <!-- !bugs code -->
+                                    <h4>Session {{ session.number }}</h4>
+                                    <!-- !end bugs code -->
+                                {% endif %}
                                 <h2>{{ session.title }}</h2>
                             </li>
             {# endsection session #}
@@ -48,7 +52,13 @@
                             {# translate_section session card #}
                             
                             <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
-                                <h2>Session {{ session.number }}: {{ session.title }}</h2>
+                                    <!-- !bugs code -->
+                                    {% if game.id == bugs_id %}
+                                    <h1>{{ session.title }}</h1>
+                                    {% else %}
+                                    <h2>Session {{ session.number }}: {{ session.title }}</h2>
+                                    {% endif %}
+                                    <!-- !end bugs -->
                                 <div>
                                     <!-- Session Notes -->
                                     <ul class="note_list" data-idSession="{{ session.number }}">
