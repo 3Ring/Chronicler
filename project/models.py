@@ -573,7 +573,35 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         return final_list
 
     @classmethod
-    def create(cls, with_follow_up=True, **kw):
+    def _fill_bugs(cls):
+        print(f"in fill")
+        tutorial_user = Users.get_admin()
+        tutorial_character = Characters.get_admin()
+        from project.bugs_texts import _bug_sessions, _bug_texts
+
+        for session in _bug_sessions:
+            print(f"creating {session}")
+            Sessions.create(
+                number=session["number"],
+                title=session["title"],
+                game_id=session["game_id"],
+            )
+        for note in _bug_texts:
+            print(f"creating {note}")
+            Notes.create(
+                charname=tutorial_character.name,
+                text=note["text"],
+                session_number=note["session_number"],
+                private=False,
+                to_dm=False,
+                user_id=tutorial_user.id,
+                origin_character_id=tutorial_character.id,
+                game_id=d.Admin.id,
+            )
+        return
+
+    @classmethod
+    def create(cls, with_follow_up=True, bug_report=False, **kw):
         """adds new Game to database
 
         :param with_follow_up: if set to `True` the tutorial notes will be added.
@@ -586,6 +614,9 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         :param img_id: = `Integer, ForeignKey('images.id')`
         """
         obj = super().create(**kw)
+        if bug_report:
+            print(f"true here\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            cls._fill_bugs()
         if with_follow_up:
             # add tutorial notes and session zero to game
             cls.new_game_training_wheels(obj)
