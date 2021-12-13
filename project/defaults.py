@@ -99,9 +99,11 @@ class Character(Base):
     bio = None
     copy = False
     dm = False
+    avatar = False
     img_id = None
     img_object = object
     server_dm = "FALSE"
+    server_avatar = "FALSE"
     server_copy = "FALSE"
     image = Images.character_player
 

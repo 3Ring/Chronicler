@@ -172,7 +172,7 @@ def game_dm_post(game_id):
 @fresh_login_required
 def game_dm_remove_confirm(game_id):
     form = forms.GameRemove()
-    form.heir.choices = [(g.id) for g in Users.query.order_by("name")]
+    form.heir.choices = [(g.id) for g in Users.query.order_by("name").all()]
     pass
 
 

@@ -228,7 +228,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         """
 
         user = Users.get_from_email(email)
-        avatar = Characters.create(name=user.name, user_id=user.id)
+        avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
         success = avatar.add_to_game(Games.get_bugs().id)
         return success
 
@@ -662,6 +662,11 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     name = db.Column(db.String(50), nullable=False)
     bio = db.Column(db.Text)
+    avatar = db.Column(
+        db.Boolean,
+        default=d.Character.avatar,
+        server_default=text(d.Character.server_avatar),
+    )
     dm = db.Column(
         db.Boolean, default=d.Character.dm, server_default=text(d.Character.server_dm)
     )
@@ -742,31 +747,47 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def get_list_from_user(
-        cls, user_id: int, include_dm: bool = False, include_removed: bool = False
+        cls,
+        user_id: int,
+        include_avatar: bool = False,
+        include_dm: bool = False,
+        include_removed: bool = False,
     ) -> list:
         """Returns a list of all characters attached to the provided user_id.
 
         does not include characters in bug reports or orphanage
 
         :param user_id: id of user.
+        :param include_avatar: if set to `True` user avatar will be included in the list.
         :param include_dm: if set to `True` dm avatars will be inluded in the list.
         :param include_removed: if set to `True` removed characters will be included.
         """
 
-        my_characters = cls.query.filter_by(user_id=user_id).order_by(cls.name)
+        my_characters = cls.query.filter_by(user_id=user_id).order_by(cls.name).all()
+        if include_avatar:
+            pass
+        else:
+            for i, a in enumerate(my_characters):
+                if a.avatar:
+                    my_characters.pop(i)
+                    break
         if include_removed:
-            return my_characters
-        without_removed = []
-        for r in my_characters:
-            if not r.removed:
-                without_removed.append(r)
+            pass
+        else:
+            without_removed = []
+            for r in my_characters:
+                if not r.removed:
+                    without_removed.append(r)
+            my_characters = without_removed
         if include_dm:
-            return without_removed
-        without_dm = []
-        for c in without_removed:
-            if not c.dm:
-                without_dm.append(c)
-        return without_dm
+            pass
+        else:
+            without_dm = []
+            for c in my_characters:
+                if not c.dm:
+                    without_dm.append(c)
+            my_characters = without_dm
+        return my_characters
 
     @classmethod
     def get_dm_characters(cls, user_id: int) -> list:
@@ -844,6 +865,7 @@ class Notes(SABaseMixin, db.Model):
             cls.query.filter_by(game_id=game_id)
             .filter_by(session_number=session_number)
             .order_by(Notes.date_added)
+            .all()
         )
 
     @staticmethod
@@ -920,7 +942,7 @@ class NPCs(SAWithImageMixin, SABaseMixin, db.Model):
 
     @classmethod
     def get_list(cls, user_id):
-        return cls.query.filter_by(user_id=user_id).order_by(cls.name)
+        return cls.query.filter_by(user_id=user_id).order_by(cls.name).all()
 
     @orm.reconstructor
     def init_on_load(self):
