@@ -27,7 +27,15 @@
         {% if current_user.id != game.dm_id %}
         <div class="row checkbox">
             <input type='checkbox' class="note_checkbox" data-flag="newQuillDm" name='note_to_dm' value='False'>
-            <label for='note_to_dm'><strong>Privileged</strong> - Visible only to you and the DM</label>
+            <label for='note_to_dm'><strong>Privileged</strong>
+                <!-- !bugs code -->
+                {% if game.id == bugs_id %}
+                - Visible only to you and Chronicler</label>
+                {% else %}
+                - Visible only to you and the DM</label>
+                {% endif %}
+                <!-- !end bugs -->
+                
         </div>
         {% endif %}
         <div class="row button-row">
