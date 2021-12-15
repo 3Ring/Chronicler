@@ -8,6 +8,9 @@ function init(DM = "") {
   // note editting functions
   Note_Editor();
 
+  // session editting functions
+  Session_Editor();
+  
   // general functions
   Checkbox_logic();
 

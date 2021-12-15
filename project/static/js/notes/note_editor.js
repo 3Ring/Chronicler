@@ -30,8 +30,9 @@ function click_inside_element(e, attribute) {
 // hide all open contextual menues
 function toggle_menues_off() {
   // find all context menus
-  let contextMenus = document.querySelectorAll("div[data-flag='contextMenu']");
-
+  let contextMenus = Array.from(
+    document.querySelectorAll("div[data-flag='contextMenu']")
+  );
   // check to see if there are any yet
   if (contextMenus.length != 0) {
     // iterate through each element, remove active class name if it exists and hide it
@@ -50,6 +51,7 @@ function toggle_menues_off() {
     }
   }
 }
+
 // deploy context menu
 function toggle_menu_on(element) {
   if (element.classList.contains(className__active)) {
@@ -117,7 +119,6 @@ function toggle_form_on(id_num) {
     placeholder: "A note about this session.",
     theme: "snow",
   });
-
   // Local variables
   let flag__formEdit = "form[data-id_formEdit='" + id_num + "']",
     flag__notes_noteText = "span[data-id_noteText='" + id_num + "']",

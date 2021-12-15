@@ -1,0 +1,19 @@
+
+<div data-session_edit_form_container="{{ session.id }}" class="hidden">
+    <div class="shroud">
+        <div class="modal-container">
+            <div class="modal">
+                <div class="content">
+                    <h2>Session Info</h2>
+                    <form data-flag="formEditSession_form" data-sid='{{ session.id }}'>
+                        <input data-session_edit_game_id="{{ session.id }}" id='new_session_form_game_id' type='hidden' value='{{ id }}'>
+                        <input data-session_edit_number='{{ session.id }}' required placeholder='Number (Required)' value='{{ session.number }}' type='number' min='0'>
+                        <input data-session_edit_title='{{ session.id }}' required placeholder='Title (Required)' value='{{ session.title }}' type='text'>
+                        <input class="button primary" type='submit' value='Edit Session'>
+                        <input class="button secondary" type='button' data-formEditSession_buttonCancel="{{ session.id }}" value='Cancel'>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -15,6 +15,14 @@ imageLink__buttonEdit = "/static/images/edit_button_image.png"
 idPrefix__newSessionHeader = "session_header_"
 idPrefix__newSessionCard = "session_card_"
 
+@socketio.on("edit_session")
+def edit_session(id_, number, title):
+    session = Sessions.get_from_id(id_)
+    session.number = number
+    session.title = title
+    print("here", session)
+    db.session.commit()
+    return
 # Create, store and return new session on new session event
 @socketio.on("send_new_session")
 def send_new_session(game_id, number, title, synopsis=None):

@@ -11,6 +11,10 @@ if (heroku) {
 } else {
   socket = io();
 }
+var user_is_dm = false;
+if (user_id == dm_id) {
+  user_is_dm = true;
+}
 const className__hidden = "hidden",
   className__active = "--active",
   className__active_sessionList = "current";

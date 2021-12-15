@@ -4,7 +4,7 @@
         <div class="header-container">
             <div class="new-session">
                 {% if game.dm_id == current_user.id %}
-                    <button class="button primary" data-flag="button_newSessionDisplay">Start a new session?</button>
+                    <button class="button primary" data-flag="button_newSessionDisplay">Create new session</button>
                 {% endif %}
             </div>
             <h1>{{ game.name }}</h1>
@@ -59,6 +59,11 @@
                                     <h2>Session {{ session.number }}: {{ session.title }}</h2>
                                     {% endif %}
                                     <!-- !end bugs -->
+                                    {% if game.dm_id == current_user.id %}
+                                        {% include 'notes/widgets/session_edit_button.html' %}
+                                        {% include 'notes/widgets/session_context_menu.html' %}
+                                        {% include 'notes/widgets/edit_session_form.html' %}
+                                    {% endif %}
                                 <div>
                                     <!-- Session Notes -->
                                     <ul class="note_list" data-idSession="{{ session.number }}">
