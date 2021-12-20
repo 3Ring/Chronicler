@@ -49,7 +49,7 @@ def ready_db(app, test_config):
         try:
             flask_migrate.upgrade()
             print("success upgrade")
-        except:
+        except BaseException:
             raise RuntimeError(
                 """Flask Migrations/versions directory either not found or empty.\n 
                 check your Migrations directory errors"""

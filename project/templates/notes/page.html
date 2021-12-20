@@ -17,7 +17,7 @@
                     {% if session_titles %}
                         {% for session in session_titles %}
             {# translate_hook session #}
-            {# translate_section session nav #}
+            {# translate_section session_nav #}
                             <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
                                 {% if game.id != bugs_id %}
                                 <!-- !bugs code -->
@@ -26,7 +26,6 @@
                                 {% endif %}
                                 <h2>{{ session.title }}</h2>
                             </li>
-            {# endsection session #}
             {# socket_ignore session #}
                         {% endfor %}
                     {% else %}
@@ -44,12 +43,12 @@
                         {% include 'notes/widgets/session_quill.html' %}
             
                     </div>
-                    <div class="sessions-scroll-container" data-flag="sessionsContainer" id="Session Cards">
+                    <div class="sessions-scroll-container" data-flag="sessionsContainer" id="session_cards">
                         {% if session_titles %}
                             <!-- Session Title Cards -->
                             {% for session in session_titles %}
                             {# endignore session #}
-                            {# translate_section session card #}
+                            {# translate_section session_card #}
                             
                             <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
                                     <!-- !bugs code -->

@@ -28,7 +28,7 @@ function click_inside_element(e, attribute) {
   return false;
 }
 // hide all open contextual menues
-function toggle_menues_off() {
+function toggle_note_menus_off() {
   // find all context menus
   let contextMenus = Array.from(
     document.querySelectorAll("div[data-flag='contextMenu']")
@@ -89,7 +89,7 @@ function click_listener() {
 
           e.preventDefault();
           toggle_form_on(id_num);
-          toggle_menues_off();
+          toggle_note_menus_off();
 
           // if the delete button was clicked
         } else {
@@ -99,7 +99,7 @@ function click_listener() {
         }
       }
     } else {
-      toggle_menues_off();
+      toggle_note_menus_off();
     }
   });
 }

@@ -5,6 +5,7 @@ test.py
 test2.py
 project/ignored
 project/templates/test.html
+project/templates/notes/test.html
 project/liteBON.db
 project/utils
 chronicler.egg-info

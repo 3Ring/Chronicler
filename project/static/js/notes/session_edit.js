@@ -19,7 +19,7 @@ function session_add_contextual_listener() {
     else if (click_inside_element(e, "data-sessionContextMenuId")) {
       session_context_menu_interior(e);
     } else {
-      toggle_menues_off();
+      toggle_session_menu_off();
     }
   });
 }

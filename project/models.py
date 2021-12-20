@@ -102,6 +102,12 @@ class SABaseMixin:
         db.session.commit()
         return obj
 
+    
+    def update(self, **kw):
+        for key, value in kw.items():
+            exec(f"self.{key} = value")
+        db.session.commit()
+
     @classmethod
     def get_orphanage(cls):
         """Returns orphan class object"""

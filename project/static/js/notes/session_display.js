@@ -116,7 +116,7 @@ function apply_sessionHighlightLogic_fromElement(element) {
 }
 // Session highlight logic
 function clickListener__sessionList() {
-  // get list of elements in session navbar
+  // get list of elements in session_navbar
   let elements__sessionList = document.querySelectorAll(
     "li[data-flag='sessionList']"
   );

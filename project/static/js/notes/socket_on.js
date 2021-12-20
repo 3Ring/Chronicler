@@ -54,6 +54,18 @@ function new_check_box_logic(note_id_number) {
   }
 }
 
+socket.on("edit_session", function(new_session, new_list, session_number, old_number) {
+
+  remove_activeFlags_sessionList();
+  if (session_number > current__session_number) {
+    current__session_number = session_number;
+  }
+  let old_sl = document.querySelector(`li[data-number_sessionList='${old_number}']`);
+  old_sl.innerHTML = new_list;
+  let old_sc = document.querySelector(`div[data-number_sessionCont='${old_number}']`);
+  old_sc.innerHTML = new_session;
+});
+
 // Display new Session
 socket.on("fill_new_session", function (new_session, new_list, session_number) {
   // remove filler session title if first session

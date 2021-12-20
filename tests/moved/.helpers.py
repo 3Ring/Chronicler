@@ -6,7 +6,7 @@ import re
 def _add_testing_string_lengths(passed_function, to_replace=" var ", **lengths):
     searched_str = [m.start() for m in re.finditer(to_replace, passed_function)]
     if len(searched_str) != 1:
-        raise "replace error. found variables != 1"
+        raise BaseException("replace error. found variables != 1")
 
     samples = {}
 
@@ -29,7 +29,7 @@ def make_string_testset(type_dict, **kwargs):
 
 
     if not kwargs:
-        raise "Input error. requires at least on argument"
+        raise BaseException("Input error. requires at least on argument")
     strings = {}
 
 

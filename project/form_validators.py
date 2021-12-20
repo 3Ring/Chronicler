@@ -147,40 +147,6 @@ class Image:
             return _failure("Bad Upload!")
         return True
 
-    # @classmethod
-    # def _upload_and_parse(cls, filename: str) -> dict:
-    #     """checks and parses image upload data
-
-    #     :param filename: file name string ex 'img'
-    #                     this correlates to the 'name' value in the file form input field.
-
-    #     :return dict['pic']: the streamable filestorage of the image.
-    #     :return dict['secure_name']: secure version of the filename
-    #     :return dict['mimetype']: content type
-    #     """
-    #     try:
-    #         pic = request.files[filename]
-    #     except:
-    #         return 'Invalid image file or filename. Images must be in .jpg or .png format'
-    #     if not pic:
-    #         return False
-    #     if len(pic.stream.read()) > 3000000:
-    #         return 'image is too large. limit to images 1MB or less.'
-
-    #     mimetype = pic.mimetype
-    #     if not mimetype:
-    #         return 'Invalid image file or filename. Images must be in .jpg or .png format'
-    #     allowed = cls._allowed_file(mimetype)
-    #     if type(allowed) is str:
-    #         return allowed
-    #     secure_name = secure_filename(pic.filename)
-    #     if not secure_name:
-    #         return "Bad Upload!"
-    #     return {"pic": pic
-    #             , "secure_name": secure_name
-    #             , "mimetype": mimetype
-    #             }
-
     @staticmethod
     def _allowed_file(filename):
         ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg"]
@@ -321,7 +287,7 @@ class Character:
         if type(id_) is not int:
             try:
                 _ = int(id_)
-            except:
+            except BaseException:
                 return "id needs to be of type: int"
         return True
 

@@ -3,7 +3,7 @@
 //
 // //
 
-// display form for making new session card
+// display form for making new session_card
 function newSessionForm_clickListener() {
   // Local Variables
   let element__button_newSessionDisplay = document.querySelector(
@@ -147,7 +147,9 @@ function newSession__submitListener() {
         game_id,
         element__formNewSession_inputNumber.value,
         element__formNewSession_inputTitle.value,
-        element__formNewSession_inputSynopsis.value
+        // TODO this is here because synopsis was removed. clean up code
+        null
+        // TODO end
       );
 
       // remove new session form
