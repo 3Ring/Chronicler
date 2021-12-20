@@ -4,53 +4,89 @@ var session_edit_hidden_class = className__hidden;
 
 function Session_Editor() {
   if (user_is_dm) {
-    session_add_contextual_listener();
-    session_edit_add_submit_listener();
+    session_add_contextual_listeners();
+    session_edit_add_submit_listeners();
     session_add_cancel_listener();
   }
 }
 
-function session_add_contextual_listener() {
+function session_add_contextual_listeners() {
   document.addEventListener("click", function (e) {
-    if (click_inside_element(e, "data-sessionEditNumber")) {
-      session_context_menu_deployment(e);
-    }
-    // check if the click happened within the contextual form
-    else if (click_inside_element(e, "data-sessionContextMenuId")) {
-      session_context_menu_interior(e);
-    } else {
-      toggle_session_menu_off();
-    }
+    session_context_menu(e);
   });
 }
 
-function session_context_menu_deployment(e) {
-  if (session_menu_deployed == false) {
-    // deploy session context menu
-    // if statement is because the user can click the container which would throw an error otherwise
-    if (e.target.getAttribute("data-id_editSessionImage")) {
-      let target_id = e.target.getAttribute("data-id_editSessionImage");
-      let target_element = document.querySelector(
-        `div[data-sessionContextMenuId="${target_id}"]`
-      );
-      toggle_session_menu_on(target_element);
+function session_context_menu(e) {
+  if (!session_edit_form_deployed) {
+    if (!session_menu_deployed) {
+      if (click_from_session_edit_button(e)) {
+        session_context_menu_deployment(e);
+      }
+    }
+    // check if the click happened within the contextual form
+    else if (click_from_session_menu(e)) {
+      session_context_menu_interior(e);
+    } else {
+      toggle_session_menus_off();
     }
   }
 }
 
+function click_from_session_edit_button(e) {
+  if (click_inside_element(e, "data-sessionEditNumber")) {
+    return true;
+  }
+  return false;
+}
+
+function click_from_session_menu(e) {
+  if (click_inside_element(e, "data-sessionContextMenuId")) {
+    return true;
+  }
+  return false;
+}
+
+function click_from_session_form(e) {
+  if (click_inside_element(e, "data-session_edit_form_container")) {
+    return true;
+  }
+  return false;
+}
+
+function click_from_session_form_cancel(e) {
+  if (click_inside_element(e, "data-formEdit_session_buttonCancel")) {
+    return true;
+  }
+  return false;
+}
+
+function session_context_menu_deployment(e) {
+  // deploy session context menu
+  // if statement is because the user can click the container which would throw an error otherwise
+  if (e.target.getAttribute("data-id_editSessionImage")) {
+    let target_id = e.target.getAttribute("data-id_editSessionImage");
+    let target_element = document.querySelector(
+      `div[data-sessionContextMenuId="${target_id}"]`
+    );
+    toggle_session_menu_on(target_element);
+  }
+}
+
 function session_context_menu_interior(e) {
-  // check if the click happened within the edit menu
-  if (click_inside_element(e, "data-editMenuId")) {
-    let id_num = e.target.getAttribute("data-editMenuId");
-    // if the edit button was clicked
-    if (e.target.getAttribute("data-action") == "edit") {
-      e.preventDefault();
-      toggle_session_edit_on(id_num);
-      toggle_session_menu_off(id_num);
-      // if the delete button was clicked
-    } else {
-      toggle_session_menu_off(id_num);
-      delete_session(id_num);
+  if (session_menu_deployed) {
+    // check if the click happened within the edit menu
+    if (click_inside_element(e, "data-editMenuId")) {
+      let id_num = e.target.getAttribute("data-editMenuId");
+      // if the edit button was clicked
+      if (e.target.getAttribute("data-action") == "edit") {
+        e.preventDefault();
+        toggle_session_edit_on(id_num);
+        toggle_session_menus_off();
+        // if the delete button was clicked
+      } else {
+        toggle_session_menus_off();
+        delete_session(id_num);
+      }
     }
   }
 }
@@ -63,26 +99,26 @@ function delete_session(id_num) {
 function session_add_cancel_listener() {
   document.addEventListener("click", function (e) {
     if (click_inside_element(e, "data-formEditSession_buttonCancel")) {
-        let id_num = e.target.getAttribute("data-formEditSession_buttonCancel");
-        toggle_session_edit_off(id_num);
+      let id_num = e.target.getAttribute("data-formEditSession_buttonCancel");
+      toggle_session_edit_off(id_num);
     }
   });
 }
 
-function session_edit_add_submit_listener() {
+function session_edit_add_submit_listeners() {
   var session_edit_forms = document.querySelectorAll(
     `form[data-flag='formEditSession_form']`
   );
 
   for (let i = 0; i < session_edit_forms.length; i++) {
     session_edit_forms[i].addEventListener("submit", function (e) {
-      let id_num = e.target.getAttribute("data-sid");
-      edit_session_func(id_num, e);
+      edit_session_func(e);
     });
   }
 }
 
-function edit_session_func(id_num, event) {
+function edit_session_func(event) {
+  let id_num = event.target.getAttribute("data-sid");
   event.preventDefault();
 
   let number = document.querySelector(
@@ -92,12 +128,7 @@ function edit_session_func(id_num, event) {
     `input[data-session_edit_title="${id_num}"]`
   );
 
-  socket.emit(
-      "edit_session",
-      id_num,
-      number.value,
-      title.value, 
-  );
+  socket.emit("edit_session", id_num, number.value, title.value);
   toggle_session_edit_off(id_num);
 }
 
@@ -126,11 +157,18 @@ function toggle_session_edit_off(id_num) {
   session_edit_form_deployed = false;
 }
 
-function toggle_session_menu_off(id_num) {
-  let sessionMenu = document.querySelector(
-    `div[data-sessionContextMenuId='${id_num}']`
+function toggle_session_menus_off() {
+  let sessionMenus = document.querySelectorAll(
+    `div[data-flag='sessionContextMenu']`
   );
-  session_edit_hide_element(sessionMenu);
+  for (let i = 0; i < sessionMenus.length; i++) {
+    if (!sessionMenus[i].classList.contains(className__hidden)) {
+      sessionMenus[i].classList.add(className__hidden);
+    }
+    if (sessionMenus[i].classList.contains(className__active)) {
+      sessionMenus[i].classList.remove(className__active);
+    }
+  }
   session_menu_deployed = false;
 }
 

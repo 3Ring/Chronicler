@@ -54,17 +54,53 @@ function new_check_box_logic(note_id_number) {
   }
 }
 
-socket.on("edit_session", function(new_session, new_list, session_number, old_number) {
-
-  remove_activeFlags_sessionList();
-  if (session_number > current__session_number) {
-    current__session_number = session_number;
+socket.on(
+  "edit_session",
+  function (new_card, new_list, session_number, old_number) {
+    if (session_number > current__session_number) {
+      current__session_number = session_number;
+    }
+    replace_session(old_number, new_card, new_list);
+    display_editted_session(session_number);
+    add_session_listener(session_number);
   }
-  let old_sl = document.querySelector(`li[data-number_sessionList='${old_number}']`);
-  old_sl.innerHTML = new_list;
-  let old_sc = document.querySelector(`div[data-number_sessionCont='${old_number}']`);
-  old_sc.innerHTML = new_session;
-});
+);
+
+function add_session_listener(session_number) {
+  let el = document.querySelector(
+    `form[data-snum='${session_number}']`
+  );
+  el.addEventListener("submit", function (e) {
+    edit_session_func(e);
+  });
+}
+
+function display_editted_session(session_number) {
+  let el = document.querySelector(
+    `li[data-number_sessionList='${session_number}']`
+  );
+  display_sessionCont(el);
+}
+function replace_session(old_number, new_card, new_list) {
+  replace_session_list(old_number, new_list);
+  replace_session_card(old_number, new_card);
+}
+
+function replace_session_list(old_number, new_list) {
+  let old_sl = document.querySelector(
+    `li[data-number_sessionList='${old_number}']`
+  );
+  old_sl.insertAdjacentHTML("afterend", new_list);
+  old_sl.remove();
+}
+
+function replace_session_card(old_number, new_card) {
+  let old_sc = document.querySelector(
+    `div[data-number_sessionCont='${old_number}']`
+  );
+  old_sc.insertAdjacentHTML("afterend", new_card);
+  old_sc.remove();
+}
 
 // Display new Session
 socket.on("fill_new_session", function (new_session, new_list, session_number) {

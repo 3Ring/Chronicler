@@ -3,7 +3,7 @@ from flask_socketio import emit
 from project.__init__ import db, socketio
 from project.models import Sessions, Characters, Notes
 from project.helpers import private_convert
-from project.socket_helper import translate_jinja, run
+from project.socket_helper import translate_jinja
 
 # variables
 class__buttonEdit = "note_edit_button"
@@ -26,7 +26,8 @@ def edit_session(id_, number, title):
     # TODO end
 
     session.update(number=number, title=title)
-    elements = run(session, "session", session.game_id)
+    elements = translate_jinja(session, "session", session.game_id)
+    print(f'elements["session_card"]: {elements["session_card"]} |\n\n| elements["session_nav"]: {elements["session_nav"]}')
     emit(
         "edit_session",
         (elements["session_card"], elements["session_nav"], str(number), old_number),

@@ -5,7 +5,7 @@
             <div class="modal">
                 <div class="content">
                     <h2>Session Info</h2>
-                    <form data-flag="formEditSession_form" data-sid='{{ session.id }}'>
+                    <form data-flag="formEditSession_form" data-sid='{{ session.id }}' data-snum='{{ session.number }}'>
                         <input data-session_edit_game_id="{{ session.id }}" id='new_session_form_game_id' type='hidden' value='{{ id }}'>
                         <input data-session_edit_number='{{ session.id }}' required placeholder='Number (Required)' value='{{ session.number }}' type='number' min='0'>
                         <input data-session_edit_title='{{ session.id }}' required placeholder='Title (Required)' value='{{ session.title }}' type='text'>
