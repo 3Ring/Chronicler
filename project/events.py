@@ -1,8 +1,8 @@
 from flask_socketio import emit
 
 from project.__init__ import db, socketio
-from project.models import BridgeGameCharacters, Sessions, Characters, Notes
-from project.helpers import make_character_images, private_convert
+from project.models import Sessions, Characters, Notes
+from project.helpers import private_convert
 from project.socket_helper import translate_jinja, run
 
 # variables
@@ -24,7 +24,7 @@ def edit_session(id_, number, title):
     if Sessions.query.filter_by(game_id=session.game_id, number=number).first():
         return False
     # TODO end
-    # print(f"here now \n\n {session.__dict__}")
+
     session.update(number=number, title=title)
     elements = run(session, "session", session.game_id)
     emit(

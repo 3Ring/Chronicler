@@ -100,11 +100,11 @@ depends_on = None
 
 
 # email = Users.get_from_email("app@chronicler.gg")
-# print(email)
+
 # email.delete_self(confirm=True, orphan=False)
 # admin.email = "app@chronicler.gg"
 # db.session.commit()
-# print(admin)
+
 
 
 # if first_char:
@@ -116,12 +116,12 @@ depends_on = None
 # notes = Notes.query.filter_by(origin_character_id = 1).all()
 # for note in notes:
 #     note.origin_character_id = i
-#     print(note.id)
+
 #     db.session.commit()
 # bridge1 = BridgeCharacters.query.filter_by(character_id= 1).all()
 # for item in bridge1:
 #     item.character_id= i
-#     print(item.id)
+
 #     db.session.commit()
 # placeholder = Characters.query.filter_by(name='placeholder').first()
 # placeholder.delete_self(confirm=True)
@@ -133,15 +133,14 @@ depends_on = None
 # i += 1
 # Characters.create(id = 1, name = "Chronicler Helper", user_id = 1, game_id=1)
 # first_char = Characters.get_from_id(1)
-# print(first_char)
+
 # delete = Users.get_from_id(-1)
 # # delete.delete_self(confirm=True)
 # # Users.create(id = -1, name = 'Chronicler Helper', email="app@chronicler.com", password="password123")
 # delete.name = "Chronicler Helper"
 # delete.email = "app@chronicler.com"
 # delete.change_pw("password123")
-# print(delete)
-# print(Users.get_admin())
+
 # first_game = Games.get_from_id(1)
 
 
@@ -156,16 +155,15 @@ depends_on = None
 #                     )
 
 
-# print(first_game)
+
 
 # delete = Games.get_from_id(88)
-# print(delete)
+
 # delete.delete_self(confirm = True)
-# print(delete)
+
 # all_games = Games.query.all()
 # all_characters = Characters.query.all()
-# for game in all_games:
-#     print(game)
+
 # first = Games.get_from_id(1)
 # def move_game_id(current_id):
 #     pass
@@ -173,12 +171,11 @@ depends_on = None
 #     bc = BridgeCharacters.query.filter_by(game_id = current_id).all()
 #     notes = Notes
 # new_place = Characters.get_from_id(i)
-# print(f"first char id = {first_char.id} and now it's {new_place.id}")
+
 
 
 # helpers = Characters.query.filter_by(name="Chronicler Helper").all()
-# for helper in helpers:
-#     print(helper.id)
+
 # helper.delete_self(confirm = True)
 
 # , final_claimed = all_games
