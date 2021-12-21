@@ -1,12 +1,12 @@
 var session_menu_deployed = false;
 var session_edit_form_deployed = false;
-var session_edit_hidden_class = className__hidden;
+var session_edit_hidden_class = CLASSNAME_HIDDEN;
 
 /*
 Main function
 */
 function Session_Editor() {
-  if (user_is_dm) {
+  if (USER_IS_DM) {
     session_add_contextual_listeners();
     session_edit_add_submit_listeners();
     session_add_cancel_listener();
@@ -23,7 +23,7 @@ function session_add_contextual_listeners() {
 }
 function session_add_cancel_listener() {
   document.addEventListener("click", function (e) {
-    if (click_from_session_form_cancel()) {
+    if (click_from_session_form_cancel(e)) {
       let id_num = e.target.getAttribute("data-formEditSession_buttonCancel");
       toggle_session_edit_off(id_num);
     }
@@ -72,7 +72,7 @@ function session_context_menu_deployment(e) {
 function session_context_menu_interior(e) {
   if (session_menu_deployed) {
     // check if the click happened within the edit menu
-    if (click_from_session_context_button()) {
+    if (click_from_session_context_button(e)) {
       let id_num = e.target.getAttribute("data-editMenuId");
       // if the edit button was clicked
       if (e.target.getAttribute("data-action") == "edit") {
@@ -91,8 +91,9 @@ function session_context_menu_interior(e) {
 /*
 Context menu and edit form actions
 */
-function delete_session(id_num) {
+function delete_session(session_id) {
   // TODO
+
   console.log("delete", id_num);
 }
 function edit_session_func(event) {
@@ -104,7 +105,7 @@ function edit_session_func(event) {
   let title = document.querySelector(
     `input[data-session_edit_title="${id_num}"]`
   );
-  socket.emit("edit_session", id_num, number.value, title.value);
+  SOCKET.emit("edit_session", id_num, number.value, title.value);
   toggle_session_edit_off(id_num);
 }
 
@@ -112,7 +113,7 @@ function edit_session_func(event) {
 Context menu deployment functions
 */
 function toggle_session_menu_on(element) {
-  if (element.classList.contains(className__active)) {
+  if (element.classList.contains(CLASSNAME_ACTIVE)) {
   } else {
     session_edit_reveal_element(element);
     session_menu_deployed = true;
@@ -123,11 +124,11 @@ function toggle_session_menus_off() {
     `div[data-flag='sessionContextMenu']`
   );
   for (let i = 0; i < sessionMenus.length; i++) {
-    if (!sessionMenus[i].classList.contains(className__hidden)) {
-      sessionMenus[i].classList.add(className__hidden);
+    if (!sessionMenus[i].classList.contains(CLASSNAME_HIDDEN)) {
+      sessionMenus[i].classList.add(CLASSNAME_HIDDEN);
     }
-    if (sessionMenus[i].classList.contains(className__active)) {
-      sessionMenus[i].classList.remove(className__active);
+    if (sessionMenus[i].classList.contains(CLASSNAME_ACTIVE)) {
+      sessionMenus[i].classList.remove(CLASSNAME_ACTIVE);
     }
   }
   session_menu_deployed = false;
@@ -173,13 +174,13 @@ function remove_hidden_class(element) {
   }
 }
 function add_active_class(element) {
-  if (!element.classList.contains(className__active)) {
-    element.classList.add(className__active);
+  if (!element.classList.contains(CLASSNAME_ACTIVE)) {
+    element.classList.add(CLASSNAME_ACTIVE);
   }
 }
 function remove_active_class(element) {
-  if (element.classList.contains(className__active)) {
-    element.classList.remove(className__active);
+  if (element.classList.contains(CLASSNAME_ACTIVE)) {
+    element.classList.remove(CLASSNAME_ACTIVE);
   }
 }
 

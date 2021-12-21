@@ -14,8 +14,8 @@ function newSessionForm_clickListener() {
     );
 
   element__button_newSessionDisplay.onclick = function () {
-    element__formNewSession_container.classList.remove(className__hidden);
-    element__button_newSessionDisplay.classList.add(className__hidden);
+    element__formNewSession_container.classList.remove(CLASSNAME_HIDDEN);
+    element__button_newSessionDisplay.classList.add(CLASSNAME_HIDDEN);
   };
 }
 
@@ -42,8 +42,8 @@ function cancel_new_session_func() {
     );
 
   // add and removes hidden class
-  element__formNewSession_container.classList.add(className__hidden);
-  element__button_newSessionDisplay.classList.remove(className__hidden);
+  element__formNewSession_container.classList.add(CLASSNAME_HIDDEN);
+  element__button_newSessionDisplay.classList.remove(CLASSNAME_HIDDEN);
 }
 
 // check that all required data is there
@@ -140,7 +140,7 @@ function newSession__submitListener() {
 
     if (validated) {
       // send new session data to server through socket.io
-      socket.emit(
+      SOCKET.emit(
         "send_new_session",
         game_id,
         element__formNewSession_inputNumber.value,

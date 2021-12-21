@@ -1,12 +1,12 @@
 /*
 global variables
 */
-const socket = set_socket();
-const user_is_dm = set_dm_user();
+const SOCKET = set_socket();
+const USER_IS_DM = set_dm_user();
 const CLASSNAME_HIDDEN = "hidden";
 const CLASSNAME_ACTIVE = "--active";
 const CLASSNAME_ACTIVE_SESSIONLIST = "current";
-var current__session_number = 0;
+var CURRENT_SESSION_NUMBER = 0;
 
 /*
 Set variable functions

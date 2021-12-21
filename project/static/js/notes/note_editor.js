@@ -17,12 +17,12 @@ function toggle_note_menus_off() {
     // iterate through each element, remove active class name if it exists and hide it
     for (let i = 0; i < contextMenus.length; i++) {
       // remove active class
-      if (contextMenus[i].classList.contains(className__active)) {
-        contextMenus[i].classList.remove(className__active);
+      if (contextMenus[i].classList.contains(CLASSNAME_ACTIVE)) {
+        contextMenus[i].classList.remove(CLASSNAME_ACTIVE);
       }
       // add hidden class if not already applied
-      if (!contextMenus[i].classList.contains(className__hidden)) {
-        contextMenus[i].classList.add(className__hidden);
+      if (!contextMenus[i].classList.contains(CLASSNAME_HIDDEN)) {
+        contextMenus[i].classList.add(CLASSNAME_HIDDEN);
       }
 
       // update menu flag
@@ -33,10 +33,10 @@ function toggle_note_menus_off() {
 
 // deploy context menu
 function toggle_menu_on(element) {
-  if (element.classList.contains(className__active)) {
+  if (element.classList.contains(CLASSNAME_ACTIVE)) {
   } else {
-    element.classList.add(className__active);
-    element.classList.remove(className__hidden);
+    element.classList.add(CLASSNAME_ACTIVE);
+    element.classList.remove(CLASSNAME_HIDDEN);
     menu_deployed = true;
   }
 }
@@ -107,12 +107,12 @@ function toggle_form_on(id_num) {
     element__notes_editImage = document.querySelector(flag__notes_editImage);
 
   // hide original note
-  element__notes_noteText.classList.add(className__hidden);
+  element__notes_noteText.classList.add(CLASSNAME_HIDDEN);
   element__notes_editImage.remove();
   // element__notes_editImage.classList.add(className__hidden);
 
   // display edit form
-  element__formEdit.classList.remove(className__hidden);
+  element__formEdit.classList.remove(CLASSNAME_HIDDEN);
 
   // insert text into Quill
   let old_html = element__notes_noteText.innerHTML,
@@ -127,7 +127,7 @@ function toggle_form_off(id_num) {
     form_element = document.querySelector(flag__formEdit);
 
   // hide form
-  form_element.classList.add(className__hidden);
+  form_element.classList.add(CLASSNAME_HIDDEN);
 }
 
 // Note edit: capture form data and send data to server
@@ -168,7 +168,7 @@ function edit_note_func(id_num, event) {
   }
 
   // send to server
-  socket.emit(
+  SOCKET.emit(
     "edit_note",
     note_text,
     note_private,
@@ -185,7 +185,7 @@ function edit_note_func(id_num, event) {
   let element__notes_noteText = document.querySelector(
     `span[data-id_noteText="${id_num}"]`
   );
-  element__notes_noteText.classList.remove(className__hidden);
+  element__notes_noteText.classList.remove(CLASSNAME_HIDDEN);
   return false;
 }
 
@@ -197,10 +197,10 @@ function delete_note(id_num) {
   );
 
   // add hidden class to note element
-  element__containerNote.classList.add(className__hidden);
+  element__containerNote.classList.add(CLASSNAME_HIDDEN);
 
   // emit delete event to server
-  socket.emit("delete_note", id_num);
+  SOCKET.emit("delete_note", id_num);
 }
 
 // Set listener for note edit forms

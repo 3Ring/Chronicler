@@ -5,7 +5,9 @@
 
 function NewQuill(event, quill) {
   // Local Variables
-  let element__newQuill_private = document.querySelector(flag__newQuillPrivate),
+  let element__newQuill_private = document.querySelector(
+      "input[data-flag='newQuillPrivate']"
+    ),
     element__newQuill_to_dm = document.querySelector(
       `input[data-flag="newQuillDm"]`
     );
@@ -33,13 +35,13 @@ function NewQuill(event, quill) {
 
     // send data to server
   } else {
-    socket.emit(
+    SOCKET.emit(
       "send_new_note",
       user_id,
       game_id,
       dm_id,
       speaking_as,
-      current__session_number,
+      CURRENT_SESSION_NUMBER,
       new_note_html,
       new_note_private,
       new_note_to_dm
@@ -55,7 +57,7 @@ function NewQuill(event, quill) {
 function NewQuill_submitListener(quill) {
   // Local Variables
   var element__newQuill_formSession = document.querySelector(
-    flag__newQuill_formSession
+    "form[data-flag='newQuill_FormSession']"
   );
 
   // Listener

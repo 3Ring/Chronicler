@@ -54,11 +54,11 @@ function new_check_box_logic(note_id_number) {
   }
 }
 
-socket.on(
-  "edit_session",
+SOCKET.on(
+  "fill_edit_session",
   function (new_card, new_list, session_number, old_number) {
-    if (session_number > current__session_number) {
-      current__session_number = session_number;
+    if (session_number > CURRENT_SESSION_NUMBER) {
+      CURRENT_SESSION_NUMBER = session_number;
     }
     replace_session(old_number, new_card, new_list);
     display_editted_session(session_number);
@@ -101,8 +101,8 @@ function replace_session_card(old_number, new_card) {
 }
 
 // Display new Session
-socket.on("fill_new_session", function (new_session, new_list, session_number) {
-  // remove filler session title if first session
+SOCKET.on("fill_new_session", function (new_session, new_list, session_number) {
+  // remove filler session title if no sessions
   let filler_session = document.querySelector(
     `li[data-number_sessionList="set_up"]`
   );
@@ -112,15 +112,15 @@ socket.on("fill_new_session", function (new_session, new_list, session_number) {
   // Local Variables
 
   let element__sessionsContainer = document.querySelector(
-    "div[data-flag='sessionsContainer']"
+      "div[data-flag='sessionsContainer']"
     ),
     element__sessionsList = document.querySelector(
       "ul[data-flag='sessions_list']"
     );
 
   remove_activeFlags_sessionList();
-  if (session_number > current__session_number) {
-    current__session_number = session_number;
+  if (session_number > CURRENT_SESSION_NUMBER) {
+    CURRENT_SESSION_NUMBER = session_number;
   }
 
   // Insert into document
@@ -128,7 +128,7 @@ socket.on("fill_new_session", function (new_session, new_list, session_number) {
   element__sessionsList.insertAdjacentHTML("afterbegin", new_list);
 
   // update "New Session form's default number logic"
-  if (session_number > current__session_number) {
+  if (session_number > CURRENT_SESSION_NUMBER) {
     set_new_session_form_highest(session_number);
   }
 
@@ -137,7 +137,15 @@ socket.on("fill_new_session", function (new_session, new_list, session_number) {
   );
   // hide all elements except the newest
   display_sessionCont(element__new_list);
-  element__new_list.classList.add(className__active_sessionList);
+  element__new_list.classList.add(CLASSNAME_ACTIVE_SESSIONLIST);
+
+  // add event edit session event listener
+  let element__new_session_edit_form = document.querySelector(
+    `form[data-snum='${session_number}']`
+  );
+  element__new_session_edit_form.addEventListener("submit", function (e) {
+    edit_session_func(e);
+  });
 
   // apply logic
 
@@ -170,7 +178,7 @@ function fill_new_note(new_note, session_number, note_id_number, note_text) {
 }
 
 // display new note
-socket.on(
+SOCKET.on(
   "fill_new_note",
   function (new_note, note_text, draft, to_dm, note_id, session_number, u_id) {
     let origin_index = 0,
@@ -224,7 +232,7 @@ function remove_socket(note_id_number) {
 }
 
 // display note edit
-socket.on(
+SOCKET.on(
   "fill_note_edit",
   function (
     editted_note,
@@ -336,7 +344,7 @@ socket.on(
 );
 
 // Remove deleted note for all users without reloading page
-socket.on("remove_deleted_note", function (note_id_number) {
+SOCKET.on("remove_deleted_note", function (note_id_number) {
   let el_to_remove = document.querySelector(
     `li[data-id_noteCont="${note_id_number}"]`
   );
@@ -362,7 +370,7 @@ function fill_note_made_public(new_note, note_id_number, note_text) {
 }
 
 // make and insert temp element into DOM as placeholder for other users if changing to from private to not private
-socket.on(
+SOCKET.on(
   "make_filler",
   function (
     note_id_number,
@@ -404,7 +412,7 @@ socket.on(
     } else {
       found.insertAdjacentHTML("beforebegin", placeholder);
     }
-    socket.emit(
+    SOCKET.emit(
       "filled",
       text,
       is_draft,

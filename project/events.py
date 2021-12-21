@@ -29,7 +29,7 @@ def edit_session(id_, number, title):
     elements = translate_jinja(session, "session", session.game_id)
     print(f'elements["session_card"]: {elements["session_card"]} |\n\n| elements["session_nav"]: {elements["session_nav"]}')
     emit(
-        "edit_session",
+        "fill_edit_session",
         (elements["session_card"], elements["session_nav"], str(number), old_number),
         broadcast=True,
     )
@@ -44,7 +44,7 @@ def send_new_session(game_id, number, title, synopsis=None):
     )
 
     # convert data to html element
-    elements = run(new, "session", game_id)
+    elements = translate_jinja(new, "session", game_id)
 
     # return data to client
     emit(

@@ -7,7 +7,7 @@ function set_currentSessionVariable_fromElement(element) {
   current_session_int = parseInt(
     element.getAttribute("data-number_sessionList")
   );
-  current__session_number = current_session_int;
+  CURRENT_SESSION_NUMBER = current_session_int;
 }
 // display correct session container element and hide others
 function display_sessionCont(active_listElement) {
@@ -24,19 +24,19 @@ function display_sessionCont(active_listElement) {
   // hide all session containers and remove any active flags
   for (let i = 0; i < elements__sessionConts.length; i++) {
     // hide all sessions
-    if (!elements__sessionConts[i].classList.contains(className__hidden)) {
-      elements__sessionConts[i].classList.add(className__hidden);
+    if (!elements__sessionConts[i].classList.contains(CLASSNAME_HIDDEN)) {
+      elements__sessionConts[i].classList.add(CLASSNAME_HIDDEN);
     }
     // remove all active flags
-    if (elements__sessionConts[i].classList.contains(className__active)) {
-      elements__sessionConts[i].classList.remove(className__active);
+    if (elements__sessionConts[i].classList.contains(CLASSNAME_ACTIVE)) {
+      elements__sessionConts[i].classList.remove(CLASSNAME_ACTIVE);
     }
   }
 
   // display session container
-  element__newActiveSessionCont.classList.remove(className__hidden);
+  element__newActiveSessionCont.classList.remove(CLASSNAME_HIDDEN);
   // add active flag
-  element__newActiveSessionCont.classList.add(className__active);
+  element__newActiveSessionCont.classList.add(CLASSNAME_ACTIVE);
   // !bugs code
   if (game_id == bugs_id) {
     let element__session_form = document.querySelector(
@@ -44,12 +44,12 @@ function display_sessionCont(active_listElement) {
     );
     
     if (active_sessionNumber == 0) {
-      if (!element__session_form.classList.contains(className__hidden)) {
-        element__session_form.classList.add(className__hidden);
+      if (!element__session_form.classList.contains(CLASSNAME_HIDDEN)) {
+        element__session_form.classList.add(CLASSNAME_HIDDEN);
       }
     } else {
-      if (element__session_form.classList.contains(className__hidden)) {
-        element__session_form.classList.remove(className__hidden);
+      if (element__session_form.classList.contains(CLASSNAME_HIDDEN)) {
+        element__session_form.classList.remove(CLASSNAME_HIDDEN);
       }
     }
   }
@@ -66,9 +66,9 @@ function remove_activeFlags_sessionList() {
   for (i = 0; i < elements__sessionList.length; i++) {
     // remove active flag if it's there
     if (
-      elements__sessionList[i].classList.contains(className__active_sessionList)
+      elements__sessionList[i].classList.contains(CLASSNAME_ACTIVE_SESSIONLIST)
     ) {
-      elements__sessionList[i].classList.remove(className__active_sessionList);
+      elements__sessionList[i].classList.remove(CLASSNAME_ACTIVE_SESSIONLIST);
     }
   }
 }
@@ -102,11 +102,11 @@ function apply_sessionHighlightLogic_fromElement(element) {
   // check to make sure function returned parent element
   if (element) {
     // check if selected session is already active
-    if (!element.classList.contains(className__active_sessionList)) {
+    if (!element.classList.contains(CLASSNAME_ACTIVE_SESSIONLIST)) {
       // remove active flag from all list elements
       remove_activeFlags_sessionList();
       // add active flag to this element
-      element.classList.add(className__active_sessionList);
+      element.classList.add(CLASSNAME_ACTIVE_SESSIONLIST);
       // display corresponding session container element and hide others
       display_sessionCont(element);
       // update current session variable
@@ -160,29 +160,29 @@ function setActiveSession__onPageLoad() {
     }
 
     // set current session variable
-    current__session_number = highest;
+    CURRENT_SESSION_NUMBER = highest;
     // !bugs code
     if (game_id == bugs_id) {
-      current__session_number = 0;
+      CURRENT_SESSION_NUMBER = 0;
       highest = 0;
     }
     // !end bugs code
-    set_new_session_form_highest(current__session_number);
+    set_new_session_form_highest(CURRENT_SESSION_NUMBER);
     // Flag most recent session elements and display most recent session container
     // Sessions List
     let element__sessionList_mostRecent = document.querySelector(
       "li[data-number_sessionList='" + highest + "']"
     );
     element__sessionList_mostRecent.classList.add(
-      className__active_sessionList
+      CLASSNAME_ACTIVE_SESSIONLIST
     );
 
     // Session Container
     let element__sessionCont_mostRecent = document.querySelector(
       "div[data-number_sessionCont='" + highest + "']"
     );
-    element__sessionCont_mostRecent.classList.add(className__active);
+    element__sessionCont_mostRecent.classList.add(CLASSNAME_ACTIVE);
     // Display container
-    element__sessionCont_mostRecent.classList.remove(className__hidden);
+    element__sessionCont_mostRecent.classList.remove(CLASSNAME_HIDDEN);
   }
 }
