@@ -7,10 +7,10 @@
 function newSessionForm_clickListener() {
   // Local Variables
   let element__button_newSessionDisplay = document.querySelector(
-      flag__button_newSessionDisplay
+    "[data-flag='button_newSessionDisplay']"
     ),
     element__formNewSession_container = document.querySelector(
-      flag__formNewSession_container
+      "div[data-flag='formNewSession_container']"
     );
 
   element__button_newSessionDisplay.onclick = function () {
@@ -23,7 +23,7 @@ function newSessionForm_clickListener() {
 function cancel_button_listener() {
   // Local Variables
   let element__formNewSession_buttonCancel = document.querySelector(
-    flag__formNewSession_buttonCancel
+    "input[data-flag='formNewSession_buttonCancel']"
   );
 
   element__formNewSession_buttonCancel.addEventListener("click", function () {
@@ -35,10 +35,10 @@ function cancel_button_listener() {
 function cancel_new_session_func() {
   // Local Variables
   let element__button_newSessionDisplay = document.querySelector(
-      flag__button_newSessionDisplay
+    "[data-flag='button_newSessionDisplay']"
     ),
     element__formNewSession_container = document.querySelector(
-      flag__formNewSession_container
+      "div[data-flag='formNewSession_container']"
     );
 
   // add and removes hidden class
@@ -50,10 +50,10 @@ function cancel_new_session_func() {
 function new_session_form_is_incomplete() {
   // Local Variables
   let element__formNewSession_inputNumber = document.querySelector(
-      flag__formNewSession_inputSessionNumber
+    "input[data-flag='formNewSession_inputSessionNumber']"
     ),
     element__formNewSession_inputTitle = document.querySelector(
-      flag__formNewSession_inputSessionTitle
+      "input[data-flag='formNewSession_inputSessionTitle']"
     );
 
   // check each field to see if it's empty
@@ -90,7 +90,7 @@ function new_session_form_is_incomplete() {
 function new_session_form_is_not_unique() {
   // Local Variables
   let element__formNewSession_inputNumber = document.querySelector(
-    flag__formNewSession_inputSessionNumber
+    "input[data-flag='formNewSession_inputSessionNumber']"
   );
 
   if (
@@ -121,17 +121,15 @@ function newSession__validateFormError() {
 function newSession__submitListener() {
   // Local Variables
   let element__formNewSession_form = document.querySelector(
-      flag__formNewSession_form
+    "form[data-flag='formNewSession_form']"
     ),
     element__formNewSession_inputTitle = document.querySelector(
-      flag__formNewSession_inputSessionTitle
+      "input[data-flag='formNewSession_inputSessionTitle']"
     ),
     element__formNewSession_inputNumber = document.querySelector(
-      flag__formNewSession_inputSessionNumber
-    ),
-    element__formNewSession_inputSynopsis = document.querySelector(
-      flag__formNewSession_inputSessionSynopsis
+      "input[data-flag='formNewSession_inputSessionNumber']"
     );
+
 
   element__formNewSession_form.addEventListener("submit", function (event) {
     // stop page from reloading

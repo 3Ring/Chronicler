@@ -44,7 +44,7 @@ function toggle_menu_on(element) {
 function click_listener() {
   document.addEventListener("click", function (e) {
     // check if edit button was clicked
-    if (click_inside_element(e, attribute__editButtons)) {
+    if (click_inside_element(e, "data-editButtonAnchorId")) {
       // check if context  menu is already deployed
       if (menu_deployed == false) {
         // deploy context menu
@@ -59,9 +59,9 @@ function click_listener() {
       }
     }
     // check if the click happened within the contextual form
-    else if (click_inside_element(e, attribute__contextForm)) {
+    else if (click_inside_element(e, "data-contextMenuId")) {
       // check if the click happened within the edit menu
-      if (click_inside_element(e, attribute__editMenu)) {
+      if (click_inside_element(e, "data-editMenuId")) {
         // if the edit button was clicked
         if (e.target.getAttribute("data-action") == "edit") {
           let id_num = e.target.getAttribute("data-id_note");
@@ -206,7 +206,7 @@ function delete_note(id_num) {
 // Set listener for note edit forms
 function submit_listener() {
   // Local Variables
-  let elements__formEdit_form = document.querySelectorAll(flag__formEdit_form);
+  let elements__formEdit_form = document.querySelectorAll("form[data-flag='formEdit']");
 
   // set listeners on all note editting forms in document
   for (let i = 0; i < elements__formEdit_form.length; i++) {

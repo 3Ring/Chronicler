@@ -1,41 +1,31 @@
-// Variables
+/*
+global variables
+*/
+const socket = set_socket();
+const user_is_dm = set_dm_user();
+const className__hidden = "hidden";
+const className__active = "--active";
+const className__active_sessionList = "current";
+var current__session_number = 0;
 
-var socket = null;
-if (heroku) {
-  socket = io("https://www.chronicler.gg", {
-    withCredentials: true,
-    // extraHeaders: {
-    //   "my-custom-header": "abcd"
-    // }
-  });
-} else {
-  socket = io();
+/*
+Set variable functions
+*/
+function set_dm_user() {
+  let dm = false;
+  if (user_id == dm_id) {
+    dm = true;
+  }
+  return dm;
 }
-var user_is_dm = false;
-if (user_id == dm_id) {
-  user_is_dm = true;
+function set_socket() {
+  let socket = null;
+  if (heroku) {
+    socket = io("https://www.chronicler.gg", {
+      withCredentials: true,
+    });
+  } else {
+    socket = io();
+  }
+  return socket;
 }
-const className__hidden = "hidden",
-  className__active = "--active",
-  className__active_sessionList = "current";
-var menu_deployed = false,
-  current__session_number = 0,
-  flag__formEdit_form = "form[data-flag='formEdit']",
-  flag__formNewSession_container = "div[data-flag='formNewSession_container']",
-  flag__button_newSessionDisplay = "[data-flag='button_newSessionDisplay']",
-  flag__formNewSession_form = "form[data-flag='formNewSession_form']",
-  flag__formNewSession_inputSessionNumber =
-    "input[data-flag='formNewSession_inputSessionNumber']",
-  flag__formNewSession_inputSessionTitle =
-    "input[data-flag='formNewSession_inputSessionTitle']",
-  flag__formNewSession_inputSessionSynopsis =
-    "input[data-flag='formNewSession_inputSessionSynopsis",
-  flag__formNewSession_buttonCancel =
-    "input[data-flag='formNewSession_buttonCancel']",
-  flag__formNewSession_idGame = "input[data-flag='formNewSession_idGame']",
-  flag__newQuill_formSession = "form[data-flag='newQuill_FormSession']",
-  flag__newQuillPrivate = "input[data-flag='newQuillPrivate']",
-  flag__sessionContainer = "div[data-flag='sessionsContainer']",
-  attribute__editButtons = "data-editButtonAnchorId",
-  attribute__editMenu = "data-editMenuId",
-  attribute__contextForm = "data-contextMenuId";

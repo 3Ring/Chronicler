@@ -112,7 +112,7 @@ socket.on("fill_new_session", function (new_session, new_list, session_number) {
   // Local Variables
 
   let element__sessionsContainer = document.querySelector(
-      flag__sessionContainer
+    "div[data-flag='sessionsContainer']"
     ),
     element__sessionsList = document.querySelector(
       "ul[data-flag='sessions_list']"
