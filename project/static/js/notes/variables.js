@@ -3,9 +3,9 @@ global variables
 */
 const socket = set_socket();
 const user_is_dm = set_dm_user();
-const className__hidden = "hidden";
-const className__active = "--active";
-const className__active_sessionList = "current";
+const CLASSNAME_HIDDEN = "hidden";
+const CLASSNAME_ACTIVE = "--active";
+const CLASSNAME_ACTIVE_SESSIONLIST = "current";
 var current__session_number = 0;
 
 /*
