@@ -5,28 +5,7 @@
 
 // Edit button and contextual menu functions
 //
-// check if element or any of its parents contain the edit button
-function click_inside_element(e, attribute) {
-  // Local Variables
-  let el = e.target;
 
-  // check if element clicked has attribute
-  if (el.hasAttribute(attribute)) {
-    return el;
-  } else {
-    // check if any of the parentNodes have the attribute
-    while ((el = el.parentNode)) {
-      if (el.hasAttribute(attribute)) {
-        return el;
-
-        // break before final loop otherwise it will throw an error
-      } else if (el.parentNode == document) {
-        break;
-      }
-    }
-  }
-  return false;
-}
 // hide all open contextual menues
 function toggle_note_menus_off() {
   // find all context menus

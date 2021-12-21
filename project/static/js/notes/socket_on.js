@@ -67,9 +67,7 @@ socket.on(
 );
 
 function add_session_listener(session_number) {
-  let el = document.querySelector(
-    `form[data-snum='${session_number}']`
-  );
+  let el = document.querySelector(`form[data-snum='${session_number}']`);
   el.addEventListener("submit", function (e) {
     edit_session_func(e);
   });
@@ -339,9 +337,12 @@ socket.on(
 
 // Remove deleted note for all users without reloading page
 socket.on("remove_deleted_note", function (note_id_number) {
-  let el_to_remove = get_note_element(note_id_number);
+  let el_to_remove = document.querySelector(
+    `li[data-id_noteCont="${note_id_number}"]`
+  );
   el_to_remove.remove();
 });
+
 // this is to replace the hidden placeholder element with the new note
 function fill_note_made_public(new_note, note_id_number, note_text) {
   let element__placeholder = document.querySelector(
