@@ -11,7 +11,7 @@ function NewQuill(event, quill) {
     element__newQuill_to_dm = document.querySelector(
       `input[data-flag="newQuillDm"]`
     );
-  var element__newQuill_speaking_as = document.querySelector(
+  let element__newQuill_speaking_as = document.querySelector(
     `select[name="speaking_as"]`
   );
   // capture data

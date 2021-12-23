@@ -1,0 +1,15 @@
+
+<div data-sessionConfirm_id="{{ session.id }}" data-flag="sessionEdit" class="note_edit_menu hidden">Delete Session {{ session.number }}?
+    <ul class="note_edit_menu_items">
+        <li class="note_edit_menu_item">
+            <a href="#" data-sessionConfirm_id="{{ session.id }}" class="note_edit_menu_link button primary" data-sessionDeleteConfirmNum="{{ session.number }}" data-action="delete">
+                Delete
+            </a>
+        </li>
+        <li class="note_edit_menu_item">
+            <a href="#" data-sessionConfirm_id="{{ session.id }}" class="note_edit_menu_link button primary" data-sessionDeleteConfirmNum="{{ session.number }}" data-action="cancel">
+                Cancel
+            </a>
+        </li>
+    </ul>
+</div>

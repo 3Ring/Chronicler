@@ -61,19 +61,19 @@ function click_listener() {
     // check if the click happened within the contextual form
     else if (click_inside_element(e, "data-contextMenuId")) {
       // check if the click happened within the edit menu
-      if (click_inside_element(e, "data-editMenuId")) {
+      if (click_inside_element(e, "data-editChoices_id")) {
         // if the edit button was clicked
         if (e.target.getAttribute("data-action") == "edit") {
-          let id_num = e.target.getAttribute("data-id_note");
+          let note_id = e.target.getAttribute("data-id_note");
 
           e.preventDefault();
-          toggle_form_on(id_num);
+          toggle_form_on(note_id);
           toggle_note_menus_off();
 
           // if the delete button was clicked
         } else {
-          let id_num = e.target.getAttribute("data-id_note");
-          delete_note(id_num);
+          let note_id = e.target.getAttribute("data-id_note");
+          delete_note(note_id);
           menu_deployed = false;
         }
       }
@@ -168,7 +168,7 @@ function edit_note_func(id_num, event) {
   }
 
   // send to server
-  SOCKET.emit(
+  socket.emit(
     "edit_note",
     note_text,
     note_private,
@@ -200,7 +200,7 @@ function delete_note(id_num) {
   element__containerNote.classList.add(CLASSNAME_HIDDEN);
 
   // emit delete event to server
-  SOCKET.emit("delete_note", id_num);
+  socket.emit("delete_note", id_num);
 }
 
 // Set listener for note edit forms

@@ -1,5 +1,5 @@
 
-<div data-session_edit_form_container="{{ session.id }}" class="hidden">
+<div data-sessionEdit_id="{{ session.id }}" data-flag="sessionEdit" class="hidden">
     <div class="shroud">
         <div class="modal-container">
             <div class="modal">
@@ -10,7 +10,7 @@
                         <input data-session_edit_number='{{ session.id }}' required placeholder='Number (Required)' value='{{ session.number }}' type='number' min='0'>
                         <input data-session_edit_title='{{ session.id }}' required placeholder='Title (Required)' value='{{ session.title }}' type='text'>
                         <input class="button primary" type='submit' value='Edit Session'>
-                        <input class="button secondary" type='button' data-formEditSession_buttonCancel="{{ session.id }}" value='Cancel'>
+                        <input class="button secondary" type='button' data-sessionEditCancel_id="{{ session.id }}" value='Cancel'>
                     </form>
                 </div>
             </div>

@@ -15,6 +15,16 @@ imageLink__buttonEdit = "/static/images/edit_button_image.png"
 idPrefix__newSessionHeader = "session_header_"
 idPrefix__newSessionCard = "session_card_"
 
+@socketio.on("check_delete_session")
+def check_delete(session_id):
+    session = Sessions.get_from_id(session_id)
+    notes = Notes.get_list_from_session_number(session.number, session.game_id)
+    print(f'notes: {notes}')
+    if notes:
+        emit("check_delete_session_fail")
+    else:
+        emit("check_delete_session_pass")
+
 
 @socketio.on("edit_session")
 def edit_session(id_, number, title):

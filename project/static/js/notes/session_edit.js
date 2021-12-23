@@ -1,219 +1,118 @@
-var session_menu_deployed = false;
-var session_edit_form_deployed = false;
-var session_edit_hidden_class = CLASSNAME_HIDDEN;
-
 /*
 Main function
 */
 function Session_Editor() {
+  let deployed = { confirm: false, edit: false, context: false };
   if (USER_IS_DM) {
-    session_add_contextual_listeners();
-    session_edit_add_submit_listeners();
-    session_add_cancel_listener();
-  }
-}
-
-/*
-Event Listeners
-*/
-function session_add_contextual_listeners() {
-  document.addEventListener("click", function (e) {
-    session_context_menu(e);
-  });
-}
-function session_add_cancel_listener() {
-  document.addEventListener("click", function (e) {
-    if (click_from_session_form_cancel(e)) {
-      let id_num = e.target.getAttribute("data-formEditSession_buttonCancel");
-      toggle_session_edit_off(id_num);
-    }
-  });
-}
-function session_edit_add_submit_listeners() {
-  var session_edit_forms = document.querySelectorAll(
-    `form[data-flag='formEditSession_form']`
-  );
-  for (let i = 0; i < session_edit_forms.length; i++) {
-    session_edit_forms[i].addEventListener("submit", function (e) {
-      edit_session_func(e);
+    document.addEventListener("click", (e) => {
+      if (!deployed.confirm) {
+        if (!deployed.edit) {
+          if (!deployed.context) {
+            if (!!click_inside_element(e, "data-sessionEditButton_num")) {
+              deploy_context(e, deployed);
+            } else {
+              toggle_all_off(deployed);
+            }
+          } else if (!!click_inside_element(e, "data-sessionContext_id")) {
+            const choice = e.target.getAttribute("data-action");
+            if (choice == "edit") {
+              deploy_edit(e, deployed);
+            } else if (choice == "delete") {
+              deploy_confirm(e, deployed);
+            }
+          } else {
+            toggle_all_off(deployed);
+          }
+        } else if (!!click_inside_element(e, "data-sessionEditCancel_id")) {
+          toggle_all_off(deployed);
+        }
+      } else if (!!click_inside_element(e, "data-sessionConfirm_id")) {
+        let choice = e.target.getAttribute("data-action");
+        if (choice == "delete") {
+          toggle_all_off(deployed);
+          SOCKET.emit(
+            "check_delete_session",
+            e.target.getAttribute("data-sessionConfirm_id")
+          );
+        } else if (choice == "cancel") {
+          toggle_all_off(deployed);
+        }
+      }
     });
-  }
-}
-
-/*
-Event Logic
-*/
-function session_context_menu(e) {
-  if (!session_edit_form_deployed) {
-    if (!session_menu_deployed) {
-      if (click_from_session_edit_button(e)) {
-        session_context_menu_deployment(e);
-      }
-    }
-    // check if the click happened within the contextual form
-    else if (click_from_session_menu(e)) {
-      session_context_menu_interior(e);
-    } else {
-      toggle_session_menus_off();
-    }
-  }
-}
-function session_context_menu_deployment(e) {
-  // deploy session context menu
-  // if statement is because the user can click the container which would throw an error otherwise
-  if (e.target.getAttribute("data-id_editSessionImage")) {
-    let target_id = e.target.getAttribute("data-id_editSessionImage");
-    let target_element = document.querySelector(
-      `div[data-sessionContextMenuId="${target_id}"]`
+    const edit_forms = document.querySelectorAll(
+      `form[data-flag='formEditSession_form']`
     );
-    toggle_session_menu_on(target_element);
-  }
-}
-function session_context_menu_interior(e) {
-  if (session_menu_deployed) {
-    // check if the click happened within the edit menu
-    if (click_from_session_context_button(e)) {
-      let id_num = e.target.getAttribute("data-editMenuId");
-      // if the edit button was clicked
-      if (e.target.getAttribute("data-action") == "edit") {
+    for (let i = 0; i < edit_forms.length; i++) {
+      edit_forms[i].addEventListener("submit", (e) => {
         e.preventDefault();
-        toggle_session_edit_on(id_num);
-        toggle_session_menus_off();
-        // if the delete button was clicked
-      } else {
-        toggle_session_menus_off();
-        delete_session(id_num);
-      }
+        const id_num = e.target.getAttribute("data-sid");
+        const number = document.querySelector(
+          `input[data-session_edit_number="${id_num}"]`
+        ).value;
+        const title = document.querySelector(
+          `input[data-session_edit_title="${id_num}"]`
+        ).value;
+        SOCKET.emit("edit_session", id_num, number.value, title.value);
+        toggle_session_edit_off(id_num, deployed);
+      });
     }
   }
 }
 
 /*
-Context menu and edit form actions
+socket actions
 */
-function delete_session(session_id) {
-  // TODO
+SOCKET.on("check_delete_session_fail", () => {
+  alert("session has other user's notes. cannot delete session");
+});
+SOCKET.on("check_delete_session_pass", () => {
+  alert("success");
+});
 
-  console.log("delete", id_num);
+/*
+Menu deployment functions
+*/
+function deploy_context(e, deployed) {
+  const target_id = e.target.getAttribute("data_sessionEditButton_id");
+  const target_element = document.querySelector(
+    `div[data-sessionContext_id="${target_id}"]`
+  );
+  toggle_session_element_on(target_element);
+  deployed.context = true;
 }
-function edit_session_func(event) {
-  let id_num = event.target.getAttribute("data-sid");
-  event.preventDefault();
-  let number = document.querySelector(
-    `input[data-session_edit_number="${id_num}"]`
+function deploy_edit(e, deployed) {
+  toggle_all_off(deployed);
+  const session_id = e.target.getAttribute("data-editChoices_id");
+  const edit = document.querySelector(
+    `div[data-sessionEdit_id="${session_id}"]`
   );
-  let title = document.querySelector(
-    `input[data-session_edit_title="${id_num}"]`
+  toggle_session_element_on(edit);
+  deployed.edit = true;
+}
+function deploy_confirm(e, deployed) {
+  toggle_all_off(deployed);
+  const session_id = e.target.getAttribute("data-editChoices_id");
+  const confirm = document.querySelector(
+    `div[data-sessionConfirm_id="${session_id}"]`
   );
-  SOCKET.emit("edit_session", id_num, number.value, title.value);
-  toggle_session_edit_off(id_num);
+  toggle_session_element_on(confirm);
+  deployed.confirm = true;
 }
 
 /*
-Context menu deployment functions
+Deployment helper functions
 */
-function toggle_session_menu_on(element) {
-  if (element.classList.contains(CLASSNAME_ACTIVE)) {
-  } else {
-    session_edit_reveal_element(element);
-    session_menu_deployed = true;
+function toggle_session_element_on(el) {
+  el.classList.add(CLASSNAME_ACTIVE);
+  el.classList.remove(CLASSNAME_HIDDEN);
+}
+function toggle_all_off(deployed) {
+  const all = document.querySelectorAll(`div[data-flag='sessionEdit']`);
+  all.forEach((el) => {
+    el.classList.remove(CLASSNAME_ACTIVE);
+    el.classList.add(CLASSNAME_HIDDEN);
+  });
+  for (let key of Object.keys(deployed)) {
+    deployed[key] = false;
   }
-}
-function toggle_session_menus_off() {
-  let sessionMenus = document.querySelectorAll(
-    `div[data-flag='sessionContextMenu']`
-  );
-  for (let i = 0; i < sessionMenus.length; i++) {
-    if (!sessionMenus[i].classList.contains(CLASSNAME_HIDDEN)) {
-      sessionMenus[i].classList.add(CLASSNAME_HIDDEN);
-    }
-    if (sessionMenus[i].classList.contains(CLASSNAME_ACTIVE)) {
-      sessionMenus[i].classList.remove(CLASSNAME_ACTIVE);
-    }
-  }
-  session_menu_deployed = false;
-}
-
-/*
-Session edit form deployment functions
-*/
-function toggle_session_edit_on(id_num) {
-  let el = document.querySelector(
-    `div[data-session_edit_form_container="${id_num}"]`
-  );
-  session_edit_reveal_element(el);
-  session_edit_form_deployed = true;
-}
-function toggle_session_edit_off(id_num) {
-  let el = document.querySelector(
-    `div[data-session_edit_form_container="${id_num}"]`
-  );
-  session_edit_hide_element(el);
-  session_edit_form_deployed = false;
-}
-
-/*
-Hide/reveal helper functions
-*/
-function session_edit_hide_element(element) {
-  add_hidden_class(element);
-  remove_active_class(element);
-}
-function session_edit_reveal_element(element) {
-  remove_hidden_class(element);
-  add_active_class(element);
-}
-function add_hidden_class(element) {
-  if (!element.classList.contains(session_edit_hidden_class)) {
-    element.classList.add(session_edit_hidden_class);
-  }
-}
-function remove_hidden_class(element) {
-  if (element.classList.contains(session_edit_hidden_class)) {
-    element.classList.remove(session_edit_hidden_class);
-  }
-}
-function add_active_class(element) {
-  if (!element.classList.contains(CLASSNAME_ACTIVE)) {
-    element.classList.add(CLASSNAME_ACTIVE);
-  }
-}
-function remove_active_class(element) {
-  if (element.classList.contains(CLASSNAME_ACTIVE)) {
-    element.classList.remove(CLASSNAME_ACTIVE);
-  }
-}
-
-/*
-Click event location finders
-*/
-function click_from_session_edit_button(e) {
-  if (click_inside_element(e, "data-sessionEditNumber")) {
-    return true;
-  }
-  return false;
-}
-function click_from_session_menu(e) {
-  if (click_inside_element(e, "data-sessionContextMenuId")) {
-    return true;
-  }
-  return false;
-}
-function click_from_session_form(e) {
-  if (click_inside_element(e, "data-session_edit_form_container")) {
-    return true;
-  }
-  return false;
-}
-function click_from_session_form_cancel(e) {
-  if (click_inside_element(e, "data-formEditSession_buttonCancel")) {
-    return true;
-  }
-  return false;
-}
-function click_from_session_context_button(e) {
-  if (click_inside_element(e, "data-editMenuId")) {
-    return true;
-  }
-  return false;
 }
