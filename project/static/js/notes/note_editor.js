@@ -2,7 +2,7 @@
 //
 //
 // //
-
+let menu_deployed = false
 // Edit button and contextual menu functions
 //
 
@@ -168,7 +168,7 @@ function edit_note_func(id_num, event) {
   }
 
   // send to server
-  socket.emit(
+  SOCKET.emit(
     "edit_note",
     note_text,
     note_private,
@@ -200,7 +200,7 @@ function delete_note(id_num) {
   element__containerNote.classList.add(CLASSNAME_HIDDEN);
 
   // emit delete event to server
-  socket.emit("delete_note", id_num);
+  SOCKET.emit("delete_note", id_num);
 }
 
 // Set listener for note edit forms

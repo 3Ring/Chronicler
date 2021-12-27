@@ -1,75 +1,156 @@
 {% extends "base.html" %}
 {% block content %}
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <p>
-                {{ message }}
-                <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
-            </p>
-        </div>
-    {% endfor %}
-{% endif %}
-{% endwith %}
+<style>
+    .hidden {
+        display: none !important;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+    crossorigin="anonymous"></script>
+<script>
+    const game_id = {{ game.id }};
+    const heroku = {{ heroku| tojson}};
+</script>
+<script src="{{ url_for('static', filename='js/edit_game.js') }}"></script>
 <img src="{{game.image}}">
 <div class="container">
     <div class="app-container">
-            <h1>{{game.name}}:</h1>
-        <div class="games">
-            <div class="game">
-                <h2>Edit game:</h2>
-                <form enctype="multipart/form-data" method='POST'>
+        <h1>{{game.name}}:</h1>
 
+        <div class="game">
+            <h2>Edit Game:</h2>
+
+
+            <form enctype="multipart/form-data" method='POST'>
+                <div class="row checkbox">
+                    {{ form_edit.published (data_published=game.published|string) }}
+                    {{ form_edit.published.label }}
+                </div>
+                <a href="#" data-change_name="header" class="button primary">Change Name</a>
+                <div data-change_name="input" class="row hidden">
+                    {{ form_edit.hidden_tag() }}
+                    {{ form_edit.name.label }}
+                    {{ form_edit.name }}
+                </div>
+                <a href="#" data-change_img="header" class="button primary">Change Image</a>
+
+                <div class="row hidden" data-change_img="input">
+                    {{ form_edit.img.label }}
+                    {{ form_edit.img }}
+                </div>
+                <div class="row">
+                    {{ form_edit.edit_submit (class="button primary") }}
+                </div>
+            </form>
+
+            <h2>Manage Players:</h2>
+            <div>
+                <a href="#" class="button primary" data-remove_player="">Remove Player</a>
+                <a href="#" class="button primary" data-remove_character="">Remove Character</a>
+            </div>
+            <form class="hidden" data-flag="remove_player_form">
+                <h2> Select player to remove player from {{game.name}} </h2>
+                <div class="row">
+                    {{ form_players.players.label }}
+                    {{ form_players.players}}
+                </div>
+                <div class="row">
+                    {{ form_players.player_submit (class="button primary") }}
+                </div>
+            </form>
+            <div data-flag="remove_player_cont" class="confirm-form hidden">
+                <form>
+                    <h2 data-flag="remove_player_header"></h2>
                     <div class="row">
-                        {{ form_edit.hidden_tag() }}
-                        {{ form_edit.name.label }}
-                        {{ form_edit.name }}
-                    </div>
-                    <div class="row">
-                        {{ form_edit.img.label }}
-                        {{ form_edit.img }}
-                    </div>
-                    {% if not game.published %}
-                        <div class="row checkbox">
-                            {{ form_edit.published }}
-                            {{ form_edit.published.label }}
-                        </div>
-                        {% else %}
-                        <div class="row checkbox">
-                            {{ form_edit.private }}
-                            {{ form_edit.private.label }}
-                        </div>
-                    {% endif %}
-                    <div class="row">
-                        {{ form_edit.game_edit_submit (class="button primary") }}
+                        <a href="#" class="button primary" data-flag="remove_player_confirm">Remove Player</a>
+                        <a href="#" class="button primary" data-flag="remove_player_cancel">Cancel</a>
                     </div>
                 </form>
             </div>
-            <div class="game">
-                {% if heir %}
-                <h2>Remove Ownership:</h2>
-                <p>this will remove you from the game but will allow current participants to access it</p>
-                <form method='POST'>
-                    <div class="row">
-                        {{ form_remove.heir.label }}
-                        {{ form_remove.heir }}
-                    </div>
-                    <div class="row">
-                        {{ form_remove.game_remove_submit (class="button primary") }}
-                    </div>
+            <form class="hidden" data-flag="remove_character">
+                <h2> Remove Character from {{game.name}} </h2>
+                <div class="row">
+                    {{ form_characters.characters.label }}
+                    {{ form_characters.characters }}
+                </div>
+                <div class="row">
+                    {{ form_characters.character_submit (class="button primary") }}
+                </div>
+            </form>
+
+            <div data-flag="remove_character_cont" class="confirm-form hidden">
+                <form>
+                    <h2 data-flag="remove_Character_header"></h2>
+                    <!-- TODO character remove -->
                 </form>
-                {% endif %}
-                <h2>Delete Game:</h2>
-                <p>this will permantently delete the game and remove it forever from the database.</p>
-                <p>Users will still be able to see their data from the game, but it will be accessed through an "orphanage game"</p>
-                <form method='POST'>
+            </div>
+
+
+            {% if heir %}
+            <h2>Transfer Ownership:</h2>
+            <p>Transfer the role of dm to one of your players.</p>
+            <form>
+                <div data-flag="init" class="row">
+                    {{ form_transfer.transfer_init (class="button primary")}}
+                </div>
+            </form>
+            <form class="hidden">
+                <h3>Who will become the new owner?</h3>
+                <h4>You will no longer be able to access this game's settings.</h4>
+                <h4>This can only be undone by the person you give the role to.</h4>
+
+                <div data-flag="heir" class="hidden row">
+                    {{ form_transfer.heir.label }}
+                    {{ form_transfer.heir }}
+                </div>
+                <div data-flag="transfer" class="hidden row">
+                    {{ form_transfer.transfer_transfer (class="button primary") }}
+                </div>
+            </form>
+            <div data-flag="transfer_form_cont" class="confirm-form hidden">
+                <form>
+                    <h2 data-flag="transfer_header"></h2>
                     <div class="row">
-                        {{ form_delete.game_delete_submit (class="button primary") }}
+                        {{ form_transfer.transfer_player.label }}
+                        {{ form_transfer.transfer_player }}
+                    </div>
+                    <div class="row">
+                        {{ form_transfer.transfer_game.label}}
+                        {{ form_transfer.transfer_game}}
+                    </div>
+                    <div class="row">
+                        {{ form_transfer.transfer_confirm (class="button primary") }}
                     </div>
                 </form>
             </div>
+
+
+            {% endif %}
+            <h2>End Game:</h2>
+            <p>This will put your game into a "read only" state.</p>
+            <p>participants will still be able to access the game, but will no longer be able to make changes.</p>
+            <form method='POST'>
+                <div class="row">
+                    {{ form_end.end_init (class="button primary") }}
+                </div>
+            </form>
+            <form class="hidden confirm-form">
+                <h2>Make {{game.name}} an archive?</h2>
+                <h3>This can be undone.</h3>
+                {{ form_end.end_confirm (class="button primary") }}
+            </form>
+
+            <h2>Delete Game:</h2>
+            <p>this will permanently delete the game and remove it forever from the database.</p>
+            <p>This cannot be undone.</p>
+            <form method='POST'>
+                <div class="row">
+                    {{ form_delete.game_delete_submit (class="button primary") }}
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -1,8 +1,13 @@
-
+import os
 from project.models import *
 from project.__init__ import db
 
-
+def set_heroku():
+    """this is to set the address for Flask socket.io"""
+    heroku = False
+    if os.environ.get("HEROKU_HOSTING"):
+        heroku = True
+    return heroku
 
 def attach_game_image_or_default_from_Images_model(model):
     keys = ["img", "mimetype"]

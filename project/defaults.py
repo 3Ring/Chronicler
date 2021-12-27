@@ -73,6 +73,8 @@ class UserOrphanage(Orphanage, User):
 
 class Game(Base):
     published = False
+    finished = False
+    server_finished = "FALSE"
     server_published = "FALSE"
     image = Images.game
     image_object = None

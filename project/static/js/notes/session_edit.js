@@ -65,8 +65,11 @@ socket actions
 SOCKET.on("check_delete_session_fail", () => {
   alert("session has other user's notes. cannot delete session");
 });
-SOCKET.on("check_delete_session_pass", () => {
-  alert("success");
+SOCKET.on("check_delete_session_pass", (session_num) => {
+  let sl = document.querySelector(`li[data-number_sessionList='${session_num}']`);
+  sl.remove();
+  let sc = document.querySelector(`data-number_sessionCont='${session_num}']`);
+  sc.remove();
 });
 
 /*

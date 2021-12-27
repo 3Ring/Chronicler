@@ -42,7 +42,7 @@ def create_app(test_config=None):
     init_blueprints(app)
 
     # register events file with application
-    from project import events
+    from project.events import notes
 
     # create db admins and orphanages
     from project.base_items import Base_items

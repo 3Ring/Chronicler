@@ -2,12 +2,12 @@
 {% block content %}
 
 <script>
-    var class_hidden = "hidden";
-    var deployed_add = false;
-    var deployed_leave = false;
+    let class_hidden = "hidden";
+    let deployed_add = false;
+    let deployed_leave = false;
 
     document.addEventListener("DOMContentLoaded", function() {
-        var options = document.getElementsByTagName("select");
+        let options = document.getElementsByTagName("select");
         if (options.length > 0) {
             let el = document.createElement("option");
             el.setAttribute("selected", true);
@@ -16,10 +16,10 @@
             el.innerHTML = "Choose Your Character"
             options[0].insertAdjacentElement("afterbegin", el);
         }
-        var add = document.querySelector(`a[data-modify="add"]`);
-        var leave = document.querySelector(`a[data-modify="leave"]`);
-        var addform = document.querySelector(`div[data-flag="addform"]`);
-        var removeform = document.querySelector(`div[data-flag="removeform"]`);
+        let add = document.querySelector(`a[data-modify="add"]`);
+        let leave = document.querySelector(`a[data-modify="leave"]`);
+        let addform = document.querySelector(`div[data-flag="addform"]`);
+        let removeform = document.querySelector(`div[data-flag="removeform"]`);
         add.addEventListener("click", function() {
             if (!deployed_add) {
                 addform.classList.remove(class_hidden);

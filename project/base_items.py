@@ -127,6 +127,7 @@ class Base_items:
 
             cls.models.Games.create(
                 id=cls.d.GameBugs.id,
+                finished=cls.d.GameBugs.finished,
                 removed=cls.d.GameBugs.removed,
                 name=cls.d.GameBugs.name,
                 published=cls.d.GameBugs.published,
@@ -205,6 +206,7 @@ class Base_items:
             """
             cls.models.Games.create(
                 id=cls.d.GameOrphanage.id,
+                finished=cls.d.GameOrphanage.finished,
                 removed=cls.d.GameOrphanage.removed,
                 name=cls.d.GameOrphanage.name,
                 published=cls.d.GameOrphanage.published,

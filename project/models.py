@@ -351,6 +351,17 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
             return super().delete_self(confirm=confirm)
         return
 
+    def get_character_list_from_game(self, game_id: int, include_removed: bool = False) -> list:
+        """returns a list of all the character objects the user owns in specified game"""
+        game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
+        final = []
+        for c in game_characters:
+            if c.user_id == self.id:
+                if c.removed:
+                    if not include_removed:
+                        continue
+                final.append(c)
+        return final
 
 class Images(SABaseMixin, db.Model):
 
@@ -442,6 +453,9 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         nullable=False,
     )
     date_added = db.Column(db.DateTime, default=d.Game.date_added)
+    finished = db.Column(
+        db.Boolean, default=d.Game.finished, server_default=text(d.Game.server_finished)
+    )
 
     dm_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
@@ -534,7 +548,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     def get_dm_avatar(cls, game_id: int):
         """returns dm avatar for game"""
         game = cls.get_from_id(game_id)
-        char_list = Characters.get_player_list_for_current_user_from_game(
+        char_list = Characters.get_characters_list_for_game(
             game.dm_id, game_id
         )
         for char in char_list:
@@ -754,7 +768,7 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             return super()._delete_attached(dependencies, confirm=confirm)
 
     @staticmethod
-    def get_player_list_for_current_user_from_game(
+    def get_player_character_list_for_game(
         game_id: int, include_removed: bool = False
     ) -> list:
         """returns a list of all the character objects the user owns in specified game"""

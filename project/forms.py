@@ -130,17 +130,31 @@ class GameEdit(FlaskForm):
         ],
     )
     img = FileField("Game Image")
-    private = BooleanField("Unpublish? (Do not allow game to be searchable)")
-    published = BooleanField("Publish? (Allow game to be searchable)")
-    game_edit_submit = SubmitField("Submit")
+    published = BooleanField("Allow game to be searchable")
+    edit_submit = SubmitField("Submit Changes")
 
 
-class GameRemove(FlaskForm):
-    will = BooleanField("Transfer Game ownership to another specific user?")
-    heir = SelectField("Users")
-    name = StringField("Confirm here")
-    game_remove_submit = SubmitField("Remove")
 
+class GameTransfer(FlaskForm):
+    
+    heir = SelectField("Players")
+    transfer_player = StringField("Player's name")
+    transfer_game = StringField("Game's name")
+    transfer_init = SubmitField("Transfer Ownership")
+    transfer_transfer = SubmitField("Transfer")
+    transfer_confirm = SubmitField("Confirm")
+
+class GameManagePlayers(FlaskForm):
+    players = SelectField("Players")
+    player_submit = SubmitField("Remove Player")
+
+class GameManageCharacters(FlaskForm):
+    characters = SelectField("characters")
+    character_submit = SubmitField("Remove Character")
+
+class GameEnd(FlaskForm):
+    end_init = SubmitField("End Game")
+    end_confirm = SubmitField("End Game")
 
 class GameDelete(FlaskForm):
     name = StringField("Confirm here")

@@ -13,6 +13,7 @@ from project.models import (
     Images,
     ViewsMixin,
 )
+from project.helpers import set_heroku
 from project import defaults as d
 from project.__init__ import db
 
@@ -102,28 +103,36 @@ def character_post(character_id):
 #######################################
 
 
-no_choice = "No Choice"
-
-
 @edit.route("/edit/games/dm/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def game_dm(game_id):
     if DM.not_authorized(game_id):
         return redirect(url_for(DM.not_authorized_url))
+    game = Games.get_from_id(game_id)
     heir = False
     form_edit = forms.GameEdit()
-    form_remove = forms.GameRemove()
+    form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
-    game = Games.get_from_id(game_id)
-    player_list = Users.get_player_list(game_id)
-    form_remove.heir.choices = [no_choice]
-    for i, player in enumerate(player_list):
-        if player.id != current_user.id:
-            form_remove.heir.choices.append(player.name)
-            form_remove.heir.choices[i + 1].value = player.id
-
-    if len(form_remove.heir.choices) > 1:
+    form_players = forms.GameManagePlayers()
+    form_characters = forms.GameManageCharacters()
+    form_end = forms.GameEnd()
+    players = Users.get_player_list(game_id)
+    for i, p in enumerate(players):
+        if p.id < 0 or p.id == current_user.id:
+            players.pop(i)
+    form_transfer.heir.choices = form_players.players.choices = [
+        (p.id, p.name) for p in players
+    ]
+    if len(form_transfer.heir.choices) > 0:
         heir = True
+    characters = []
+    for p in players:
+        char_list = p.get_character_list_from_game(game.id)
+        for c in char_list:
+            characters.append(
+                (c.id, f"{p.name}: {c.name}")
+            )
+    form_characters.characters.choices = [(c[0], c[1]) for c in characters]
     # visit game
     # edit game name
     # remove game
@@ -135,8 +144,12 @@ def game_dm(game_id):
         game=game,
         heir=heir,
         form_edit=form_edit,
-        form_remove=form_remove,
+        form_transfer=form_transfer,
         form_delete=form_delete,
+        form_players=form_players,
+        form_characters=form_characters,
+        form_end=form_end,
+        heroku=set_heroku()
     )
 
 
@@ -144,15 +157,20 @@ def game_dm(game_id):
 @fresh_login_required
 def game_dm_post(game_id):
     form_edit = forms.GameEdit()
-    form_remove = forms.GameRemove()
+    form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
+    form_players = forms.GameManagePlayers()
+    form_characters = forms.GameManageCharacters()
 
-    if form_edit.game_edit_submit.data:
+
+    if form_edit.edit_submit.data:
         GameDM.handle_edit(form_edit, game_id)
-    elif form_remove.game_remove_submit.data:
-        GameDM.handle_remove(form_remove)
+    elif form_transfer.confirm.data:
+        GameDM.handle_transfer(form_transfer)
     elif form_delete.game_delete_submit.data:
         GameDM.handle_delete(form_delete)
+    elif form_players.player_submit.data:
+        GameDM.player_remove(form_players)
 
     # visit game
     # edit game name
@@ -166,7 +184,7 @@ def game_dm_post(game_id):
 @edit.route("/edit/games/dm/remove/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def game_dm_remove_confirm(game_id):
-    form = forms.GameRemove()
+    form = forms.GameTransfer()
     form.heir.choices = [(g.id) for g in Users.query.order_by("name").all()]
     pass
 
@@ -194,9 +212,6 @@ class GameDM(ViewsMixin):
         if form.img.data:
             if not form_validators.Game.image(form.img.name):
                 return False
-        if type(form.private.data) is not bool:
-            flash("Data corrupted")
-            return False
         if type(form.published.data) is not bool:
             flash("Data corrupted")
             return False
@@ -210,27 +225,31 @@ class GameDM(ViewsMixin):
         return
 
     @classmethod
+    def player_remove(cls, form):
+
+        pass
+
+    @classmethod
     def handle_edit(cls, form, game_id):
 
         if not cls.validate_edit(form):
             return cls._failure(game_id)
         game = Games.get_from_id(game_id)
+        img_id = game.img_id
+        name = game.name
         if form.img.data:
             img_id = Images.upload(form.img.name)
             old_id = game.img_id
-            game.img_id = img_id
+            cls.delete_old_image(old_id)
         if form.name.data:
-            game.name = form.name.data
-        if form.published.data:
-            game.published = True
-        if form.private.data:
-            game.published = False
-        db.session.commit()
-        cls.delete_old_image(old_id)
+            name = form.name.data
+        print(img_id, name, form.published.data)
+        game.update(img_id=img_id, name=name, published=form.published.data)
+
         return cls._success(game_id)
 
     @staticmethod
-    def handle_remove(form, game_id):
+    def handle_transfer(form, game_id):
         game = Games.get_from_id(game_id)
         if form.heir.data != no_choice:
             return
@@ -393,7 +412,7 @@ class Player(ViewsMixin):
         add = []
         ids = []
 
-        remove_list = Characters.get_player_list_for_current_user_from_game(game_id)
+        remove_list = Characters.get_player_character_list_for_game(game_id)
         add_list = Characters.get_list_from_user(current_user.id)
         for player in remove_list:
             ids.append(player.id)
