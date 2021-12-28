@@ -11,6 +11,7 @@
 <script>
     const game_id = {{ game.id }};
     const heroku = {{ heroku| tojson}};
+    const players = true ? ({{players|tojson}}.length > 0) : false;
 </script>
 <script src="{{ url_for('static', filename='js/edit_game.js') }}"></script>
 <img src="{{game.image}}">
@@ -27,13 +28,13 @@
                     {{ form_edit.published (data_published=game.published|string) }}
                     {{ form_edit.published.label }}
                 </div>
-                <a href="#" data-change_name="header" class="button primary">Change Name</a>
+                <a href="#" data-change_name="button" class="button primary">Change Name</a>
                 <div data-change_name="input" class="row hidden">
                     {{ form_edit.hidden_tag() }}
                     {{ form_edit.name.label }}
                     {{ form_edit.name }}
                 </div>
-                <a href="#" data-change_img="header" class="button primary">Change Image</a>
+                <a href="#" data-change_img="button" class="button primary">Change Image</a>
 
                 <div class="row hidden" data-change_img="input">
                     {{ form_edit.img.label }}
@@ -43,32 +44,35 @@
                     {{ form_edit.edit_submit (class="button primary") }}
                 </div>
             </form>
-
+            {% if players %}
+                
             <h2>Manage Players:</h2>
             <div>
-                <a href="#" class="button primary" data-remove_player="">Remove Player</a>
-                <a href="#" class="button primary" data-remove_character="">Remove Character</a>
+                <a href="#" class="button primary" data-remove_player="button">Remove Player</a>
+                <a href="#" class="button primary" data-remove_character="button">Remove Character</a>
             </div>
-            <form class="hidden" data-flag="remove_player_form">
+            <form class="hidden" data-flag="remove_player">
                 <h2> Select player to remove player from {{game.name}} </h2>
                 <div class="row">
                     {{ form_players.players.label }}
                     {{ form_players.players}}
                 </div>
                 <div class="row">
-                    {{ form_players.player_submit (class="button primary") }}
+                    <a href="#" class="button primary" data-flag="remove_player_select_button">Remove Player</a>
+                    <a href="#" class="button primary" data-flag="remove_player_cancel_button">Cancel</a>
                 </div>
-            </form>
+            </form method="POST">
             <div data-flag="remove_player_cont" class="confirm-form hidden">
-                <form>
+                <form method="POST">
                     <h2 data-flag="remove_player_header"></h2>
                     <div class="row">
-                        <a href="#" class="button primary" data-flag="remove_player_confirm">Remove Player</a>
+                        {{ form_players.player_id (data_flag="player_remove_hidden")}}
+                        {{ form_players.player_submit (class="button primary") }}
                         <a href="#" class="button primary" data-flag="remove_player_cancel">Cancel</a>
                     </div>
                 </form>
             </div>
-            <form class="hidden" data-flag="remove_character">
+            <form method="POST" class="hidden" data-flag="remove_character">
                 <h2> Remove Character from {{game.name}} </h2>
                 <div class="row">
                     {{ form_characters.characters.label }}
@@ -85,7 +89,7 @@
                     <!-- TODO character remove -->
                 </form>
             </div>
-
+            {% endif %}
 
             {% if heir %}
             <h2>Transfer Ownership:</h2>

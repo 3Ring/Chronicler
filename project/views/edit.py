@@ -129,9 +129,7 @@ def game_dm(game_id):
     for p in players:
         char_list = p.get_character_list_from_game(game.id)
         for c in char_list:
-            characters.append(
-                (c.id, f"{p.name}: {c.name}")
-            )
+            characters.append((c.id, f"{p.name}: {c.name}"))
     form_characters.characters.choices = [(c[0], c[1]) for c in characters]
     # visit game
     # edit game name
@@ -142,6 +140,7 @@ def game_dm(game_id):
     return render_template(
         "edit/games/dm.html",
         game=game,
+        players=players,
         heir=heir,
         form_edit=form_edit,
         form_transfer=form_transfer,
@@ -149,28 +148,34 @@ def game_dm(game_id):
         form_players=form_players,
         form_characters=form_characters,
         form_end=form_end,
-        heroku=set_heroku()
+        heroku=set_heroku(),
     )
 
 
 @edit.route("/edit/games/dm/<int:game_id>", methods=["POST"])
 @fresh_login_required
 def game_dm_post(game_id):
+    print("post")
     form_edit = forms.GameEdit()
     form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
     form_players = forms.GameManagePlayers()
     form_characters = forms.GameManageCharacters()
 
-
     if form_edit.edit_submit.data:
         GameDM.handle_edit(form_edit, game_id)
-    elif form_transfer.confirm.data:
+    elif form_transfer.transfer_confirm.data:
         GameDM.handle_transfer(form_transfer)
     elif form_delete.game_delete_submit.data:
         GameDM.handle_delete(form_delete)
-    elif form_players.player_submit.data:
-        GameDM.player_remove(form_players)
+    elif form_players.player_submit:
+        player = BridgeUserGames.query.filter_by(
+            game_id=game_id, user_id=form_players.player_id.data
+        ).first()
+        if player:
+            player.delete_self(confirm=True)
+        else:
+            flash("unable to remove player")
 
     # visit game
     # edit game name

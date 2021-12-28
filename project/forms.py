@@ -13,6 +13,7 @@ from wtforms import (
     FileField,
 )
 from wtforms.fields import core
+from wtforms.fields.simple import HiddenField
 from wtforms.validators import (
     DataRequired,
     InputRequired,
@@ -146,6 +147,7 @@ class GameTransfer(FlaskForm):
 
 class GameManagePlayers(FlaskForm):
     players = SelectField("Players")
+    player_id = HiddenField()
     player_submit = SubmitField("Remove Player")
 
 class GameManageCharacters(FlaskForm):

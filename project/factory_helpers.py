@@ -23,6 +23,7 @@ def config_db_uri(app):
     if not database_exists(uri):
         print("creating database..")
         create_db()
+        config_db_uri(app)
     return
 
 

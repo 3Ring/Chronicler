@@ -74,6 +74,7 @@ def player(game_id):
 @profile.route("/profile/games/dm")
 @login_required
 def dm():
+    session["reauth"] = "edit.dm"
     # see list of games
     dm_games = Games.get_personal_game_list_dm(current_user.id)
     return render_template("profile/games/dm.html", dm_games=dm_games)
