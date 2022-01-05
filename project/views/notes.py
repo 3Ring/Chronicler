@@ -81,6 +81,6 @@ def get_game_character_list(game):
         for npc in npcs:
             choices.append(npc)
     else:
-        character_list = Characters.get_characters_list_for_game(game.id)
+        character_list = Characters.get_player_character_list_for_game(game.id)
     choices = [character for character in character_list]
     return choices

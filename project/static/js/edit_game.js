@@ -35,18 +35,40 @@ document.addEventListener("DOMContentLoaded", () => {
   pub.getAttribute("data-published") == "True"
     ? (pub.checked = true)
     : (pub.checked = false);
-  let rPlayerId = null;
-  let rPlayerName = null;
+  let rPlayerId = null,
+    rPlayerName = null;
+  let rCharacterId = null,
+    rCharacterName = null;
   if (players) {
     set_select_title("select[id='players']", "Choose player to remove");
     set_select_title("select[id='characters']", "Choose character to remove");
 
-    document
-      .querySelector("select[id='players']")
-      .addEventListener("change", function () {
+    const rPlayerEl = document.querySelector("select[id='players']");
+    const pSelect = new Event("player_select");
+    for (let i = 0; i < rPlayerEl.childNodes.length; i++) {
+      rPlayerEl.childNodes[i].addEventListener("click", function () {
         rPlayerId = this.value;
         rPlayerName = this.innerHTML;
+        document.dispatchEvent(pSelect);
       });
+    }
+    rPlayerEl.addEventListener("player_select", () => {
+      rPlayerEl.value = rPlayerId;
+    });
+
+    const cSelect = new Event("character_select");
+    const rCharacterEl = document.querySelector("select[id='characters']");
+    for (let i = 0; i < rCharacterEl.childNodes.length; i++) {
+      rCharacterEl.childNodes[i].addEventListener("click", function () {
+        rCharacterId = this.value;
+        rCharacterName = this.innerHTML;
+        document.dispatchEvent(cSelect);
+      });
+    }
+    rCharacterEl.addEventListener("player_select", () => {
+      rCharacterEl.value = rCharacterId;
+    });
+  
   }
   /*
   Buttons
@@ -115,6 +137,36 @@ document.addEventListener("DOMContentLoaded", () => {
       .addEventListener("click", () => {
         hide_remove_player_form();
       });
+
+    document
+      .querySelector("a[data-flag='remove_character_select_button']")
+      .addEventListener("click", () => {
+        if (!rCharacterName) {
+          alert("You must select a character to remove");
+        } else {
+          document.querySelector(
+            "input[data-flag='character_remove_hidden']"
+          ).value = rCharacterId;
+          let header = document.querySelector(
+            `h2[data-flag="remove_character_header"]`
+          );
+          header.innerHTML = `Do you wish to remove ${rCharacterName}?`;
+          let cont = document.querySelector(
+            `div[data-flag="remove_character_cont"]`
+          );
+          cont.classList.remove(HIDDEN);
+          document
+            .querySelector(`a[data-flag="remove_character_cancel"]`)
+            .addEventListener("click", () => {
+              cont.classList.add(HIDDEN);
+            });
+        }
+      });
+    document
+      .querySelector("a[data-flag='remove_character_cancel_button']")
+      .addEventListener("click", () => {
+        hide_remove_character_form();
+      });
   }
   // SOCKET.on("remove_player_start_success", (user_name, user_id) => {});
 });
@@ -131,12 +183,12 @@ function hide_remove_character_form() {
 }
 if (players) {
   function set_select_title(selector, header) {
-    let players = document.querySelector(selector);
+    let el = document.querySelector(selector);
     let title = document.createElement("option");
     title.setAttribute("selected", true);
     title.setAttribute("hidden", true);
     title.setAttribute("value", "");
     title.innerHTML = header;
-    players.insertAdjacentElement("afterbegin", title);
+    el.insertAdjacentElement("afterbegin", title);
   }
 }

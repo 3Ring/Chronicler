@@ -10,8 +10,8 @@
     crossorigin="anonymous"></script>
 <script>
     const game_id = {{ game.id }};
-    const heroku = {{ heroku| tojson}};
-    const players = true ? ({{players|tojson}}.length > 0) : false;
+    const heroku = {{ heroku|tojson}};
+    const players = {{ players|tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/edit_game.js') }}"></script>
 <img src="{{game.image}}">
@@ -79,14 +79,19 @@
                     {{ form_characters.characters }}
                 </div>
                 <div class="row">
-                    {{ form_characters.character_submit (class="button primary") }}
+                    <a href="#" class="button primary" data-flag="remove_character_select_button">Remove Character</a>
+                    <a href="#" class="button primary" data-flag="remove_character_cancel_button">Cancel</a>
                 </div>
             </form>
 
             <div data-flag="remove_character_cont" class="confirm-form hidden">
-                <form>
-                    <h2 data-flag="remove_Character_header"></h2>
-                    <!-- TODO character remove -->
+                <form method="POST">
+                    <h2 data-flag="remove_character_header"></h2>
+                    <div class="row">
+                        {{ form_characters.character_id (data_flag="character_remove_hidden")}}
+                        {{ form_characters.character_submit (class="button primary") }}
+                        <a href="#" class="button primary" data-flag="remove_character_cancel">Cancel</a>
+                    </div>
                 </form>
             </div>
             {% endif %}

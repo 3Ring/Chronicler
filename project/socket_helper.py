@@ -70,7 +70,7 @@ def run(
     user_id: int = None,
     dm_id: int = None,
     target_user: int = None,
-    template: str = "blueprint.html",
+    template: str = "test.html",
     **kwarg,
 ):
     """creates socket for target_user"""
@@ -711,8 +711,8 @@ class SortHtml:
 
     def open_else(self):
         self.gatekeeper = False
-        self.allowed_depth += -1
         self._elif[self.depth] = True
+        self.allowed_depth += -1
         self.remove_line()
         return
 
@@ -720,7 +720,7 @@ class SortHtml:
         if self.allowed_depth == self.depth or self.allowed_depth + 1 == self.depth:
             self.gatekeeper = True
             self._elif.pop(self.depth)
-            self.allowed_depth += -1
+            # self.allowed_depth += -1
         self.depth += -1
         self.remove_line()
 
@@ -729,6 +729,7 @@ class SortHtml:
     def closed_if(self):
         self.depth += 1
         self.remove_line()
+        self._elif[self.depth] = False
         return
 
     def closed_elif(self):
@@ -774,12 +775,13 @@ class SortHtml:
 def finalize(section: list, model, game_id: int, **kwarg):
 
     conditionals = set_conditionals(section, model)
-    if conditionals:
-        program = SortHtml(conditionals, section)
-        sorted_section = program.run()
-        generic_socket_list = parse_html_list(sorted_section)
+    # generic_socket_list = None
+    # if conditionals:
+    program = SortHtml(conditionals, section)
+    sorted_section = program.run()
+    generic_socket_list = parse_html_list(sorted_section)
     final_socket_list = pass_model_variables(
-        generic_socket_list, model, game_id, **kwarg
+    generic_socket_list, model, game_id, **kwarg
     )
     final_socket = stringify_and_add_whiteSpace(final_socket_list)
     return final_socket

@@ -103,6 +103,7 @@ def send_new_note(
         user_id=user_id,
         dm_id=dm_id,
         target_users={"user": user_id, "dm": dm_id, "other": -10},
+        # target_users={"user": user_id},
         char_img=new.char_img,
     )
     emit(

@@ -152,6 +152,7 @@ class GameManagePlayers(FlaskForm):
 
 class GameManageCharacters(FlaskForm):
     characters = SelectField("characters")
+    character_id = HiddenField()
     character_submit = SubmitField("Remove Character")
 
 class GameEnd(FlaskForm):

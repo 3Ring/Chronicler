@@ -109,28 +109,28 @@ def game_dm(game_id):
     if DM.not_authorized(game_id):
         return redirect(url_for(DM.not_authorized_url))
     game = Games.get_from_id(game_id)
-    heir = False
     form_edit = forms.GameEdit()
     form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
     form_players = forms.GameManagePlayers()
     form_characters = forms.GameManageCharacters()
     form_end = forms.GameEnd()
-    players = Users.get_player_list(game_id)
-    for i, p in enumerate(players):
+    p_list = Users.get_player_list(game_id)
+    for i, p in enumerate(p_list):
         if p.id < 0 or p.id == current_user.id:
-            players.pop(i)
+            p_list.pop(i)
     form_transfer.heir.choices = form_players.players.choices = [
-        (p.id, p.name) for p in players
+        (p.id, p.name) for p in p_list
     ]
-    if len(form_transfer.heir.choices) > 0:
-        heir = True
-    characters = []
-    for p in players:
-        char_list = p.get_character_list_from_game(game.id)
-        for c in char_list:
-            characters.append((c.id, f"{p.name}: {c.name}"))
-    form_characters.characters.choices = [(c[0], c[1]) for c in characters]
+    players = True if p_list else False
+    heir = True if len(form_transfer.heir.choices) > 0 else False
+    if p_list:
+        characters = []
+        for p in p_list:
+            char_list = p.get_character_list_from_game(game.id)
+            for c in char_list:
+                characters.append((c.id, f"{p.name}: {c.name}"))
+        form_characters.characters.choices = [(c[0], c[1]) for c in characters]
     # visit game
     # edit game name
     # remove game
@@ -163,19 +163,39 @@ def game_dm_post(game_id):
     form_characters = forms.GameManageCharacters()
 
     if form_edit.edit_submit.data:
+        print(f"edit")
         GameDM.handle_edit(form_edit, game_id)
     elif form_transfer.transfer_confirm.data:
+        print(f"transfer")
         GameDM.handle_transfer(form_transfer)
     elif form_delete.game_delete_submit.data:
+        print(f"delete")
         GameDM.handle_delete(form_delete)
-    elif form_players.player_submit:
+    elif form_players.player_submit.data:
+        print(f"player")
+        user = Users.get_from_id(form_players.player_id.data)
+        pc_list = user.get_character_list_from_game(game_id)
+        pc_ids = [p.id for p in pc_list]
+
+        characters = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
+        [x.delete_self(confirm=True) for x in characters if x.character_id in pc_ids]
+        test_characters = user.get_character_list_from_game(game_id)
+        print(f"test: {test_characters}")
         player = BridgeUserGames.query.filter_by(
-            game_id=game_id, user_id=form_players.player_id.data
+            game_id=game_id, user_id=user.id
         ).first()
-        if player:
-            player.delete_self(confirm=True)
-        else:
-            flash("unable to remove player")
+        player.delete_self(confirm=True) if player else flash("unable to remove player")
+        test_player = BridgeUserGames.query.filter_by(
+            game_id=game_id, user_id=user.id
+        ).first()
+        print(f'test_player: {test_player}')
+
+    elif form_characters.character_submit.data:
+        print(f"character")
+        c = BridgeGameCharacters.query.filter_by(
+            game_id=game_id, character_id=form_characters.character_id.data
+        ).first()
+        c.delete_self(confirm=True) if c else flash("unable to remove character")
 
     # visit game
     # edit game name

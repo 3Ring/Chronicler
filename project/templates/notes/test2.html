@@ -1,0 +1,123 @@
+{# socket_scope start #}
+{# translate_hook note #}
+1in
+{% if 1 %}
+2in
+    {% if False %}
+        2out
+    {% elif 2 %}
+        3in
+        {% if False %}
+            out
+        {% else %}
+            4in
+            {% if False %}
+                6out
+            {% elif 3 %}
+                5in
+            {% endif %}
+        {% endif %}
+    6in
+    {% endif %}
+    {% if 4 %}
+        7in
+        PROBLEM HERE
+        {% if False %}
+            10out
+        {% elif 5 %}
+            8in
+        {% else %}
+            23out
+        {% endif %}
+        9in
+        PROBLEM
+    {% else %}
+        out
+    {% endif %}
+        10in      
+{% else %}
+    35out
+{% endif %}
+IN
+{% if 9 %}
+    11in
+{% endif %}
+12in
+        {# end_translate_hook note #}
+{# socket_scope end #}
+
+40in
+
+{% if 1 %}
+    IN
+    {% if False %}
+        2out
+    {% elif 2 %}
+        1 here here
+    {% endif %}
+    IN
+{% endif %}
+IN
+        {# end_translate_hook note #}
+{# socket_scope end #}
+        {% if False %}
+            4out
+        {% else %}
+            2
+            {% if False %}
+                6out
+            {% elif 3 %}
+                3
+            {% endif %}
+        {% endif %}
+       4
+    {% endif %}
+        {% if 4 %}
+            5
+            {% if False %}
+                10out
+            {% elif 5 %}
+                6
+            {% else %}
+                23out
+                {% if False %}
+                    24out
+                {% elif 6 %}
+                    25out
+                    {% if False %}
+                        26out
+                    {% else %}
+                        {% if 7 %}
+                            27out
+                        {% else %}
+                            28out
+                        {% endif %}
+                        29out
+                    {% endif %}
+                {% else %}
+                    30out
+                {% endif %}
+            {% endif %}
+        {% else %}
+            31out
+            {% if 8 %}
+                32out
+            {% else %}
+                33out
+            {% endif %}
+        {% endif %}
+        13    
+{% else %}
+    35out
+{% endif %}
+{% if 9 %}
+    36in
+{% elif False %}
+    37out
+{% else %}
+    38out
+{% endif %}
+14
+
+{# end_translate_hook note #}
+{# socket_scope end #}
