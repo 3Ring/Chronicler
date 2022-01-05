@@ -56,15 +56,44 @@ function new_check_box_logic(note_id_number) {
 
 SOCKET.on(
   "fill_edit_session",
-  function (new_card, new_list, session_number, old_number) {
-    if (session_number > CURRENT_SESSION_NUMBER) {
-      CURRENT_SESSION_NUMBER = session_number;
+  function (
+    old_title,
+    new_title,
+    new_number,
+    old_number
+  ) {
+    // if (session_number > CURRENT_SESSION_NUMBER) {
+    //   CURRENT_SESSION_NUMBER = session_number;
+    // }
+    CURRENT_SESSION_NUMBER = new_number;
+    const old_sl = document.querySelector(
+      `li[data-number_sessionList='${old_number}']`
+    );
+    old_sl.setAttribute("data-number_sessionList", new_number);
+    for (let i = 0; i < old_sl.childNodes.length; i++) {
+      if (old_sl.childNodes[i].innerHTML == old_title) {
+        old_sl.childNodes[i].innerHTML = new_title;
+      } else if (old_sl.childNodes[i].innerHTML == `Session ${old_number}`) {
+        old_sl.childNodes[i].innerHTML = `Session ${new_number}`;
+      }
     }
-    replace_session(old_number, new_card, new_list);
-    display_editted_session(session_number);
-    add_session_listener(session_number);
+    const old_sc = document.querySelector(
+      `div[data-number_sessionCont='${old_number}']`
+    );
+    old_sc.setAttribute("data-number_sessioncont", new_number);
+    for (let i = 0; i < old_sc.childNodes.length; i++) {
+      if (old_sc.childNodes[i].innerHTML == `Session ${old_number}: ${old_title}`) {
+        old_sc.childNodes[i].innerHTML = `Session ${new_number}: ${new_title}`;
+        break;
+      }
+    }
   }
 );
+
+SOCKET.on("session_number_conflict", () => {
+  alert("cannot change session number to one that is already in use!");
+});
+// function edit_note_func() {};
 
 function add_session_listener(session_number) {
   let el = document.querySelector(`form[data-snum='${session_number}']`);
@@ -73,32 +102,17 @@ function add_session_listener(session_number) {
   });
 }
 
-function display_editted_session(session_number) {
-  let el = document.querySelector(
-    `li[data-number_sessionList='${session_number}']`
-  );
-  display_sessionCont(el);
+function edit_session_func(e) {
+  e.preventDefault();
+  console.log(e);
+  console.log("hi");
 }
-function replace_session(old_number, new_card, new_list) {
-  replace_session_list(old_number, new_list);
-  replace_session_card(old_number, new_card);
-}
-
-function replace_session_list(old_number, new_list) {
-  let old_sl = document.querySelector(
-    `li[data-number_sessionList='${old_number}']`
-  );
-  old_sl.insertAdjacentHTML("afterend", new_list);
-  old_sl.remove();
-}
-
-function replace_session_card(old_number, new_card) {
-  let old_sc = document.querySelector(
-    `div[data-number_sessionCont='${old_number}']`
-  );
-  old_sc.insertAdjacentHTML("afterend", new_card);
-  old_sc.remove();
-}
+// function display_editted_session(session_number) {
+//   let el = document.querySelector(
+//     `li[data-number_sessionList='${session_number}']`
+//   );
+//   display_sessionCont(el);
+// }
 
 // Display new Session
 SOCKET.on("fill_new_session", function (new_session, new_list, session_number) {

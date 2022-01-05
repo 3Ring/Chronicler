@@ -22,6 +22,7 @@ function NewQuill(event, quill) {
   if (element__newQuill_speaking_as) {
     speaking_as = element__newQuill_speaking_as.value;
   } else {
+    speaking_as = "bugs"
   }
   // ! END BUG PAGE
   if (element__newQuill_to_dm) {

@@ -1,9 +1,10 @@
-from flask import Blueprint, redirect, url_for, render_template
+from flask import Blueprint, render_template
 from flask_login import login_required
 
-from project.models import Users, Games, Sessions, Notes
+from project.models import Users, Games, Sessions
 from project import defaults as d
 from project.views.notes import set_heroku, get_game_notes, convert_to_JSON
+
 bugs = Blueprint("bugs", __name__)
 
 
@@ -29,7 +30,3 @@ def bugs_page():
         game=game,
         heroku=heroku,
     )
-
-    # _bugs = Games.get_bugs()
-    # if _bugs:
-    #     return redirect(url_for("notes.game", game_id=_bugs.id))

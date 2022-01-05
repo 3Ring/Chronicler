@@ -146,8 +146,15 @@ function edit_note_func(id_num, event) {
       `select[name="speaking_as"]`
     ),
     element__formEdit_Editor = element__editorParent.firstElementChild;
-  let note_text = element__formEdit_Editor.innerHTML,
+    // !bugs code
+  let note_text = element__formEdit_Editor.innerHTML;
+  let speaking_as = null;
+  if (element__newQuill_speaking_as) {
     speaking_as = element__newQuill_speaking_as.value;
+  } else {
+    speaking_as = "bugs";
+  };
+  // !bugs code
   // private
   let element__notes_checkboxPrivate = document.querySelector(
     `input[data-id_noteCheckboxPrivate="${id_num}"]`

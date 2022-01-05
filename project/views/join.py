@@ -11,9 +11,7 @@ from project.models import (
     ViewsMixin,
 )
 
-
 join = Blueprint("join", __name__)
-
 
 @join.route("/join", methods=["GET"])
 @login_required
@@ -62,6 +60,7 @@ class Joining(ViewsMixin):
     def make_add_list():
         form = forms.CharAdd()
         my_characters = Characters.get_list_from_user(current_user.id)
+        print(f'my_characters: {my_characters}')
         form.character.choices = [(g.id, g.name) for g in my_characters]
         return {"my_characters": my_characters, "addform": form}
 

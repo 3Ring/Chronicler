@@ -52,8 +52,9 @@ function Session_Editor() {
         const title = document.querySelector(
           `input[data-session_edit_title="${id_num}"]`
         ).value;
-        SOCKET.emit("edit_session", id_num, number.value, title.value);
-        toggle_session_edit_off(id_num, deployed);
+        console.log(id_num, number, title);
+        SOCKET.emit("edit_session", id_num, number, title);
+        toggle_all_off(deployed);
       });
     }
   }
@@ -65,10 +66,11 @@ socket actions
 SOCKET.on("check_delete_session_fail", () => {
   alert("session has other user's notes. cannot delete session");
 });
+
 SOCKET.on("check_delete_session_pass", (session_num) => {
   let sl = document.querySelector(`li[data-number_sessionList='${session_num}']`);
   sl.remove();
-  let sc = document.querySelector(`data-number_sessionCont='${session_num}']`);
+  let sc = document.querySelector(`div[data-number_sessionCont='${session_num}']`);
   sc.remove();
 });
 

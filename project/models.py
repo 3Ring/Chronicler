@@ -256,6 +256,14 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         return cls.query.filter_by(email=email).first()
 
     @classmethod
+    def get_avatar(cls, user_id):
+
+        for char in Characters.get_list_from_user(user_id, include_avatar=True):
+            print(f'char: {char}')
+            if char.avatar:
+                return char
+
+    @classmethod
     def get_player_list(cls, game_id: int) -> list:
         users = []
         bridge = BridgeUserGames.query.filter_by(game_id=game_id).all()

@@ -1,7 +1,7 @@
 from flask_socketio import emit
-
+from flask_login import current_user
 from project.__init__ import db, socketio
-from project.models import Sessions, Characters, Notes
+from project.models import Sessions, Characters, Notes, Users
 from project.helpers import private_convert
 from project.socket_helper import translate_jinja
 
@@ -14,6 +14,7 @@ imageLink__buttonEdit = "/static/images/edit_button_image.png"
 
 idPrefix__newSessionHeader = "session_header_"
 idPrefix__newSessionCard = "session_card_"
+
 
 @socketio.on("check_delete_session")
 def check_delete(session_id):
@@ -29,18 +30,21 @@ def check_delete(session_id):
 @socketio.on("edit_session")
 def edit_session(id_, number, title):
     session = Sessions.get_from_id(id_)
+    old_title = session.title
     old_number = session.number
-    # TODO improve this to alert user and ask if they wish to merge sessions
-    if Sessions.query.filter_by(game_id=session.game_id, number=number).first():
-        return False
-    # TODO end
-
+    if (
+        Sessions.query.filter_by(id=id_).first().number != int(number)
+        and Sessions.query.filter_by(game_id=session.game_id, number=number).first()
+    ):
+        emit("session_number_conflict")
+        return
+    notes = Notes.get_list_from_session_number(old_number, session.game_id)
+    for note in notes:
+        note.update(session_number=number)
     session.update(number=number, title=title)
-    elements = translate_jinja(session, "session", session.game_id)
-    print(f'elements["session_card"]: {elements["session_card"]} |\n\n| elements["session_nav"]: {elements["session_nav"]}')
     emit(
         "fill_edit_session",
-        (elements["session_card"], elements["session_nav"], str(number), old_number),
+        (old_title, title, str(number), old_number),
         broadcast=True,
     )
 
@@ -75,7 +79,9 @@ def send_new_note(
     private_=False,
     to_dm=False,
 ):
-
+    # bugs code
+    if character_id == "bugs":
+        character_id = Users.get_avatar(current_user.id).id
     private2 = private_convert(private_)
     to_dm = private_convert(to_dm)
     # user_char_list = Characters.query.filter_by(user_id=user_id).all()
@@ -176,7 +182,8 @@ def send_editted_note(
 
 @socketio.on("edit_note")
 def edit_note(text, is_private, to_dm, character_id, dm_id, game_id, user_id, note_id):
-
+    if character_id == "bugs":
+        character_id = Users.get_avatar(current_user.id).id
     _to_dm = private_convert(to_dm)
     _private = private_convert(is_private)
 
@@ -196,7 +203,6 @@ def edit_note(text, is_private, to_dm, character_id, dm_id, game_id, user_id, no
 
     # these are separated to make sure that if the filler needs to be made then that is done by the client before emitting the new note.
     if (
-
         note.to_dm == True
         and _to_dm == False
         or note.private == True
