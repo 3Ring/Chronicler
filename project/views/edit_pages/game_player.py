@@ -11,7 +11,7 @@ from project.models import (
     Users,
     Games,
     Images,
-    ViewsMixin,
+    
 )
 from project.helpers import set_heroku
 from project import defaults as d
@@ -95,7 +95,7 @@ def handle_leave(game_id, form):
     return Player.leave_success(game_id, f"You are no longer part of {game_name}")
 
 
-class Player(ViewsMixin):
+class Player():
 
     not_authorized_url = "profile.player"
 

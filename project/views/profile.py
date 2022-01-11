@@ -23,18 +23,7 @@ def account():
     return render_template("profile/account.html", user=user)
 
 
-@profile.route("/profile/delete", methods=["GET"])
-@fresh_login_required
-def delete():
-    form = forms.UserDelete()
-    games = Games.get_personal_game_list_dm(current_user.id)
-    names = {}
-    for game in games:
-        names[game.name] = Users.get_player_list(game.id)
-    user = Users.get_from_id(current_user.id)
-    return render_template(
-        "profile/delete.html", user=user, form=form, games=games, names=names
-    )
+
 
 
 @profile.route("/profile/characters")

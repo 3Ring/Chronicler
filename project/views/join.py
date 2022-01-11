@@ -8,7 +8,7 @@ from project.models import (
     Users,
     Images,
     Characters,
-    ViewsMixin,
+    
 )
 
 join = Blueprint("join", __name__)
@@ -55,7 +55,7 @@ def joining_post(game_id, game_name):
     return Joining.failure(game_id, game_name)
 
 
-class Joining(ViewsMixin):
+class Joining():
     @staticmethod
     def make_add_list():
         form = forms.CharAdd()
@@ -78,15 +78,15 @@ class Joining(ViewsMixin):
             return True
         return False
 
-    @staticmethod
-    def rollback_character(id_):
-        Characters.rollback(id=id_)
-        return
+    # @staticmethod
+    # def rollback_character(id_):
+    #     Characters.rollback(id=id_)
+    #     return
 
-    @staticmethod
-    def rollback_bridge(character_id, game_id):
-        BridgeGameCharacters.rollback(character_id=character_id, game_id=game_id)
-        return
+    # @staticmethod
+    # def rollback_bridge(character_id, game_id):
+    #     BridgeGameCharacters.rollback(character_id=character_id, game_id=game_id)
+    #     return
 
     @classmethod
     def handle_add(cls, form, game_id):

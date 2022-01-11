@@ -59,7 +59,7 @@ class UserCreate(FlaskForm):
     usersubmit = SubmitField("Submit")
 
 
-class UserEdit(FlaskForm):
+class UserEditName(FlaskForm):
     name = StringField(
         "Change Name",
         validators=[
@@ -71,11 +71,17 @@ class UserEdit(FlaskForm):
             ),
         ],
     )
+    user_edit_name_submit = SubmitField("Submit")
+
+class UserEditEmail(FlaskForm):
     email = StringField("Change Email", validators=[DataRequired()])
+    user_edit_email_submit = SubmitField("Submit")
+
+class UserEditPassword(FlaskForm):
     password = PasswordField("Change Password", validators=[DataRequired(), password])
     confirm = PasswordField("Confirm New Password", validators=[DataRequired()])
     reveal = BooleanField("Show Passwords")
-    user_edit_submit = SubmitField("Submit")
+    user_edit_password_submit = SubmitField("Submit")
 
 
 class Login(FlaskForm):
@@ -135,9 +141,8 @@ class GameEdit(FlaskForm):
     edit_submit = SubmitField("Submit Changes")
 
 
-
 class GameTransfer(FlaskForm):
-    
+
     heir = SelectField("Players")
     transfer_player = StringField("Player's name")
     transfer_game = StringField("Game's name")
@@ -145,19 +150,23 @@ class GameTransfer(FlaskForm):
     transfer_transfer = SubmitField("Transfer")
     transfer_confirm = SubmitField("Confirm")
 
+
 class GameManagePlayers(FlaskForm):
     players = SelectField("Players")
     player_id = HiddenField()
     player_submit = SubmitField("Remove Player")
+
 
 class GameManageCharacters(FlaskForm):
     characters = SelectField("characters")
     character_id = HiddenField()
     character_submit = SubmitField("Remove Character")
 
+
 class GameEnd(FlaskForm):
     end_init = SubmitField("End Game")
     end_confirm = SubmitField("End Game")
+
 
 class GameDelete(FlaskForm):
     name = StringField("Confirm here")

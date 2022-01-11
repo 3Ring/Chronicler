@@ -351,6 +351,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         :param orphan: if set to `True` will set dependencies to be owned by admin
                        if `False` dependencies will be deleted
         """
+        
         if confirm:
             if orphan:
                 self.orphan_attached()

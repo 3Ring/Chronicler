@@ -9,8 +9,8 @@ def init_blueprints(app):
     from project.views.bugs import bugs as bugs_blueprint
     app.register_blueprint(bugs_blueprint)
 
-    from project.views.admin import admin as admin_blueprint
-    app.register_blueprint(admin_blueprint)
+    # from project.views.admin import admin as admin_blueprint
+    # app.register_blueprint(admin_blueprint)
 
     from project.views.profile import profile as profile_blueprint
     app.register_blueprint(profile_blueprint)

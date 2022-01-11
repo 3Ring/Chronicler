@@ -15,20 +15,11 @@
         <h1>Permanently Delete Account</h1>
         <h2>To permantently delete account type in your email below and submit.</h2>
         <h2>There is no going back from this!</h2>
-        <h3>transfer ownership of your games?</h3>
-        {% for game in games %}
-            <label class="form-label" for="{{game.name}}"></label>
-            <select>
-                <option disabled>Player Name</option>
-                {% for user in names["game.name"] %}
-                <option>{{user.name}}</option>
-                {% endfor %}
-            </select>
-        {% endfor %}
+
         <div class="row">
             {{ form.hidden_tag() }}
             {{ form.confirm.label }}
-            {{ form.confirm }}
+            {{ form.confirm (placeholder="email")}}
         </div>
         <div class="row">
             {{ form.user_delete_submit (class="button primary") }}

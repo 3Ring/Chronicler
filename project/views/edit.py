@@ -21,6 +21,22 @@ def account_post():
     return post()
 
 
+@edit.route("/edit/account/delete", methods=["GET"])
+@fresh_login_required
+def delete_get():
+    from project.views.edit_pages.account import confirm_get
+
+    return confirm_get()
+
+
+@edit.route("/edit/account/delete", methods=["POST"])
+@fresh_login_required
+def delete_post():
+    from project.views.edit_pages.account import confirm_post
+
+    return confirm_post()
+
+
 @edit.route("/edit/character/<int:character_id>", methods=["GET"])
 @fresh_login_required
 def character(character_id):
@@ -54,9 +70,6 @@ def game_dm_post(game_id):
     return post(game_id)
 
 
-from project.views.join import Joining
-
-
 @edit.route("/edit/games/player/add_remove/<int:game_id>", methods=["GET"])
 @fresh_login_required
 def add_remove(game_id):
@@ -87,14 +100,3 @@ def leave_post(game_id):
     from project.views.edit_pages.game_player import leave_post_
 
     return leave_post_(game_id)
-
-
-# class DM(ViewsMixin):
-#     not_authorized_url = "profile.dm"
-
-#     @staticmethod
-#     def not_authorized(game_id):
-#         dm_id = Games.get_dmID_from_gameID(game_id)
-#         if current_user.id == dm_id:
-#             return False
-#         return True

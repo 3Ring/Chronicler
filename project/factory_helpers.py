@@ -32,10 +32,14 @@ def config(app):
     db_password = os.environ.get("DB_PASS")
     config_db_uri(app)
 
+    # SQLAlchemy
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = db_password
     app.config["POSTGRES_PASSWORD"] = db_password
     app.config["SQLALCHEMY_ECHO"] = False
+
+    # Flask admin
+    app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
     return
 
 

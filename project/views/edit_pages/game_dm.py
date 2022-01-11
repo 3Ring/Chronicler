@@ -11,7 +11,7 @@ from project.models import (
     Users,
     Games,
     Images,
-    ViewsMixin,
+    
 )
 from project.helpers import set_heroku
 from project import defaults as d
@@ -109,7 +109,7 @@ def post(game_id):
     return redirect(url_for("edit.game_dm", game_id=game_id))
 
 
-class GameDM(ViewsMixin):
+class GameDM():
     @staticmethod
     def _failure(game_id):
         return redirect(url_for("edit.game_dm", game_id=game_id))
