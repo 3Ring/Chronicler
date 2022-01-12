@@ -6,21 +6,6 @@
         
         <form  enctype="multipart/form-data" method='POST'>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for message in messages %}
-
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <p>
-                            {{ message }}
-                            <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></span></button>
-                        </p>
-                    </div>
-
-                {% endfor %}
-            {% endif %}
-            {% endwith%}
-
             <h1>Create your game!</h1>
             <div class="row">
                 {{ gameform.hidden_tag() }}

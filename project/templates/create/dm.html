@@ -9,17 +9,6 @@
 {% endif %}
         <form  enctype="multipart/form-data" method='POST'>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="alert {{ category }} alert-dismissible fade show" role="alert">
-                        <p>
-                            {{ message }}
-                            <button type="button" data-bs-dismiss="alert" aria-label="Close"><span class="fas fa-times"></button>
-                        </p>
-                    </div>
-                {% endif %}
-            {% endwith %}
-
             <h1>Personalize your "DM" avatar</h1>
             <div class="row">
                 {{ form.hidden_tag() }}
