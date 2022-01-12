@@ -102,7 +102,6 @@ class SABaseMixin:
         db.session.commit()
         return obj
 
-    
     def update(self, **kw):
         for key, value in kw.items():
             exec(f"self.{key} = value")
@@ -259,7 +258,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     def get_avatar(cls, user_id):
 
         for char in Characters.get_list_from_user(user_id, include_avatar=True):
-            print(f'char: {char}')
+            print(f"char: {char}")
             if char.avatar:
                 return char
 
@@ -303,17 +302,9 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         user = super().create(**kw)
         if with_follow_up:
             if not cls.add_to_bug_report_page(kw["email"]):
-                user.delete_self(confirm=True, orphan=False)
+                user.delete_self(confirm=True)
 
         return user
-
-    def orphan_attached(self):
-        """changes the dm ID to the admin"""
-
-        orphanage = Users.get_orphanage()
-        games_list = Games.query.filter_by(dm_id=self.id).all()
-        for game in games_list:
-            game.dm_id = orphanage.id
 
     def remove_self(self):
         self._remove_attached()
@@ -327,20 +318,20 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
         super()._remove_attached(dependencies=dependencies)
 
-    def delete_attached(self, confirm: bool = False):
+    def delete_attached(self):
         """deletes all attached items
 
         :param confirm: confirmation to make sure this wasn't
                         used on accident when "remove_self" method was intended
         """
-        if confirm:
-            dependencies = []
-            dependencies.append(Games.query.filter_by(dm_id=self.id).all())
-            dependencies.append(Characters.query.filter_by(user_id=self.id).all())
-            dependencies.append(Notes.query.filter_by(user_id=self.id).all())
-            dependencies.append(BridgeUserGames.query.filter_by(user_id=self.id).all())
-            dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
-            super()._delete_attached(dependencies=dependencies, confirm=confirm)
+
+        dependencies = [
+            Games.query.filter_by(dm_id=self.id).all(),
+            Characters.query.filter_by(user_id=self.id).all(),
+            Notes.query.filter_by(user_id=self.id).all(),
+            BridgeUserGames.query.filter_by(user_id=self.id).all(),
+            BridgeUserImages.query.filter_by(user_id=self.id).all(),
+        ]
         return
 
     def delete_self(self, confirm: bool = False, orphan: bool = True):
@@ -351,16 +342,18 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         :param orphan: if set to `True` will set dependencies to be owned by admin
                        if `False` dependencies will be deleted
         """
-        
-        if confirm:
-            if orphan:
-                self.orphan_attached()
-            else:
-                self.delete_attached(confirm=confirm)
-            return super().delete_self(confirm=confirm)
+
+        if not confirm:
+            return
+
+        else:
+            self.delete_attached()
+        # return super().delete_self(confirm=confirm)
         return
 
-    def get_character_list_from_game(self, game_id: int, include_removed: bool = False) -> list:
+    def get_character_list_from_game(
+        self, game_id: int, include_removed: bool = False
+    ) -> list:
         """returns a list of all the character objects the user owns in specified game"""
         game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
         final = []
@@ -371,6 +364,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
                         continue
                 final.append(c)
         return final
+
 
 class Images(SABaseMixin, db.Model):
 
@@ -557,9 +551,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     def get_dm_avatar(cls, game_id: int):
         """returns dm avatar for game"""
         game = cls.get_from_id(game_id)
-        char_list = Characters.get_characters_list_for_game(
-            game.dm_id, game_id
-        )
+        char_list = Characters.get_characters_list_for_game(game.dm_id, game_id)
         for char in char_list:
             if char.dm == True:
                 return char
