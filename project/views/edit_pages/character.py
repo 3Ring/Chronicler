@@ -23,8 +23,6 @@ def post(character_id):
     if delform.char_del_submit.data:
         confirm = form_validators.Character.remove(delform, character)
         if not confirm:
-            # print("test")
-            # flash("names do not match")
             return redirect(url_for("edit.character", character_id=character_id))
         character.remove_self()
     elif charform.char_submit.data:

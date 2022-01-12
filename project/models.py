@@ -258,7 +258,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     def get_avatar(cls, user_id):
 
         for char in Characters.get_list_from_user(user_id, include_avatar=True):
-            print(f"char: {char}")
             if char.avatar:
                 return char
 
