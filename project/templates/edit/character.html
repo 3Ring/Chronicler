@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-
 <div class="container">
-    <form enctype="multipart/form-data" method='POST' action='/edit/character/{{character.id}}'>
+    <form enctype="multipart/form-data" method='POST' action='/edit/character/{{character.id}}' autocomplete="off">
         <h1>{{character.name}}</h1>
         <div class="row">
             {{ charform.hidden_tag() }}
@@ -25,7 +24,7 @@
             {{ charform.char_submit (class="button primary") }}
         </div>
     </form>
-    <form method='POST' action='/edit/character/{{character.id}}'>
+    <form method='POST' action='/edit/character/{{character.id}}' autocomplete="off">
         <h1>Delete {{character.name}}</h1>
         <div class="row">
             {{ delform.hidden_tag() }}

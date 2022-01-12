@@ -3,6 +3,7 @@ from flask_login import current_user, logout_user
 from project import defaults as d
 from project import forms
 from project.models import Users, Games
+from project.__init__ import db
 
 
 def get():
@@ -37,7 +38,7 @@ def post():
         else:
             flash("passwords do not match")
     elif del_form.user_delete_submit.data:
-        return redirect(url_for("edit.delete"))
+        return redirect(url_for("edit.delete_get"))
     return render_template(
         "edit/account/account.html",
         user=current_user,
@@ -59,7 +60,9 @@ def confirm_post():
         if form.confirm.data == user.email:
             logout_user()
             user.delete_self(confirm=True)
+            db.session.commit()
+            flash("Your account has been deleted")
             return redirect(url_for("auth.login"))
         else:
             flash("email does not match")
-    return render_template("edit/account/delete.html", form=form)
+    return render_template("profile/delete.html", form=form)

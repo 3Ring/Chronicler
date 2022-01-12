@@ -318,37 +318,45 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
         super()._remove_attached(dependencies=dependencies)
 
-    def delete_attached(self):
-        """deletes all attached items
+    def orphan_attached(self):
+        """orphans all attached items"""
 
-        :param confirm: confirmation to make sure this wasn't
-                        used on accident when "remove_self" method was intended
-        """
+        chars = Characters.query.filter_by(user_id=self.id).all()
+        for c in chars:
+            c.user_id = d.Orphanage.id
 
-        dependencies = [
-            Games.query.filter_by(dm_id=self.id).all(),
-            Characters.query.filter_by(user_id=self.id).all(),
-            Notes.query.filter_by(user_id=self.id).all(),
-            BridgeUserGames.query.filter_by(user_id=self.id).all(),
-            BridgeUserImages.query.filter_by(user_id=self.id).all(),
-        ]
+        notes = Notes.query.filter_by(user_id=self.id).all()
+        for n in notes:
+            n.user_id = d.Orphanage.id
+
+        games = Games.query.filter_by(dm_id=self.id).all()
+        for g in games:
+            g.dm_id = d.Orphanage.id
+
+        npcs = NPCs.query.filter_by(user_id=self.id).all()
+        for n in npcs:
+            n.user_id = d.Orphanage.id
+
+        bridgeui = BridgeUserImages.query.filter_by(user_id=self.id).all()
+        for ui in bridgeui:
+            ui.user_id = d.Orphanage.id
+
+        bridgeug = BridgeUserGames.query.filter_by(user_id=self.id).all()
+        for ug in bridgeug:
+            db.session.delete(ug)
         return
 
-    def delete_self(self, confirm: bool = False, orphan: bool = True):
+    def delete_self(self, confirm: bool = False):
         """deletes user from database.
 
         :param confirm: confirmation to make sure this wasn't
                         used on accident when "remove_self" method was intended
-        :param orphan: if set to `True` will set dependencies to be owned by admin
-                       if `False` dependencies will be deleted
         """
 
         if not confirm:
             return
-
-        else:
-            self.delete_attached()
-        # return super().delete_self(confirm=confirm)
+        self.orphan_attached()
+        db.session.delete(self)
         return
 
     def get_character_list_from_game(
