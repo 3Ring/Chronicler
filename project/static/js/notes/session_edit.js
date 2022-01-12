@@ -52,7 +52,6 @@ function Session_Editor() {
         const title = document.querySelector(
           `input[data-session_edit_title="${id_num}"]`
         ).value;
-        console.log(id_num, number, title);
         SOCKET.emit("edit_session", id_num, number, title);
         toggle_all_off(deployed);
       });

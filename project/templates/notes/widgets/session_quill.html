@@ -1,18 +1,18 @@
+{% if character_list|length > 0 %}
 <form class="wysiwyg-form <{% if game.id == bugs_id %} hidden{% endif %}" data-flag="newQuill_FormSession" id="test_form_quill">
     <div class="form-group">
         <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>
         <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
-        {% if game.id != bugs_id %}
         <!-- !bug page code (some in form class too) -->
-        <h2>Speaking as:</h2>
-        <select name="speaking_as">
-            {% for character in character_list %}
-            <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
-            {% endfor %}
-        </select>
-        <!-- !end bugs -->
+        {% if game.id != bugs_id %}
+            <h2>Speaking as:</h2>
+            <select name="speaking_as">
+                {% for character in character_list %}
+                <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
+                {% endfor %}
+            </select>
         {% endif %}
-
+        <!-- !end bugs -->
 
 
 
@@ -44,3 +44,6 @@
     </div>
 
 </form>
+{% else %}
+<button><a href="{{url_for('join.joining', game_id=game.id, game_name=game.name)}}">Add Character to game</a></button>
+{% endif %}

@@ -18,8 +18,8 @@ from project import defaults as d
 from project.__init__ import db
 
 def get(game_id):
-    if DM.not_authorized(game_id):
-        return redirect(url_for(DM.not_authorized_url))
+    if current_user.id != Games.get_from_id(game_id).dm_id:
+        return redirect(url_for("profile.dm"))
     game = Games.get_from_id(game_id)
     form_edit = forms.GameEdit()
     form_transfer = forms.GameTransfer()
@@ -99,7 +99,6 @@ def post(game_id):
         ).first()
         c.delete_self(confirm=True) if c else flash("unable to remove character")
     return redirect(url_for("edit.game_dm", game_id=game_id))
-
 
 class GameDM():
     @staticmethod

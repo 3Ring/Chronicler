@@ -22,7 +22,7 @@ function NewQuill(event, quill) {
   if (element__newQuill_speaking_as) {
     speaking_as = element__newQuill_speaking_as.value;
   } else {
-    speaking_as = "bugs"
+    speaking_as = "bugs";
   }
   // ! END BUG PAGE
   if (element__newQuill_to_dm) {
@@ -56,17 +56,17 @@ function NewQuill(event, quill) {
 
 // capture and send new note to server
 function NewQuill_submitListener(quill) {
-  // Local Variables
-  var element__newQuill_formSession = document.querySelector(
+  const newQuill = document.querySelector(
     "form[data-flag='newQuill_FormSession']"
   );
-
-  // Listener
-  element__newQuill_formSession.addEventListener("submit", function (event) {
-    // prevent page reload
-    event.preventDefault();
-    NewQuill(event, quill);
-  });
+  if (newQuill) {
+    // Listener
+    newQuill.addEventListener("submit", function (event) {
+      // prevent page reload
+      event.preventDefault();
+      NewQuill(event, quill);
+    });
+  };
 }
 
 // set new notes to populate after page load Function
@@ -84,7 +84,7 @@ function insert_rich_note(note_session) {
       element__notes_noteText = document.querySelector(
         `span[data-id_noteText="${id__note}"]`
       );
-    console.log(note_rich);
+
 
     // insert rich note
     if (element__notes_noteText) {

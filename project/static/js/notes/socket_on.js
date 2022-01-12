@@ -104,8 +104,6 @@ function add_session_listener(session_number) {
 
 function edit_session_func(e) {
   e.preventDefault();
-  console.log(e);
-  console.log("hi");
 }
 // function display_editted_session(session_number) {
 //   let el = document.querySelector(

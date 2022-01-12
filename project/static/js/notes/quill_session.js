@@ -1,4 +1,7 @@
 function make_quill() {
+  if (!document.getElementById("Quill_sessionNew")) {
+    return;
+  }
   var quill = new Quill("#Quill_sessionNew", {
     modules: {
       toolbar: [
