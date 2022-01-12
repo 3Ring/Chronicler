@@ -287,7 +287,7 @@ class Character:
         if type(id_) is not int:
             try:
                 _ = int(id_)
-            except BaseException:
+            except TypeError:
                 return "id needs to be of type: int"
         return True
 
