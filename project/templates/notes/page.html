@@ -41,7 +41,9 @@
                     <div class="comment-container">
             
                         {% include 'notes/widgets/session_quill.html' %}
-            
+                        {% if game.id != bugs_id %}
+                            <button data-flag="note_direction">Change note direction</button>
+                        {% endif %}
                     </div>
                     <div class="sessions-scroll-container" data-flag="sessionsContainer" id="session_cards">
                         {% if session_titles %}
@@ -66,7 +68,14 @@
                                     {% endif %}
                                 <div>
                                     <!-- Session Notes -->
-                                    <ul class="note_list" data-idSession="{{ session.number }}">
+                                    <!-- !bugs code -->
+                                    {% if game.id == bugs_id %}
+                                    <ul class="note_list reverse" data-flag="note_list" data-idSession="{{ session.number }}">
+                                    {% else %}
+                                    <ul class="note_list" data-flag="note_list" data-idSession="{{ session.number }}">
+                                    {% endif %}
+                                    <!-- !end bugs -->
+                                    
             
                             {# socket_ignore session #}
                                         {% for note in note_dict[session.number] %}

@@ -84,6 +84,7 @@ function insert_rich_note(note_session) {
       element__notes_noteText = document.querySelector(
         `span[data-id_noteText="${id__note}"]`
       );
+    console.log(note_rich);
 
     // insert rich note
     if (element__notes_noteText) {
