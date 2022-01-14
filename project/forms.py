@@ -34,12 +34,6 @@ def password(form, field, message=None):
     if len(field.data) < 8:
         raise ValidationError(message)
 
-
-# def image(form, field, filename):
-#     message = form_validators.Image.upload_and_parse(filename)
-#     if len(field.data) < 8:
-#         raise ValidationError(message)
-# Form models
 class UserCreate(FlaskForm):
     name = StringField(
         "Name",

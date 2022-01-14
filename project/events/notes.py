@@ -5,19 +5,10 @@ from project.models import Sessions, Characters, Notes, Users
 from project.helpers import private_convert
 from project.socket_helper import translate_jinja
 
-# variables
-class__buttonEdit = "note_edit_button"
-imageLink__defaultCharacter = "/static/images/default_character.jpg"
-imageLink__defaultGame = "/static/images/default_game.jpg"
-imageLink__defaultDm = "/static/images/default_dm.jpg"
-imageLink__buttonEdit = "/static/images/edit_button_image.png"
-
-idPrefix__newSessionHeader = "session_header_"
-idPrefix__newSessionCard = "session_card_"
-
 
 @socketio.on("check_delete_session")
 def check_delete(session_id):
+    """delete session if session does not contain any notes"""
     session = Sessions.get_from_id(session_id)
     notes = Notes.get_list_from_session_number(session.number, session.game_id)
     if notes:
@@ -28,23 +19,23 @@ def check_delete(session_id):
 
 
 @socketio.on("edit_session")
-def edit_session(id_, number, title):
+def edit_session(id_, new_number, new_title):
     session = Sessions.get_from_id(id_)
     old_title = session.title
     old_number = session.number
     if (
-        Sessions.query.filter_by(id=id_).first().number != int(number)
-        and Sessions.query.filter_by(game_id=session.game_id, number=number).first()
+        Sessions.query.filter_by(id=id_).first().number != int(new_number)
+        and Sessions.query.filter_by(game_id=session.game_id, number=new_number).first()
     ):
         emit("session_number_conflict")
         return
     notes = Notes.get_list_from_session_number(old_number, session.game_id)
     for note in notes:
-        note.update(session_number=number)
-    session.update(number=number, title=title)
+        note.update(session_number=new_number)
+    session.update(number=new_number, title=new_title)
     emit(
         "fill_edit_session",
-        (old_title, title, str(number), old_number),
+        (old_title, new_title, str(new_number), old_number),
         broadcast=True,
     )
 
