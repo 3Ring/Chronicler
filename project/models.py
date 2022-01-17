@@ -405,14 +405,14 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         bridge = BridgeUserGames.query.filter_by(
             user_id=user_id, game_id=game_id
         ).first()
-        bridge.remove_self()
+        bridge.delete_self()
 
     @classmethod
     def remove_character_from_id(cls, character_id):
         bridge = BridgeGameCharacters.query.filter_by(character_id=character_id).first()
         if not bridge:
             return False
-        bridge.remove_self()
+        bridge.delete_self()
         return True
 
     @classmethod
