@@ -1,4 +1,4 @@
-from project import defaults as d
+from project.setup_ import defaults as d
 
 
 _bug_sessions = [

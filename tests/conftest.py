@@ -8,7 +8,7 @@ from flask_migrate import init, migrate, upgrade
 from project.models import Users
 import pytest
 
-from project.factory_helpers import add_admin_to_db
+from factory_helpers.factory_helpers import add_admin_to_db
 
 admin_pass = os.environ.get("ADMIN_PASS")
 def db_init_for_tests(app, path):

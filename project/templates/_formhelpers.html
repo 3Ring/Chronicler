@@ -1,0 +1,15 @@
+{% macro render_field(field, cls_lb="form-label", cls_in="form-control", cls_dv="row", cls_er="errors") %}
+
+<div class="{{ cls_dv }}">
+    {{ field.label(class=cls_lb) }}
+    {{ field(class=cls_in, **kwargs)|safe }}
+</div>
+{% if field.errors %}s
+<ul class="{{cls_er}}">
+    {% for error in field.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+</dd>
+{% endmacro %}

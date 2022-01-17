@@ -1,21 +1,18 @@
-from os import fstat
-from flask import Blueprint, render_template, redirect, url_for, session, flash
-from flask_login import login_required, fresh_login_required, current_user
+from flask import render_template, redirect, url_for, flash
+from flask_login import current_user
 from project import forms
 from project import form_validators
+from project.helpers.db_session import db_session
 
 from project.models import (
     BridgeGameCharacters,
     BridgeUserGames,
-    Characters,
     Users,
     Games,
     Images,
-    
 )
-from project.helpers import set_heroku
-from project import defaults as d
-from project.__init__ import db
+from project.helpers.misc import set_heroku
+
 
 def get(game_id):
     if current_user.id != Games.get_from_id(game_id).dm_id:
@@ -57,8 +54,9 @@ def get(game_id):
         heroku=set_heroku(),
     )
 
+
 def post(game_id):
-    
+
     form_edit = forms.GameEdit()
     form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
@@ -66,41 +64,42 @@ def post(game_id):
     form_characters = forms.GameManageCharacters()
 
     if form_edit.edit_submit.data:
-        
+
         GameDM.handle_edit(form_edit, game_id)
     elif form_transfer.transfer_confirm.data:
-        
+
         GameDM.handle_transfer(form_transfer)
     elif form_delete.game_delete_submit.data:
-        
+
         GameDM.handle_delete(form_delete)
     elif form_players.player_submit.data:
-        
-        user = Users.get_from_id(form_players.player_id.data)
-        pc_list = user.get_character_list_from_game(game_id)
-        pc_ids = [p.id for p in pc_list]
+        with db_session():
+            user = Users.query.get(form_players.player_id.data)
+            pc_list = user.get_character_list_from_game(game_id)
+            pc_ids = [pc.id for pc in pc_list]
 
-        characters = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
-        [x.delete_self(confirm=True) for x in characters if x.character_id in pc_ids]
-        test_characters = user.get_character_list_from_game(game_id)
-        
-        player = BridgeUserGames.query.filter_by(
-            game_id=game_id, user_id=user.id
-        ).first()
-        player.delete_self(confirm=True) if player else flash("unable to remove player")
-        test_player = BridgeUserGames.query.filter_by(
-            game_id=game_id, user_id=user.id
-        ).first()
-        
+            bridges = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
+            [br.delete_self() for br in bridges if br.character_id in pc_ids]
+            # test_characters = user.get_character_list_from_game(game_id)
+
+            player = BridgeUserGames.query.filter_by(
+                game_id=game_id, user_id=user.id
+            ).first()
+            player.delete_self() if player else flash("Player does not exist")
+            # test_player = BridgeUserGames.query.filter_by(
+            #     game_id=game_id, user_id=user.id
+            # ).first()
 
     elif form_characters.character_submit.data:
-        c = BridgeGameCharacters.query.filter_by(
-            game_id=game_id, character_id=form_characters.character_id.data
-        ).first()
-        c.delete_self(confirm=True) if c else flash("unable to remove character")
+        with db_session():
+            br = BridgeGameCharacters.query.filter_by(
+                game_id=game_id, character_id=form_characters.character_id.data
+            ).first()
+            br.delete_self() if br else flash("Character doesn't exist")
     return redirect(url_for("edit.game_dm", game_id=game_id))
 
-class GameDM():
+
+class GameDM:
     @staticmethod
     def _failure(game_id):
         return redirect(url_for("edit.game_dm", game_id=game_id))
@@ -125,9 +124,9 @@ class GameDM():
     @staticmethod
     def delete_old_image(image_id):
         if image_id:
-            image = Images.get_from_id(image_id)
-            image.delete_self(confirm=True)
-        return
+            with db_session():
+                image = Images.get_from_id(image_id)
+                image.delete_self()
 
     @classmethod
     def player_remove(cls, form):
@@ -156,7 +155,7 @@ class GameDM():
     @staticmethod
     def handle_transfer(form, game_id):
         game = Games.get_from_id(game_id)
-        if form.heir.data != 'no_choice':
+        if form.heir.data != "no_choice":
             return
         return
 

@@ -1,6 +1,3 @@
-from re import S
-
-# from flask.app import Flask
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -9,10 +6,8 @@ from wtforms import (
     BooleanField,
     SelectField,
     TextAreaField,
-    IntegerField,
     FileField,
 )
-from wtforms.fields import core
 from wtforms.fields.simple import HiddenField
 from wtforms.validators import (
     DataRequired,
@@ -20,11 +15,9 @@ from wtforms.validators import (
     Length,
     Optional,
     ValidationError,
+    Email,
 )
 
-# from project import form_validators
-
-from markupsafe import Markup
 from wtforms.widgets.core import html_params
 
 
@@ -33,6 +26,7 @@ def password(form, field, message=None):
         message = f"Password must be at least 8 characters long"
     if len(field.data) < 8:
         raise ValidationError(message)
+
 
 class UserCreate(FlaskForm):
     name = StringField(
@@ -46,7 +40,18 @@ class UserCreate(FlaskForm):
             ),
         ],
     )
-    email = StringField("Email", validators=[DataRequired()])
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(),
+            Length(
+                min=6,
+                max=120,
+                message=f"Game name must be between %(min)d and %(max)d characters",
+            ),
+            Email(),
+        ],
+    )
     password = PasswordField("Password", validators=[DataRequired(), password])
     confirm = PasswordField("Confirm Password", validators=[DataRequired()])
     reveal = BooleanField("Show Passwords")
@@ -67,9 +72,11 @@ class UserEditName(FlaskForm):
     )
     user_edit_name_submit = SubmitField("Submit")
 
+
 class UserEditEmail(FlaskForm):
     email = StringField("Change Email", validators=[DataRequired()])
     user_edit_email_submit = SubmitField("Submit")
+
 
 class UserEditPassword(FlaskForm):
     password = PasswordField("Change Password", validators=[DataRequired(), password])
@@ -91,7 +98,18 @@ class Login(FlaskForm):
         ],
     )
     password = PasswordField("Password", validators=[DataRequired(), password])
-    email = StringField("Email", validators=[DataRequired()])
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(),
+            Length(
+                min=6,
+                max=120,
+                message=f"Game name must be between %(min)d and %(max)d characters",
+            ),
+            Email(),
+        ],
+    )
     remember = BooleanField("Remember Me")
     submit = SubmitField("Submit")
 

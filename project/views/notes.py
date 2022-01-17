@@ -4,22 +4,17 @@ import json
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
-from project.helpers import set_heroku
-from project import form_validators, forms
-from project.defaults import Character
+from project.helpers.misc import set_heroku
+
 from project.models import (
-    BridgeGameCharacters,
     Games,
-    BridgeUserGames,
     Users,
-    Images,
     Characters,
     Sessions,
     Notes,
     NPCs,
 )
-from project import defaults as d
-from project.helpers import attach_game_image_or_default_from_Images_model
+from project.setup_ import defaults as d
 
 notes = Blueprint("notes", __name__)
 

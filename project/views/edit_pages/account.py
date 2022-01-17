@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import current_user, logout_user
-from project import defaults as d
+from project.helpers.db_session import db_session
+from project.setup_ import defaults as d
 from project import forms
 from project.models import Users, Games
 from project.__init__ import db
@@ -59,8 +60,8 @@ def confirm_post():
         user = Users.get_from_id(current_user.id)
         if form.confirm.data == user.email:
             logout_user()
-            user.delete_self(confirm=True)
-            db.session.commit()
+            with db_session:
+                user.delete_self()
             flash("Your account has been deleted")
             return redirect(url_for("auth.login"))
         else:

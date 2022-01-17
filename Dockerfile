@@ -12,6 +12,7 @@ RUN pip3 install -r requirements.txt && \
     python -m pip install requests && \
     pip install sqlalchemy-utils && \
     pip install Flask-BabelEx && \
-    pip install flask-admin
+    pip install flask-admin && \
+    pip install wtforms[email]
 COPY . .
 CMD [ "gunicorn", "--reload", "-b", "0.0.0.0:5000", "--worker-class", "eventlet", "-w", "1", "app:app" ]

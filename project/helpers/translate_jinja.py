@@ -1,7 +1,7 @@
 import os
 
-from project import defaults as d
-from project.helpers import private_convert
+from project.setup_ import defaults as d
+from project.helpers.misc import private_convert
 from project.models import Users
 
 
@@ -580,8 +580,8 @@ def pass_model_variables(html, model, game_id, **additional_keys):
 
         for key, value in columns.items():
             model_key = "{{ " + "model." + key + " }}"
-            currentU_key = "{{ " + "current_user.id" " }}"
-            gameID_key = "{{ " + "id" " }}"
+            currentU_key = "{{ " + "current_user.id" + " }}"
+            gameID_key = "{{ " + "id" + " }}"
 
             # replace jinja variables
             # if

@@ -3,20 +3,21 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy import orm, text, event
-from flask import request, flash, redirect, url_for
+from flask import request
 from flask_login import current_user
 
 # from project.form_validators import Character
 
 from project.__init__ import db
-from project import defaults as d
+from project.setup_ import defaults as d
 
 
 #######################################
 ###           Base classes         ####
 #######################################
-class ViewsMixin:
-    pass
+
+# class ViewsMixin:
+#     pass
     # @staticmethod
     # def failure(url, message=None, **kwarg):
     #     """redirects user to url and flashes message"""
@@ -59,93 +60,60 @@ class SABaseMixin:
     )
 
     @classmethod
-    def rollback(cls, **kw):
-        if not kw:
-            return False
-        to_delete = cls.query.filter_by(**kw).all()
-        if not to_delete:
-            return False
-        if len(to_delete) > 1:
-            raise BaseException("more than one item matching specifications")
-        if to_delete[0].delete_self(confirm=True):
-            return True
-        raise BaseException(f"deletion of {cls.__class__} failed")
-
-    @classmethod
     def get_from_id(cls, id_: int):
         return cls.query.filter_by(id=id_).first()
 
-    @classmethod
-    def create_simple(cls, **kw):
-        """adds new item to database
-
-        this version is never used to create other classes
-        """
-        obj = cls(**kw)
-        db.session.add(obj)
-        db.session.commit()
-        return obj
 
     @classmethod
-    def create(cls, with_follow_up=False, **kw):
+    def create(cls, **kw):
         """adds new item to database
 
         this is inherited by all Chronicler SQLAlchemy classes
         and can be used to also populate join tables
-
-        :param with_follow_up:
-        if set to `True` this will also execute all secondary
-        scripts associated with the various tables
         """
         obj = cls(**kw)
         db.session.add(obj)
-        db.session.commit()
         return obj
-
-    def update(self, **kw):
-        for key, value in kw.items():
-            exec(f"self.{key} = value")
-        db.session.commit()
 
     @classmethod
     def get_orphanage(cls):
         """Returns orphan class object"""
-        return cls.get_from_id(d.Orphanage.id)
+        return cls.query.get(d.Orphanage.id)
 
-    def remove_self(self):
-        self.removed = True
-        db.session.commit()
-        return True
+    # def remove_self(self):
+    #     self.removed = True
+    #     db.session.commit()
+    #     return True
 
-    def unremove_self(self):
-        self.removed = False
-        db.session.commit()
-        return True
+    # def unremove_self(self):
+    #     self.removed = False
+    #     db.session.commit()
+    #     return True
 
-    def edit(self, **kw):
-        for key, value in kw.items():
-            # if str(f"{self.__table__}.{key}") in str(self.__table__.columns):
-            self.key = value
-            db.session.commit()
+    # def edit(self, **kw):
+    #     for key, value in kw.items():
+    #         # if str(f"{self.__table__}.{key}") in str(self.__table__.columns):
+    #         self.key = value
+    #         db.session.commit()
 
-    def _remove_attached(self, dependencies: list = []):
-        for list_ in dependencies:
-            for item in list_:
-                item.remove_self()
-        return
+    # def _remove_attached(self, dependencies: list = []):
+    #     for list_ in dependencies:
+    #         for item in list_:
+    #             item.remove_self()
+    #     return
 
-    def _delete_attached(self, dependencies: list = [], confirm: bool = False):
-        """deletes all attached items
+    # def _delete_attached(self, dependencies: list = [], confirm: bool = False):
+    #     """deletes all attached items
 
-        :param dependencies: list containing lists of dependencies
-        :param confirm: confirmation to make sure this wasn't
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            for list_ in dependencies:
-                for item in list_:
-                    item.delete_self(confirm=confirm)
-        return
+    #     :param dependencies: list containing lists of dependencies
+    #     :param confirm: confirmation to make sure this wasn't
+    #                     used on accident when "remove_self" method was intended
+    #     """
+    #     if confirm:
+    #         for list_ in dependencies:
+    #             for item in list_:
+    #                 item.delete_self(confirm=confirm)
+    #     return
 
     # def _delete_list(self, item_list: list, confirm: bool = False):
     #     """deletes all items in argument list
@@ -158,40 +126,31 @@ class SABaseMixin:
 
     #     return
 
-    def delete_self(self, confirm: bool = False):
-        """deletes SQLAlchemy model from database.
-
-        :param confirm: confirmation to make sure this wasn't
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            self._delete_attached(confirm=confirm)
-            db.session.query(self.__class__).filter_by(id=self.id).delete()
-            db.session.commit()
-            return True
-        return False
-
-    def _get_new_id(self):
-        """returns new unused primary key"""
-        new = self.__class__.query.order_by(self.__class__.id.desc()).first().id
-        return new + 1
-
-    def _move_dependencies(self, new_id):
-        """this is here as a base case. and will be handled at the class level"""
-        return
-
-    def _copy_to_new_id(self, new_id, **kw):
-        """make placeholder in db for moving primary keys"""
-        self.__class__.create(id=new_id, **kw)
-
-    def move_self(self, **kw):
-        """changes primary_key and triggers foreign key changes to dependencies"""
-        new_id = self._get_new_id()
-        self._copy_to_new_id(new_id, **kw)
-        self._move_dependencies(new_id, self.id)
+    def delete_self(self):
+        """deletes SQLAlchemy model from database."""
         db.session.query(self.__class__).filter_by(id=self.id).delete()
-        db.session.commit()
-        return
+
+    # def _get_new_id(self):
+    #     """returns new unused primary key"""
+    #     new = self.__class__.query.order_by(self.__class__.id.desc()).first().id
+    #     return new + 1
+
+    # def _move_dependencies(self, new_id):
+    #     """this is here as a base case. and will be handled at the class level"""
+    #     return
+
+    # def _copy_to_new_id(self, new_id, **kw):
+    #     """make placeholder in db for moving primary keys"""
+    #     self.__class__.create(id=new_id, **kw)
+
+    # def move_self(self, **kw):
+    #     """changes primary_key and triggers foreign key changes to dependencies"""
+    #     new_id = self._get_new_id()
+    #     self._copy_to_new_id(new_id, **kw)
+    #     self._move_dependencies(new_id, self.id)
+    #     db.session.query(self.__class__).filter_by(id=self.id).delete()
+    #     db.session.commit()
+    #     return
 
     def __repr__(self) -> str:
         repr_ = f"{self.__tablename__}("
@@ -214,49 +173,26 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     hashed_password = db.Column(db.String(120), nullable=False)
     date_added = db.Column(db.DateTime, default=d.User.date_added)
     password = None
-    self_title = "user"
+    # self_title = "user"
     image = d.User.image
 
-    def _get_pw(self):
-        return self.password
+    # def _get_pw(self):
+    #     return self.password
 
-    def _set_pw(self, password):
-        new = generate_password_hash(password, method="sha256")
-        self.hashed_password = new
-        self.password = password
-        db.session.commit()
+    # def _set_pw(self, password):
+    #     new = generate_password_hash(password, method="sha256")
+    #     self.hashed_password = new
+    #     self.password = password
+    #     # db.session.commit()
 
-    @staticmethod
-    def add_to_bug_report_page(email):
-        """Creates a User character and adds them to the bug report page
-        it's done this way because the bug report page uses the "notes" page's code so it requires a "Character".
-        """
-
-        user = Users.get_from_email(email)
-        avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
-        success = avatar.add_to_game(Games.get_bugs().id)
-        return success
 
     @staticmethod
     def add_to_game(user_id: int, game_id: int) -> object:
         """adds user to join table and returns bridge object"""
-
-        check = BridgeUserGames.query.filter_by(
-            user_id=user_id, game_id=game_id
-        ).first()
-        if check:
-            if check.removed:
-                check.unremove_self()
-            return check
         return BridgeUserGames.create(user_id=user_id, game_id=game_id)
 
     @classmethod
-    def get_from_email(cls, email):
-        return cls.query.filter_by(email=email).first()
-
-    @classmethod
     def get_avatar(cls, user_id):
-
         for char in Characters.get_list_from_user(user_id, include_avatar=True):
             if char.avatar:
                 return char
@@ -281,41 +217,43 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     def get_game_list_dm(self):
         return Games.query.filter_by(dm_id=self.id).all()
 
-    @classmethod
-    def create_simple(cls, **kw):
-        """adds new User to database and hashes their password.
-        does not create dependencies
-        """
-        kw["hashed_password"] = generate_password_hash(kw["password"], method="sha256")
-        kw.pop("password")
-        user = super().create(**kw)
-        return user
+    # @classmethod
+    # def create_simple(cls, **kw):
+    #     """adds new User to database and hashes their password.
+    #     does not create dependencies
+    #     """
+    #     kw["hashed_password"] = generate_password_hash(kw["password"], method="sha256")
+    #     kw.pop("password")
+    #     user = super().create(**kw)
+    #     return user
 
     @classmethod
-    def create(cls, with_follow_up=False, **kw):
+    def create(cls, **kw):
         """adds new User to database and hashes their password.
         it also adds the user to bug reports
         """
         kw["hashed_password"] = generate_password_hash(kw["password"], method="sha256")
         kw.pop("password")
         user = super().create(**kw)
-        if with_follow_up:
-            if not cls.add_to_bug_report_page(kw["email"]):
-                user.delete_self(confirm=True)
-
         return user
 
-    def remove_self(self):
-        self._remove_attached()
+    # def remove_self(self):
+    #     self._remove_attached()
 
-    def _remove_attached(self):
-        dependencies = []
-        dependencies.append(Games.query.filter_by(dm_id=self.id).all())
-        dependencies.append(Characters.query.filter_by(user_id=self.id).all())
-        dependencies.append(Notes.query.filter_by(user_id=self.id).all())
-        dependencies.append(BridgeUserGames.query.filter_by(user_id=self.id).all())
-        dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
-        super()._remove_attached(dependencies=dependencies)
+    # def _remove_attached(self):
+    #     dependencies = []
+    #     dependencies.append(Games.query.filter_by(dm_id=self.id).all())
+    #     dependencies.append(Characters.query.filter_by(user_id=self.id).all())
+    #     dependencies.append(Notes.query.filter_by(user_id=self.id).all())
+    #     dependencies.append(BridgeUserGames.query.filter_by(user_id=self.id).all())
+    #     dependencies.append(BridgeUserImages.query.filter_by(user_id=self.id).all())
+    #     super()._remove_attached(dependencies=dependencies)
+
+    def delete_self(self):
+        """deletes user from database."""
+        self.orphan_attached()
+        db.session.delete(self)
+
 
     def orphan_attached(self):
         """orphans all attached items"""
@@ -343,20 +281,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         bridgeug = BridgeUserGames.query.filter_by(user_id=self.id).all()
         for ug in bridgeug:
             db.session.delete(ug)
-        return
 
-    def delete_self(self, confirm: bool = False):
-        """deletes user from database.
-
-        :param confirm: confirmation to make sure this wasn't
-                        used on accident when "remove_self" method was intended
-        """
-
-        if not confirm:
-            return
-        self.orphan_attached()
-        db.session.delete(self)
-        return
 
     def get_character_list_from_game(
         self, game_id: int, include_removed: bool = False
@@ -421,36 +346,6 @@ class Images(SABaseMixin, db.Model):
         img = Images.create(img_string=img_string, name=secure_name, mimetype=mimetype)
         id_ = img.id
         return id_
-
-    @classmethod
-    def get_image_user_admin(cls) -> object:
-        pass
-
-    @classmethod
-    def get_image_user_orphan(cls) -> object:
-        pass
-
-    @classmethod
-    def get_image_games_bugs(cls) -> object:
-        pass
-
-    @classmethod
-    def get_image_games_orphan(cls) -> object:
-        pass
-
-    def _delete_attached(self, dependencies: list = [], confirm: bool = False):
-        """deletes all attached items
-
-        :param dependencies: list containing lists of dependencies
-        :param confirm: confirmation to make sure this wasn't
-                        used on accident when "remove_self" method was intended
-        """
-        if confirm:
-            games = Games.query.filter_by(img_id=self.id).all()
-            for game in games:
-                game.img_id = None
-                db.session.commit()
-            super()._delete_attached(dependencies=dependencies, confirm=confirm)
 
 
 class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
@@ -520,22 +415,6 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         bridge.remove_self()
         return True
 
-    def _move_dependencies(self, new_id, old_id):
-        dependencies = []
-        dependencies.append(Notes.query.filter_by(game_id=old_id).all())
-        dependencies.append(BridgeGameCharacters.query.filter_by(game_id=old_id).all())
-        dependencies.append(BridgeGameItems.query.filter_by(game_id=old_id).all())
-        dependencies.append(Sessions.query.filter_by(game_id=old_id).all())
-        dependencies.append(BridgeUserGames.query.filter_by(game_id=old_id).all())
-        dependencies.append(BridgeGameNPCs.query.filter_by(game_id=old_id).all())
-        dependencies.append(BridgeGamePlaces.query.filter_by(game_id=old_id).all())
-        dependencies.append(Characters.query.filter_by(game_id=old_id).all())
-        for list_ in dependencies:
-            for item in list_:
-                item.game_id = new_id
-                db.session.commit()
-        return
-
     @classmethod
     def get_personal_game_list_dm(cls, user_id: int) -> list:
         """returns a list of all games where user_id == Games.dm_id"""
@@ -603,7 +482,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     def _fill_bugs(cls):
         tutorial_user = Users.get_admin()
         tutorial_character = Characters.get_admin()
-        from project.bugs_texts import _bug_sessions, _bug_texts
+        from project.helpers.bugs_texts import _bug_sessions, _bug_texts
 
         for session in _bug_sessions:
             Sessions.create(
@@ -749,14 +628,9 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             character_id=self.id, game_id=game_id
         ).first()
         if bridge:
-            if bridge.removed:
-                bridge.unremove_self()
-                return True
-            else:
                 raise BaseException("character already in game")
-        if BridgeGameCharacters.create(character_id=self.id, game_id=game_id):
-            return True
-        return False
+        BridgeGameCharacters.create(character_id=self.id, game_id=game_id)
+
 
     def _delete_attached(self, confirm: bool = False):
         """deletes all attached items
@@ -884,7 +758,7 @@ class Sessions(SABaseMixin, db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=False)
 
     @classmethod
-    def get_list_from_gameID(cls, game_id) -> list:
+    def get_list_from_gameID(cls, game_id: int) -> list:
         """returns list of sessions in order of Sessions.number"""
 
         session_list = (
@@ -909,8 +783,7 @@ class Notes(SABaseMixin, db.Model):
     )
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=False)
-    self_title = "note"
-    header = "note."
+
 
     @classmethod
     def get_list_from_session_number(cls, session_number, game_id):
@@ -930,7 +803,6 @@ class Notes(SABaseMixin, db.Model):
                 target.char_img = img.img_string
             elif character_object.dm:
                 target.char_img = d.Images.character_dm
-        return
 
 
 @event.listens_for(Notes, "refresh")

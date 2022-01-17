@@ -1,98 +1,101 @@
+from project.helpers.db_session import db_session
+
 class Base_items:
     from project import models
-    from project import defaults as d
+    from project.setup_ import defaults as d
+    
 
     @classmethod
     def init_database_assets(cls, app):
-
-        cls.init_admins(app)
-        cls.init_orphanages(app)
-
-    @classmethod
-    def init_admins(cls, app):
-        missing_admins = cls.check_admins(app)
-        if missing_admins:
-            cls.create_admins(missing_admins, app)
-
-    @classmethod
-    def init_orphanages(cls, app):
-        missing_orphanages = cls.check_orphanages(app)
-        if missing_orphanages:
-            cls.create_orphanages(missing_orphanages, app)
-
-    @classmethod
-    def create_admins(cls, missing, app):
+        """create db admins and orphanages"""
         with app.app_context():
-            for admin in missing:
+            cls.init_admins()
+            cls.init_orphanages()
+
+
+    @classmethod
+    def init_admins(cls):
+        missing_admins = cls.check_admins()
+        if missing_admins:
+            cls.create_admins(missing_admins)
+
+    @classmethod
+    def init_orphanages(cls):
+        missing_orphanages = cls.check_orphanages()
+        if missing_orphanages:
+            cls.create_orphanages(missing_orphanages)
+
+    @classmethod
+    def create_admins(cls, missing):
+        for admin in missing:
+            with db_session():
                 exec(f"cls.CreateAdmins.{admin.lower()}()")
 
     @classmethod
-    def create_orphanages(cls, missing, app):
-        with app.app_context():
-            for orphanage in missing:
+    def create_orphanages(cls, missing):
+        for orphanage in missing:
+            with db_session():
                 exec(f"cls.CreateOrphanage.{orphanage.lower()}()")
 
     @classmethod
-    def check_admins(cls, app) -> list:
-        with app.app_context():
-            missing = []
-            if not cls.models.Users.get_admin():
-                missing.append(cls.models.Users.__name__)
-            if not cls.models.Characters.get_admin():
-                missing.append(cls.models.Characters.__name__)
-            if not cls.models.Games.get_admin():
-                missing.append(cls.models.Games.__name__)
-            return missing
+    def check_admins(cls) -> list:
+        missing = []
+        if not cls.models.Users.get_admin():
+            missing.append(cls.models.Users.__name__)
+        if not cls.models.Characters.get_admin():
+            missing.append(cls.models.Characters.__name__)
+        if not cls.models.Games.get_admin():
+            missing.append(cls.models.Games.__name__)
+        return missing
 
     @classmethod
-    def check_orphanages(cls, app) -> list:
-        with app.app_context():
-            missing = []
+    def check_orphanages(cls) -> list:
+        missing = []
 
-            if not cls.models.Users.get_orphanage():
-                missing.append(cls.models.Users.__name__)
+        if not cls.models.Users.get_orphanage():
+            missing.append(cls.models.Users.__name__)
 
-            if not cls.models.Images.get_orphanage():
-                missing.append(cls.models.Images.__name__)
+        if not cls.models.Images.get_orphanage():
+            missing.append(cls.models.Images.__name__)
 
-            if not cls.models.Games.get_orphanage():
-                missing.append(cls.models.Games.__name__)
+        if not cls.models.Games.get_orphanage():
+            missing.append(cls.models.Games.__name__)
 
-            if not cls.models.Characters.get_orphanage():
-                missing.append(cls.models.Characters.__name__)
+        if not cls.models.Characters.get_orphanage():
+            missing.append(cls.models.Characters.__name__)
 
-            if not cls.models.Sessions.get_orphanage():
-                missing.append(cls.models.Sessions.__name__)
+        if not cls.models.Sessions.get_orphanage():
+            missing.append(cls.models.Sessions.__name__)
 
-            if not cls.models.Notes.get_orphanage():
-                missing.append(cls.models.Notes.__name__)
+        if not cls.models.Notes.get_orphanage():
+            missing.append(cls.models.Notes.__name__)
 
-            if not cls.models.Places.get_orphanage():
-                missing.append(cls.models.Places.__name__)
+        if not cls.models.Places.get_orphanage():
+            missing.append(cls.models.Places.__name__)
 
-            if not cls.models.NPCs.get_orphanage():
-                missing.append(cls.models.NPCs.__name__)
+        if not cls.models.NPCs.get_orphanage():
+            missing.append(cls.models.NPCs.__name__)
 
-            if not cls.models.Items.get_orphanage():
-                missing.append(cls.models.Items.__name__)
+        if not cls.models.Items.get_orphanage():
+            missing.append(cls.models.Items.__name__)
 
-            if not cls.models.BridgeUserImages.get_orphanage():
-                missing.append(cls.models.BridgeUserImages.__name__)
+        if not cls.models.BridgeUserImages.get_orphanage():
+            missing.append(cls.models.BridgeUserImages.__name__)
 
-            if not cls.models.BridgeUserGames.get_orphanage():
-                missing.append(cls.models.BridgeUserGames.__name__)
+        if not cls.models.BridgeUserGames.get_orphanage():
+            missing.append(cls.models.BridgeUserGames.__name__)
 
-            if not cls.models.BridgeGameCharacters.get_orphanage():
-                missing.append(cls.models.BridgeGameCharacters.__name__)
+        if not cls.models.BridgeGameCharacters.get_orphanage():
+            missing.append(cls.models.BridgeGameCharacters.__name__)
 
-            if not cls.models.BridgeGamePlaces.get_orphanage():
-                missing.append(cls.models.BridgeGamePlaces.__name__)
+        if not cls.models.BridgeGamePlaces.get_orphanage():
+            missing.append(cls.models.BridgeGamePlaces.__name__)
 
-            if not cls.models.BridgeGameNPCs.get_orphanage():
-                missing.append(cls.models.BridgeGameNPCs.__name__)
+        if not cls.models.BridgeGameNPCs.get_orphanage():
+            missing.append(cls.models.BridgeGameNPCs.__name__)
 
-            if not cls.models.BridgeGameItems.get_orphanage():
-                missing.append(cls.models.BridgeGameItems.__name__)
+        if not cls.models.BridgeGameItems.get_orphanage():
+            missing.append(cls.models.BridgeGameItems.__name__)
 
         return missing
 
@@ -105,7 +108,7 @@ class Base_items:
         contains all Admin creation methods"""
 
         from project import models
-        from project import defaults as d
+        from project.setup_ import defaults as d
 
         @classmethod
         def users(cls):
@@ -119,7 +122,6 @@ class Base_items:
                 password=cls.d.UserAdmin.password,
                 date_added=cls.d.UserAdmin.date_added,
             )
-            return
 
         @classmethod
         def games(cls):
@@ -139,7 +141,6 @@ class Base_items:
                 with_follow_up=False,
                 bug_report=True
             )
-            return
 
         @classmethod
         def characters(cls):
@@ -158,14 +159,13 @@ class Base_items:
                 img_object=cls.d.CharacterTutorial.img_object,
                 image=cls.d.CharacterTutorial.image,
             )
-            return
 
     class CreateOrphanage:
         """inner class purely for organization.
         contains all orphanage creation methods"""
 
         from project import models
-        from project import defaults as d
+        from project.setup_ import defaults as d
 
         @classmethod
         def users(cls):
@@ -181,7 +181,6 @@ class Base_items:
                 password=cls.d.UserOrphanage.password,
                 date_added=cls.d.UserOrphanage.date_added,
             )
-            return
 
         @classmethod
         def images(cls):
@@ -196,7 +195,6 @@ class Base_items:
                 name=cls.d.ImageOrphanage.name,
                 mimetype=cls.d.ImageOrphanage.mimetype,
             )
-            return
 
         @classmethod
         def games(cls):
@@ -214,7 +212,6 @@ class Base_items:
                 dm_id=cls.d.GameOrphanage.dm_id,
                 img_id=cls.d.GameOrphanage.img_id,
             )
-            return
 
         @classmethod
         def characters(cls):
@@ -235,7 +232,6 @@ class Base_items:
                 img_object=cls.d.CharacterOrphanage.img_object,
                 image=cls.d.CharacterOrphanage.image,
             )
-            return
 
         @classmethod
         def sessions(cls):
@@ -243,7 +239,7 @@ class Base_items:
 
             this is used as the fkey when a primary key Session is removed
             """
-            cls.models.Sessions.create(
+            new = cls.models.Sessions(
                 id=cls.d.SessionOrphanage.id,
                 removed=cls.d.SessionOrphanage.removed,
                 number=cls.d.SessionOrphanage.number,
@@ -252,7 +248,6 @@ class Base_items:
                 date_added=cls.d.SessionOrphanage.date_added,
                 game_id=cls.d.SessionOrphanage.game_id,
             )
-            return
 
         @classmethod
         def notes(cls):
@@ -274,7 +269,6 @@ class Base_items:
                 origin_character_id=cls.d.NoteOrphanage.origin_character_id,
                 game_id=cls.d.NoteOrphanage.game_id,
             )
-            return
 
         @classmethod
         def places(cls):
@@ -290,7 +284,6 @@ class Base_items:
                 secret_bio=cls.d.PlaceOrphanage.secret_bio,
                 date_added=cls.d.PlaceOrphanage.date_added,
             )
-            return
 
         @classmethod
         def npcs(cls):
@@ -310,7 +303,6 @@ class Base_items:
                 place_id=cls.d.NPCOrphanage.place_id,
                 user_id=cls.d.NPCOrphanage.user_id,
             )
-            return
 
         @classmethod
         def items(cls):
@@ -326,7 +318,6 @@ class Base_items:
                 copper_value=cls.d.ItemOrphanage.copper_value,
                 date_added=cls.d.ItemOrphanage.date_added,
             )
-            return
 
         @classmethod
         def bridgeuserimages(cls):
@@ -340,7 +331,6 @@ class Base_items:
                 user_id=cls.d.BridgeUserImageOrphanage.user_id,
                 img_id=cls.d.BridgeUserImageOrphanage.img_id,
             )
-            return
 
         @classmethod
         def bridgeusergames(cls):
@@ -348,6 +338,7 @@ class Base_items:
 
             this is used as the fkey when a primary key BridgeUserGame is removed
             """
+            # new = 
             cls.models.BridgeUserGames.create(
                 id=cls.d.BridgeUserGameOrphanage.id,
                 removed=cls.d.BridgeUserGameOrphanage.removed,
@@ -355,7 +346,6 @@ class Base_items:
                 user_id=cls.d.BridgeUserGameOrphanage.user_id,
                 game_id=cls.d.BridgeUserGameOrphanage.game_id,
             )
-            return
 
         @classmethod
         def bridgegamecharacters(cls):
@@ -370,7 +360,6 @@ class Base_items:
                 character_id=cls.d.BridgeGameCharacterOrphanage.character_id,
                 game_id=cls.d.BridgeGameCharacterOrphanage.game_id,
             )
-            return
 
         @classmethod
         def bridgegameplaces(cls):
@@ -384,7 +373,6 @@ class Base_items:
                 place_id=cls.d.BridgeGamePlaceOrphanage.place_id,
                 game_id=cls.d.BridgeGamePlaceOrphanage.game_id,
             )
-            return
 
         @classmethod
         def bridgegamenpcs(cls):
@@ -398,7 +386,6 @@ class Base_items:
                 npc_id=cls.d.BridgeGameNPCOrphanage.npc_id,
                 game_id=cls.d.BridgeGameNPCOrphanage.game_id,
             )
-            return
 
         @classmethod
         def bridgegameitems(cls):
@@ -412,4 +399,3 @@ class Base_items:
                 item_id=cls.d.BridgeGameItemOrphanage.item_id,
                 game_id=cls.d.BridgeGameItemOrphanage.game_id,
             )
-            return

@@ -1,21 +1,13 @@
-from os import fstat
-from flask import Blueprint, render_template, redirect, url_for, session, flash
-from flask_login import login_required, fresh_login_required, current_user
+from flask import render_template, redirect, url_for, flash
+from flask_login import current_user
 from project import forms
 from project import form_validators
 
 from project.models import (
-    BridgeGameCharacters,
-    BridgeUserGames,
     Characters,
-    Users,
     Games,
-    Images,
-    
 )
-from project.helpers import set_heroku
-from project import defaults as d
-from project.__init__ import db
+
 
 def get(game_id):
     if Player.not_authorized(game_id):
@@ -39,8 +31,10 @@ def get(game_id):
         last_character=last_character,
     )
 
+
 def post(game_id):
     from project.views.join import Joining
+
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
     game = Games.get_from_id(game_id)
@@ -63,6 +57,7 @@ def post(game_id):
     else:
         return manage_remove_character(game, delform.character.data)
 
+
 def manage_remove_character(game, character_id):
     if not Games.remove_character_from_id(character_id):
         return Player.failure(f"unable to remove character from {game.name}")
@@ -77,11 +72,13 @@ def leave_get(game_id):
     leaveform = forms.LeaveGame()
     return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
 
+
 def leave_post_(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
     leaveform = forms.LeaveGame()
     return handle_leave(game_id, leaveform)
+
 
 def handle_leave(game_id, form):
     message = form_validators.Game.leave(form)
@@ -95,7 +92,7 @@ def handle_leave(game_id, form):
     return Player.leave_success(game_id, f"You are no longer part of {game_name}")
 
 
-class Player():
+class Player:
 
     not_authorized_url = "profile.player"
 

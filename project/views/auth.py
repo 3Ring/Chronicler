@@ -3,7 +3,9 @@ from werkzeug.security import check_password_hash
 from flask_login import login_user, logout_user, login_required
 from flask_login import current_user
 
-from project.models import Users
+from project.__init__ import db
+from project.helpers.db_session import db_session
+from project.models import Users, Characters, Games
 from project import forms
 from project import form_validators
 
@@ -29,12 +31,11 @@ def login():
 
 
 def _login_failure():
+    # flash("incorrect")
     return redirect(url_for("auth.login"))
 
 
-def _login_success(user, form):
-    login_user(user, remember=form.remember.data)
-    return redirect(url_for("auth.login"))
+
 
 
 @auth.route("/login", methods=["POST"])
@@ -45,17 +46,22 @@ def login_post():
 
     # check data
     form = forms.Login()
-    if not form_validators.User.user(form):
+    user = Users.query.filter_by(email=form.email.data).first()
+    print(f'user: {user}')
+    if not form.validate_on_submit():
+        print(f'no')
+    # if not form_validators.User.user(form):
         return _login_failure()
-    user = Users.get_from_email(form.email.data)
-    if not user:
-        return _login_failure()
-    if not form_validators.User.check_password(
-        form.password.data, user.hashed_password
-    ):
-        return _login_failure()
+    # if not user:
+    #     return _login_failure()
+    # if not form_validators.User.check_password(
+    #     form.password.data, user.hashed_password
+    # ):
+    #     return _login_failure()
     # login user
-    return _login_success(user, form)
+    login_user(user, remember=form.remember.data)
+    return redirect(url_for("main.index"))
+
 
 
 def _reauth_failure():
@@ -82,9 +88,10 @@ def reauth_post():
     form = forms.Login()
     if not form_validators.User.user(form):
         return _login_failure()
-    user = Users.get_from_email(form.email.data)
+    user = Users.query.filter_by(email=form.email.data)
     if not user:
         return _reauth_failure()
+        
     if not form_validators.User.check_password(
         form.password.data, user.hashed_password
     ):
@@ -103,38 +110,45 @@ def register():
     form = forms.UserCreate()
     return render_template("register.html", form=form)
 
-
-def _register_failure():
-    return redirect(url_for("auth.register"))
-
-
-def _register_success():
-    return redirect(url_for("auth.login"))
-
-
 @auth.route("/register", methods=["POST"])
 def register_post():
-    """register new users
-
-    checks to make sure form is filled out correctly and redirects them to /login or back to /register
-    (this is a redundancy as this is done client side as well)
-    """
-
+    """register new users"""
     form = forms.UserCreate()
+    if not form.validate_on_submit():
+        return render_template("register.html", form=form)
+    # with db_session():
+    #     user = Users.create(
+    #         name=form.name.data,
+    #         email=form.email.data,
+    #         password=form.password.data,
+    #     )
+    # add_to_bug_report_page(user)
+    return redirect(url_for("auth.login"))
 
-    if not form_validators.User.register(form):
-        return _register_failure()
-    if Users.get_from_email(form.email.data):
-        flash(f"{form.email.data} is already in use!")
-        return _register_failure()
-    Users.create(
-        name=form.name.data,
-        email=form.email.data,
-        password=form.password.data,
-        with_follow_up=True,
-    )
-    return _register_success()
-
+   
+def add_to_bug_report_page(user):
+    """Creates a User character and adds them to the bug report page
+    it's done this way because the bug report page uses the "notes" page's code so it requires a "Character".
+    
+    uses multiple commits/rollbacks due to foreign key requirements
+    """
+    with db_session():
+        try:
+            avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
+        except Exception:
+            db.session.rollback()
+            user.delete_self()
+            db.session.commit()
+            raise
+    with db_session():
+        try:
+            avatar.add_to_game(Games.get_bugs().id)
+        except Exception:
+            db.session.rollback()
+            avatar.delete_self()
+            user.delete_self()
+            db.session.commit()
+            raise
 
 #######################################
 ###            Logout              ####

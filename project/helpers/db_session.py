@@ -7,8 +7,7 @@ def db_session(autocommit=True):
         yield db.session
         if autocommit:
             db.session.commit()
-    except Exception as e:
-        print(e)
+    except Exception:
         db.session.rollback()
         raise
     finally:
