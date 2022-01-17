@@ -26,7 +26,7 @@ def send_new_note(
         private2 = private_convert(private_)
         to_dm = private_convert(to_dm)
         current_char_id = character_id
-        current_char = Characters.get_from_id(current_char_id)
+        current_char = Characters.query.get(current_char_id)
 
         new = Notes.create(
             charname=current_char.name,

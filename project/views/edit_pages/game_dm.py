@@ -15,9 +15,9 @@ from project.helpers.misc import set_heroku
 
 
 def get(game_id):
-    if current_user.id != Games.get_from_id(game_id).dm_id:
+    if current_user.id != Games.query.get(game_id).dm_id:
         return redirect(url_for("profile.dm"))
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     form_edit = forms.GameEdit()
     form_transfer = forms.GameTransfer()
     form_delete = forms.GameDelete()
@@ -125,7 +125,7 @@ class GameDM:
     def delete_old_image(image_id):
         if image_id:
             with db_session():
-                image = Images.get_from_id(image_id)
+                image = Images.query.get(image_id)
                 image.delete_self()
 
     @classmethod
@@ -138,7 +138,7 @@ class GameDM:
 
         if not cls.validate_edit(form):
             return cls._failure(game_id)
-        game = Games.get_from_id(game_id)
+        game = Games.query.get(game_id)
         img_id = game.img_id
         name = game.name
         if form.img.data:
@@ -154,7 +154,7 @@ class GameDM:
 
     @staticmethod
     def handle_transfer(form, game_id):
-        game = Games.get_from_id(game_id)
+        game = Games.query.get(game_id)
         if form.heir.data != "no_choice":
             return
         return

@@ -10,7 +10,7 @@ from project.__init__ import db
 def get(character_id):
     charform = forms.CharCreate()
     delform = forms.CharDelete()
-    character = Characters.get_from_id(character_id)
+    character = Characters.query.get(character_id)
     charform.bio.data = character.bio
     return render_template(
         "edit/character.html", charform=charform, character=character, delform=delform
@@ -19,7 +19,7 @@ def get(character_id):
 def post(character_id):
     charform = forms.CharCreate()
     delform = forms.CharDelete()
-    character = Characters.get_from_id(character_id)
+    character = Characters.query.get(character_id)
     if delform.char_del_submit.data:
         confirm = form_validators.Character.remove(delform, character)
         if not confirm:

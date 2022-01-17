@@ -11,7 +11,7 @@ profile = Blueprint("profile", __name__)
 @profile.route("/profile")
 @login_required
 def dashboard():
-    user = Users.get_from_id(current_user.id)
+    user = Users.query.get(current_user.id)
     return render_template("profile/dashboard.html", user=user)
 
 
@@ -19,7 +19,7 @@ def dashboard():
 @login_required
 def account():
     session["reauth"] = "edit.account"
-    user = Users.get_from_id(current_user.id)
+    user = Users.query.get(current_user.id)
     return render_template("profile/account.html", user=user)
 
 
@@ -44,7 +44,7 @@ def games():
 @profile.route("/profile/games/player")
 @login_required
 def player_landing():
-    user = Users.get_from_id(current_user.id)
+    user = Users.query.get(current_user.id)
     player_games = user.get_game_list_player()
     # claim game if abandoned
     return render_template(
@@ -56,7 +56,7 @@ def player_landing():
 @login_required
 def player(game_id):
     session["reauth"] = "profile.player"
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     return render_template("profile/games/player.html", game=game)
 
 

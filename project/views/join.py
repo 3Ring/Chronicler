@@ -28,7 +28,7 @@ def joining(game_id, game_name):
 
     charform = forms.CharCreate()
     resources = Joining.make_add_list()
-    game = Games.get_from_id(int(game_id))
+    game = Games.query.get(int(game_id))
 
     return render_template(
         "joining.html",

@@ -12,7 +12,7 @@ from project.models import (
 def get(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     charform = forms.CharCreate()
     resources = Player.get_resources(game_id)
     game_characters = Games.get_personal_game_list_player(current_user.id)
@@ -37,7 +37,7 @@ def post(game_id):
 
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     addform = forms.CharAdd()
     charform = forms.CharCreate()
     delform = forms.CharRemove()
@@ -61,14 +61,14 @@ def post(game_id):
 def manage_remove_character(game, character_id):
     if not Games.remove_character_from_id(character_id):
         return Player.failure(f"unable to remove character from {game.name}")
-    name = Characters.get_from_id(character_id).name
+    name = Characters.query.get(character_id).name
     return Player.success(game.id, f"{name} removed from {game.name} successfully")
 
 
 def leave_get(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     leaveform = forms.LeaveGame()
     return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
 
@@ -84,7 +84,7 @@ def handle_leave(game_id, form):
     message = form_validators.Game.leave(form)
     if type(message) is str:
         return Player.leave_failure(game_id, message)
-    game_name = Games.get_from_id(game_id).name.lower().strip()
+    game_name = Games.query.get(game_id).name.lower().strip()
     confirm = form.confirm.data.lower().strip()
     if confirm != game_name:
         return Player.leave_failure(game_id, f"{confirm} does not match {game_name}")

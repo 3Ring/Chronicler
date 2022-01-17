@@ -53,7 +53,7 @@ def game_post():
 @create.route("/create/dm/<int:game_id>", methods=["GET"])
 @login_required
 def dm(game_id):
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     form = forms.DMCreate()
     dm_default_image = "/static/images/default_dm.jpg"
     return render_template(

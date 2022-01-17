@@ -27,7 +27,7 @@ def post():
     email_form = forms.UserEditEmail()
     pass_form = forms.UserEditPassword()
     del_form = forms.UserDelete()
-    user = Users.get_from_id(current_user.id)
+    user = Users.query.get(current_user.id)
     # these statements are used instead of .validate_on_submit() because otherwise errors from all forms will be displayed
     if name_form.name.data and name_form.validate():
         user.update(name=name_form.name.data)
@@ -57,7 +57,7 @@ def confirm_get():
 def confirm_post():
     form = forms.UserDelete()
     if form.validate_on_submit():
-        user = Users.get_from_id(current_user.id)
+        user = Users.query.get(current_user.id)
         if form.confirm.data == user.email:
             logout_user()
             with db_session:

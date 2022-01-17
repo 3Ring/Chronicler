@@ -23,7 +23,7 @@ notes = Blueprint("notes", __name__)
 @login_required
 def game(game_id):
     tutorial = Users.get_admin()
-    game = Games.get_from_id(game_id)
+    game = Games.query.get(game_id)
     character_list = get_game_character_list(game)
     session_list = Sessions.get_list_from_gameID(game_id)
     notes = get_game_notes(session_list, game_id)

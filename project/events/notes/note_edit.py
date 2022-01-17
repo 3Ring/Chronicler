@@ -126,7 +126,7 @@ def send_editted_note(
             user_id=user_id,
             dm_id=dm_id,
             target_users={"user": user_id, "dm": dm_id, "other": -10},
-            char_img=Characters.get_from_id(character_id).image,
+            char_img=Characters.query.get(character_id).image,
         )
         emit(
             "fill_note_edit",

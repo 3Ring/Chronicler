@@ -40,7 +40,7 @@ from project.setup_ import defaults as d
 class SAWithImageMixin:
     def attach_image(self):
 
-        self.image_object = Images.get_from_id(self.img_id)
+        self.image_object = Images.query.get(self.img_id)
         if self.image_object:
             self.image = self.image_object.img_string
         return
@@ -59,9 +59,9 @@ class SABaseMixin:
         db.Boolean, default=d.Base.removed, server_default=text(d.Base.server_removed)
     )
 
-    @classmethod
-    def get_from_id(cls, id_: int):
-        return cls.query.filter_by(id=id_).first()
+    # @classmethod
+    # def get_from_id(cls, id_: int):
+    #     return cls.query.filter_by(id=id_).first()
 
 
     @classmethod
@@ -202,7 +202,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         users = []
         bridge = BridgeUserGames.query.filter_by(game_id=game_id).all()
         for user in bridge:
-            users.append(cls.get_from_id(user.user_id))
+            users.append(cls.query.get(user.user_id))
         return users
 
     def get_game_list_player(self):
@@ -211,7 +211,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         if my_games:
             for game in my_games:
                 if game.dm_id != self.id:
-                    player_list.append(Games.get_from_id(game.id))
+                    player_list.append(Games.query.get(game.id))
         return player_list
 
     def get_game_list_dm(self):
@@ -393,7 +393,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     @staticmethod
     def get_player_list_from_id(game_id: int) -> list:
         join = BridgeUserGames.join(game_id, "game_id", "user_id")
-        game = Games.get_from_id(game_id)
+        game = Games.query.get(game_id)
         for i, user in enumerate(join):
             if user.id == game.dm_id:
                 join.pop(i)
@@ -424,19 +424,19 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     def get_dm_from_gameID(cls, game_id: int):
         """returns user of game"""
 
-        game = cls.get_from_id(game_id)
-        return Users.get_from_id(game.dm_id)
+        game = cls.query.get(game_id)
+        return Users.query.get(game.dm_id)
 
     @classmethod
     def get_dmID_from_gameID(cls, game_id: int) -> int:
         """returns user_id of game dm"""
 
-        return Games.get_from_id(game_id).dm_id
+        return Games.query.get(game_id).dm_id
 
     @classmethod
     def get_dm_avatar(cls, game_id: int):
         """returns dm avatar for game"""
-        game = cls.get_from_id(game_id)
+        game = cls.query.get(game_id)
         char_list = Characters.get_characters_list_for_game(game.dm_id, game_id)
         for char in char_list:
             if char.dm == True:
@@ -449,7 +449,7 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         final = []
         bridges = BridgeUserGames.query.filter_by(user_id=user_id).all()
         for bridge in bridges:
-            game = Games.get_from_id(bridge.game_id)
+            game = Games.query.get(bridge.game_id)
             if game.dm_id != current_user.id:
                 final.append(game)
         return final
@@ -666,7 +666,7 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def add_character_to_game(cls, character_id: int, game_id: int):
-        adding = cls.get_from_id(character_id)
+        adding = cls.query.get(character_id)
         if adding:
             if adding.add_to_game(game_id):
                 return True
@@ -796,9 +796,9 @@ class Notes(SABaseMixin, db.Model):
 
     @staticmethod
     def attach_char_img(target):
-        character_object = Characters.get_from_id(target.origin_character_id)
+        character_object = Characters.query.get(target.origin_character_id)
         if character_object:
-            img = Images.get_from_id(character_object.img_id)
+            img = Images.query.get(character_object.img_id)
             if img:
                 target.char_img = img.img_string
             elif character_object.dm:
@@ -937,7 +937,7 @@ class BridgeBase:
         if not my_keys:
             return False
         for key in my_keys:
-            item = model.get_from_id(key)
+            item = model.query.get(key)
             if item.removed:
                 if not include_removed:
                     continue

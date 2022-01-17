@@ -27,7 +27,7 @@ def index():
     if not current_user.is_authenticated:
         return redirect(url_for("auth.login"))
 
-    user = Users.get_from_id(current_user.id)
+    user = Users.query.get(current_user.id)
     game_lists = Games.get_index_lists(user)
 
     return render_template(
@@ -49,7 +49,7 @@ def index_post():
 
 @main.route("/test")
 def test():
-    game = Games.get_from_id(5)
+    game = Games.query.get(5)
     return render_template("test.html", game=game)
 
 

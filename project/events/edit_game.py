@@ -5,13 +5,13 @@ from project.models import BridgeGameCharacters, Users
 
 # @socketio.on("remove_player")
 # def remove_player(user_id: int, game_id: int):
-#     player = Users.get_from_id(user_id)
+#     player = Users.query.get(user_id)
 #     socketio.emit("remove_player_start_success", ())
 
 
 @socketio.on("remove_player_final")
 def remove_player(user_id: int, game_id: int):
-    player = Users.get_from_id(user_id)
+    player = Users.query.get(user_id)
     bridge = BridgeGameCharacters.query.filter_by(game_id=game_id, character_id=player.id).first()
     bridge.remove_self()
     socketio.emit("remove_player_final_success") 
