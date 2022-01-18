@@ -3,7 +3,7 @@ from flask_login import login_required
 
 from project.models import Users, Games, Sessions
 from project.setup_ import defaults as d
-from project.views.notes.routes import get_game_notes, convert_to_JSON
+from project.views.notes.notes import get_game_notes, convert_to_JSON
 from project.helpers.misc import set_heroku
 
 bugs = Blueprint("bugs", __name__)

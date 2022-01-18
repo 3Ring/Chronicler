@@ -1,69 +1,55 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, session
-from flask_login import LoginManager, login_required, current_user, fresh_login_required
+from flask import Blueprint
+from flask_login import login_required
 
-from project.forms import forms
-from project.models import Characters, Users, Games
+from project.views.profile.dashboard import dashboard_get
+from project.views.profile.account import account_get
+from project.views.profile.characters import characters_get
+from project.views.profile.games import games_get
+from project.views.profile.player_landing import landing_get
+from project.views.profile.games_player import player_get
+from project.views.profile.games_dm import dm_get
 
 
 profile = Blueprint("profile", __name__)
 
 
-@profile.route("/profile")
+@profile.route("/profile", methods=["GET"])
 @login_required
 def dashboard():
-    user = Users.query.get(current_user.id)
-    return render_template("profile/dashboard.html", user=user)
+    return dashboard_get()
 
 
 @profile.route("/profile/account", methods=["GET"])
 @login_required
 def account():
-    session["reauth"] = "edit.account"
-    user = Users.query.get(current_user.id)
-    return render_template("profile/account.html", user=user)
+    return account_get()
 
 
-
-
-
-@profile.route("/profile/characters")
+@profile.route("/profile/characters", methods=["GET"])
 @login_required
 def characters():
-    my_characters = Characters.get_list_from_user(current_user.id)
-    if not my_characters:
-        return redirect(url_for("create.character"))
-    return render_template("profile/characters.html", my_characters=my_characters)
+    return characters_get()
 
 
-@profile.route("/profile/games")
+@profile.route("/profile/games", methods=["GET"])
 @login_required
 def games():
-    return render_template("profile/games/landing.html")
+    return games_get()
 
 
-@profile.route("/profile/games/player")
+@profile.route("/profile/games/player", methods=["GET"])
 @login_required
 def player_landing():
-    user = Users.query.get(current_user.id)
-    player_games = user.get_game_list_player()
-    # claim game if abandoned
-    return render_template(
-        "profile/games/player_landing.html", player_games=player_games
-    )
+    return landing_get()
 
 
-@profile.route("/profile/games/player/<int:game_id>")
+@profile.route("/profile/games/player/<int:game_id>", methods=["GET"])
 @login_required
 def player(game_id):
-    session["reauth"] = "profile.player"
-    game = Games.query.get(game_id)
-    return render_template("profile/games/player.html", game=game)
+    return player_get(game_id)
 
 
-@profile.route("/profile/games/dm")
+@profile.route("/profile/games/dm", methods=["GET"])
 @login_required
 def dm():
-    session["reauth"] = "edit.dm"
-    # see list of games
-    dm_games = Games.get_personal_game_list_dm(current_user.id)
-    return render_template("profile/games/dm.html", dm_games=dm_games)
+    return dm_get()

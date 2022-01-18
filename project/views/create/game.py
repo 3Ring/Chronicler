@@ -1,17 +1,17 @@
 from flask import redirect, render_template, url_for
 from flask_login import current_user
 
-from project.forms import forms
+from project.forms.create_game import GameCreate
 from project.models import Games, Images, BridgeUserGames
 from project.helpers.db_session import db_session
 
 def game_get():
-    form = forms.GameCreate()
+    form = GameCreate()
     return render_template("create/game.html", gameform=form)
 
 
 def game_post():
-    form = forms.GameCreate()
+    form = GameCreate()
     if not form.validate_on_submit():
         return render_template("create/game.html", gameform=form)
     with db_session() as sess:
