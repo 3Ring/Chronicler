@@ -4,7 +4,7 @@
     {{ field.label(class=cls_lb) }}
     {{ field(class=cls_in, **kwargs)|safe }}
 </div>
-{% if field.errors %}s
+{% if field.errors %}
 <ul class="{{cls_er}}">
     {% for error in field.errors %}
     <li>{{ error }}</li>

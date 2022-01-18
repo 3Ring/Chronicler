@@ -1,19 +1,17 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import current_user
-from project import forms
+from project.forms.edit_character import CharEdit
+from project.forms.edit_game_player import CharAdd, CharRemove, LeaveGame
 from project import form_validators
 
-from project.models import (
-    Characters,
-    Games,
-)
+from project.models import Characters, Games
 
 
-def get(game_id):
+def add_remove_get(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
     game = Games.query.get(game_id)
-    charform = forms.CharCreate()
+    charform = CharEdit()
     resources = Player.get_resources(game_id)
     game_characters = Games.get_personal_game_list_player(current_user.id)
     last_character = False
@@ -32,15 +30,15 @@ def get(game_id):
     )
 
 
-def post(game_id):
-    from project.views.join import Joining
+def add_remove_post(game_id):
+    from project.views.join.join_game import Joining
 
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
     game = Games.query.get(game_id)
-    addform = forms.CharAdd()
-    charform = forms.CharCreate()
-    delform = forms.CharRemove()
+    addform = CharAdd()
+    charform = CharEdit()
+    delform = CharRemove()
     if addform.char_add_submit.data:
         message = Joining.handle_add(addform, game_id)
         if type(message) is not str:
@@ -69,14 +67,14 @@ def leave_get(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
     game = Games.query.get(game_id)
-    leaveform = forms.LeaveGame()
+    leaveform = LeaveGame()
     return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
 
 
 def leave_post_(game_id):
     if Player.not_authorized(game_id):
         return redirect(url_for(Player.not_authorized))
-    leaveform = forms.LeaveGame()
+    leaveform = LeaveGame()
     return handle_leave(game_id, leaveform)
 
 
@@ -131,8 +129,8 @@ class Player:
     @staticmethod
     def get_resources(game_id):
 
-        addform = forms.CharAdd()
-        removeform = forms.CharRemove()
+        addform = CharAdd()
+        removeform = CharRemove()
         add = []
         ids = []
 

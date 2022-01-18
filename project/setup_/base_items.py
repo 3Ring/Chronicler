@@ -113,7 +113,6 @@ class Base_items:
         @classmethod
         def users(cls):
             """Creates admin User account"""
-
             cls.models.Users.create(
                 id=cls.d.UserAdmin.id,
                 removed=cls.d.UserAdmin.removed,
@@ -139,8 +138,8 @@ class Base_items:
                 image=cls.d.GameBugs.image,
                 image_object=cls.d.GameBugs.image_object,
                 with_follow_up=False,
-                bug_report=True
             )
+            cls._fill_bugs()
 
         @classmethod
         def characters(cls):

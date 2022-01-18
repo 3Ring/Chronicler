@@ -1,32 +1,16 @@
-from flask import Blueprint, flash, redirect, render_template, url_for
-from flask_login import login_required, current_user
+from flask import render_template, redirect, url_for
+from flask_login import current_user
 
-from project import form_validators, forms
-from project.models import (
-    BridgeGameCharacters,
-    Games,
-    Users,
-    Images,
-    Characters,
-    
-)
-
-join = Blueprint("join", __name__)
-
-@join.route("/join", methods=["GET"])
-@login_required
-def game():
-    """serve list of games that User can join"""
-    games = Games.get_my_joinable()
-    return render_template("join.html", games=games)
+from project import form_validators
+from project.forms.create_character import CharCreate
+from project.forms.edit_game_player import CharAdd
+from project.models import Games, Users, Images, Characters
 
 
-@join.route("/joining/<game_id>/<game_name>", methods=["GET"])
-@login_required
-def joining(game_id, game_name):
+def join_game_get(game_id, game_name):
     """Serve new character form to User"""
 
-    charform = forms.CharCreate()
+    charform = CharCreate()
     resources = Joining.make_add_list()
     game = Games.query.get(int(game_id))
 
@@ -39,13 +23,11 @@ def joining(game_id, game_name):
     )
 
 
-@join.route("/joining/<game_id>/<game_name>", methods=["POST"])
-@login_required
-def joining_post(game_id, game_name):
+def join_game_post(game_id, game_name):
     """add new character to game"""
     game_id = int(game_id)
-    addform = forms.CharAdd()
-    charform = forms.CharCreate()
+    addform = CharAdd()
+    charform = CharCreate()
     if addform.char_add_submit.data:
         if Joining.handle_add(addform, game_id):
             return Joining._success(game_id)
@@ -55,12 +37,12 @@ def joining_post(game_id, game_name):
     return Joining.failure(game_id, game_name)
 
 
-class Joining():
+class Joining:
     @staticmethod
     def make_add_list():
-        form = forms.CharAdd()
+        form = CharAdd()
         my_characters = Characters.get_list_from_user(current_user.id)
-        print(f'my_characters: {my_characters}')
+        print(f"my_characters: {my_characters}")
         form.character.choices = [(g.id, g.name) for g in my_characters]
         return {"my_characters": my_characters, "addform": form}
 
@@ -77,16 +59,6 @@ class Joining():
         if Users.add_to_game(current_user.id, game_id):
             return True
         return False
-
-    # @staticmethod
-    # def rollback_character(id_):
-    #     Characters.rollback(id=id_)
-    #     return
-
-    # @staticmethod
-    # def rollback_bridge(character_id, game_id):
-    #     BridgeGameCharacters.rollback(character_id=character_id, game_id=game_id)
-    #     return
 
     @classmethod
     def handle_add(cls, form, game_id):

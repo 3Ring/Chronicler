@@ -501,13 +501,10 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
                 origin_character_id=tutorial_character.id,
                 game_id=d.Admin.id,
             )
-        return
 
     @classmethod
-    def create(cls, with_follow_up=True, bug_report=False, **kw):
+    def create(cls, **kw):
         """adds new Game to database
-
-        :param with_follow_up: if set to `True` the tutorial notes will be added.
 
         :param name: `String(50), nullable=False)`
         :param published: `Boolean, default=False, nullable=False`
@@ -516,14 +513,10 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         :param dm_id: = `Integer, ForeignKey('users.id'), nullable=False`
         :param img_id: = `Integer, ForeignKey('images.id')`
         """
-        obj = super().create(**kw)
-        if bug_report:
-            cls._fill_bugs()
-        if with_follow_up:
-            # add tutorial notes and session zero to game
-            cls.new_game_training_wheels(obj)
-            BridgeUserGames.create(owner=True, user_id=obj.dm_id, game_id=obj.id)
-        return obj
+        game = cls(**kw)
+        db.session.add(game)
+
+        return game
 
     def _delete_attached(self, confirm: bool = False):
         """deletes all attached items
@@ -617,7 +610,6 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     img_object = d.Character.img_object
     image = d.Character.image
 
-    self_title = "character"
 
     def get_my_games(self) -> list:
         """returns a list of all games self is attached to"""

@@ -1,6 +1,11 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import current_user
-from project import forms
+from project.forms.edit_dm_game import (
+    GameEdit,
+    GameDelete,
+    GameManagePlayers,
+    GameManageCharacters,
+)
 from project import form_validators
 from project.helpers.db_session import db_session
 
@@ -14,25 +19,19 @@ from project.models import (
 from project.helpers.misc import set_heroku
 
 
-def get(game_id):
+def game_dm_get(game_id):
     if current_user.id != Games.query.get(game_id).dm_id:
         return redirect(url_for("profile.dm"))
     game = Games.query.get(game_id)
-    form_edit = forms.GameEdit()
-    form_transfer = forms.GameTransfer()
-    form_delete = forms.GameDelete()
-    form_players = forms.GameManagePlayers()
-    form_characters = forms.GameManageCharacters()
-    form_end = forms.GameEnd()
+    form_edit = GameEdit()
+    form_delete = GameDelete()
+    form_players = GameManagePlayers()
+    form_characters = GameManageCharacters()
     p_list = Users.get_player_list(game_id)
     for i, p in enumerate(p_list):
         if p.id < 0 or p.id == current_user.id:
             p_list.pop(i)
-    form_transfer.heir.choices = form_players.players.choices = [
-        (p.id, p.name) for p in p_list
-    ]
     players = True if p_list else False
-    heir = True if len(form_transfer.heir.choices) > 0 else False
     if p_list:
         characters = []
         for p in p_list:
@@ -44,31 +43,25 @@ def get(game_id):
         "edit/games/dm.html",
         game=game,
         players=players,
-        heir=heir,
         form_edit=form_edit,
-        form_transfer=form_transfer,
         form_delete=form_delete,
         form_players=form_players,
         form_characters=form_characters,
-        form_end=form_end,
         heroku=set_heroku(),
     )
 
 
-def post(game_id):
+def game_dm_post(game_id):
 
-    form_edit = forms.GameEdit()
-    form_transfer = forms.GameTransfer()
-    form_delete = forms.GameDelete()
-    form_players = forms.GameManagePlayers()
-    form_characters = forms.GameManageCharacters()
+    form_edit = GameEdit()
+    form_delete = GameDelete()
+    form_players = GameManagePlayers()
+    form_characters = GameManageCharacters()
 
     if form_edit.edit_submit.data:
 
         GameDM.handle_edit(form_edit, game_id)
-    elif form_transfer.transfer_confirm.data:
 
-        GameDM.handle_transfer(form_transfer)
     elif form_delete.game_delete_submit.data:
 
         GameDM.handle_delete(form_delete)

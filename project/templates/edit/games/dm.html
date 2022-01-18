@@ -95,69 +95,6 @@
                 </form>
             </div>
             {% endif %}
-
-            
-            <!-- <h2>Transfer Ownership:</h2>
-            <p>Transfer the role of dm to one of your players.</p>
-            <form>
-                <div data-flag="init" class="row">
-                    {{ form_transfer.transfer_init (class="button primary")}}
-                </div>
-            </form>
-            <form class="hidden">
-                <h3>Who will become the new owner?</h3>
-                <h4>You will no longer be able to access this game's settings.</h4>
-                <h4>This can only be undone by the person you give the role to.</h4>
-
-                <div data-flag="heir" class="hidden row">
-                    {{ form_transfer.heir.label }}
-                    {{ form_transfer.heir }}
-                </div>
-                <div data-flag="transfer" class="hidden row">
-                    {{ form_transfer.transfer_transfer (class="button primary") }}
-                </div>
-            </form>
-            <div data-flag="transfer_form_cont" class="confirm-form hidden">
-                <form>
-                    <h2 data-flag="transfer_header"></h2>
-                    <div class="row">
-                        {{ form_transfer.transfer_player.label }}
-                        {{ form_transfer.transfer_player }}
-                    </div>
-                    <div class="row">
-                        {{ form_transfer.transfer_game.label}}
-                        {{ form_transfer.transfer_game}}
-                    </div>
-                    <div class="row">
-                        {{ form_transfer.transfer_confirm (class="button primary") }}
-                    </div>
-                </form>
-            </div>
-
-
-            
-            <h2>End Game:</h2>
-            <p>This will put your game into a "read only" state.</p>
-            <p>participants will still be able to access the game, but will no longer be able to make changes.</p>
-            <form method='POST'>
-                <div class="row">
-                    {{ form_end.end_init (class="button primary") }}
-                </div>
-            </form>
-            <form class="hidden confirm-form">
-                <h2>Make {{game.name}} an archive?</h2>
-                <h3>This can be undone.</h3>
-                {{ form_end.end_confirm (class="button primary") }}
-            </form>
-
-            <h2>Delete Game:</h2>
-            <p>this will permanently delete the game and remove it forever from the database.</p>
-            <p>This cannot be undone.</p>
-            <form method='POST'>
-                <div class="row">
-                    {{ form_delete.game_delete_submit (class="button primary") }}
-                </div>
-            </form> -->
         </div>
     </div>
 </div>

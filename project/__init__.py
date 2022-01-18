@@ -11,7 +11,7 @@ from project.setup_.config import config as config_app
 from project.setup_.flask_login import config as config_fl
 from project.setup_.flask_admin import init_admin
 from project.setup_.helpers import update_db
-from project.views.admin import AdminIndex
+from project.views.admin.routes import AdminIndex
 from project.setup_.blueprints import init_blueprints
 from project import events
 

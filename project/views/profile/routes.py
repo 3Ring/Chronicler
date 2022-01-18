@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session
 from flask_login import LoginManager, login_required, current_user, fresh_login_required
 
-from project import forms
+from project.forms import forms
 from project.models import Characters, Users, Games
 
 
