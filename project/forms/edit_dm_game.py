@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField, FileField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.fields.simple import HiddenField
 from wtforms.validators import Length, Optional
 
@@ -16,7 +17,13 @@ class GameEdit(FlaskForm):
             ),
         ],
     )
-    img = FileField("Game Image")
+    img = FileField(
+        "(Optional) Game Image",
+        validators=[
+            Optional(),
+            FileAllowed(["jpg", "jpeg", "png"], "Images only!"),
+        ],
+    )
     published = BooleanField("Allow game to be searchable")
     edit_submit = SubmitField("Submit Changes")
 

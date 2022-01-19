@@ -3,30 +3,18 @@
 
 <div class="container">
     <div class="form-container">
-{% if game %}
 <h1>{{game.name}}</h1>
 <img src="{{game.image}}">
-{% endif %}
         <form  enctype="multipart/form-data" method='POST'>
+            {% from "_formhelpers.html" import render_field %}
 
             <h1>Personalize your "DM" avatar</h1>
-            <div class="row">
-                {{ form.hidden_tag() }}
-                {{ form.name.label }}
-                {{ form.name(value="DM") }}
-            </div>
-                
-            <div class="row">
-                {{ form.img.label }}
-                {{ form.img }}  
-                <img src="{{dm_default_image}}">
-            </div>
-            
-            <div class="row">
-                {{ form.dm_char_submit (class="button primary") }}
-            </div>
+            {{ form.hidden_tag() }}
+            {{ render_field(form.name, value="DM") }}
+            {{ render_field(form.img) }}  
+            <img src="{{dm_default_image}}">
+            {{ render_field(form.dm_char_submit, cls_in="button primary", no_label=true) }}
         </form>
-
     </div>
 </div>
 {% endblock %}

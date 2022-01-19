@@ -1,6 +1,7 @@
 from wtforms.validators import ValidationError
 from werkzeug.security import check_password_hash
 
+
 from project.models import Users
 
 def email_user_exists(form, field):

@@ -7,8 +7,8 @@ from project.helpers.db_session import db_session
 
 def game_get():
     form = GameCreate()
+    print(f'form.img.type: {form.img.type}')
     return render_template("create/game.html", gameform=form)
-
 
 def game_post():
     form = GameCreate()

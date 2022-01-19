@@ -344,6 +344,7 @@ class Images(SABaseMixin, db.Model):
         render_file = Images._render_picture(data)
         img_string = Images._add_decoder(render_file, mimetype)
         img = Images.create(img_string=img_string, name=secure_name, mimetype=mimetype)
+        db.session.flush()
         id_ = img.id
         return id_
 

@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, FileField
+from wtforms import StringField, SubmitField, TextAreaField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import Length, Optional
 
 
@@ -8,7 +9,6 @@ class CharCreate(FlaskForm):
     name = StringField(
         "Name",
         validators=[
-            Optional(),
             Length(
                 min=1,
                 max=50,
@@ -16,6 +16,22 @@ class CharCreate(FlaskForm):
             ),
         ],
     )
-    img = FileField("(Optional) Character Image")
-    bio = TextAreaField("Bio")
+    img = FileField(
+        "(Optional) Character Image",
+        validators=[
+            Optional(),
+            FileAllowed(["jpg", "jpeg", "png"], "Images only!"),
+        ],
+    )
+    bio = TextAreaField(
+        "Bio",
+        validators=[
+            Optional(),
+            Length(
+                min=1,
+                max=5000,
+                message=f"Bio must be between %(min)d and %(max)d characters",
+            ),
+        ],
+    )
     char_submit = SubmitField("Submit")

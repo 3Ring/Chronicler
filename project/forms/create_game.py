@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, FileField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, SubmitField, BooleanField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms.validators import DataRequired, Length, Optional
 
 
 class GameCreate(FlaskForm):
@@ -15,6 +16,12 @@ class GameCreate(FlaskForm):
             ),
         ],
     )
-    img = FileField("(Optional) Game Image")
+    img = FileField(
+        "(Optional) Game Image",
+        validators=[
+            Optional(),
+            FileAllowed(["jpg", "jpeg", "png"], "Images only!"),
+        ],
+    )
     published = BooleanField("Publish? (Allow game to be searchable)")
     gamesubmit = SubmitField("Submit")

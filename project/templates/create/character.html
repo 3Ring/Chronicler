@@ -1,28 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+{% from "_formhelpers.html" import render_field %}
 
 <div class="container">
     <div class="form-container">
-
         <form  enctype="multipart/form-data" method='POST' action='/create/character'>
 
             <h1>Create Character!</h1>
-            <div class="row">
                 {{ form.hidden_tag() }}
-                {{ form.name.label }}
-                {{ form.name }}
-            </div>
-                
-            <div class="row">
-                {{ form.img.label }}
-                {{ form.img }}  
-            </div>
-            
-            <div class="row">
-                {{ form.bio.label }}
-                {{ form.bio }}
-            </div>
-            
+                {{ render_field(form.name) }}
+                {{ render_field(form.img) }}  
+                {{ render_field(form.bio) }}
             <div class="row">
                 {{ form.char_submit (class="button primary") }}
             </div>

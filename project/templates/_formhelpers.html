@@ -1,8 +1,14 @@
-{% macro render_field(field, cls_lb="form-label", cls_in="form-control", cls_dv="row", cls_er="errors") %}
+{% macro render_field(field, cls_lb="form-label", cls_in="form-control", cls_dv="row", cls_er="errors", value="", no_label=false) %}
 
 <div class="{{ cls_dv }}">
+    {% if not no_label %}
     {{ field.label(class=cls_lb) }}
-    {{ field(class=cls_in, **kwargs)|safe }}
+    {% endif %}
+    {% if field.type == "SubmitField" %}
+        {{ field(class=cls_in, **kwargs)|safe }}
+    {% else %}
+        {{ field(class=cls_in, value=value, **kwargs)|safe }}
+    {% endif %}
 </div>
 {% if field.errors %}
 <ul class="{{cls_er}}">
