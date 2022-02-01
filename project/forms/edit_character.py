@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, HiddenField
 
 from project.forms.create_character import CharCreate
+from project.forms import validators as v
 
 
 class CharEdit(CharCreate):
@@ -9,7 +10,14 @@ class CharEdit(CharCreate):
 
 
 class CharDelete(FlaskForm):
+    char_name = HiddenField()
     confirm = StringField(
-        "Confirm by typing the name of the character you want to delete here"
+        "Confirm by typing the name of the character you want to delete here",
+        validators=[v.delete_character_confirm],
     )
-    char_del_submit = SubmitField("Delete")
+    submit = SubmitField("Delete")
+
+    def __init__(self, char_name=None, *args, **kw):
+        super().__init__(*args, **kw)
+        if char_name:
+            self.char_name.data = char_name

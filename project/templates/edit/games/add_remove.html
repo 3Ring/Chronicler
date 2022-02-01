@@ -1,113 +1,44 @@
+{% from "_formhelpers.html" import render_field %}
 {% extends "base.html" %}
 {% block content %}
 
-<script>
-    let class_hidden = "hidden";
-    let deployed_add = false;
-    let deployed_leave = false;
+<script src="{{ url_for('static', filename='js/edit/game_player/add_remove.js') }}"></script>
+<img src="{{game.image}}">
+<div>
+    <h1>{{game.name}}</h1>
+        <a data-reveal="add" class="button primary">Add Character</a>
+        <div data-revealed="add" class="hidden form-container">
 
-    document.addEventListener("DOMContentLoaded", function() {
-        let options = document.getElementsByTagName("select");
-        if (options.length > 0) {
-            let el = document.createElement("option");
-            el.setAttribute("selected", true);
-            el.setAttribute('hidden', true);
-            el.setAttribute('value', "");
-            el.innerHTML = "Choose Your Character"
-            options[0].insertAdjacentElement("afterbegin", el);
-        }
-        let add = document.querySelector(`a[data-modify="add"]`);
-        let leave = document.querySelector(`a[data-modify="leave"]`);
-        let addform = document.querySelector(`div[data-flag="addform"]`);
-        let removeform = document.querySelector(`div[data-flag="removeform"]`);
-        add.addEventListener("click", function() {
-            if (!deployed_add) {
-                addform.classList.remove(class_hidden);
-                deployed_add = true;
-                if (deployed_leave) {
-                    removeform.classList.add(class_hidden);
-                    deployed_leave = false;
-                }
-            }
-        });
-
-        leave.addEventListener("click", function() {
-            if (!deployed_leave) {
-                removeform.classList.remove(class_hidden);
-                deployed_leave = true;
-                if (deployed_add) {
-                    addform.classList.add(class_hidden);
-                    deployed_add = false;
-                }
-            }
-        });
-    });
-</script>
-<div class="container">
-    <div class="app-container">
-        <img src="{{game.image}}">
-        <h1>{{game.name}}</h1>
-        <div>
-            <a data-modify="add">Add Character</a>
-            <a data-modify="leave">Remove Character</a>
-        </div>
-        <div data-flag="addform" class="hidden form-container">
-
-            {% if my_characters %}
+            {% if addform.character.choices and addform.character.choices|length > 0 %}
             <form method='POST'>
                 <h1>Add Character From Your Characters</h1>
-                <div class="row">
-                    {{ addform.hidden_tag() }}
-                    {{ addform.character.label }}
-                    {{ addform.character }}
-                </div>
-                <div class="row">
-                    {{ addform.char_add_submit (class="button primary") }}
-                </div>
+                {{ addform.hidden_tag() }}
+                {{ render_field(addform.character) }}
+                {{ render_field(addform.submit) }}
             </form>
             <h1>or</h1>
             {% endif %}
-            <form  enctype="multipart/form-data" method='POST'>
-                <h1>Create a New Character!</h1>
-                <div class="row">
-                    {{ charform.hidden_tag() }}
-                    {{ charform.name.label }}
-                    {{ charform.name }}
-                </div>
-                <div class="row">
-                    {{ charform.img.label }}
-                    {{ charform.img }}  
-                </div>
-                <div class="row">
-                    {{ charform.bio.label }}
-                    {{ charform.bio }}
-                </div>
-                <div class="row">
-                    {{ charform.char_submit (class="button primary") }}
-                </div>
+
+            <form enctype="multipart/form-data" method='POST'>
+                <h1>Create a New Character for {{game.name}}!</h1>
+                {{ charform.hidden_tag() }}
+                {{ render_field(charform.name) }}
+                {{ render_field(charform.img) }}
+                {{ render_field(charform.bio) }}
+                {{ render_field(charform.submit) }}
             </form>
         </div>
 
-        <div data-flag="removeform" class="hidden form-container">
-
-            {% if last_character %}
-                <h1> {{last_character.name}} is your only charcter! if you want to remove them either add another character first or you can leave the game</h1>
-                <a href='{{url_for("edit.leave", game_id=game.id)}}'> Leave game</a>
-                {% else %}
-                
+        {% if removeform.characters.choices and removeform.characters.choices|length > 0 %}
+        <a data-reveal="rm" class="button primary">Remove Character</a>
+        <div data-revealed="rm" class="hidden form-container">
             <form method='POST'>
                 <h1>Remove Character</h1>
-                <div class="row">
-                    {{ removeform.hidden_tag() }}
-                    {{ removeform.character.label }}
-                    {{ removeform.character }}
-                </div>
-                <div class="row">
-                    {{ removeform.char_remove_submit (class="button primary") }}
-                </div>
+                {{ removeform.hidden_tag() }}
+                {{ render_field(removeform.characters) }}
+                {{ render_field(removeform.submit) }}
             </form>
-            {% endif %}
-
-
         </div>
-{% endblock %}
+        {% endif %}
+
+    {% endblock %}

@@ -1,157 +1,196 @@
-from flask import render_template, redirect, url_for, flash
-from flask_login import current_user
+from flask import render_template, flash, redirect, url_for
 from project.forms.edit_dm_game import (
-    GameEdit,
-    GameDelete,
-    GameManagePlayers,
-    GameManageCharacters,
+    Edit,
+    Delete,
+    RemovePlayer,
+    RemoveCharacter,
 )
-from project import form_validators
 from project.helpers.db_session import db_session
 
 from project.models import (
     BridgeGameCharacters,
+    BridgeGameItems,
+    BridgeGameNPCs,
+    BridgeGamePlaces,
     BridgeUserGames,
+    Notes,
+    Characters,
+    Sessions,
     Users,
     Games,
     Images,
 )
-from project.helpers.misc import set_heroku
 
 
-def game_dm_get(game_id):
-    if current_user.id != Games.query.get(game_id).dm_id:
-        return redirect(url_for("profile.dm"))
-    game = Games.query.get(game_id)
-    form_edit = GameEdit()
-    form_delete = GameDelete()
-    form_players = GameManagePlayers()
-    form_characters = GameManageCharacters()
-    p_list = Users.get_player_list(game_id)
-    for i, p in enumerate(p_list):
-        if p.id < 0 or p.id == current_user.id:
-            p_list.pop(i)
-    players = True if p_list else False
-    if p_list:
-        characters = []
-        for p in p_list:
-            char_list = p.get_character_list_from_game(game.id)
-            for c in char_list:
-                characters.append((c.id, f"{p.name}: {c.name}"))
-        form_characters.characters.choices = [(c[0], c[1]) for c in characters]
+def game_dm_get(game):
+    """
+    GET request function for "edit/games/dm.html"
+
+    This function is called when a user wants to edit a game's details or delete a game
+    :param game: The SQLAlchemy game object
+    :return: A rendered template with the game, players, and forms.
+    """
+    return render(game)
+
+
+def game_dm_post(game):
+    """
+    POST request function for "edit/games/dm.html"
+    
+    This function is called when a user wants to edit a game's details or delete a game
+    :param game: The SQLAlchemy game object
+    :return: A rendered template with the game, players, and forms.
+    """
+
+    error_target = None
+    form_edit = Edit()
+    form_delete = Delete()
+    form_players = RemovePlayer(choices=Games.get_player_list_from_id(game.id))
+    form_characters = RemoveCharacter(choices=Games.get_PCs(game.id))
+    with db_session(autocommit=False) as sess:
+        if form_edit.edit_submit.data:
+            if form_edit.validate():
+                edit_game_details(game, form_edit)
+                sess.commit()
+                return render(game)
+        elif form_delete.game_delete_submit.data:
+            if form_delete.validate():
+                delete_game_and_assets(game)
+                sess.commit()
+                flash(f"{game.name} and all assets deleted successfully")
+                return redirect(url_for("main.index"))
+            error_target = "del_game"
+        elif form_players.players.data:
+            if form_players.validate():
+                remove_player(game, form_players)
+                sess.commit()
+                return render(game)
+            error_target = "rm_player"
+        elif form_characters.characters.data:
+            if form_characters.validate():
+                remove_character(game, form_characters)
+                sess.commit()
+                return render(game)
+            error_target = "rm_character"
+        return render(
+            game,
+            form_edit=form_edit,
+            form_delete=form_delete,
+            form_players=form_players,
+            form_characters=form_characters,
+            error_target=error_target,
+        )
+
+
+def render(
+    game,
+    form_edit=None,
+    form_delete=None,
+    form_players=None,
+    form_characters=None,
+    error_target=None,
+):
+    """
+    Render the game's edit page
+
+    :param game: The SQLAlchemy game object
+    :param form_edit: The form that will be used to edit the game
+    :param form_delete: The form that will be used to delete the game
+    :param form_players: This is the form that will be used to remove players from the game
+    :param form_characters: This is the form that will be used to remove characters from the game
+    :param error_target: This is the 'data-form' attribute value attached to the form that has errors if applicable. Used to reveal said form.
+    """
+    if form_edit is None:
+        form_edit = Edit()
+    if form_delete is None:
+        form_delete = Delete()
+    if form_players is None:
+        form_players = RemovePlayer(choices=Games.get_player_list_from_id(game.id))
+    if form_characters is None:
+        form_characters = RemoveCharacter(choices=Games.get_PCs(game.id))
     return render_template(
         "edit/games/dm.html",
         game=game,
-        players=players,
         form_edit=form_edit,
         form_delete=form_delete,
         form_players=form_players,
         form_characters=form_characters,
-        heroku=set_heroku(),
+        error_target=error_target,
     )
 
 
-def game_dm_post(game_id):
-
-    form_edit = GameEdit()
-    form_delete = GameDelete()
-    form_players = GameManagePlayers()
-    form_characters = GameManageCharacters()
-
-    if form_edit.edit_submit.data:
-
-        GameDM.handle_edit(form_edit, game_id)
-
-    elif form_delete.game_delete_submit.data:
-
-        GameDM.handle_delete(form_delete)
-    elif form_players.player_submit.data:
-        with db_session():
-            user = Users.query.get(form_players.player_id.data)
-            pc_list = user.get_character_list_from_game(game_id)
-            pc_ids = [pc.id for pc in pc_list]
-
-            bridges = BridgeGameCharacters.query.filter_by(game_id=game_id).all()
-            [br.delete_self() for br in bridges if br.character_id in pc_ids]
-            # test_characters = user.get_character_list_from_game(game_id)
-
-            player = BridgeUserGames.query.filter_by(
-                game_id=game_id, user_id=user.id
-            ).first()
-            player.delete_self() if player else flash("Player does not exist")
-            # test_player = BridgeUserGames.query.filter_by(
-            #     game_id=game_id, user_id=user.id
-            # ).first()
-
-    elif form_characters.character_submit.data:
-        with db_session():
-            br = BridgeGameCharacters.query.filter_by(
-                game_id=game_id, character_id=form_characters.character_id.data
-            ).first()
-            br.delete_self() if br else flash("Character doesn't exist")
-    return redirect(url_for("edit.game_dm", game_id=game_id))
+def edit_game_details(game, form):
+    '''
+    Edit the game details
+    
+    :param game: The SQLAlchemy game object
+    :param form: The form object that was submitted
+    '''
+    game.name = form.name.data if form.name.data else game.name
+    game.published = form.published.data
+    if form.img.data:
+        img_id = Images.upload(form.img.name)
+        id_ = game.img_id
+        game.img_id = img_id
+        Images.query.get(id_).delete_self() if img_id else None
 
 
-class GameDM:
-    @staticmethod
-    def _failure(game_id):
-        return redirect(url_for("edit.game_dm", game_id=game_id))
+def delete_game_and_assets(g):
+    '''
+    Delete all the game's assets and then delete the game itself
 
-    @staticmethod
-    def _success(game_id):
-        return redirect(url_for("edit.game_dm", game_id=game_id))
+    :param g: The SQLAlchemy game instance of the game to delete
+    '''
+    [
+        br.delete_self()
+        for br in BridgeGameCharacters.query.filter_by(game_id=g.id).all()
+    ]
+    [br.delete_self() for br in BridgeGamePlaces.query.filter_by(game_id=g.id).all()]
+    [br.delete_self() for br in BridgeGameNPCs.query.filter_by(game_id=g.id).all()]
+    [br.delete_self() for br in BridgeGameItems.query.filter_by(game_id=g.id).all()]
+    [br.delete_self() for br in BridgeUserGames.query.filter_by(game_id=g.id).all()]
+    [nt.delete_self() for nt in Notes.query.filter_by(game_id=g.id).all()]
+    [se.delete_self() for se in Sessions.query.filter_by(game_id=g.id).all()]
+    g.delete_self()
 
-    @staticmethod
-    def validate_edit(form):
-        if form.name.data:
-            if not form_validators.Game.name(form.name.data):
-                return False
-        if form.img.data:
-            if not form_validators.Game.image(form.img.name):
-                return False
-        if type(form.published.data) is not bool:
-            flash("Data corrupted")
-            return False
-        return True
 
-    @staticmethod
-    def delete_old_image(image_id):
-        if image_id:
-            with db_session():
-                image = Images.query.get(image_id)
-                image.delete_self()
+def remove_player(game, form, no_flash=False):
+    '''
+    Remove a player and their characters from a game 
+    
+    :param game: The SQLAlchemy game instance of the game the player player is being removed from
+    :param form: The form that was submitted
+    :param no_flash: If True, don't flash messages, defaults to False (optional)
+    '''
 
-    @classmethod
-    def player_remove(cls, form):
+    player_to_rm = Users.query.get(form.players.data)
+    ptr_pcs = [c for c in player_to_rm.get_character_list_from_game(game.id)]
+    bgc = BridgeGameCharacters.query.filter_by(game_id=game.id).all()
+    br_ids = set([br.character_id for br in bgc])
+    pc_ids = set([c.id for c in ptr_pcs])
+    char_ids_to_rm = pc_ids.intersection(br_ids)
+    for br in bgc:
+        if br.character_id in char_ids_to_rm:
+            br.delete_self()
+    player = BridgeUserGames.query.filter_by(
+        game_id=game.id, user_id=player_to_rm.id
+    ).first()
+    player.delete_self()
+    if not no_flash:
+        [flash(f"{c.name} removed from {game.name}") for c in ptr_pcs]
+        flash(f"{player_to_rm.name} removed from {game.name}")
 
-        pass
 
-    @classmethod
-    def handle_edit(cls, form, game_id):
-
-        if not cls.validate_edit(form):
-            return cls._failure(game_id)
-        game = Games.query.get(game_id)
-        img_id = game.img_id
-        name = game.name
-        if form.img.data:
-            img_id = Images.upload(form.img.name)
-            old_id = game.img_id
-            cls.delete_old_image(old_id)
-        if form.name.data:
-            name = form.name.data
-        print(img_id, name, form.published.data)
-        game.update(img_id=img_id, name=name, published=form.published.data)
-
-        return cls._success(game_id)
-
-    @staticmethod
-    def handle_transfer(form, game_id):
-        game = Games.query.get(game_id)
-        if form.heir.data != "no_choice":
-            return
-        return
-
-    @staticmethod
-    def handle_delete(form):
-        return
+def remove_character(game, form):
+    '''
+    Remove a character from a game
+    
+    :param game: The SQLAlchemy game instance that the character is being removed from
+    :param form: The form object that was submitted
+    :param choices: a list of tuples, where each tuple is a character id and the associated character's name
+    '''
+    char_to_rm = BridgeGameCharacters.query.filter_by(
+        game_id=game.id, character_id=form.characters.data
+    ).first()
+    flash(f"{Characters.query.get(char_to_rm.character_id).name} removed from {game.name}")
+    char_to_rm.delete_self()

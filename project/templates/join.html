@@ -1,62 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
 <script src="{{ url_for('static', filename='js/join.js') }}"></script>
-        
 <div class="container">
-    
     <div class="app-container">
-
         {% if games %}
-            <h1>Public Games</h1>
+        <h1>Public Games</h1>
         {% endif %}
         {% if games %}
-            <div class="games">
-                <div class="game">
-                    <p>Choose a game to get started</p>
-                    <ul>
-                        {% for game in games %}
-                            <li id="selectGame_{{game.id}}" class="select_game">
-                                <a>
-                                    <img class="index_game_image" src="{{game.image}}">
-                                    {{game.name}}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                        
-                </div>
+        <div class="games">
+            <div class="game">
+                <p>Choose a game to get started</p>
+                <ul>
+                    {% for game in games %}
+                    <li id="selectGame_{{game.id}}" class="select_game">
+                        <a><img class="index_game_image" src="{{game.image}}">
+                            {{game.name}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+
             </div>
+        </div>
         {% else %}
         <div class="welcome">
             <h2><span>Uh Oh!</span> </h2>
-            <p>Looks like there aren't any games available. You should <a href="{{ url_for('create.game') }}" >make one!</a></p>
+            <p>Looks like there aren't any games available. You should <a href="{{ url_for('create.game') }}">make
+                    one!</a></p>
         </div>
         {% endif %}
     </div>
 </div>
 {% if games %}
-
-    {% for game in games %}
-
-        <div id="confirmCard_{{game.id}}" class="confirm_card hidden shroud">
-            <div class="modal-container">
-                <div class="modal">
-                    <img src="{{game.image}}">
-                    <div class="content">
-                        <h2><span>{{game.name}}</span></h2>
-                        <p>Join this game?</p>
-                        <div class="button-row">
-                            <a class="game_cancel button secondary">Cancel</a>
-                            <a class="game_confirm button primary" href="{{ url_for('join.joining', game_id=game.id, game_name=game.name) }}" >Confirm</a>
-                        </div>
-                        
-                    </div> 
+{% for game in games %}
+<div id="confirmCard_{{game.id}}" class="confirm_card hidden shroud">
+    <div class="modal-container">
+        <div class="modal">
+            <img src="{{game.image}}">
+            <div class="content">
+                <h2><span>{{game.name}}</span></h2>
+                <p>Join this game?</p>
+                <div class="button-row">
+                    <a class="game_cancel button secondary">Cancel</a>
+                    <a class="game_confirm button primary"
+                        href="{{ url_for('join.joining', game_id=game.id, game_name=game.name) }}">Confirm</a>
                 </div>
             </div>
         </div>
-
-    {% endfor %}
-
+    </div>
+</div>
+{% endfor %}
 {% endif %}
-
 {% endblock %}

@@ -1,102 +1,102 @@
 {% extends "base.html" %}
 {% block content %}
+{% from "_formhelpers.html" import render_field %}
 <style>
     .hidden {
         display: none !important;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
-    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
-    crossorigin="anonymous"></script>
 <script>
     const game_id = {{ game.id }};
-    const heroku = {{ heroku|tojson}};
-    const players = {{ players|tojson }};
+    const game_name = "{{ game.name }}";
+    const error_target = {{ error_target|tojson }};
+    let players = false;
+    if ({{ form_players.players.choices|length }} > 0) {
+        players = true;
+    }
 </script>
-<script src="{{ url_for('static', filename='js/edit_game.js') }}"></script>
-<img src="{{game.image}}">
-<div class="container">
-    <div class="app-container">
-        <h1>{{game.name}}:</h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/edit/game_dm/form_setup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/edit/game_dm/reveal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/edit/game_dm/submit.js') }}"></script>
+<script src="{{ url_for('static', filename='js/edit/game_dm/image_update.js') }}"></script>
 
-        <div class="game">
-            <h2>Edit Game:</h2>
 
 
-            <form enctype="multipart/form-data" method='POST'>
-                <div class="row checkbox">
-                    {{ form_edit.published (data_published=game.published|string) }}
-                    {{ form_edit.published.label }}
-                </div>
-                <a href="#" data-change_name="button" class="button primary">Change Name</a>
-                <div data-change_name="input" class="row hidden">
-                    {{ form_edit.hidden_tag() }}
-                    {{ form_edit.name.label }}
-                    {{ form_edit.name }}
-                </div>
-                <a href="#" data-change_img="button" class="button primary">Change Image</a>
 
-                <div class="row hidden" data-change_img="input">
-                    {{ form_edit.img.label }}
-                    {{ form_edit.img }}
-                </div>
-                <div class="row">
-                    {{ form_edit.edit_submit (class="button primary") }}
-                </div>
-            </form>
-            {% if players %}
-                
-            <h2>Manage Players:</h2>
-            <div>
-                <a href="#" class="button primary" data-remove_player="button">Remove Player</a>
-                <a href="#" class="button primary" data-remove_character="button">Remove Character</a>
-            </div>
-            <form class="hidden" data-flag="remove_player">
-                <h2> Select player to remove player from {{game.name}} </h2>
-                <div class="row">
-                    {{ form_players.players.label }}
-                    {{ form_players.players}}
-                </div>
-                <div class="row">
-                    <a href="#" class="button primary" data-flag="remove_player_select_button">Remove Player</a>
-                    <a href="#" class="button primary" data-flag="remove_player_cancel_button">Cancel</a>
-                </div>
-            </form method="POST">
-            <div data-flag="remove_player_cont" class="confirm-form hidden">
-                <form method="POST">
-                    <h2 data-flag="remove_player_header"></h2>
-                    <div class="row">
-                        {{ form_players.player_id (data_flag="player_remove_hidden")}}
-                        {{ form_players.player_submit (class="button primary") }}
-                        <a href="#" class="button primary" data-flag="remove_player_cancel">Cancel</a>
-                    </div>
-                </form>
-            </div>
-            <form method="POST" class="hidden" data-flag="remove_character">
-                <h2> Remove Character from {{game.name}} </h2>
-                <div class="row">
-                    {{ form_characters.characters.label }}
-                    {{ form_characters.characters }}
-                </div>
-                <div class="row">
-                    <a href="#" class="button primary" data-flag="remove_character_select_button">Remove Character</a>
-                    <a href="#" class="button primary" data-flag="remove_character_cancel_button">Cancel</a>
-                </div>
-            </form>
-
-            <div data-flag="remove_character_cont" class="confirm-form hidden">
-                <form method="POST">
-                    <h2 data-flag="remove_character_header"></h2>
-                    <div class="row">
-                        {{ form_characters.character_id (data_flag="character_remove_hidden")}}
-                        {{ form_characters.character_submit (class="button primary") }}
-                        <a href="#" class="button primary" data-flag="remove_character_cancel">Cancel</a>
-                    </div>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-    </div>
+<img data-flag="game_img" src="{{game.image}}">
+<h1>{{game.name}}:</h1>
+<div data-form="edit_game">
+    <form enctype="multipart/form-data" method='POST'>
+        {{ form_edit.hidden_tag() }}
+        {{ render_field(form_edit.published, data_published=game.published|string) }}
+        <a href="#" data-reveal="name" class="button primary">Change Name</a>
+        {{ render_field(form_edit.name, cls_dv="row hidden", flag_dv="name") }}
+        <a href="#" data-reveal="img" class="button primary">Change Image</a>
+        {{ render_field(form_edit.img, cls_dv="row hidden", flag_dv="img") }}
+        {{ render_field(form_edit.submit) }}
+    </form>
 </div>
+
+<div data-form="del_game">
+    <a href="#" data-reveal="confirm" class="button primary">Delete Game</a>
+    <form method='POST' class="hidden" data-form="del_game" data-cancel="" data-remove="" data-flag="confirm">
+        {{ form_edit.hidden_tag() }}
+        {{ form_delete.game_name (value=game.name) }}
+        {{ render_field(form_delete.confirm, placeholder="Confirm Deletion", autofill=false) }}
+        <p>This will delete all Notes and Sessions associated with the game.</p>
+        <p>This cannot be undone!!</p>
+        {{ render_field(form_delete.game_delete_submit) }}
+        <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
+    </form>
+</div>
+{% if form_players.players.choices and form_players.players.choices|length > 0 %}
+<div data-form="rm_player">
+    <a href="#" class="button primary" data-reveal="rm_player">Remove Player</a>
+    <form method="POST" class="hidden" data-form="rm_player" data-cancel="" data-remove="submit" data-flag="rm_player">
+        <h2> Select player to remove player from {{game.name}} </h2>
+        {{ form_players.hidden_tag() }}
+        {{ render_field(form_players.players) }}
+        {{ render_field(form_players.game_id, value=game.id) }}
+        <div class="row">
+            {{ form_players.submit(class="button-primary") }}
+            <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
+        </div>
+    </form>
+    <form class="hidden" data-cancel="" data-confirm="rm_player">
+        <h2 data-flag="header"></h2>
+        <a href="#" class="button primary" data-confirm="rm_player">Confirm</a>
+        <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
+    </form>
+</div>
+
+    {% if form_characters.characters.choices and form_characters.characters.choices|length > 0 %}
+    <div data-form="rm_character">
+        <a href="#" class="button primary" data-reveal="rm_character">Remove Character</a>
+        <form method="POST" class="hidden" data-form="rm_character" data-cancel="" data-remove="submit" data-flag="rm_character">
+            <h2> Remove Character from {{game.name}} </h2>
+            {{ form_characters.hidden_tag() }}
+            {{ render_field(form_characters.characters) }}
+            {{ render_field(form_characters.game_id, value=game.id) }}
+            <div class="row">
+                {{ form_characters.character_submit }}
+                <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
+            </div>
+        </form>
+        <form class="hidden" data-cancel="" data-confirm="rm_character">
+            <h2 data-flag="header"></h2>
+            <div class="row">
+                <a href="#" class="button primary" data-confirm="rm_character">Confirm</a>
+                <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+{% endif %}
+
+
+
 
 {% endblock %}

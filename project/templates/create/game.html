@@ -7,18 +7,13 @@
         <form  enctype="multipart/form-data" method='POST'>
 
             <h1>Create your game!</h1>
-                {{ gameform.hidden_tag() }}
-                {{ render_field(gameform.name) }}
-                {{ render_field(gameform.img) }}
-            <div class="row checkbox">
-                {{ gameform.published }}
-                {{ gameform.published.label }}
-            </div>
-                {{  render_field(gameform.gamesubmit, cls_in="button primary", no_label=true) }}
+            {{ gameform.hidden_tag() }}
+            {{ render_field(gameform.name) }}
+            {{ render_field(gameform.img) }}
+            {{ render_field(gameform.published, check=true) }}
+            {{ render_field(gameform.gamesubmit) }}
         </form>
     </div>
 </div>
     
-
-
 {% endblock %}

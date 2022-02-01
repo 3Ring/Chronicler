@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+<div class="form-container">
+    <form method='POST'>
+        <h1>Permanently Delete Account</h1>
+        <h2>To permantently delete account type in your email below and submit.</h2>
+        <h2>There is no going back from this!</h2>
+
+            {{ form.hidden_tag() }}
+            {{ render_field(form.confirm, placeholder="email") }}
+            {{ render_field(form.user_delete_submit) }}
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,74 +1,63 @@
 {% extends 'base.html' %}
 {% block content %}
+{% from "_formhelpers.html" import render_field %}
 
-    <script src="{{url_for('static', filename='js/edit_account.js')}}">
-
+    <script src="{{url_for('static', filename='js/edit_account.js')}}"></script>
+    {% if name_form.name.errors %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("div[data-reveal='name']").classList.remove("hidden");
+        });
     </script>
+    {% endif %}
+    {% if email_form.email.errors %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("div[data-reveal='email']").classList.remove("hidden");
+        });
+    </script>
+    {% endif %}
+    {% if pass_form.password.errors or pass_form.confirm.errors %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("div[data-reveal='pass']").classList.remove("hidden");
+        });s
+    </script>
+    {% endif %}
     <style>
         .hidden {
             display: none !important; 
         }
     </style>
 
-{% if name_form.name.errors %}
-    <ul class="errors">
-    {% for error in name_form.name.errors %}
-        <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
-{% if email_form.email.errors %}
-    <ul class="errors">
-    {% for error in email_form.email.errors %}
-        <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
-{% if pass_form.password.errors %}
-    <ul class="errors">
-    {% for error in pass_form.password.errors %}
-        <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
 <div class="container">
     <h1>Change Account info:</h1>
     <div>
         <h2>
             Name:
         </h2>
-        <h3>{{ user.name }}</h3>
+        <h3>{{ current_user.name }}</h3>
         <a href="#" data-edit="name">edit</a>
     </div>
     <div class="form-container hidden" data-reveal="name">
         <form method='POST'>
             {{ name_form.hidden_tag() }}
-            <div class="row">
-                {{ name_form.name.label(class="form-label") }}
-                {{ name_form.name(class="form-control", value=user.name) }}
-            </div>
-            <div class="row">
-                {{ name_form.user_edit_name_submit(class="button primary") }}
-            </div>
+            {{ render_field(name_form.name, value=current_user.name) }}
+            {{ render_field(name_form.user_edit_name_submit) }}
         </form>
     </div>
     <div>
         <h2>
             Email:
         </h2>
-        <h3>{{ user.email }}</h3>
+        <h3>{{ current_user.email }}</h3>
         <a href="#" data-edit="email">edit</a>
     </div>
     <div class="form-container hidden" data-reveal="email">
         <form method='POST'>
             {{ email_form.hidden_tag() }}
-            <div class="row">
-                {{ email_form.email.label(class="form-label") }}
-                {{ email_form.email(class="form-control", value=user.email) }}
-            </div>
-            <div class="row">
-                {{ email_form.user_edit_email_submit(class="button primary") }}
-            </div>
+            {{ render_field(email_form.email, value=current_user.email) }}
+            {{ render_field(email_form.user_edit_email_submit) }}
         </form>
     </div>
     <div>
@@ -79,31 +68,18 @@
     <div class="form-container hidden" data-reveal="pass">
         <form method='POST'>
             {{ pass_form.hidden_tag() }}
-            <div class="row">
-                {{ pass_form.password.label(class="form-label") }}
-                {{ pass_form.password(class="form-control", autocomplete="new-password") }}
-            </div>
-            
-            <div class="row">
-                {{ pass_form.confirm.label(class="form-label") }}
-                {{ pass_form.confirm(class="form-control", autocomplete="new-password") }}
-            </div>
-            <div class="row checkbox">
-                {{ pass_form.reveal }} {{ pass_form.reveal.label}}
-            </div>
-            <div class="row">
-                {{ pass_form.user_edit_password_submit(class="button primary") }}
-            </div>
+            {{ render_field(pass_form.password, autocomplete="new-password") }}
+            {{ render_field(pass_form.confirm, autocomplete="new-password") }}
+            {{ render_field(pass_form.reveal, check=true) }}
+            {{ render_field(pass_form.user_edit_password_submit) }}
         </form>
     </div>
     <div class="form-container">
         <form method='POST'>
             <h1>Delete Account:</h1>
-            {{ del_form.hidden_tag() }}
             <h2>This will take you to another page to confirm and delegate assets</h2>
-            <div class="row">
-                {{ del_form.user_delete_submit(class="button primary") }}
-            </div>
+            {{ del_form.hidden_tag() }}
+            {{ render_field(del_form.user_delete_submit) }}
         </form>
     </div>
 </div>

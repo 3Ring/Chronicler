@@ -27,22 +27,22 @@ login_manager = config_fl()
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
 
-    # try:
-    app = Flask(__name__)
-    config_app(app)
-    db.init_app(app)
-    migrate_.init_app(app, db, compare_type=True)
-    login_manager.init_app(app)
-    init_admin(admin, db)
-    admin.init_app(app, AdminIndex())
-    socketio.init_app(app)
-    init_blueprints(app)
+    try:
+        app = Flask(__name__)
+        config_app(app)
+        db.init_app(app)
+        migrate_.init_app(app, db, compare_type=True)
+        login_manager.init_app(app)
+        init_admin(admin, db)
+        admin.init_app(app, AdminIndex())
+        socketio.init_app(app)
+        init_blueprints(app)
 
-    update_db(app, test_config)
+        update_db(app, test_config)
 
-    from project.setup_.base_items import Base_items
-    Base_items.init_database_assets(app)
-    
-    return app
-    # except Exception as e:
-    #     print(e)
+        from project.setup_.base_items import Base_items
+        Base_items.init_database_assets(app)
+        
+        return app
+    except Exception as e:
+        print(e)

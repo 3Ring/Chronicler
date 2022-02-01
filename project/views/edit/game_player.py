@@ -1,151 +1,109 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, flash
 from flask_login import current_user
-from project.forms.edit_character import CharEdit
-from project.forms.edit_game_player import CharAdd, CharRemove, LeaveGame
-from project import form_validators
 
-from project.models import Characters, Games
+from project.forms.create_character import CharCreate
+from project.forms.edit_game_player import CharAdd
+from project.forms.edit_dm_game import RemoveCharacter
+from project.models import BridgeGameCharacters, Characters
+from project.helpers.db_session import db_session
+from project.views.edit.game_dm import remove_character
+from project.views.create.character import create_character
 
 
-def add_remove_get(game_id):
-    if Player.not_authorized(game_id):
-        return redirect(url_for(Player.not_authorized))
-    game = Games.query.get(game_id)
-    charform = CharEdit()
-    resources = Player.get_resources(game_id)
-    game_characters = Games.get_personal_game_list_player(current_user.id)
-    last_character = False
-    if len(resources["remove"]) == 1:
-        last_character = resources["remove"][0]
+def add_remove_get(game):
+    '''
+    GET request function for "edit/games/add_remove.html"
 
+    This function is used to add and remove characters from a game. 
+    :param game: The SQLAlchemy game object
+    :return: A rendered template with the game and forms.
+    '''
+    return render(game)
+
+
+def add_remove_post(game):
+    '''
+    POST request function for "edit/games/add_remove.html"
+    This function is used to add and remove characters from a game. 
+    
+    :param game: The SQLAlchemy game object
+    :return: A rendered template with the game and forms.
+    '''
+    with db_session() as sess:
+        charform = CharCreate(prefix="a")
+        choices = make_choices(game)
+        addform = CharAdd(prefix="b", game_id=game.id, choices=choices)
+        removeform = RemoveCharacter(
+            prefix="c",
+            game_id=game.id,
+            choices=current_user.get_character_list_from_game(game.id),
+        )
+        if addform.submit.data:
+            if addform.validate():
+                Characters.add_character_to_game(addform.character.data, game.id)
+                flash(
+                    f"{Characters.query.get(addform.character.data).name} added to {game.name}!"
+                )
+                return render(game)
+        elif charform.submit.data:
+            if charform.validate():
+                new = create_character(charform)
+                sess.flush()
+                Characters.add_character_to_game(new.id, game.id)
+                flash(f"{new.name} successfully added to {game.name}")
+                return render(game)
+        elif removeform.submit.data:
+            if removeform.validate():
+                remove_character(game, removeform)
+                return render(game)
+        return render(game, charform=charform, addform=addform, removeform=removeform)
+
+
+def render(game, charform=None, addform=None, removeform=None):
+    '''
+    This function renders the add/remove character page for a game
+
+    :param game: The SQLAlchemy game object
+
+    :param charform: The form that allows you to create a new character
+    :param addform: The form that allows you to add an existing character to the game
+    :param removeform: The form that will be used to remove characters from the game
+    :return: The rendered template.
+    '''
+    if charform is None:
+        charform = CharCreate(prefix="a")
+    if addform is None:
+        choices = make_choices(game)
+        addform = CharAdd(prefix="b", game_id=game.id, choices=choices)
+
+    if removeform is None:
+        removeform = RemoveCharacter(
+            prefix="c",
+            game_id=game.id,
+            choices=current_user.get_character_list_from_game(game.id),
+        )
     return render_template(
         "edit/games/add_remove.html",
         game=game,
-        addform=resources["addform"],
-        my_characters=resources["my_characters"],
-        game_characters=game_characters,
+        addform=addform,
         charform=charform,
-        removeform=resources["removeform"],
-        last_character=last_character,
+        removeform=removeform,
     )
 
 
-def add_remove_post(game_id):
-    from project.views.join.join_game import Joining
-
-    if Player.not_authorized(game_id):
-        return redirect(url_for(Player.not_authorized))
-    game = Games.query.get(game_id)
-    addform = CharAdd()
-    charform = CharEdit()
-    delform = CharRemove()
-    if addform.char_add_submit.data:
-        message = Joining.handle_add(addform, game_id)
-        if type(message) is not str:
-            return Player.success(
-                game_id, f"{addform.character.name} successfully added to {game.name}"
-            )
-        return Player.failure(game_id, message)
-    elif charform.char_submit.data:
-        message = Joining.handle_create(charform, game_id)
-        if type(message) is not str:
-            return Player.success(
-                game_id, f"{addform.character.name} successfully added to {game.name}"
-            )
-    else:
-        return manage_remove_character(game, delform.character.data)
-
-
-def manage_remove_character(game, character_id):
-    if not Games.remove_character_from_id(character_id):
-        return Player.failure(f"unable to remove character from {game.name}")
-    name = Characters.query.get(character_id).name
-    return Player.success(game.id, f"{name} removed from {game.name} successfully")
-
-
-def leave_get(game_id):
-    if Player.not_authorized(game_id):
-        return redirect(url_for(Player.not_authorized))
-    game = Games.query.get(game_id)
-    leaveform = LeaveGame()
-    return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
-
-
-def leave_post_(game_id):
-    if Player.not_authorized(game_id):
-        return redirect(url_for(Player.not_authorized))
-    leaveform = LeaveGame()
-    return handle_leave(game_id, leaveform)
-
-
-def handle_leave(game_id, form):
-    message = form_validators.Game.leave(form)
-    if type(message) is str:
-        return Player.leave_failure(game_id, message)
-    game_name = Games.query.get(game_id).name.lower().strip()
-    confirm = form.confirm.data.lower().strip()
-    if confirm != game_name:
-        return Player.leave_failure(game_id, f"{confirm} does not match {game_name}")
-    Games.remove_player(current_user.id, game_id)
-    return Player.leave_success(game_id, f"You are no longer part of {game_name}")
-
-
-class Player:
-
-    not_authorized_url = "profile.player"
-
-    @staticmethod
-    def success(game_id, message=None):
-        if message:
-            flash(message)
-        return redirect(url_for("edit.add_remove", game_id=game_id))
-
-    @staticmethod
-    def failure(game_id, message=None):
-        if message:
-            flash(message)
-        return redirect(url_for("edit.add_remove", game_id=game_id))
-
-    @staticmethod
-    def leave_success(game_id, message=None):
-        if message:
-            flash(message)
-        return redirect(url_for("profile.player", game_id=game_id))
-
-    @staticmethod
-    def leave_failure(game_id, message=None):
-        if message:
-            flash(message)
-        return redirect(url_for("edit.leave", game_id=game_id))
-
-    @staticmethod
-    def not_authorized(game_id):
-        user_list = Games.get_player_list_from_id(game_id)
-        for user in user_list:
-            if current_user.id == user.id:
-                return False
-        return True
-
-    @staticmethod
-    def get_resources(game_id):
-
-        addform = CharAdd()
-        removeform = CharRemove()
-        add = []
-        ids = []
-
-        remove_list = Characters.get_player_character_list_for_game(game_id)
-        add_list = Characters.get_list_from_user(current_user.id)
-        for player in remove_list:
-            ids.append(player.id)
-        for character in add_list:
-            if character.id not in ids:
-                add.append(character)
-        addform.character.choices = [(g.id, g.name) for g in add]
-        removeform.character.choices = [(g.id, g.name) for g in remove_list]
-        return {
-            "my_characters": add,
-            "removeform": removeform,
-            "addform": addform,
-            "remove": remove_list,
-        }
+def make_choices(game):
+    '''
+    It returns a list of characters that are not in the game.
+    
+    :param game: The SQLAlchemy game object
+    :return: A list of characters that are not in the game.
+    '''
+    characters = Characters.query.filter_by(user_id=current_user.id).all()
+    bridges = BridgeGameCharacters.query.filter_by(game_id=game.id).all()
+    hm = {}
+    [hm.update({b.character_id: True}) for b in bridges]
+    choices = []
+    for c in characters:
+        if not hm.get(c.id, None) and not c.avatar and not c.dm:
+            choices.append(c)
+    return choices

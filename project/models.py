@@ -16,26 +16,6 @@ from project.setup_ import defaults as d
 ###           Base classes         ####
 #######################################
 
-# class ViewsMixin:
-#     pass
-    # @staticmethod
-    # def failure(url, message=None, **kwarg):
-    #     """redirects user to url and flashes message"""
-    #     if message:
-    #         flash(message)
-    #     if kwarg:
-    #         return redirect(url_for(url, **kwarg))
-    #     return redirect(url_for(url))
-
-    # @staticmethod
-    # def success(url, message=None, **kwarg):
-    #     """redirects user to url and flashes message"""
-    #     if message:
-    #         flash(message)
-    #     if kwarg:
-    #         return redirect(url_for(url, **kwarg))
-    #     return redirect(url_for(url))
-
 
 class SAWithImageMixin:
     def attach_image(self):
@@ -62,7 +42,6 @@ class SABaseMixin:
     # @classmethod
     # def get_from_id(cls, id_: int):
     #     return cls.query.filter_by(id=id_).first()
-
 
     @classmethod
     def create(cls, **kw):
@@ -185,7 +164,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
     #     self.password = password
     #     # db.session.commit()
 
-
     @staticmethod
     def add_to_game(user_id: int, game_id: int) -> object:
         """adds user to join table and returns bridge object"""
@@ -254,7 +232,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         self.orphan_attached()
         db.session.delete(self)
 
-
     def orphan_attached(self):
         """orphans all attached items"""
 
@@ -281,7 +258,6 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
         bridgeug = BridgeUserGames.query.filter_by(user_id=self.id).all()
         for ug in bridgeug:
             db.session.delete(ug)
-
 
     def get_character_list_from_game(
         self, game_id: int, include_removed: bool = False
@@ -378,28 +354,28 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         game_lists = {}
 
         game_lists["player_list"] = user.get_game_list_player()
-
-        # game_lists["player_list"]=Games.query.filter(
-        #     Games.dm_id != User.id,
-        #     Games.id.in_(
-        #     BridgeUserGames.query.with_entities(BridgeUserGames.game_id).
-        #     filter(BridgeUserGames.user_id.in_(
-        #     Users.query.with_entities(
-        #     Users.id).filter_by(
-        #     id=User.id))))
-        # ).all()
         game_lists["dm_list"] = user.get_game_list_dm()
         return game_lists
 
     @staticmethod
     def get_player_list_from_id(game_id: int) -> list:
+        """
+        Given a game_id, return a list of all the players in the game, except the DM.
+
+        :param game_id: Games.id
+        :return: A list of users in the game.
+        """
         join = BridgeUserGames.join(game_id, "game_id", "user_id")
-        game = Games.query.get(game_id)
-        for i, user in enumerate(join):
-            if user.id == game.dm_id:
-                join.pop(i)
-                break
-        return join
+        dm_id = Games.get_dmID_from_gameID(game_id)
+        return [u for u in join if u.id > 0 and u.id != dm_id]
+
+    @staticmethod
+    def add_player_to_game(game_id: int, user_id: int) -> None:
+        """Adds player to game by creating BridgeUserGames object"""
+        if not BridgeUserGames.query.filter_by(
+            game_id=game_id, user_id=user_id
+        ).first():
+            BridgeUserGames.create(game_id=game_id, user_id=user_id)
 
     @classmethod
     def remove_player(cls, user_id: int, game_id: int):
@@ -478,6 +454,16 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             if game.dm_id != current_user.id:
                 final_list.append(game)
         return final_list
+
+    @staticmethod
+    def get_PCs(game_id: int) -> list:
+        """return a list of PCs for the game."""
+        characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
+        for i, c in enumerate(characters):
+            if c.dm:
+                characters.pop(i)
+                break
+        return characters
 
     @classmethod
     def _fill_bugs(cls):
@@ -585,6 +571,14 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         self.attach_image()
 
 
+@event.listens_for(Games, "refresh")
+def init_on_refresh(target, args, kwargs):
+    """attach image string to instanced game"""
+    img = Images.query.get(target.img_id)
+    if img:
+        target.image = img.img_string
+
+
 class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     name = db.Column(db.String(50), nullable=False)
@@ -611,7 +605,6 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     img_object = d.Character.img_object
     image = d.Character.image
 
-
     def get_my_games(self) -> list:
         """returns a list of all games self is attached to"""
         return BridgeGameCharacters.join(self.id, "character_id", "game_id")
@@ -621,9 +614,8 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
             character_id=self.id, game_id=game_id
         ).first()
         if bridge:
-                raise BaseException("character already in game")
+            raise BaseException("character already in game")
         BridgeGameCharacters.create(character_id=self.id, game_id=game_id)
-
 
     def _delete_attached(self, confirm: bool = False):
         """deletes all attached items
@@ -659,11 +651,8 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def add_character_to_game(cls, character_id: int, game_id: int):
-        adding = cls.query.get(character_id)
-        if adding:
-            if adding.add_to_game(game_id):
-                return True
-        return False
+        BridgeGameCharacters.create(character_id=character_id, game_id=game_id)
+
 
     @classmethod
     def get_list_from_user(
@@ -776,7 +765,6 @@ class Notes(SABaseMixin, db.Model):
     )
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=False)
-
 
     @classmethod
     def get_list_from_session_number(cls, session_number, game_id):

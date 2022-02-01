@@ -1,24 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
+{% from "_formhelpers.html" import render_field %}
 
 <div class="container">
     <div class="form-container">
-        {% from "_formhelpers.html" import render_field %}
         <form method="POST">
             <h1>Log in</h1>
             {{ form.hidden_tag() }}
             {{ render_field(form.email) }}
-
             {{ render_field(form.password) }}
-            <div class="checkbox row">
-                {{ form.remember }}
-                {{ form.remember.label(class="form-label") }}
-            </div>
-            <div class="row">
-                {{ form.login_submit(class="button primary") }}
-            </div>
+            {{ render_field(form.remember, check=true) }}
+            {{ render_field(form.login_submit) }}
             <h6>Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a></h6>
         </form>
     </div>
 </div>
+
 {% endblock %}

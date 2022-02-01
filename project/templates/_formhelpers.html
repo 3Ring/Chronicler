@@ -1,13 +1,28 @@
-{% macro render_field(field, cls_lb="form-label", cls_in="form-control", cls_dv="row", cls_er="errors", value="", no_label=false) %}
+{% macro render_field(
+field,
+cls_lb="form-label",
+cls_submit="button-primary",
+cls_in="form-control",
+cls_dv="row",
+cls_er="errors",
+flag_dv="",
+check=false
+) %}
+{% if check and cls_dv == "row" %}
+{% set cls_dv = "row checkbox"%}
+{% endif %}
 
-<div class="{{ cls_dv }}">
-    {% if not no_label %}
+<div class="{{ cls_dv }}" data-flag="{{ flag_dv }}">
+
+
+    {% if field.type == "SubmitField" or field.type == "HiddenField" %}
+    {{ field(class=cls_submit, **kwargs)|safe }}
+    {% elif check %}
+    {{ field(class=cls_in, **kwargs)|safe }}
     {{ field.label(class=cls_lb) }}
-    {% endif %}
-    {% if field.type == "SubmitField" %}
-        {{ field(class=cls_in, **kwargs)|safe }}
     {% else %}
-        {{ field(class=cls_in, value=value, **kwargs)|safe }}
+    {{ field.label(class=cls_lb) }}
+    {{ field(class=cls_in, **kwargs)|safe }}
     {% endif %}
 </div>
 {% if field.errors %}
@@ -17,5 +32,4 @@
     {% endfor %}
 </ul>
 {% endif %}
-</dd>
 {% endmacro %}

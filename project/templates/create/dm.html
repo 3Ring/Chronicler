@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+{% from "_formhelpers.html" import render_field %}
 
 <div class="container">
     <div class="form-container">
-<h1>{{game.name}}</h1>
-<img src="{{game.image}}">
+        <h1>{{game.name}}</h1>
+        <img src="{{game.image}}">
         <form  enctype="multipart/form-data" method='POST'>
-            {% from "_formhelpers.html" import render_field %}
-
             <h1>Personalize your "DM" avatar</h1>
             {{ form.hidden_tag() }}
             {{ render_field(form.name, value="DM") }}
             {{ render_field(form.img) }}  
             <img src="{{dm_default_image}}">
-            {{ render_field(form.dm_char_submit, cls_in="button primary", no_label=true) }}
+            {{ render_field(form.dm_char_submit) }}
         </form>
     </div>
 </div>

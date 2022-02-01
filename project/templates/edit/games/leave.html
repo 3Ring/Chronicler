@@ -1,3 +1,4 @@
+{% from "_formhelpers.html" import render_field %}\
 {% extends "base.html" %}
 {% block content %}
 
@@ -5,14 +6,9 @@
     <h1>Leave {{game.name}}</h1>
     <h2>Your notes will remain for all to view</h2>
     <h2>Confirm by entering the game name below</h2>
-    <div class="row">
         {{ leaveform.hidden_tag() }}
-        {{ leaveform.confirm.label }}
-        {{ leaveform.confirm }}
-    </div>
-    <div class="row">
-        {{ leaveform.leave_submit (class="button primary") }}
-    </div>
+        {{ render_field(leaveform.confirm) }}
+        {{ render_field(leaveform.submit) }}
 </form>
 
 {% endblock %}

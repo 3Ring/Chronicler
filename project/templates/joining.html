@@ -1,64 +1,29 @@
-0{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var options = document.getElementsByTagName("select");
-        if (options) {
-            let el = document.createElement("option");
-            el.setAttribute("selected", true);
-            el.setAttribute('hidden', true);
-            el.setAttribute('value', "");
-            el.innerHTML = "Choose Your Character"
-            options[0].insertAdjacentElement("afterbegin", el);
-        }
-    });
-</script>
+{% from "_formhelpers.html" import render_field %}
+<script src="{{ url_for('static', filename='js/joining.js') }}"></script>
 
 <div class="container">
     <div class="form-container">
-
         <img src="{{game.image}}">
-
         {% if my_characters %}
-        <form method='POST'>
-
-            <h1>Add Character From Your Characters</h1>
-            <div class="row">
+            <form method='POST'>
+                <h1>Add Character From Your Characters</h1>
                 {{ addform.hidden_tag() }}
-                {{ addform.character.label }}
-                {{ addform.character }}
-            </div>
-            <div class="row">
-                {{ addform.char_add_submit (class="button primary") }}
-            </div>
-        </form>
-        <h1>or</h1>
+                {{ render_field(addform.character) }}
+                {{ render_field(addform.char_add_submit) }}
+            </form>
+            <h1>or</h1>
         {% endif %}
         
         <form enctype="multipart/form-data" method='POST'>
-
             <h1>Create a New Character!</h1>
-            <div class="row">
-                {{ charform.hidden_tag() }}
-                {{ charform.name.label }}
-                {{ charform.name }}
-            </div>
-
-            <div class="row">
-                {{ charform.img.label }}
-                {{ charform.img }}
-            </div>
-
-            <div class="row">
-                {{ charform.bio.label }}
-                {{ charform.bio }}
-            </div>
-
-            <div class="row">
-                {{ charform.char_submit (class="button primary") }}
-            </div>
+            {{ charform.hidden_tag() }}
+            {{ render_field(charform.name) }}
+            {{ render_field(charform.img) }}
+            {{ render_field(charform.bio) }}
+            {{ render_field(charform.char_submit) }}
         </form>
-
     </div>
 </div>
 

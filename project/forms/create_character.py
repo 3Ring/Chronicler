@@ -34,4 +34,4 @@ class CharCreate(FlaskForm):
             ),
         ],
     )
-    char_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")

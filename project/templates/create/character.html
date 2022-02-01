@@ -5,17 +5,13 @@
 <div class="container">
     <div class="form-container">
         <form  enctype="multipart/form-data" method='POST' action='/create/character'>
-
             <h1>Create Character!</h1>
-                {{ form.hidden_tag() }}
-                {{ render_field(form.name) }}
-                {{ render_field(form.img) }}  
-                {{ render_field(form.bio) }}
-            <div class="row">
-                {{ form.char_submit (class="button primary") }}
-            </div>
+            {{ form.hidden_tag() }}
+            {{ render_field(form.name) }}
+            {{ render_field(form.img) }}  
+            {{ render_field(form.bio) }}
+            {{ render_field(form.char_submit) }}
         </form>
-
     </div>
 </div>
 {% endblock %}

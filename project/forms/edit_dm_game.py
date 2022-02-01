@@ -2,10 +2,17 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, SelectField
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.fields.simple import HiddenField
-from wtforms.validators import Length, Optional
+from wtforms.validators import (
+    Length,
+    Optional,
+    DataRequired,
+    InputRequired,
+)
+
+from project.forms import validators as v
 
 
-class GameEdit(FlaskForm):
+class Edit(FlaskForm):
     name = StringField(
         "Change your game's name",
         validators=[
@@ -28,18 +35,47 @@ class GameEdit(FlaskForm):
     edit_submit = SubmitField("Submit Changes")
 
 
-class GameDelete(FlaskForm):
-    name = StringField("Confirm here")
+class Delete(FlaskForm):
+    confirm = StringField(
+        "Confirm deletion by entering game name here",
+        validators=[DataRequired(), v.delete_game_confirm],
+    )
     game_delete_submit = SubmitField("Delete")
+    # used for form validation
+    game_name = HiddenField()
 
 
-class GameManagePlayers(FlaskForm):
-    players = SelectField("Players")
-    player_id = HiddenField()
-    player_submit = SubmitField("Remove Player")
+class RemovePlayer(FlaskForm):
+    players = SelectField(
+        "Players",
+        coerce=int,
+        validators=[DataRequired(), InputRequired(), v.remove_player],
+    )
+    submit = SubmitField("Remove Player")
+    # used for form validation
+    game_id = HiddenField()
+
+    def __init__(self, game_id=None, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if choices:
+            self.players.choices = [(g.id, g.name) for g in choices]
+        if game_id:
+            self.game_id.data = game_id
 
 
-class GameManageCharacters(FlaskForm):
-    characters = SelectField("characters")
-    character_id = HiddenField()
-    character_submit = SubmitField("Remove Character")
+class RemoveCharacter(FlaskForm):
+    characters = SelectField(
+        "characters",
+        coerce=int,
+        validators=[DataRequired(), InputRequired(), v.remove_character],
+    )
+    submit = SubmitField("Remove Character")
+    # used for form validation
+    game_id = HiddenField()
+
+    def __init__(self, game_id=None, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if choices:
+            self.characters.choices = [(g.id, g.name) for g in choices]
+        if game_id:
+            self.game_id.data = game_id

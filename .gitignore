@@ -24,3 +24,4 @@ project/litechronicler.db
 .pytest_cache
 notes.txt
 latest.dump
+notes.py

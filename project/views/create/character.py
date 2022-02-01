@@ -16,11 +16,14 @@ def character_post():
     if not form.validate_on_submit():
         return render_template("/create/character.html", form=form)
     with db_session():
-        img_id = Images.upload(form.img.name) if form.img.data else None
-        Characters.create(
-            name=form.name.data,
-            bio=form.bio.data,
-            user_id=current_user.id,
-            img_id=img_id,
-        )
+        create_character(form)
         return redirect(url_for("profile.characters"))
+
+def create_character(form):
+    img_id = Images.upload(form.img.name) if form.img.data else None
+    return Characters.create(
+        name=form.name.data,
+        bio=form.bio.data,
+        user_id=current_user.id,
+        img_id=img_id,
+    )

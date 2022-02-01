@@ -37,6 +37,7 @@ def translate_jinja(
 
     :return `dict[dict[str, str]`: [`str` target_users identifier, `dict` [`str` section name, `str` completed html]
     """
+    print(f'\n\n\n\nyes')
     if not target_users:
         return run(
             model,
@@ -70,7 +71,7 @@ def run(
     user_id: int = None,
     dm_id: int = None,
     target_user: int = None,
-    template: str = "test.html",
+    template: str = "blueprint.html",
     **kwarg,
 ):
     """creates socket for target_user"""
@@ -86,7 +87,6 @@ def run(
 
 
 def set_globals(flag, user_id, dm_id, target_user):
-    """declare global variables"""
     global if_statements
     if_statements = 0
     global tutorial_id
@@ -139,7 +139,7 @@ def build_notes_template_get(filename: str):
     """finds and opens the jinja template"""
 
     templates_path = "templates/notes"
-    root_dir = os.path.abspath(os.path.dirname(__file__))
+    root_dir = os.path.abspath("/app/project")
     templates_dir = os.path.join(root_dir, templates_path)
     src = os.path.join(templates_dir, filename)
     return open(src).read()
