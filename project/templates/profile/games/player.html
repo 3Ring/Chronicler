@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="container">
     <div class="app-container">
         <h1>Edit Games</h1>
@@ -9,14 +8,9 @@
         <a class="new-game button primary" href="{{ url_for('edit.add_remove', game_id=game.id) }}">
             <span class="fas fa-search-location"></span> Add/Remove Character
         </a>
-
-        <a class="new-game button primary" href="{{ url_for('edit.leave', game_id=game.id
-        ) }}">
+        <a class="new-game button primary" href="{{ url_for('edit.leave', game_id=game.id) }}">
             <span class="fas fa-search-location"></span> Leave Game
-        </a>  
-    </div>  
+        </a>
     </div>
 </div>
-
-
 {% endblock %}

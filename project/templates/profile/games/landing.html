@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="container">
     <div class="app-container">
         <h1>Edit Games</h1>
@@ -9,7 +8,6 @@
         <a class="new-game button primary" href="{{ url_for('profile.dm') }}">
             <span class="fas fa-search-location"></span> Dm
         </a>
-
         <a class="new-game button primary" href="{{ url_for('profile.player_landing') }}">
             <span class="fas fa-search-location"></span> Player
         </a>  
@@ -17,8 +15,6 @@
             <span class="fas fa-search-location"></span> Back
         </a>   
     </div>  
-    </div>
 </div>
-
 
 {% endblock %}

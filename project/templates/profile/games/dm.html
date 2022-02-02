@@ -3,35 +3,30 @@
 
 <div class="container">
     <div class="app-container">
-
-
-            <h1>Dungeon Master:</h1>
-
+        <h1>Dungeon Master:</h1>
         <div class="games">
             <div class="game">
                 <h2>Edit game.</h2>
                 {% if dm_games %}
-                            {% for game in dm_games %}
-                            <li>
-                                <a href="{{ url_for('edit.game_dm', game_id=game.id) }}">
-                                    <img class="index_game_image" src="{{game.image}}">
-                                    {{game.name}}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    
+                <ul>
+                {% for game in dm_games %}
+                <li>
+                    <a href="{{ url_for('edit.game_dm', game_id=game.id) }}">
+                        <img class="index_game_image" src="{{game.image}}">
+                        {{game.name}}
+                    </a>
+                </li>
+                {% endfor %}
+                </ul>
                 {% else %}
-
-                        <h2>Dungeon Master</h2>
-                        <p>You don't appear to have created any games yet.</p>
-
+                <h2>Dungeon Master</h2>
+                <p>You don't appear to have created any games yet.</p>
                 {% endif %}
             </div>
             <a class="new-game button primary" href="{{ url_for('create.game') }}">
                 <span class="far fa-plus-square"></span> Create a Game
             </a>
-        </div>            
+        </div>
     </div>
 </div>
 
