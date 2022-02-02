@@ -37,7 +37,6 @@ def translate_jinja(
 
     :return `dict[dict[str, str]`: [`str` target_users identifier, `dict` [`str` section name, `str` completed html]
     """
-    print(f'\n\n\n\nyes')
     if not target_users:
         return run(
             model,

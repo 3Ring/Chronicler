@@ -651,7 +651,6 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
     @classmethod
     def add_character_to_game(cls, character_id: int, game_id: int):
-        print(f'game_id: {game_id}')
         BridgeGameCharacters.create(character_id=character_id, game_id=game_id)
 
 
@@ -916,7 +915,6 @@ class BridgeBase:
         if not model:
             raise BaseException("invalid model in join function")
         my_items = []
-        print(f'my_keys: {my_keys}')
         if not my_keys:
             return False
         for key in my_keys:
