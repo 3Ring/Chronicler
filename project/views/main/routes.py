@@ -1,15 +1,13 @@
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_login import login_required
 
-from project.views.main.index import index_get, index_post
+from project.views.main.index import index_get
 
 main = Blueprint("main", __name__)
 
 
-@main.route("/", methods=["GET", "POST"])
+@main.route("/", methods=["GET"])
 @login_required
 def index():
-    if request.method == "GET":
-        return index_get()
-    return index_post()
+    return index_get()
 

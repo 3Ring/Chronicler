@@ -2,75 +2,59 @@
 {% block content %}
 <div class="container">
     <div class="app-container">
-
-
-                    
         {% if games or dm_games %}
-            <h1>Your Games:</h1>
+        <h1>Your Games:</h1>
         {% else %}
-            <h1>Welcome!</h1>
+        <h1>Welcome!</h1>
         {% endif %}
-
-        
         <div class="games">
             <div class="game">
+                <h2>Dungeon Master</h2>
                 {% if dm_games %}
-                    
-                        <h2>Dungeon Master</h2>
-                        <p>These are games you have created.</p>
-                        <ul>
-                            {% for game in dm_games %}
-                            <li>
-                                <a href="{{ url_for('notes.game', game_id=game.id) }}">
-                                    <img class="index_game_image" src="{{game.image}}">
-                                    {{game.name}}
-                                    {% if not game.published %}
-                                        <h2>-- Not published</h2>
-                                    {% endif %}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    
+                <p>These are games you have created.</p>
+                <ul>
+                    {% for game in dm_games %}
+                    <li>
+                        <a href="{{ url_for('notes.game', game_id=game.id) }}">
+                            <img class="index_game_image" src="{{game.image}}">
+                            {{game.name}}
+                            {% if not game.published %}
+                            <h2>-- Not published</h2>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
-
-                        <h2>Dungeon Master</h2>
-                        <p>You don't appear to have created any games yet.</p>
-
+                <p>You don't appear to have created any games yet.</p>
                 {% endif %}
             </div>
             <div class="game">
                 {% if games %}
-                    
-                        <h2>Player</h2>
-                        <p>These are games you have joined as a player.</p>
-                        <ul>
-                            {% for game in games %}
-                            <li>
-                                <a href="{{ url_for('notes.game', game_id=game.id) }}">
-                                    <img class="index_game_image" src="{{game.image}}">
-                                    {{game.name}}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                <h2>Player</h2>
+                <p>These are games you have joined as a player.</p>
+                <ul>
+                    {% for game in games %}
+                    <li>
+                        <a href="{{ url_for('notes.game', game_id=game.id) }}">
+                            <img class="index_game_image" src="{{game.image}}">
+                            {{game.name}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
-
-                        <h2>Player</h2>
-                        <p>You don't appear to have joined any games yet.</p>
-
+                <h2>Player</h2>
+                <p>You don't appear to have joined any games yet.</p>
                 {% endif %}
-                
             </div>
-
             <a class="new-game button primary" href="{{ url_for('create.game') }}">
                 <span class="far fa-plus-square"></span> Create a Game
             </a>
-
             <a class="new-game button primary" href="{{ url_for('join.game') }}">
                 <span class="fas fa-search-location"></span> Find a Game
             </a>
-        </div>            
+        </div>
     </div>
 </div>
 {% endblock %}
