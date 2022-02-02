@@ -1,4 +1,4 @@
-{% if character_list|length > 0 %}
+{% if character_list|length > 0 or game.id == bugs_id %}
 <form class="wysiwyg-form <{% if game.id == bugs_id %} hidden{% endif %}" data-flag="newQuill_FormSession" id="test_form_quill">
     <div class="form-group">
         <input type="hidden" id='note_user_id' name='note_user_id' value='{{current_user.id}}'>

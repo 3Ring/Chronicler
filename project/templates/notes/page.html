@@ -41,9 +41,11 @@
                     <div class="comment-container">
             
                         {% include 'notes/widgets/session_quill.html' %}
+                        <!-- !bugs code -->
                         {% if game.id != bugs_id %}
                             <button data-flag="note_direction">Change note direction</button>
                         {% endif %}
+                        <!-- !end bugs -->
                     </div>
                     <div class="sessions-scroll-container" data-flag="sessionsContainer" id="session_cards">
                         {% if session_titles %}
