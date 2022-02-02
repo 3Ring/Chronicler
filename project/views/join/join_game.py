@@ -7,55 +7,61 @@ from project.models import Games, Characters
 from project.helpers.db_session import db_session
 
 
-def join_game_get(game_id, game_name):
+def join_game_get(game):
     """
-    This function renders the joining.html template, which is used to join a game.
+    GET request function for "joining.html"
 
-    :param game_id: The ID of the game to join
-    :param game_name: The name of the game that the user is joining
-    :return: A rendered template with the forms for joining a game.
+    called when a user is joining a new game.
+    :param game: The SQLAlchemy game object
+    :return: The rendered "joining" template
     """
-
-    my_characters = Characters.get_list_from_user(current_user.id)
-    return render_template(
-        "joining.html",
-        charform=CharCreate(),
-        addform=CharAdd(choices=my_characters),
-        my_characters=my_characters,
-        game=Games.query.get(int(game_id)),
-    )
+    return render(game)
 
 
-def join_game_post(game_id, game_name):
+def join_game_post(game):
     """
-    Validates and adds User's character to game.
-    User may add existing character or create a new one.
+    POST request function for "joining.html"
 
-    :param game_id: the id of the game to join
-    :return: A redirect to the game's notes page.
+    Adds a player to a game.
+    :param game: The SQLAlchemy game object
+    :return: redirects user to game they just joined
     """
-    game_id = int(game_id)
     with db_session() as sess:
-        Games.add_player_to_game(game_id, current_user.id)
+        Games.add_player_to_game(game.id, current_user.id)
         my_characters = Characters.get_list_from_user(current_user.id)
-        addform = CharAdd(choices=my_characters)
-        charform = CharCreate()
+        addform = CharAdd(prefix="add", game_id=game.id, choices=my_characters)
+        charform = CharCreate(prefix="create")
         if addform.submit.data and addform.validate():
-            return join_game_get(game_id, game_name)
+            Characters.add_character_to_game(addform.character.data, game.id)
+            return redirect(url_for("notes.game", game_id=game.id))
         elif charform.submit.data and charform.validate():
             char = Characters.create(
                 name=charform.name.data, bio=charform.bio.data, user_id=current_user.id
             )
             sess.flush()
-            Characters.add_character_to_game(char.id, game_id)
-        else:
-            my_characters = Characters.get_list_from_user(current_user.id)
-            return render_template(
-                "joining.html",
-                charform=charform,
-                addform=addform,
-                my_characters=my_characters,
-                game=Games.query.get(int(game_id)),
-            )
-        return redirect(url_for("notes.game", game_id=game_id))
+            Characters.add_character_to_game(char.id, game.id)
+            return redirect(url_for("notes.game", game_id=game.id))
+        return render(game, charform=charform, addform=addform)
 
+
+def render(game, charform=None, addform=None):
+    """
+    Render the joining page
+
+    :param game: The SQLAlchemy game object
+    :param charform: The form that the user will use to create a new character
+    :param addform: The form that allows you to add an existing character to the game
+    :return: The rendered template.
+    """
+    my_characters = Characters.get_list_from_user(current_user.id)
+    if not charform:
+        charform = CharCreate(prefix="create")
+    if not addform:
+        addform = CharAdd(prefix="add", game_id=game.id, choices=my_characters)
+    return render_template(
+        "joining.html",
+        charform=charform,
+        addform=addform,
+        my_characters=my_characters,
+        game=game,
+    )

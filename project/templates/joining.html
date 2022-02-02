@@ -11,7 +11,7 @@
                 <h1>Add Character From Your Characters</h1>
                 {{ addform.hidden_tag() }}
                 {{ render_field(addform.character) }}
-                {{ render_field(addform.char_add_submit) }}
+                {{ render_field(addform.submit) }}
             </form>
             <h1>or</h1>
         {% endif %}
@@ -22,7 +22,7 @@
             {{ render_field(charform.name) }}
             {{ render_field(charform.img) }}
             {{ render_field(charform.bio) }}
-            {{ render_field(charform.char_submit) }}
+            {{ render_field(charform.submit) }}
         </form>
     </div>
 </div>
