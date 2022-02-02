@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, flash
 from project.forms.edit_character import CharEdit, CharDelete
 
 from project.models import Images
@@ -16,7 +16,7 @@ def character_get(character):
         "edit/character.html",
         editform=CharEdit(prefix="a"),
         character=character,
-        delform=CharDelete(prefix="b"),
+        delform=CharDelete(prefix="b", char_name=character.name),
     )
 
 
@@ -28,10 +28,11 @@ def character_post(character):
     :return: A redirect to the profile page.
     '''
     editform = CharEdit(prefix="a")
-    delform = CharDelete(prefix="b")
+    delform = CharDelete(prefix="b", char_name=character.name)
     with db_session():
         if delform.submit.data:
             if delform.validate():
+                flash(f"{character.name} deleted successfully.")
                 character.removed = True
             else:
                 return render_template(
