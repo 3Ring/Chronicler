@@ -10,4 +10,4 @@ def choose_game_get():
     :return: A list of games that the user can join.
     '''
     games = Games.get_my_joinable()
-    return render_template("join.html", games=games)
+    return render_template("join/join.html", games=games)

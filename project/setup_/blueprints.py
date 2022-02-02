@@ -4,8 +4,8 @@ def init_blueprints(app):
     from project.views.auth.routes import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
-    from project.views.main.routes import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    from project.views.index.routes import index as index_blueprint
+    app.register_blueprint(index_blueprint)
 
     from project.views.bugs.routes import bugs as bugs_blueprint
     app.register_blueprint(bugs_blueprint)

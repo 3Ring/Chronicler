@@ -9,7 +9,7 @@ from project.helpers.db_session import db_session
 
 def join_game_get(game):
     """
-    GET request function for "joining.html"
+    GET request function for "join/joining.html"
 
     called when a user is joining a new game.
     :param game: The SQLAlchemy game object
@@ -20,7 +20,7 @@ def join_game_get(game):
 
 def join_game_post(game):
     """
-    POST request function for "joining.html"
+    POST request function for "join/joining.html"
 
     Adds a player to a game.
     :param game: The SQLAlchemy game object
@@ -59,7 +59,7 @@ def render(game, charform=None, addform=None):
     if not addform:
         addform = CharAdd(prefix="add", game_id=game.id, choices=my_characters)
     return render_template(
-        "joining.html",
+        "join/joining.html",
         charform=charform,
         addform=addform,
         my_characters=my_characters,

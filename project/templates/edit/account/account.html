@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 {% block content %}
-{% from "_formhelpers.html" import render_field %}
+{% from "macros/render_field.html" import render_field %}
 
     <script src="{{url_for('static', filename='js/edit_account.js')}}"></script>
     {% if name_form.name.errors %}

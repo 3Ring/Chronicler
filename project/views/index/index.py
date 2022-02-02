@@ -14,5 +14,5 @@ def index_get():
     user = Users.query.get(current_user.id)
     game_lists = Games.get_index_lists(user)
     return render_template(
-        "index.html", games=game_lists["player_list"], dm_games=game_lists["dm_list"]
+        "index/index.html", games=game_lists["player_list"], dm_games=game_lists["dm_list"]
     )

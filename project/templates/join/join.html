@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 {% block content %}
 <script src="{{ url_for('static', filename='js/join.js') }}"></script>
 <div class="container">
@@ -10,7 +10,7 @@
         <div class="games">
             <div class="game">
                 <p>Choose a game to get started</p>
-                <ul>
+                <ul>\
                     {% for game in games %}
                     <li id="selectGame_{{game.id}}" class="select_game">
                         <a><img class="index_game_image" src="{{game.image}}">
