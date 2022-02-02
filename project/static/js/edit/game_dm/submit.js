@@ -1,8 +1,14 @@
+/* 
+functions for form submition logic
+*/
 document.addEventListener("DOMContentLoaded", () => {
   confirmation_listeners();
   final_confirmation_listeners();
 });
 
+/**
+ * reveal confirmation form on form submittion
+ */
 function confirmation_listeners() {
   const els = document.querySelectorAll("form[data-remove='submit']");
   els.forEach((el) =>
@@ -22,6 +28,9 @@ function confirmation_listeners() {
     })
   );
 }
+/**
+ *  Find all confirmation forms on the page and add appropriate 'click' logic
+ */
 function final_confirmation_listeners() {
   const confirms = document.querySelectorAll(`form[data-cancel]`);
   for (let i = 0; i < confirms.length; i++) {

@@ -7,22 +7,29 @@ from project.forms.login import Login
 
 
 def login_get():
-    """if user isn't logged in direct them to login page.
-    If the user is already logged in they will be directed to the index
-    """
+    '''
+    GET request function for "auth/login.html"
+
+    If the user is already logged in, redirect to the index page. Otherwise, display the login form
+    :return: The login.html template.
+    '''
+
     if current_user.is_active:
         return redirect(url_for("main.index"))
     form = Login()
-    return render_template("login.html", form=form)
+    return render_template("auth/login.html", form=form)
 
 
 def login_post():
-    """checks data and logs in user if correct
+    """
+    POST request function for "auth/login.html"
+    
+    checks data and logs in user if correct
     redirects user to index if they are already logged in
     """
     form = Login()
     if not form.validate_on_submit():
-        return render_template("login.html", form=form)
+        return render_template("auth/login.html", form=form)
 
     user = Users.query.filter_by(email=form.email.data).first()
     

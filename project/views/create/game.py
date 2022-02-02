@@ -5,12 +5,25 @@ from project.forms.create_game import GameCreate
 from project.models import Games, Images, BridgeUserGames
 from project.helpers.db_session import db_session
 
+
 def game_get():
+    """
+    GET request function for "create/game.html"
+
+    This function is called when creating a new game
+    :return: The rendered template of the game.html page.
+    """
     form = GameCreate()
-    print(f'form.img.type: {form.img.type}')
     return render_template("create/game.html", gameform=form)
 
+
 def game_post():
+    """
+    POST request function for "create/game.html"
+
+    Create a new game
+    :return: A redirect to the DM avatar creation page.
+    """
     form = GameCreate()
     if not form.validate_on_submit():
         return render_template("create/game.html", gameform=form)
@@ -20,7 +33,7 @@ def game_post():
             name=form.name.data,
             dm_id=current_user.id,
             published=form.published.data,
-            img_id=img_id
+            img_id=img_id,
         )
         Games.new_game_training_wheels(game)
         sess.flush()
