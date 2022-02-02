@@ -1,6 +1,6 @@
 from project.setup_ import defaults as d
 
-
+# These are for populating the bug report page on app creation
 _bug_sessions = [
     # session 0
     {"number": 0, "title": "Welcome", "game_id": d.Admin.id},
