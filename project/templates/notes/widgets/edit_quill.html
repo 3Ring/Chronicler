@@ -1,7 +1,6 @@
 
 <form class="hidden wysiwyg-form" data-flag="formEdit" data-id_formEdit="{{ note.id }}">
     <div class="form-group" >
-    
         <input type="hidden" id='note_user_id' name='note_user_id' value='{{ current_user.id }}'>
         <input type="hidden" id='note_game_id' name='note_game_id' value='{{ id }}'>
         <div id="QuillEdit_{{ note.id }}" data-crumb="{{ note.id }}">
@@ -16,7 +15,6 @@
         </div>
         {% endif %}
         {#  #}
-        
         {# isn't dm #}
         {% if current_user.id != game.dm_id %}
         <div class="row checkbox">

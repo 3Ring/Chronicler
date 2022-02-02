@@ -6,14 +6,14 @@
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
-// Core variables
-var user_id = {{current_user.id}}
+
+    // Core variables
+const user_id = {{current_user.id}}
 , dm_id = {{ game.dm_id }}
 , bugs_id = {{ bugs_id }}
 , game_id = {{id}}
 , js_dict = JSON.parse({{js_note_dict|tojson }})
 , heroku = {{ heroku|tojson }};
-
 
 </script>
 <script src="{{ url_for('static', filename='js/notes/variables.js') }}"></script>
@@ -35,18 +35,13 @@ var user_id = {{current_user.id}}
 document.addEventListener("DOMContentLoaded", function() {
 
     let note_session = 0;
-
     // set the current session in the loop
     {% for session in session_titles %}
-    
     // loop through each session's notes and place in the correct location
     if (note_session == {{session.number}}) {} else { note_session = {{session.number}} }
-
     // insert note
     insert_rich_note(note_session);
-
     {% endfor %}
-    
     {% if game.dm_id == current_user.id %}
     init("DM");
     {% else %}

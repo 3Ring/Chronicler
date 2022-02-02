@@ -21,7 +21,7 @@
             </span>
         </span>
         {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
-            {% include 'notes/widgets/edit_button.html' %}
+        {% include 'notes/widgets/edit_button.html' %}
         {% endif %}
         {% include 'notes/widgets/edit_quill.html' %}
         {% include 'notes/widgets/note_context_menu.html' %}

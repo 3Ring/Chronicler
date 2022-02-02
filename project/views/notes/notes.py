@@ -4,7 +4,6 @@ from flask import render_template
 from flask_login import current_user
 
 from project.helpers.misc import set_heroku
-
 from project.models import (
     Games,
     Users,

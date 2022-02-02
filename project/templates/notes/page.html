@@ -4,7 +4,7 @@
         <div class="header-container">
             <div class="new-session">
                 {% if game.dm_id == current_user.id %}
-                    <button class="button primary" data-flag="button_newSessionDisplay">Create new session</button>
+                <button class="button primary" data-flag="button_newSessionDisplay">Create new session</button>
                 {% endif %}
             </div>
             <h1>{{ game.name }}</h1>
@@ -14,107 +14,93 @@
                 <div class="scroll-max">
                     <h2>Session Log</h2>
                     <ul class="sessions-list" data-flag="sessions_list" >
-                    {% if session_titles %}
+                        {% if session_titles %}
                         {% for session in session_titles %}
-            {# translate_hook session #}
-            {# translate_section session_nav #}
-                            <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
-                                {% if game.id != bugs_id %}
-                                <!-- !bugs code -->
-                                    <h4>Session {{ session.number }}</h4>
-                                    <!-- !end bugs code -->
-                                {% endif %}
-                                <h2>{{ session.title }}</h2>
-                            </li>
-            {# socket_ignore session #}
+                        {# translate_hook session #}
+                        {# translate_section session_nav #}
+                        <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
+                            {% if game.id != bugs_id %}
+                            <!-- !bugs code -->
+                            <h4>Session {{ session.number }}</h4>
+                            <!-- !end bugs code -->
+                            {% endif %}
+                            <h2>{{ session.title }}</h2>
+                        </li>
+                        {# socket_ignore session #}
                         {% endfor %}
-                    {% else %}
+                        {% else %}
                         <li data-flag="sessionList" data-number_sessionList="set_up">
                             <h4>Setting up the table...</h4>
                         </li>
-                    {% endif %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
             <div class="notes">
                 <div class="scroll-max">
                     <div class="comment-container">
-            
                         {% include 'notes/widgets/session_quill.html' %}
                         <!-- !bugs code -->
                         {% if game.id != bugs_id %}
-                            <button data-flag="note_direction">Change note direction</button>
+                        <button data-flag="note_direction">Change note direction</button>
                         {% endif %}
                         <!-- !end bugs -->
                     </div>
                     <div class="sessions-scroll-container" data-flag="sessionsContainer" id="session_cards">
                         {% if session_titles %}
-                            <!-- Session Title Cards -->
-                            {% for session in session_titles %}
-                            {# endignore session #}
-                            {# translate_section session_card #}
-                            
-                            <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
-                                    <!-- !bugs code -->
-                                    {% if game.id == bugs_id %}
-                                    <h1>{{ session.title }}</h1>
-                                    {% else %}
-                                    <h2>Session {{ session.number }}: {{ session.title }}</h2>
-                                    {% endif %}
-                                    <!-- !end bugs -->
-                                    {% if game.dm_id == current_user.id %}
-                                        {% include 'notes/widgets/session_edit_button.html' %}
-                                        {% include 'notes/widgets/session_context_menu.html' %}
-                                        {% include 'notes/widgets/edit_session_form.html' %}
-                                        {% include 'notes/widgets/session_delete_confirm.html' %}
-                                    {% endif %}
-                                <div>
-                                    <!-- Session Notes -->
-                                    <!-- !bugs code -->
-                                    {% if game.id == bugs_id %}
-                                    <ul class="note_list reverse" data-flag="note_list" data-idSession="{{ session.number }}">
-                                    {% else %}
-                                    <ul class="note_list" data-flag="note_list" data-idSession="{{ session.number }}">
-                                    {% endif %}
-                                    <!-- !end bugs -->
-                                    
-            
-                            {# socket_ignore session #}
-                                        {% for note in note_dict[session.number] %}
-                                            {# translate_hook note #}
-                            
-                                            {# note is a draft #}
-                                            
-                                                {% if note.private == True %}
-                                                    {% if note.user_id == current_user.id %}
-                                                        {% include 'notes/note_text.html' %}
-                                                    {% endif %}
-                                            
-                                            
-                                            {# note is to_dm #}
-                                            
-                                                {% elif note.to_dm %} 
-                                                    {% if note.user_id == current_user.id or current_user.id == game.dm_id %}
-                                                        {% include 'notes/note_text.html' %}
-                                                    {% endif %}
-                                            
-                                            
-                                            {# note is public #}
-                                            
-                                                {% else %}
-                                                    {% include 'notes/note_text.html' %}    
-                                                {% endif %}
-                                            
-                                            {# end_translate_hook note #}
-                                        {% endfor %}
-                            {# endignore session #}
-            
-                                    </ul>
-                                </div>
+                        <!-- Session Title Cards -->
+                        {% for session in session_titles %}
+                        {# endignore session #}
+                        {# translate_section session_card #}
+                        <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
+                            <!-- !bugs code -->
+                            {% if game.id == bugs_id %}
+                            <h1>{{ session.title }}</h1>
+                            {% else %}
+                            <h2>Session {{ session.number }}: {{ session.title }}</h2>
+                            {% endif %}
+                            <!-- !end bugs -->
+                            {% if game.dm_id == current_user.id %}
+                            {% include 'notes/widgets/session_edit_button.html' %}
+                            {% include 'notes/widgets/session_context_menu.html' %}
+                            {% include 'notes/widgets/edit_session_form.html' %}
+                            {% include 'notes/widgets/session_delete_confirm.html' %}
+                            {% endif %}
+                            <div>
+                                <!-- Session Notes -->
+                                <!-- !bugs code -->
+                                {% if game.id == bugs_id %}
+                                <ul class="note_list reverse" data-flag="note_list" data-idSession="{{ session.number }}">
+                                {% else %}
+                                <ul class="note_list" data-flag="note_list" data-idSession="{{ session.number }}">
+                                {% endif %}
+                                <!-- !end bugs -->
+                                {# socket_ignore session #}
+                                {% for note in note_dict[session.number] %}
+                                {# translate_hook note #}
+                                {# note is a draft #}
+                                {% if note.private == True %}
+                                {% if note.user_id == current_user.id %}
+                                {% include 'notes/note_text.html' %}
+                                {% endif %}
+                                {# note is to_dm #}
+                                {% elif note.to_dm %} 
+                                {% if note.user_id == current_user.id or current_user.id == game.dm_id %}
+                                {% include 'notes/note_text.html' %}
+                                {% endif %}
+                                {# note is public #}
+                                {% else %}
+                                {% include 'notes/note_text.html' %}    
+                                {% endif %}
+                                {# end_translate_hook note #}
+                                {% endfor %}
+                                {# endignore session #}
+                                </ul>
                             </div>
-                            {# endsection session #}
-                            {# end_translate_hook session #}
-                            {% endfor %}
+                        </div>
+                        {# endsection session #}
+                        {# end_translate_hook session #}
+                        {% endfor %}
                         {% endif %}
                     </div>
                 </div>

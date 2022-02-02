@@ -1,19 +1,11 @@
 
 {% extends "main/base.html" %}
-
-
 {% block content %}
-
-    {% include 'notes/top_script.html' %}
-
+{% include 'notes/top_script.html' %}
 {# socket_scope start #}
-
-    {% include 'notes/page.html' %}
-
+{% include 'notes/page.html' %}
 {# socket_scope end #}
-
-    {% if game.dm_id == current_user.id %}
-        {% include 'notes/widgets/new_session_form.html' %}
-    {% endif %}
-
+{% if game.dm_id == current_user.id %}
+    {% include 'notes/widgets/new_session_form.html' %}
+{% endif %}
 {% endblock %}
