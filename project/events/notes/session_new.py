@@ -2,7 +2,7 @@ from flask_socketio import emit
 
 from project.__init__ import socketio
 from project.models import Sessions
-from project.helpers.translate_jinja import translate_jinja
+from project.helpers.translate_jinja.translate_jinja import translate_jinja
 from project.helpers.db_session import db_session
 
 @socketio.on("send_new_session")

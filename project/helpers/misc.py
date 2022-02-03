@@ -1,5 +1,6 @@
 import os
 
+
 def set_heroku():
     """this is to set the address for Flask socket.io"""
     heroku = False
@@ -14,4 +15,3 @@ def private_convert(priv):
     if type(priv) is str and priv.lower() == "true":
         return True
     return False
-

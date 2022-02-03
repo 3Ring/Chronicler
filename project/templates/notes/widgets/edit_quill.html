@@ -8,7 +8,7 @@
     </div>
     <div class="form-group">
         {# isn't tutorial #}
-        {% if note.user_id != tutorial.id %}
+        {% if note.user_id != tutorial_id %}
         <div class="row checkbox">
             <input type='checkbox' class="note_checkbox" data-id_noteCheckboxPrivate="{{ note.id }}" name='note_private' value='{{ note.private }}'>
             <label for='note_private'><strong>Draft</strong> - Visible only to you until published</label>

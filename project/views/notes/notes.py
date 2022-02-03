@@ -16,7 +16,7 @@ from project.setup_ import defaults as d
 
 
 def notes_get(game_id):
-    tutorial = Users.get_admin()
+
     game = Games.query.get(game_id)
     character_list = get_game_character_list(game)
     session_list = Sessions.get_list_from_gameID(game_id)
@@ -24,11 +24,9 @@ def notes_get(game_id):
     js_note_dict = convert_to_JSON(notes)
     return render_template(
         "notes/blueprint.html",
-        tutorial=tutorial,
+        tutorial_id=d.Admin.id,
         js_note_dict=js_note_dict,
-        edit_img="/static/images/edit_button_image.png",
         note_dict=notes,
-        id=game_id,
         bugs_id=d.GameBugs.id,
         session_titles=session_list,
         game=game,

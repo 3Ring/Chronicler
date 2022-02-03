@@ -3,7 +3,7 @@ from flask_login import current_user
 from project.__init__ import db, socketio
 from project.models import Sessions, Characters, Notes, Users
 from project.helpers.misc import private_convert
-from project.helpers.translate_jinja import translate_jinja
+from project.helpers.translate_jinja.translate_jinja import translate_jinja
 from project.helpers.db_session import db_session
 
 

@@ -1,18 +1,19 @@
 
-/* 
-check if element or any of its parents contain attribute
-*/
+
+/**
+ * Given an event, return the element that has the specified attribute
+ * @param e - The event object.
+ * @param attribute - The attribute to look for.
+ * @returns The element that has the attribute. or false
+ */
 function click_inside_element(e, attribute) {
   let el = e.target;
-  // check if element clicked has attribute
   if (el.hasAttribute(attribute)) {
     return el;
   } else {
-    // check if any of the parentNodes have the attribute
     while ((el = el.parentNode)) {
       if (el.hasAttribute(attribute)) {
         return el;
-        // break before final loop otherwise it will throw an error
       } else if (el.parentNode == document) {
         break;
       }
@@ -24,6 +25,9 @@ function click_inside_element(e, attribute) {
 /* 
 Set new session form's default number to n+1 of highest current session
 */
+
+
+
 function set_new_session_form_highest(highest) {
   if (document.querySelector(`form[data-flag="formNewSession_container"]`)) {
     let sessionNumberField = document.querySelector(

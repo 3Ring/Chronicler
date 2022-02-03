@@ -20,7 +20,7 @@
             <span class="note-ql" data-id_noteText="{{ note.id }}">
             </span>
         </span>
-        {% if note.user_id == current_user.id or note.user_id == tutorial.id %}
+        {% if note.user_id == current_user.id or note.user_id == tutorial_id %}
         {% include 'notes/widgets/edit_button.html' %}
         {% endif %}
         {% include 'notes/widgets/edit_quill.html' %}
