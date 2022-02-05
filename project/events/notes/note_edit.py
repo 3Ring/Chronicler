@@ -3,7 +3,7 @@ from flask_login import current_user
 from project.__init__ import db, socketio
 from project.models import Characters, Notes, Users
 from project.helpers.misc import private_convert
-from project.helpers.translate_jinja.translate_jinja import translate_jinja
+from project.helpers.translate_jinja.translate_jinja import TranslateJinja
 from project.helpers.db_session import db_session
 
 
@@ -119,15 +119,14 @@ def send_editted_note(
         note.text = text
         note.private = _private
         note.to_dm = _to_dm
-        sockets = translate_jinja(
+        sockets = TranslateJinja(
             note,
             "note",
             game_id,
             user_id=user_id,
             dm_id=dm_id,
             target_users={"user": user_id, "dm": dm_id, "other": -10},
-            char_img=Characters.query.get(character_id).image,
-        )
+        ).run()
         emit(
             "fill_note_edit",
             (

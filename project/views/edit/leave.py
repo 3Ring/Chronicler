@@ -31,7 +31,7 @@ def leave_post(game):
         if leaveform.validate_on_submit():
             leave(game)
             flash(f"You are no longer part of {game.name}")
-            return redirect(url_for("main.index"))
+            return redirect(url_for("index.page"))
         return render_template("edit/games/leave.html", game=game, leaveform=leaveform)
 
 

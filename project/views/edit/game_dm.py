@@ -58,7 +58,7 @@ def game_dm_post(game):
                 delete_game_and_assets(game)
                 sess.commit()
                 flash(f"{game.name} and all assets deleted successfully")
-                return redirect(url_for("main.index"))
+                return redirect(url_for("index.page"))
             error_target = "del_game"
         elif form_players.players.data:
             if form_players.validate():

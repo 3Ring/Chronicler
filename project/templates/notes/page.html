@@ -16,8 +16,7 @@
                     <ul class="sessions-list" data-flag="sessions_list" >
                         {% if session_titles %}
                         {% for session in session_titles %}
-                        {# translate_hook session #}
-                        {# translate_section session_nav #}
+                        {# translate_hook session session_nav #}
                         <li class="session-anchor" data-flag="sessionList" data-number_sessionList="{{ session.number }}">
                             {% if game.id != bugs_id %}
                             <!-- !bugs code -->
@@ -51,7 +50,7 @@
                         <!-- Session Title Cards -->
                         {% for session in session_titles %}
                         {# endignore session #}
-                        {# translate_section session_card #}
+                        {# translate_section session session_card #}
                         <div class="session-container hidden" data-flag="session_cont" data-number_sessionCont="{{ session.number }}">
                             <!-- !bugs code -->
                             {% if game.id == bugs_id %}

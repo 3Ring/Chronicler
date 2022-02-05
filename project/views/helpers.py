@@ -13,4 +13,4 @@ def not_authorized(message="You are not authorized to access that page", no_flas
 
     if not no_flash:
         flash(message)
-    return redirect(url_for("main.index"))
+    return redirect(url_for("index.page"))

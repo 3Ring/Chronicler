@@ -9,9 +9,9 @@ class AdminIndex(AdminIndexView):
     @expose('/')
     def index(self):
         if current_user.is_anonymous:
-            return redirect(url_for("main.index"))
+            return redirect(url_for("index.page"))
         if current_user.id != d.Admin.id:
-            return redirect(url_for("main.index"))
+            return redirect(url_for("index.page"))
         var = "test"
         return self.render('admin/index.html', var=var)
         

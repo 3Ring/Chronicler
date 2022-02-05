@@ -15,7 +15,7 @@ def login_get():
     '''
 
     if current_user.is_active:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("index.page"))
     form = Login()
     return render_template("auth/login.html", form=form)
 
@@ -34,5 +34,5 @@ def login_post():
     user = Users.query.filter_by(email=form.email.data).first()
     
     login_user(user, remember=form.remember.data)
-    return redirect(url_for("main.index"))
+    return redirect(url_for("index.page"))
 
