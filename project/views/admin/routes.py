@@ -12,6 +12,7 @@ class AdminIndex(AdminIndexView):
             return redirect(url_for("index.page"))
         if current_user.id != d.Admin.id:
             return redirect(url_for("index.page"))
-        var = "test"
-        return self.render('admin/index.html', var=var)
+
+        
+        return self.render('admin/index.html')
         

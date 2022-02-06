@@ -40,7 +40,7 @@ def create_app(test_config=None):
 
         update_db(app, test_config)
 
-        from project.setup_.base_items import Base_items
+        from project.setup_.db_init_create.base_items import Base_items
         Base_items.init_database_assets(app)
         
         return app

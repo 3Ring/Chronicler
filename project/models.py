@@ -754,8 +754,8 @@ class Notes(SABaseMixin, db.Model):
     charname = db.Column(db.String(50), nullable=False)
     text = db.Column(db.Text)
     session_number = db.Column(db.Integer)
-    private = db.Column(db.Boolean)
-    to_dm = db.Column(db.Boolean)
+    private = db.Column(db.Boolean, default=False)
+    to_dm = db.Column(db.Boolean, default=False)
     date_added = db.Column(db.DateTime, default=d.Note.date_added)
     char_img = d.Note.char_img
 
