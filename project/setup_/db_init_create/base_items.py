@@ -15,66 +15,56 @@ class Base_items:
 
     @classmethod
     def init_admins(cls):
-        missing_admins = cls.check_admins()
-        if missing_admins:
-            for admin in missing_admins:
-                with db_session():
-                    getattr(CreateAdmins, admin.lower())()
-                    if admin.lower() == "games":
-                        CreateAdmins.fill_bugs()
-                    
+        for admin in cls.check_admins():
+            with db_session():
+                getattr(CreateAdmins, admin.lower())()
+                if admin.lower() == "games":
+                    CreateAdmins.fill_bugs()
 
     @classmethod
     def init_orphanages(cls):
-        missing_orphanages = cls.check_orphanages()
-        if missing_orphanages:
-            for orphanage in missing_orphanages:
-                with db_session():
-                    getattr(CreateOrphanage, orphanage.lower())()
-                    
+        for orphanage in cls.check_orphanages():
+            with db_session():
+                getattr(CreateOrphanage, orphanage.lower())()
 
     @classmethod
-    def check_admins(cls) -> list:
-        missing = []
+    def check_admins(cls):
         if not cls.models.Users.get_admin():
-            missing.append(cls.models.Users.__name__)
+            yield cls.models.Users.__name__
         if not cls.models.Characters.get_admin():
-            missing.append(cls.models.Characters.__name__)
+            yield cls.models.Characters.__name__
         if not cls.models.Games.get_admin():
-            missing.append(cls.models.Games.__name__)
-        return missing
+            yield cls.models.Games.__name__
 
     @classmethod
-    def check_orphanages(cls) -> list:
-        missing = []
+    def check_orphanages(cls):
         if not cls.models.Users.get_orphanage():
-            missing.append(cls.models.Users.__name__)
+            yield cls.models.Users.__name__
         if not cls.models.Images.get_orphanage():
-            missing.append(cls.models.Images.__name__)
+            yield cls.models.Images.__name__
         if not cls.models.Games.get_orphanage():
-            missing.append(cls.models.Games.__name__)
+            yield cls.models.Games.__name__
         if not cls.models.Characters.get_orphanage():
-            missing.append(cls.models.Characters.__name__)
+            yield cls.models.Characters.__name__
         if not cls.models.Sessions.get_orphanage():
-            missing.append(cls.models.Sessions.__name__)
+            yield cls.models.Sessions.__name__
         if not cls.models.Notes.get_orphanage():
-            missing.append(cls.models.Notes.__name__)
+            yield cls.models.Notes.__name__
         if not cls.models.Places.get_orphanage():
-            missing.append(cls.models.Places.__name__)
+            yield cls.models.Places.__name__
         if not cls.models.NPCs.get_orphanage():
-            missing.append(cls.models.NPCs.__name__)
+            yield cls.models.NPCs.__name__
         if not cls.models.Items.get_orphanage():
-            missing.append(cls.models.Items.__name__)
+            yield cls.models.Items.__name__
         if not cls.models.BridgeUserImages.get_orphanage():
-            missing.append(cls.models.BridgeUserImages.__name__)
+            yield cls.models.BridgeUserImages.__name__
         if not cls.models.BridgeUserGames.get_orphanage():
-            missing.append(cls.models.BridgeUserGames.__name__)
+            yield cls.models.BridgeUserGames.__name__
         if not cls.models.BridgeGameCharacters.get_orphanage():
-            missing.append(cls.models.BridgeGameCharacters.__name__)
+            yield cls.models.BridgeGameCharacters.__name__
         if not cls.models.BridgeGamePlaces.get_orphanage():
-            missing.append(cls.models.BridgeGamePlaces.__name__)
+            yield cls.models.BridgeGamePlaces.__name__
         if not cls.models.BridgeGameNPCs.get_orphanage():
-            missing.append(cls.models.BridgeGameNPCs.__name__)
+            yield cls.models.BridgeGameNPCs.__name__
         if not cls.models.BridgeGameItems.get_orphanage():
-            missing.append(cls.models.BridgeGameItems.__name__)
-        return missing
+            yield cls.models.BridgeGameItems.__name__
