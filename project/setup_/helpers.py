@@ -8,61 +8,62 @@ def update_db(app, test_config):
     if test_config is not None:
         app.config.update(test_config)
         return
-    flag = ""
-    while flag != "done":
-        if flag == "":
-            with app.app_context():
-                from project.models import Users
-                admin = Users.query.with_entities(Users.id).filter_by(id=-1).first()
-                flag = "admin" if admin is not None else "upgrade"
+    flask_migrate.upgrade()
+    # flag = ""
+    # while flag != "done":
+    #     if flag == "":
+    #         with app.app_context():
+    #             from project.models import Users
+    #             admin = Users.query.with_entities(Users.id).filter_by(id=-1).first()
+    #             flag = "admin" if admin is not None else "upgrade"
 
-        if flag == "admin":
-            with app.app_context():
-                flask_migrate.upgrade()
-                flag = "done"
+    #     if flag == "admin":
+    #         with app.app_context():
+    #             flask_migrate.upgrade()
+    #             flag = "done"
 
-        if flag == "upgrade":
-            with app.app_context():
-                flask_migrate.upgrade(revision="51c3bfee43e4")
-                flag = "delete"
+    #     if flag == "upgrade":
+    #         with app.app_context():
+    #             flask_migrate.upgrade(revision="51c3bfee43e4")
+    #             flag = "delete"
 
-        if flag == "delete":
-            import os
-            from project.helpers.db_session import db_session
-            from project.models import (
-                Users,
-                BridgeUserGames,
-                BridgeUserImages,
-                NPCs,
-                Notes,
-                Characters,
-            )
-            with app.app_context():
-                with db_session(autocommit=False) as sess:
-                    _admin = Users.query.filter_by(email=os.environ.get("ADMIN_EMAIL")).first()
-                    to_delete = []
-                    to_delete.append(BridgeUserGames.query.filter_by(user_id=_admin.id).all())
-                    to_delete.append(BridgeUserImages.query.filter_by(user_id=_admin.id).all())
-                    to_delete.append(NPCs.query.filter_by(user_id=_admin.id).all())
-                    to_delete.append(Notes.query.filter_by(user_id=_admin.id).all())
-                    to_delete.append(Characters.query.filter_by(user_id=_admin.id).all())
-                    to_delete.append([_admin])
-                    for to_del in to_delete:
-                        if to_del is not None:
-                            for to in to_del:
-                                to.delete_self()
-                        sess.commit()
-            flag = "next"
+    #     if flag == "delete":
+    #         import os
+    #         from project.helpers.db_session import db_session
+    #         from project.models import (
+    #             Users,
+    #             BridgeUserGames,
+    #             BridgeUserImages,
+    #             NPCs,
+    #             Notes,
+    #             Characters,
+    #         )
+    #         with app.app_context():
+    #             with db_session(autocommit=False) as sess:
+    #                 _admin = Users.query.filter_by(email=os.environ.get("ADMIN_EMAIL")).first()
+    #                 to_delete = []
+    #                 to_delete.append(BridgeUserGames.query.filter_by(user_id=_admin.id).all())
+    #                 to_delete.append(BridgeUserImages.query.filter_by(user_id=_admin.id).all())
+    #                 to_delete.append(NPCs.query.filter_by(user_id=_admin.id).all())
+    #                 to_delete.append(Notes.query.filter_by(user_id=_admin.id).all())
+    #                 to_delete.append(Characters.query.filter_by(user_id=_admin.id).all())
+    #                 to_delete.append([_admin])
+    #                 for to_del in to_delete:
+    #                     if to_del is not None:
+    #                         for to in to_del:
+    #                             to.delete_self()
+    #                     sess.commit()
+    #         flag = "next"
 
-        if flag == "next":
-            transfer_game_id(app)
-            flag = "init"
+    #     if flag == "next":
+    #         transfer_game_id(app)
+    #         flag = "init"
 
-        if flag == "init":
-            from project.setup_.db_init_create.base_items import Base_items
-            Base_items.init_database_assets(app)
-            update_data(app)
-            flag = "admin"
+    #     if flag == "init":
+    #         from project.setup_.db_init_create.base_items import Base_items
+    #         Base_items.init_database_assets(app)
+    #         update_data(app)
+    #         flag = "admin"
 
 
 
