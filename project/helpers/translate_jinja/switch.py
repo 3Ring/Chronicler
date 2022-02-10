@@ -9,7 +9,10 @@ class Switch:
             if arg_list[0] == "if" or arg_list[0] == "elif":
                 arg_list.pop(0)
                 if "and" in arg_list or "or" in arg_list:
-                    return self._and_or(arg_list)
+                    and_or = self._and_or(arg_list)
+                    print(f'and_or: {and_or}')
+                    return and_or
+                    # return self._and_or(arg_list)
                 else:
                     return self._if(arg_list)
 

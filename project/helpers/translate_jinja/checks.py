@@ -72,6 +72,9 @@ class Checks:
             self.condition.clear()
             self.con_type = None
             return
+        flag = True if "current_user.id" in self.line else False
+        if flag:
+            print(f'self.line: {self.line}')
         con = [w.strip() for w in self.line[2:-2].strip().split(" ")]
         self.con_type = con[0]
         if len(con) == 1:
@@ -96,6 +99,8 @@ class Checks:
             else:
                 generic_list.append(item)
         self.condition = generic_list
+        if flag:
+            print(f'self.condition: {self.condition}')
 
     def check_new_section(self):
         """if new section found, set the new section"""

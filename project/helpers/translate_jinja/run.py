@@ -15,5 +15,8 @@ class Run(Build, Checks, Switch, Logic, Convert):
             if not self.checks():
                 continue
             generic_line = self.variable_check()
+            print(f'generic_line: {generic_line}')
+            # print(f'generic_line.strip(): {generic_line.strip()}')
             self.final[self.section_name] += generic_line.strip()
+        # print(f'self.final: {self.final}')
         return self.final

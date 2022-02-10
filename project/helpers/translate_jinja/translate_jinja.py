@@ -43,6 +43,7 @@ class TranslateJinja(Run):
             return self._run()
         sockets = {}
         for target, _id in self.target_users.items():
+            print(f'\n\n\n\n', target, _id, "\n\n\n\n\n\n")
             self.reset(_id)
             sockets[target] = self._run()
         return sockets

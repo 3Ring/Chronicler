@@ -47,6 +47,8 @@ def send_new_note(
             dm_id=dm_id,
             target_users={"user": user_id, "dm": dm_id, "other": -10},
             ).run()
+        print(f'user_id: {user_id}')
+        # print(f' sockets["user"]: { sockets["user"]}')
         emit(
             "fill_new_note",
             (
