@@ -75,8 +75,7 @@
     /** Modal **/
     --shroudBackground: rgba(0, 0, 0, 0.6);
 
-
-    @media (prefers-color-scheme: dark) {
+    .dark {
         --headlineColor: #{$max};
         --headlineColorReverse: #{$min};
         --headlineLinkColor: #{$gray_light};

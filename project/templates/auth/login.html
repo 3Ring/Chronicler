@@ -1,8 +1,9 @@
 {% extends "main/base.html" %}
 {% block content %}
-{% from "macros/render_field.html" import render_field %}
+
 
 <div class="container">
+    {% from "macros/render_field.html" import render_field %}
     <div class="form-container">
         <form method="POST">
             <h1>Log in</h1>
