@@ -19,6 +19,7 @@ gulp.task('serve', gulp.series('sass', function() {
 
     gulp.watch("static/scss/*.scss", gulp.series('sass'));
     gulp.watch("static/templates/*.html").on('change', browserSync.reload);
+    gulp.watch("static/templates/*.html").on('change', browserSync.reload);
 }));
 
-gulp.task('default', gulp.series('serve'));
+gulp.task('default', gulp.series(['serve']));

@@ -40,7 +40,9 @@
         </header>
         <main>
             {% include 'main/flash.html' %}
-            {% block content %} {% endblock %}
+            {% block content %} 
+                
+            {% endblock %}
         </main>
         <footer>
             <div class="container">
@@ -52,5 +54,5 @@
 </body>
 
 
-
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
 </html>

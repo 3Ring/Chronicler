@@ -124,60 +124,58 @@ input[type=submit], .button {
   /** Modal **/
   --shroudBackground: rgba(0, 0, 0, 0.6);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --headlineColor: white;
-    --headlineColorReverse: black;
-    --headlineLinkColor: #8f97a2;
-    --copyColor: #dadce0;
-    --linkColor: #45aa90;
-    --reverse: #8f97a2;
-    /** Alerts, disabled, and errors **/
-    --disabled: #2e3a49;
-    --error: red;
-    --accentColor: #9e5e48;
-    --alertCopy: white;
-    /** Borders **/
-    --border1: #212936;
-    --border2: #2e3a49;
-    --border3: #455264;
-    --accentBorder: transparent;
-    /** Inputs **/
-    --formBackground: #6dc6af;
-    --inputTextColor: #455264;
-    --inputPlaceholder: #dadce0;
-    --inputBackground: white;
-    --inputBorderColor: white;
-    --inputFocusBorder: #45aa90;
-    /** Buttons **/
-    --buttonBorderRadius: var(--xs) / var(--xxs);
-    --primaryButtonBg: #45aa90;
-    --primaryButtonBorder: #45aa90;
-    --primaryButtonText: white;
-    --primaryButtonHoverBg: black;
-    --primaryButtonHoverBorder: #45aa90;
-    --primaryButtonHoverText: #45aa90;
-    --secondaryButtonBg: #455264;
-    --secondaryButtonBorder: #455264;
-    --secondaryButtonText: white;
-    --secondaryButtonHoverBg: #dadce0;
-    --secondaryButtonHoverBorder: #45aa90;
-    --secondaryButtonHoverText: #45aa90;
-    /** Layout Regions **/
-    --headerBackground: #b5bac1;
-    --mainBackground: url(../images/chronicler-chrome-bg-dark.jpg) 0 0 no-repeat;
-    --footerBackground: #6a7583;
-    /** Boxes **/
-    --boxBackground: #2e3a49;
-    --boxAlternateBackground: #455264;
-    --boxHoverBackground: #455264;
-    --textShadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    --textBorderShadow: 1px 1px 0 rgba(0, 0, 0, 1);
-    --boxShadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.1);
-    --secondaryBoxBackground: #212936;
-    /** Modal **/
-    --shroudBackground: rgba(0, 0, 0, 0.6);
-  }
+:root .dark {
+  --headlineColor: white;
+  --headlineColorReverse: black;
+  --headlineLinkColor: #8f97a2;
+  --copyColor: #dadce0;
+  --linkColor: #45aa90;
+  --reverse: #8f97a2;
+  /** Alerts, disabled, and errors **/
+  --disabled: #2e3a49;
+  --error: red;
+  --accentColor: #9e5e48;
+  --alertCopy: white;
+  /** Borders **/
+  --border1: #212936;
+  --border2: #2e3a49;
+  --border3: #455264;
+  --accentBorder: transparent;
+  /** Inputs **/
+  --formBackground: #6dc6af;
+  --inputTextColor: #455264;
+  --inputPlaceholder: #dadce0;
+  --inputBackground: white;
+  --inputBorderColor: white;
+  --inputFocusBorder: #45aa90;
+  /** Buttons **/
+  --buttonBorderRadius: var(--xs) / var(--xxs);
+  --primaryButtonBg: #45aa90;
+  --primaryButtonBorder: #45aa90;
+  --primaryButtonText: white;
+  --primaryButtonHoverBg: black;
+  --primaryButtonHoverBorder: #45aa90;
+  --primaryButtonHoverText: #45aa90;
+  --secondaryButtonBg: #455264;
+  --secondaryButtonBorder: #455264;
+  --secondaryButtonText: white;
+  --secondaryButtonHoverBg: #dadce0;
+  --secondaryButtonHoverBorder: #45aa90;
+  --secondaryButtonHoverText: #45aa90;
+  /** Layout Regions **/
+  --headerBackground: #b5bac1;
+  --mainBackground: url(../images/chronicler-chrome-bg-dark.jpg) 0 0 no-repeat;
+  --footerBackground: #6a7583;
+  /** Boxes **/
+  --boxBackground: #2e3a49;
+  --boxAlternateBackground: #455264;
+  --boxHoverBackground: #455264;
+  --textShadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  --textBorderShadow: 1px 1px 0 rgba(0, 0, 0, 1);
+  --boxShadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.1);
+  --secondaryBoxBackground: #212936;
+  /** Modal **/
+  --shroudBackground: rgba(0, 0, 0, 0.6);
 }
 
 :root {
@@ -640,6 +638,7 @@ input:-moz-placeholder {
 .chronicler > main {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
