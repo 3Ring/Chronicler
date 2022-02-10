@@ -8,7 +8,8 @@ def update_db(app, test_config):
     if test_config is not None:
         app.config.update(test_config)
         return
-    flask_migrate.upgrade()
+    with app.app_context():
+        flask_migrate.upgrade()
     # flag = ""
     # while flag != "done":
     #     if flag == "":
