@@ -39,9 +39,10 @@ def create_character(form):
     :param form: The form object that was submitted
     '''
     img_id = Images.upload(form.img.name) if form.img.data else None
-    Characters.create(
+    new = Characters.create(
         name=form.name.data,
         bio=form.bio.data,
         user_id=current_user.id,
         img_id=img_id,
     )
+    return new
