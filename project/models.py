@@ -606,7 +606,7 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     date_added = db.Column(db.DateTime, default=d.Character.date_added)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=True) #remove this asap
+    # game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=True) #remove this asap
     img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
     img_object = d.Character.img_object
     image = d.Character.image
