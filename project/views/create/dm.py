@@ -2,7 +2,7 @@ from flask import redirect, render_template, url_for
 from flask_login import current_user
 
 from project.forms.create_dm import DMCreate
-from project.models import BridgeGameCharacters, Games, Images, Characters
+from project.models import BridgeGameCharacters, Images, Characters
 from project.helpers.db_session import db_session
 
 dm_default_image = "/static/images/default_dm.jpg"
@@ -44,4 +44,4 @@ def dm_post(game):
         )
         sess.flush()
         BridgeGameCharacters.create(dm=True, character_id=avatar.id, game_id=game.id)
-    return redirect(url_for("notes.game", game_id=game.id))
+        return redirect(url_for("notes.game", game_id=game.id))

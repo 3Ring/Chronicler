@@ -32,6 +32,11 @@ crossorigin="anonymous"></script>
     <form enctype="multipart/form-data" method='POST'>
         {{ form_edit.hidden_tag() }}
         {{ render_field(form_edit.published, data_published=game.published|string) }}
+        {% if game.published %}
+            <p>Game is currently published</p>
+        {% else %}
+            <p>Game is currently unpublished</p>
+        {% endif %}
         <a href="#" data-reveal="name" class="button primary">Change Name</a>
         {{ render_field(form_edit.name, cls_dv="row hidden", flag_dv="name") }}
         <a href="#" data-reveal="img" class="button primary">Change Image</a>
@@ -48,7 +53,7 @@ crossorigin="anonymous"></script>
         {{ render_field(form_delete.confirm, placeholder="Confirm Deletion", autofill=false) }}
         <p>This will delete all Notes and Sessions associated with the game.</p>
         <p>This cannot be undone!!</p>
-        {{ render_field(form_delete.game_delete_submit) }}
+        {{ render_field(form_delete.submit) }}
         <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
     </form>
 </div>
@@ -58,10 +63,10 @@ crossorigin="anonymous"></script>
     <form method="POST" class="hidden" data-form="rm_player" data-cancel="" data-remove="submit" data-flag="rm_player">
         <h2> Select player to remove player from {{game.name}} </h2>
         {{ form_players.hidden_tag() }}
-        {{ render_field(form_players.players) }}
+        {{ render_field(form_players.players, data_type="player") }}
         {{ render_field(form_players.game_id, value=game.id) }}
         <div class="row">
-            {{ form_players.submit(class="button-primary") }}
+            {{ render_field(form_players.submit) }}
             <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
         </div>
     </form>
@@ -78,10 +83,10 @@ crossorigin="anonymous"></script>
         <form method="POST" class="hidden" data-form="rm_character" data-cancel="" data-remove="submit" data-flag="rm_character">
             <h2> Remove Character from {{game.name}} </h2>
             {{ form_characters.hidden_tag() }}
-            {{ render_field(form_characters.characters) }}
+            {{ render_field(form_characters.characters, data_type="character") }}
             {{ render_field(form_characters.game_id, value=game.id) }}
             <div class="row">
-                {{ form_characters.character_submit }}
+                {{ render_field(form_characters.submit) }}
                 <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
             </div>
         </form>

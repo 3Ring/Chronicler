@@ -1,3 +1,4 @@
+from sys import prefix
 from flask import render_template, redirect, url_for, flash
 from flask_login import current_user, logout_user
 
@@ -20,10 +21,10 @@ def account_get():
 
     :return: The rendered account.html template
     """
-    name_form = UserEditName()
-    email_form = UserEditEmail()
-    pass_form = UserEditPassword()
-    del_form = UserDelete()
+    name_form = UserEditName(prefix="name")
+    email_form = UserEditEmail(prefix="email")
+    pass_form = UserEditPassword(prefix="pass")
+    del_form = UserDelete(prefix="del")
     return render_template(
         "edit/account/account.html",
         user=current_user,
@@ -42,18 +43,18 @@ def account_post():
     :return: The rendered account.html template.
     """
     with db_session():
-        name_form = UserEditName()
-        email_form = UserEditEmail()
-        pass_form = UserEditPassword()
-        del_form = UserDelete()
+        name_form = UserEditName(prefix="name")
+        email_form = UserEditEmail(prefix="email")
+        pass_form = UserEditPassword(prefix="pass")
+        del_form = UserDelete(prefix="del")
         user = Users.query.get(current_user.id)
-        if name_form.validate_on_submit():
+        if name_form.submit.data and name_form.validate():
             user.name = name_form.name.data
-        elif email_form.validate_on_submit():
+        elif email_form.submit.data and email_form.validate():
             user.email = email_form.email.data
-        elif pass_form.validate_on_submit():
+        elif pass_form.submit.data and pass_form.validate():
             user.password = pass_form.password.data
-        elif del_form.user_delete_submit.data:
+        elif del_form.submit.data and del_form.validate():
             return redirect(url_for("edit.delete"))
         return render_template(
             "edit/account/account.html",
