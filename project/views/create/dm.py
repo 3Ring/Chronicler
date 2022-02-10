@@ -44,4 +44,4 @@ def dm_post(game):
         )
         sess.flush()
         BridgeGameCharacters.create(dm=True, character_id=avatar.id, game_id=game.id)
-    return redirect(url_for("notes.game", game_id=game.id))
+        return redirect(url_for("notes.game", game_id=game.id))
