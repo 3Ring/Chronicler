@@ -34,7 +34,6 @@ class CreateAdmins:
     def fill_bugs(cls):
         from project.helpers import bugs_texts
         from project.models import Sessions, Notes
-
         for s in bugs_texts.bug_sessions():
             Sessions.create(number=s["number"], title=s["title"], game_id=s["game_id"])
         for n in bugs_texts.bug_notes():

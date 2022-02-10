@@ -6,8 +6,8 @@ services:
         image: postgres:13.4
         # image: postgres:9.6.23
         container_name: chronicler_host
-        # command: docker cp latest.dump chronicler_host:/var/lib/postgresql/data
-        # command: pg_restore -U postgres -d chronicler_db /var/lib/postgresql/data/latest.dump
+        # docker cp latest.dump.1 chronicler_host:/var/lib/postgresql/data/latest.dump
+        # pg_restore -U postgres --no-privileges --no-owner -d chronicler_db /var/lib/postgresql/data/latest.dump
         # healthcheck:
         #     test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
         #     timeout: 45s
@@ -15,7 +15,7 @@ services:
         #     retries: 10
         restart: always
         volumes: 
-            - chronicler_volume3:/var/lib/postgresql/data
+            - chronicler_volume:/var/lib/postgresql/data
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=${SQL_ROOT_PASSWORD:-unsecured_password}
@@ -47,8 +47,8 @@ services:
         volumes:
             - ./:/app
 volumes:
-    chronicler_volume3:
-        name: chronicler_volume3
+    chronicler_volume:
+        name: chronicler_volume
 
 networks: 
     default:

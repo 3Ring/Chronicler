@@ -22,7 +22,7 @@ def bug_sessions():
 
 def bug_notes():
     """creates and passes notes for creation of bug reports"""
-    charname = Characters.query.get(d.Admin.id).name
+    charname = d.CharacterTutorial.name
     # session 0
     yield {
         "charname": charname,

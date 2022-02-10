@@ -16,6 +16,7 @@ def conf_sqla(app):
         from project.setup_.helpers import create_db
         create_db()
 
+
     app.config["SQLALCHEMY_DATABASE_URI"] = uri
     app.config["SECRET_KEY"] = db_password
     app.config["POSTGRES_PASSWORD"] = db_password
@@ -31,6 +32,7 @@ def set_uri():
     elif os.environ.get("DOCKER_FLAG"):
         print("connecting to local through docker...")
         uri = f"postgresql://postgres:{db_password}@chronicler_host:5432/chronicler_db"
+        # uri = f"postgresql://nbaiybhjzwkkpy:{db_password}@chronicler_host:5432/chronicler_db"
     else:
         print("connecting to local...")
         uri = "sqlite:///litechronicler.db"
@@ -51,4 +53,3 @@ def postfix(string):
 def conf_admin(app):
     """configure Flask Admin"""
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
-    return

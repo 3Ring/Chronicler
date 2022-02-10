@@ -39,10 +39,8 @@ def create_app(test_config=None):
         init_blueprints(app)
 
         update_db(app, test_config)
-
-        from project.setup_.db_init_create.base_items import Base_items
-        Base_items.init_database_assets(app)
-        
+        # from project.setup_.db_init_create.base_items import Base_items
+        # Base_items.init_database_assets(app)
         return app
     except Exception as e:
         print(e)

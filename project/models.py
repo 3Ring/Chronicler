@@ -19,11 +19,9 @@ from project.setup_ import defaults as d
 
 class SAWithImageMixin:
     def attach_image(self):
-
         self.image_object = Images.query.get(self.img_id)
         if self.image_object:
             self.image = self.image_object.img_string
-        return
 
 
 class SAAdmin:
@@ -146,6 +144,8 @@ class SABaseMixin:
 
 
 class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
+
+    __tablename__ = "users"
 
     name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
@@ -276,6 +276,8 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
 
 class Images(SABaseMixin, db.Model):
 
+    __tablename__ = "images"
+
     img_string = db.Column(db.Text, nullable=False)
     name = db.Column(db.Text, nullable=False)
     mimetype = db.Column(db.Text, nullable=False)
@@ -327,6 +329,8 @@ class Images(SABaseMixin, db.Model):
 
 class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
+    __tablename__ = "games"
+
     name = db.Column(db.String(50), nullable=False)
     published = db.Column(
         db.Boolean,
@@ -343,7 +347,6 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
     image_object = object
     image = d.Game.image
-    self_title = "game"
 
     @staticmethod
     def get_index_lists(user) -> dict:
@@ -367,7 +370,8 @@ class Games(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         """
         join = BridgeUserGames.join(game_id, "game_id", "user_id")
         dm_id = Games.get_dmID_from_gameID(game_id)
-        return [u for u in join if u.id > 0 and u.id != dm_id]
+        players = [u for u in join if u.id > 0 and u.id != dm_id]
+        return players if type(players) is list else []
 
     @staticmethod
     def add_player_to_game(game_id: int, user_id: int) -> None:
@@ -581,6 +585,8 @@ def init_on_refresh(target, args, kwargs):
 
 class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
 
+    __tablename__ = "characters"
+
     name = db.Column(db.String(50), nullable=False)
     bio = db.Column(db.Text)
     avatar = db.Column(
@@ -600,7 +606,7 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     date_added = db.Column(db.DateTime, default=d.Character.date_added)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    # game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=True) #remove this asap
     img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
     img_object = d.Character.img_object
     image = d.Character.image
@@ -640,6 +646,8 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
     ) -> list:
         """returns a list of all the character objects the user owns in specified game"""
         game_characters = BridgeGameCharacters.join(game_id, "game_id", "character_id")
+        if not game_characters:
+            return []
         final = []
         for c in game_characters:
             if c.user_id == current_user.id:
@@ -729,8 +737,13 @@ class Characters(SAAdmin, SABaseMixin, SAWithImageMixin, db.Model):
         self.is_npc = False
         self.attach_image()
 
+    def delete_self(self):
+        [br.delete_self() for br in BridgeGameCharacters.query.filter_by(character_id=self.id).all()]
+        super().delete_self()
 
 class Sessions(SABaseMixin, db.Model):
+
+    __tablename__ = "sessions"
 
     number = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(100), nullable=False)
@@ -750,6 +763,8 @@ class Sessions(SABaseMixin, db.Model):
 
 
 class Notes(SABaseMixin, db.Model):
+
+    __tablename__ = "notes"
 
     charname = db.Column(db.String(50), nullable=False)
     text = db.Column(db.Text)
@@ -800,12 +815,12 @@ def init_on_refresh(target, context):
 
 class Places(SABaseMixin, db.Model):
 
+    __tablename__ = "places"
+
     name = db.Column(db.String(40), nullable=False)
     bio = db.Column(db.Text, default=d.Place.bio)
     secret_bio = db.Column(db.Text)
     date_added = db.Column(db.DateTime, default=d.Place.date_added)
-
-    self_title = "place"
 
     def _delete_attached(self, confirm: bool = False):
         """deletes all attached items
@@ -859,13 +874,12 @@ class NPCs(SAWithImageMixin, SABaseMixin, db.Model):
 
 class Items(SABaseMixin, db.Model):
 
+    __tablename__ = "items"
+
     name = db.Column(db.String(40), nullable=False)
     bio = db.Column(db.Text, default=d.Item.bio)
     copper_value = db.Column(db.Integer, default=0)
     date_added = db.Column(db.DateTime, default=d.Item.date_added)
-
-    # owner_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-    self_title = "loot"
 
     def _delete_attached(self, confirm: bool = False):
         """deletes all attached items
@@ -905,7 +919,7 @@ class BridgeBase:
         bridge_list = cls._get_column_attr(model_id, input_column_name)
         my_keys = []
         if not bridge_list:
-            return False
+            return []
         for bridge in bridge_list:
             if bridge.removed:
                 if not include_removed:
@@ -916,7 +930,7 @@ class BridgeBase:
             raise BaseException("invalid model in join function")
         my_items = []
         if not my_keys:
-            return False
+            return []
         for key in my_keys:
             if not key:
                 continue
@@ -955,7 +969,7 @@ class BridgeBase:
 class BridgeUserImages(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character item assets"""
 
-    __tablename__ = "bridgeimages"
+    __tablename__ = "bridgeuserimages"
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     img_id = db.Column(db.Integer, db.ForeignKey("images.id"))
@@ -970,7 +984,7 @@ class BridgeUserGames(SABaseMixin, BridgeBase, db.Model):
     :param user_id: `Integer, ForeignKey('games.id'), nullable=False`
     """
 
-    __tablename__ = "players"
+    __tablename__ = "bridgeusergames"
 
     owner = db.Column(
         db.Boolean,
@@ -979,8 +993,6 @@ class BridgeUserGames(SABaseMixin, BridgeBase, db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"), nullable=False)
-
-    self_title = "player"
 
     @classmethod
     def create(cls, **kw):
@@ -998,7 +1010,7 @@ class BridgeUserGames(SABaseMixin, BridgeBase, db.Model):
 class BridgeGameCharacters(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character game assets"""
 
-    __tablename__ = "bridgecharacters"
+    __tablename__ = "bridgegamecharacters"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     character_id = db.Column(db.Integer, db.ForeignKey("characters.id"))
@@ -1023,7 +1035,7 @@ class BridgeGameCharacters(SABaseMixin, BridgeBase, db.Model):
 class BridgeGamePlaces(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining Place game assets"""
 
-    __tablename__ = "bridgeplaces"
+    __tablename__ = "bridgegameplaces"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     place_id = db.Column(db.Integer, db.ForeignKey("places.id"))
@@ -1032,7 +1044,7 @@ class BridgeGamePlaces(SABaseMixin, BridgeBase, db.Model):
 class BridgeGameNPCs(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining NPC game assets"""
 
-    __tablename__ = "bridgenpcs"
+    __tablename__ = "bridgegamenpcs"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     npc_id = db.Column(db.Integer, db.ForeignKey("npcs.id"))
@@ -1041,7 +1053,7 @@ class BridgeGameNPCs(SABaseMixin, BridgeBase, db.Model):
 class BridgeGameItems(SABaseMixin, BridgeBase, db.Model):
     """multi-relational database joining character item assets"""
 
-    __tablename__ = "bridgeitems"
+    __tablename__ = "bridgegameitems"
 
     game_id = db.Column(db.Integer, db.ForeignKey("games.id"))
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
