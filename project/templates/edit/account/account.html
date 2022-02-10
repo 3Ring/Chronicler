@@ -43,7 +43,7 @@
         <form method='POST'>
             {{ name_form.hidden_tag() }}
             {{ render_field(name_form.name, value=current_user.name) }}
-            {{ render_field(name_form.user_edit_name_submit) }}
+            {{ render_field(name_form.submit) }}
         </form>
     </div>
     <div>
@@ -57,7 +57,7 @@
         <form method='POST'>
             {{ email_form.hidden_tag() }}
             {{ render_field(email_form.email, value=current_user.email) }}
-            {{ render_field(email_form.user_edit_email_submit) }}
+            {{ render_field(email_form.submit) }}
         </form>
     </div>
     <div>
@@ -68,10 +68,10 @@
     <div class="form-container hidden" data-reveal="pass">
         <form method='POST'>
             {{ pass_form.hidden_tag() }}
-            {{ render_field(pass_form.password, autocomplete="new-password") }}
-            {{ render_field(pass_form.confirm, autocomplete="new-password") }}
-            {{ render_field(pass_form.reveal, check=true) }}
-            {{ render_field(pass_form.user_edit_password_submit) }}
+            {{ render_field(pass_form.password, data_revealed="pass", autocomplete="new-password") }}
+            {{ render_field(pass_form.confirm, data_revealed="pass", autocomplete="new-password") }}
+            {{ render_field(pass_form.reveal, check=true, data_reveal="pass") }}
+            {{ render_field(pass_form.submit) }}
         </form>
     </div>
     <div class="form-container">
@@ -79,7 +79,7 @@
             <h1>Delete Account:</h1>
             <h2>This will take you to another page to confirm and delegate assets</h2>
             {{ del_form.hidden_tag() }}
-            {{ render_field(del_form.user_delete_submit) }}
+            {{ render_field(del_form.submit) }}
         </form>
     </div>
 </div>

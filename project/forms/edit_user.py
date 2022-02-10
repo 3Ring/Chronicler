@@ -16,12 +16,12 @@ class UserEditName(FlaskForm):
             ),
         ],
     )
-    user_edit_name_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")
 
 
 class UserEditEmail(FlaskForm):
     email = StringField("Change Email", validators=[DataRequired(), Email()])
-    user_edit_email_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")
 
 
 class UserEditPassword(FlaskForm):
@@ -34,9 +34,9 @@ class UserEditPassword(FlaskForm):
         v.password_confirm(form, field)
 
     reveal = BooleanField("Show Passwords")
-    user_edit_password_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")
 
 
 class UserDelete(FlaskForm):
     confirm = StringField("Confirm here", validators=[v.delete_account_confirm])
-    user_delete_submit = SubmitField("Delete")
+    submit = SubmitField("Delete")
