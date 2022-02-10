@@ -1,3 +1,4 @@
+from sys import prefix
 from flask import render_template, flash, redirect, url_for
 from project.forms.edit_dm_game import (
     Edit,
@@ -43,12 +44,12 @@ def game_dm_post(game):
     """
 
     error_target = None
-    form_edit = Edit()
-    form_delete = Delete()
-    form_players = RemovePlayer(choices=Games.get_player_list_from_id(game.id))
-    form_characters = RemoveCharacter(choices=Games.get_PCs(game.id))
+    form_edit = Edit(prefix="edit")
+    form_delete = Delete(prefix="del")
+    form_players = RemovePlayer(prefix="rm_player", choices=Games.get_player_list_from_id(game.id))
+    form_characters = RemoveCharacter(prefix="rm_character", choices=Games.get_PCs(game.id))
     with db_session(autocommit=False) as sess:
-        if form_edit.edit_submit.data:
+        if form_edit.submit.data:
             if form_edit.validate():
                 edit_game_details(game, form_edit)
                 sess.commit()
@@ -101,13 +102,13 @@ def render(
     :param error_target: This is the 'data-form' attribute value attached to the form that has errors if applicable. Used to reveal said form.
     """
     if form_edit is None:
-        form_edit = Edit()
+        form_edit = Edit(prefix="edit")
     if form_delete is None:
-        form_delete = Delete()
+        form_delete = Delete(prefix="del")
     if form_players is None:
-        form_players = RemovePlayer(choices=Games.get_player_list_from_id(game.id))
+        form_players = RemovePlayer(prefix="rm_player", choices=Games.get_player_list_from_id(game.id))
     if form_characters is None:
-        form_characters = RemoveCharacter(choices=Games.get_PCs(game.id))
+        form_characters = RemoveCharacter(prefix="rm_character", choices=Games.get_PCs(game.id))
     return render_template(
         "edit/games/dm.html",
         game=game,

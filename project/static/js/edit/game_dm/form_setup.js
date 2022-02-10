@@ -28,7 +28,7 @@ function create_select_element_title_cards() {
     title.setAttribute("selected", true);
     title.setAttribute("hidden", true);
     title.setAttribute("value", "");
-    title.innerHTML = `Choose ${el[i].getAttribute("id")} to remove`;
+    title.innerHTML = `Choose ${el[i].getAttribute("data-type")} to remove`;
     el[i].insertAdjacentElement("afterbegin", title);
   }
 }

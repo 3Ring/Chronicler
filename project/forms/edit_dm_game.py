@@ -32,7 +32,7 @@ class Edit(FlaskForm):
         ],
     )
     published = BooleanField("Allow game to be searchable")
-    edit_submit = SubmitField("Submit Changes")
+    submit = SubmitField("Submit Changes")
 
 
 class Delete(FlaskForm):
@@ -40,7 +40,7 @@ class Delete(FlaskForm):
         "Confirm deletion by entering game name here",
         validators=[DataRequired(), v.delete_game_confirm],
     )
-    game_delete_submit = SubmitField("Delete")
+    submit = SubmitField("Delete")
     # used for form validation
     game_name = HiddenField()
 
