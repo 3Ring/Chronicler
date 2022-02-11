@@ -364,7 +364,6 @@ form h1 {
   line-height: 1.085;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
-  color: var(--linkColor);
   font-weight: 500;
   text-align: center;
 }
@@ -1363,6 +1362,15 @@ form.wysiwyg-form {
   width: 100%;
   margin: 0;
 }
+form.wysiwyg-form .character-select label {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--sm);
+}
+form.wysiwyg-form .character-select select {
+  background: var(--reverse);
+  margin: 0 0 0 var(--sm);
+}
 form.wysiwyg-form:not(.hidden) {
   display: grid;
 }
@@ -1404,7 +1412,7 @@ form.wysiwyg-form p {
   text-align: left;
 }
 
-.session-container > h2 {
+.session-container h2 {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
@@ -1413,24 +1421,80 @@ form.wysiwyg-form p {
   line-height: 1.085;
   color: var(--headlineColor);
   font-family: "Grenze Gotisch", cursive;
-  margin: var(--sm) var(--lg) 0 var(--lg);
+  margin: 0 var(--lg) 0 var(--lg);
 }
-.session-container > h2 b,
-.session-container > h2 strong {
+.session-container h2 b,
+.session-container h2 strong {
   font-weight: 700;
 }
-.session-container > h2 em, .session-container > h2 i {
+.session-container h2 em, .session-container h2 i {
   font-style: italic;
 }
-.session-container > h2 strong i,
-.session-container > h2 strong em,
-.session-container > h2 b i,
-.session-container > h2 b em {
+.session-container h2 strong i,
+.session-container h2 strong em,
+.session-container h2 b i,
+.session-container h2 b em {
   font-weight: 700;
   font-style: italic;
 }
 .session-container > div {
   margin-bottom: var(--lg);
+}
+.session-container .session-item {
+  display: flex;
+  align-items: center;
+}
+.session-container .session-item .edit-note .note_edit_button {
+  display: flex;
+}
+.session-container .session-item .session-notes-direction button {
+  transition: all 0.3s ease;
+  color: var(--linkColor);
+  text-decoration: none;
+  margin: 0;
+  padding: var(--xxs);
+}
+.session-container .session-item .session-notes-direction button:hover {
+  text-decoration: none;
+  color: var(--copyColor);
+  cursor: pointer;
+}
+.session-container .note_edit_menu:not(.hidden) {
+  position: absolute;
+  font-size: 0.8;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--shroudBackground);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.session-container .note_edit_menu ul {
+  display: flex;
+  gap: var(--sm);
+}
+.session-container .note_edit_menu ul a {
+  color: white;
+}
+.session-container .note_edit_menu ul a:hover {
+  color: #6dc6af;
+}
+.session-container .edit-note {
+  display: flex;
+  min-width: var(--lg);
+  height: max-content;
+  padding: var(--xxs);
+}
+.session-container .edit-note:not(.active):hover {
+  text-decoration: none;
+  color: var(--copyColor);
+  cursor: pointer;
+}
+.session-container .edit-note .note_edit_button {
+  display: none;
 }
 
 .note_list {
@@ -1448,42 +1512,6 @@ form.wysiwyg-form p {
 .note_list > li .note-item {
   display: grid;
   grid-template-columns: max-content 1fr max-content;
-}
-.note_list > li .note_edit_menu:not(.hidden) {
-  position: absolute;
-  font-size: 0.8;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--shroudBackground);
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.note_list > li .note_edit_menu ul {
-  display: flex;
-  gap: var(--sm);
-}
-.note_list > li .note_edit_menu ul a {
-  color: white;
-}
-.note_list > li .note_edit_menu ul a:hover {
-  color: #6dc6af;
-}
-.note_list .edit-note {
-  display: flex;
-  min-width: var(--lg);
-  height: max-content;
-  padding: var(--xxs);
-}
-.note_list .edit-note:not(.active):hover {
-  text-decoration: none;
-  color: var(--copyColor);
-  cursor: pointer;
-}
-.note_list .edit-note .note_edit_button {
-  display: none;
 }
 .note_list .span_cont:hover .edit-note .note_edit_button {
   display: flex;

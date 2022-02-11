@@ -9,6 +9,8 @@ function set_direction() {
         const els = document.querySelectorAll(`ul[data-flag="note_list"]`);
         for (let i = 0; i < els.length; i++) {
           els[i].classList.toggle("reverse");
+          button.classList.toggle("fa-sort-numeric-down");
+          button.classList.toggle("fa-sort-numeric-up-alt");
         }
       });
     }

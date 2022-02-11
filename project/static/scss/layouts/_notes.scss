@@ -199,6 +199,18 @@ form.wysiwyg-form {
     width: 100%;
     margin: 0;
 
+    .character-select {
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--sm);
+        }
+        select {
+            background: var(--reverse);
+            margin: 0 0 0 var(--sm);
+        }
+    }
+
     &:not(.hidden) {
         display: grid;
     }
@@ -250,15 +262,92 @@ form.wysiwyg-form {
 }
 
 .session-container {
-    > h2 {
+    h2 {
         @include size-3();
         font-family: $display;
-        margin: var(--sm) var(--lg) 0 var(--lg);
+        margin: 0 var(--lg) 0 var(--lg);
     }
 
     > div {
         margin-bottom: var(--lg);
     }
+
+    .session-item {
+        display: flex;
+        align-items: center;
+
+        .edit-note {
+            .note_edit_button {
+                display: flex;
+            }
+        }
+        .session-notes-direction {
+            button {
+                transition: all 0.3s ease;
+                color: var(--linkColor);
+                text-decoration: none;
+                margin: 0;
+                padding: var(--xxs);
+
+                &:hover {
+                    text-decoration: none;
+                    color: var(--copyColor);
+                    cursor: pointer;
+                }
+            }
+            
+        }
+        
+    }
+
+    .note_edit_menu {
+
+            &:not(.hidden) {
+                position: absolute;
+                font-size: 0.8;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background: var(--shroudBackground);
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+            }
+            
+            
+
+            ul {
+                display: flex;
+                gap: var(--sm);
+
+                a {
+                    color: $max;
+
+                    &:hover {
+                        color: $brand;
+                    }
+                }
+            }
+        }
+    .edit-note {
+        display: flex;
+        min-width: var(--lg);
+        height: max-content;
+        padding: var(--xxs);
+        &:not(.active) {
+            &:hover {
+                text-decoration: none;
+                color: var(--copyColor);
+                cursor: pointer;
+            }
+        }
+        .note_edit_button {
+            display: none;
+        }
+    }
+
 }
 
 .note_list {
@@ -280,55 +369,11 @@ form.wysiwyg-form {
             grid-template-columns: max-content 1fr max-content;
         }
 
-        .note_edit_menu {
-
-            &:not(.hidden) {
-                position: absolute;
-                font-size: 0.8;
-                top: 0;
-                left: 0;
-                width: 100%;
-                background: var(--shroudBackground);
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            
-
-            ul {
-                display: flex;
-                gap: var(--sm);
-
-                a {
-                    color: $max;
-
-                    &:hover {
-                        color: $brand;
-                    }
-                }
-            }
-        }
+        
     }
 
 
-    .edit-note {
-        display: flex;
-        min-width: var(--lg);
-        height: max-content;
-        padding: var(--xxs);
-        &:not(.active) {
-            &:hover {
-                text-decoration: none;
-                color: var(--copyColor);
-                cursor: pointer;
-            }
-        }
-        .note_edit_button {
-            display: none;
-        }
-    }
+    
     .span_cont {
         &:hover {
             .edit-note {

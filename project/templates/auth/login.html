@@ -11,7 +11,7 @@
             {{ render_field(form.email) }}
             {{ render_field(form.password) }}
             {{ render_field(form.remember, check=true) }}
-            {{ render_field(form.login_submit) }}
+            {{ render_field(form.login_submit, class='button primary') }}
             <h6>Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a></h6>
         </form>
     </div>

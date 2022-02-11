@@ -5,12 +5,16 @@
         <input type="hidden" id='note_game_id' name='note_game_id' value='{{id}}'>
         <!-- !bug page code (some in form class too) -->
         {% if game.id != bugs_id %}
-        <h2>Speaking as:</h2>
-        <select name="speaking_as">
-            {% for character in character_list %}
-            <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
-            {% endfor %}
-        </select>
+        <div class="character-select">
+            <label>Speaking as:
+                <select name="speaking_as">
+                    {% for character in character_list %}
+                    <option value="{{character.id}}" data-is_npc="{{character.is_npc}}">{{character.name}}</option>
+                    {% endfor %}
+                </select>
+            <label>
+        </div>
+        
         {% endif %}
         <!-- !end bugs -->
         <div id="Quill_sessionNew"></div>
