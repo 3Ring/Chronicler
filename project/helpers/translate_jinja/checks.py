@@ -12,10 +12,16 @@ class Checks:
     def checks(self) -> bool:
         """Check if the line is in scope should be added to the socket"""
         if not self.in_scope():
+            # if "{% if note.user_id == current_user.id" in self.line:
+                # print(f'scope: {self.line}')
             return False
         if not self.nested_conditionals():
+            # if "{% if note.user_id == current_user.id" in self.line:
+                # print(f'nested: {self.line}')
             return False
         if not self.comment_or_empty():
+            # if "{% if note.user_id == current_user.id" in self.line:
+                # print(f'comment: {self.line}')
             return False
         return True
 
@@ -72,9 +78,9 @@ class Checks:
             self.condition.clear()
             self.con_type = None
             return
-        flag = True if "current_user.id" in self.line else False
-        if flag:
-            print(f'self.line: {self.line}')
+        # flag = True if "current_user.id" in self.line else False
+        # if flag:
+        #     print(f'self.line: {self.line}')
         con = [w.strip() for w in self.line[2:-2].strip().split(" ")]
         self.con_type = con[0]
         if len(con) == 1:
@@ -99,8 +105,8 @@ class Checks:
             else:
                 generic_list.append(item)
         self.condition = generic_list
-        if flag:
-            print(f'self.condition: {self.condition}')
+        # if flag:
+        #     print(f'self.condition: {self.condition}')
 
     def check_new_section(self):
         """if new section found, set the new section"""
