@@ -25,5 +25,7 @@ def init_blueprints(app):
     from project.views.join.routes import join as join_blueprint
     app.register_blueprint(join_blueprint)
     
+    from project.views.admin.routes import admin_ as admin_blueprint
+    app.register_blueprint(admin_blueprint)
     return
     
