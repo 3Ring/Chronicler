@@ -50,7 +50,6 @@ def _if(arg) -> bool:
     :param arg: The argument to be evaluated
     :return: A boolean value.
     """
-    print("arg", arg)
     if type(arg) is list:
         if len(arg) == 1:
             return bool(arg[0])

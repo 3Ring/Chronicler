@@ -4,20 +4,12 @@ class Logic:
     def nested_conditionals(self):
         """if/elif/else nesting logic to determine if self.line is appended to the socket"""
         self.top_checks()
-        if "{% if note.user_id == current_user.id or note.user_id == tutorial_id %}" in self.line and self.allowed_depth == 1:
-            print(f'switch .gatekeeper: {self.gatekeeper}')
-            print(f'switch .condition: {self.condition}')
-            print(f'switch .con_type: {self.con_type}')
-            print(f'switch .allowed_depth: {self.allowed_depth}')
-            print(f'switch .depth: {self.depth}')
         if self.gatekeeper:
             if self.con_type is None:
                 return True
             if self.con_type == "endif":
                 return self.open_endif()
             elif self.con_type == "if":
-                # if "{% if note.user_id == current_user.id or note.user_id == tutorial_id %}" in self.line:
-                #     print(f'here')
                 self.passed_if() if switch(self.condition) else self.open_failed_if()
             elif self.con_type == "elif":
                 self.open_elif()
