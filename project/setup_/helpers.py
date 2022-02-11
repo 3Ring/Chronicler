@@ -68,68 +68,68 @@ def update_db(app, test_config):
 
 
 
-def transfer_game_id(app):
-    from project.helpers.db_session import db_session
-    from project.models import Characters, BridgeGameCharacters
-    with app.app_context():
-        with db_session(autocommit=False) as sess:
-            for c in Characters.query.all():
-                brs = BridgeGameCharacters.query.filter_by(character_id=c.id).all()
-                if c not in brs:
-                    BridgeGameCharacters.create(character_id=c.id, game_id=c.game_id)
-                c.game_id = None
-            sess.commit()
+# def transfer_game_id(app):
+#     from project.helpers.db_session import db_session
+#     from project.models import Characters, BridgeGameCharacters
+#     with app.app_context():
+#         with db_session(autocommit=False) as sess:
+#             for c in Characters.query.all():
+#                 brs = BridgeGameCharacters.query.filter_by(character_id=c.id).all()
+#                 if c not in brs:
+#                     BridgeGameCharacters.create(character_id=c.id, game_id=c.game_id)
+#                 c.game_id = None
+#             sess.commit()
 
-def update_data(app):
-    from project.helpers.db_session import db_session
-    from project.models import (
-        Users,
-        Notes,
-        Characters,
-        Games,
-        Images,
-    )
-    from project.views.edit.game_dm import delete_game_and_assets
+# def update_data(app):
+#     from project.helpers.db_session import db_session
+#     from project.models import (
+#         Users,
+#         Notes,
+#         Characters,
+#         Games,
+#         Images,
+#     )
+#     from project.views.edit.game_dm import delete_game_and_assets
 
-    with app.app_context():
-        with db_session(autocommit=False) as sess:
-            # add charname to notes
-            for n in Notes.query.all():
-                if getattr(n, "charname", None) is None:
-                    try:
-                        name = Characters.query.get(n.origin_character_id).name
-                    except KeyError:
-                        name = Characters.query.get(n.character).name
-                    finally:
-                        n.charname = name
-            sess.commit()
+#     with app.app_context():
+#         with db_session(autocommit=False) as sess:
+#             # add charname to notes
+#             for n in Notes.query.all():
+#                 if getattr(n, "charname", None) is None:
+#                     try:
+#                         name = Characters.query.get(n.origin_character_id).name
+#                     except KeyError:
+#                         name = Characters.query.get(n.character).name
+#                     finally:
+#                         n.charname = name
+#             sess.commit()
 
-            # adjust dm avatar
-            for c in Characters.query.all():
-                if c.name == "DM":
-                    c.dm = True
-            sess.commit()
-            # create and place user avatars
-            for user in Users.query.all():
-                if user.id > 0:
-                    avatar = Characters.create(
-                        name=user.name, user_id=user.id, avatar=True
-                    )
-                    avatar.add_to_game(Games.get_bugs().id)
-            sess.commit()
-            # correct img strings
-            for i in Images.query.all():
-                if (
-                    i.img_string[: len("data:image/jpeg;base64,")]
-                    != "data:image/jpeg;base64,"
-                ):
-                    i.img_string = "data:image/jpeg;base64," + i.img_string
-            sess.commit()
-            # delete unused games
-            for g in Games.query.all():
-                if g.id > 0 and len(Games.get_player_list_from_id(g.id)) < 1:
-                    delete_game_and_assets(g)
-            sess.commit()
+#             # adjust dm avatar
+#             for c in Characters.query.all():
+#                 if c.name == "DM":
+#                     c.dm = True
+#             sess.commit()
+#             # create and place user avatars
+#             for user in Users.query.all():
+#                 if user.id > 0:
+#                     avatar = Characters.create(
+#                         name=user.name, user_id=user.id, avatar=True
+#                     )
+#                     avatar.add_to_game(Games.get_bugs().id)
+#             sess.commit()
+#             # correct img strings
+#             for i in Images.query.all():
+#                 if (
+#                     i.img_string[: len("data:image/jpeg;base64,")]
+#                     != "data:image/jpeg;base64,"
+#                 ):
+#                     i.img_string = "data:image/jpeg;base64," + i.img_string
+#             sess.commit()
+#             # delete unused games
+#             for g in Games.query.all():
+#                 if g.id > 0 and len(Games.get_player_list_from_id(g.id)) < 1:
+#                     delete_game_and_assets(g)
+#             sess.commit()
 
 
 def create_db():
