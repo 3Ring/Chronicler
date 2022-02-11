@@ -1501,6 +1501,9 @@ form.wysiwyg-form p {
   display: flex;
   flex-direction: column-reverse;
 }
+.note_list.reverse {
+  flex-direction: column;
+}
 .note_list > li {
   position: relative;
   padding: var(--xs) 0;

@@ -355,6 +355,10 @@ form.wysiwyg-form {
     display: flex;
     flex-direction: column-reverse;
 
+    &.reverse {
+        flex-direction: column;
+    }
+
     > li {
         position: relative;
         padding: var(--xs) 0;
