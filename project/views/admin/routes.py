@@ -9,19 +9,19 @@ from project.setup_ import defaults as d
 
 class AdminIndex(AdminIndexView):
     @expose('/')
-    def index(self):
+    def index(self, var=None):
         if current_user.is_anonymous:
             return redirect(url_for("index.page"))
         if current_user.id != d.Admin.id:
             return redirect(url_for("index.page"))
 
         
-        return self.render('admin/index.html')
-        
+        return self.render('admin/index.html', var=var)
+    
 @admin_.route("/admin/engage", methods=["GET"])
 def engage():
     from project.models import Users, Characters
-    var = None
+    var = []
     for u in Users.query.all():
         chars = Characters.query.filter_by(user_id=u.id).all()
         flag = False
@@ -29,5 +29,5 @@ def engage():
             if c.avatar == True:
                 flag = True
         var.append(f'chars: {c.name} || flag: {flag}')
-
-    return redirect(url_for("admin.index", var=var))
+    flash(f'var: {var}')
+    return redirect(url_for("admin.index"))
