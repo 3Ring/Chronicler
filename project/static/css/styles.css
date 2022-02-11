@@ -1453,6 +1453,7 @@ form.wysiwyg-form p {
   text-decoration: none;
   margin: 0;
   padding: var(--xxs);
+  font-size: var(--md);
 }
 .session-container .session-item .session-notes-direction button:hover {
   text-decoration: none;
@@ -1487,6 +1488,7 @@ form.wysiwyg-form p {
   min-width: var(--lg);
   height: max-content;
   padding: var(--xxs);
+  font-size: var(--md);
 }
 .session-container .edit-note:not(.active):hover {
   text-decoration: none;
