@@ -27,21 +27,21 @@ def engage():
     from project.models import BridgeGameCharacters
     with db_session():
         
-        for user in Users.query.all():
-            # for c in Characters.query.filter_by(user_id=user.id).all():
-            #     if c.avatar == True:
-            #         for n in Notes.query.filter_by(origin_character_id=c.id).all():
-            #             flash(n.origin_character_id)
-            #             n.delete_self()
-            #         for br in BridgeGameCharacters.query.filter_by(character_id=c.id).all():
+        # for user in Users.query.all():
+        #     # for c in Characters.query.filter_by(user_id=user.id).all():
+        #     #     if c.avatar == True:
+        #     #         for n in Notes.query.filter_by(origin_character_id=c.id).all():
+        #     #             flash(n.origin_character_id)
+        #     #             n.delete_self()
+        #     #         for br in BridgeGameCharacters.query.filter_by(character_id=c.id).all():
 
-            #             flash(br.game_id)
-            #             br.delete_self()
-            #         flash(c.name)
-            #         c.delete_self()
-            if user.id > 0:
-                avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
-                avatar.add_to_game(Games.get_bugs().id)
-                flash(avatar.name)
+        #     #             flash(br.game_id)
+        #     #             br.delete_self()
+        #     #         flash(c.name)
+        #     #         c.delete_self()
+        #     if user.id > 0:
+        #         avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
+        #         avatar.add_to_game(Games.get_bugs().id)
+        #         flash(avatar.name)
 
         return redirect(url_for("admin.index"))
