@@ -854,6 +854,48 @@ nav ul:last-child li:first-child a {
   flex-grow: 1;
   align-items: center;
   justify-content: flex-start;
+}
+.app-container .games .game ul a:hover {
+  text-decoration: none;
+}
+.app-container .games .game ul a img {
+  max-height: var(--xl);
+  margin: 0 var(--sm) 0 0;
+}
+.app-container .games .game ul a span {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.app-container .games .game ul a span h6 {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  font-family: "robotomedium", Helvetica, Arial, sans-serif;
+  color: var(--accentColor);
+}
+.app-container .games .game ul a span h6 b,
+.app-container .games .game ul a span h6 strong {
+  font-weight: 700;
+}
+.app-container .games .game ul a span h6 em, .app-container .games .game ul a span h6 i {
+  font-style: italic;
+}
+.app-container .games .game ul a span h6 strong i,
+.app-container .games .game ul a span h6 strong em,
+.app-container .games .game ul a span h6 b i,
+.app-container .games .game ul a span h6 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games .game ul a span h6 i {
+  font-style: normal;
+}
+.app-container .games .game ul a span h3 {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
@@ -865,26 +907,19 @@ nav ul:last-child li:first-child a {
   color: var(--copyColor);
   font-weight: 900;
 }
-.app-container .games .game ul a b,
-.app-container .games .game ul a strong {
+.app-container .games .game ul a span h3 b,
+.app-container .games .game ul a span h3 strong {
   font-weight: 700;
 }
-.app-container .games .game ul a em, .app-container .games .game ul a i {
+.app-container .games .game ul a span h3 em, .app-container .games .game ul a span h3 i {
   font-style: italic;
 }
-.app-container .games .game ul a strong i,
-.app-container .games .game ul a strong em,
-.app-container .games .game ul a b i,
-.app-container .games .game ul a b em {
+.app-container .games .game ul a span h3 strong i,
+.app-container .games .game ul a span h3 strong em,
+.app-container .games .game ul a span h3 b i,
+.app-container .games .game ul a span h3 b em {
   font-weight: 700;
   font-style: italic;
-}
-.app-container .games .game ul a:hover {
-  text-decoration: none;
-}
-.app-container .games .game ul a img {
-  max-height: var(--xl);
-  margin: 0 var(--sm) 0 0;
 }
 .app-container .game h2, .app-container .welcome h2 {
   font-family: "Urbanist", sans-serif;
