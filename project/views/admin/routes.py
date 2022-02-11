@@ -20,14 +20,13 @@ class AdminIndex(AdminIndexView):
     
 @admin_.route("/admin/engage", methods=["GET"])
 def engage():
-    from project.models import Users, Characters
-    var = []
-    for u in Users.query.all():
-        chars = Characters.query.filter_by(user_id=u.id).all()
-        flag = False
-        for c in chars:
-            if c.avatar == True:
-                flag = True
-        var.append(f'chars: {c.name} || flag: {flag}')
-    flash(f'var: {var}')
-    return redirect(url_for("admin.index"))
+    from project.helpers.db_session import db_session
+    from project.models import Users, Characters, Games
+    with db_session():
+        
+        for user in Users.query.all():
+            avatar = Characters.create(name=user.name, user_id=user.id, avatar=True)
+            avatar.add_to_game(Games.get_bugs().id)
+            flash(avatar)
+
+        return redirect(url_for("admin.index"))
