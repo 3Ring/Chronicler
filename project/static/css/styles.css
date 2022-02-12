@@ -144,7 +144,7 @@ input[type=submit], .button {
   /** Inputs **/
   --formBackground: #6dc6af;
   --inputTextColor: #455264;
-  --inputPlaceholder: #dadce0;
+  --inputPlaceholder: #8f97a2;
   --inputBackground: white;
   --inputBorderColor: white;
   --inputFocusBorder: #45aa90;
@@ -410,7 +410,7 @@ form h6 b em {
   font-weight: 700;
   font-style: italic;
 }
-form p {
+form p, form ul, form ol {
   font-family: "Urbanist", sans-serif;
   color: var(--copyColor);
   font-weight: 500;
@@ -420,21 +420,31 @@ form p {
   line-height: 1.333;
   color: var(--copyColor);
   margin: 0;
-  text-align: center;
 }
 form p b,
-form p strong {
+form p strong, form ul b,
+form ul strong, form ol b,
+form ol strong {
   font-weight: 700;
 }
-form p em, form p i {
+form p em, form p i, form ul em, form ul i, form ol em, form ol i {
   font-style: italic;
 }
 form p strong i,
 form p strong em,
 form p b i,
-form p b em {
+form p b em, form ul strong i,
+form ul strong em,
+form ul b i,
+form ul b em, form ol strong i,
+form ol strong em,
+form ol b i,
+form ol b em {
   font-weight: 700;
   font-style: italic;
+}
+form p {
+  text-align: center;
 }
 form a {
   color: var(--linkColor);
@@ -854,6 +864,48 @@ nav ul:last-child li:first-child a {
   flex-grow: 1;
   align-items: center;
   justify-content: flex-start;
+}
+.app-container .games .game ul a:hover {
+  text-decoration: none;
+}
+.app-container .games .game ul a img {
+  max-height: var(--xl);
+  margin: 0 var(--sm) 0 0;
+}
+.app-container .games .game ul a span {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.app-container .games .game ul a span h6 {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  font-family: "robotomedium", Helvetica, Arial, sans-serif;
+  color: var(--accentColor);
+}
+.app-container .games .game ul a span h6 b,
+.app-container .games .game ul a span h6 strong {
+  font-weight: 700;
+}
+.app-container .games .game ul a span h6 em, .app-container .games .game ul a span h6 i {
+  font-style: italic;
+}
+.app-container .games .game ul a span h6 strong i,
+.app-container .games .game ul a span h6 strong em,
+.app-container .games .game ul a span h6 b i,
+.app-container .games .game ul a span h6 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .games .game ul a span h6 i {
+  font-style: normal;
+}
+.app-container .games .game ul a span h3 {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
@@ -865,26 +917,19 @@ nav ul:last-child li:first-child a {
   color: var(--copyColor);
   font-weight: 900;
 }
-.app-container .games .game ul a b,
-.app-container .games .game ul a strong {
+.app-container .games .game ul a span h3 b,
+.app-container .games .game ul a span h3 strong {
   font-weight: 700;
 }
-.app-container .games .game ul a em, .app-container .games .game ul a i {
+.app-container .games .game ul a span h3 em, .app-container .games .game ul a span h3 i {
   font-style: italic;
 }
-.app-container .games .game ul a strong i,
-.app-container .games .game ul a strong em,
-.app-container .games .game ul a b i,
-.app-container .games .game ul a b em {
+.app-container .games .game ul a span h3 strong i,
+.app-container .games .game ul a span h3 strong em,
+.app-container .games .game ul a span h3 b i,
+.app-container .games .game ul a span h3 b em {
   font-weight: 700;
   font-style: italic;
-}
-.app-container .games .game ul a:hover {
-  text-decoration: none;
-}
-.app-container .games .game ul a img {
-  max-height: var(--xl);
-  margin: 0 var(--sm) 0 0;
 }
 .app-container .game h2, .app-container .welcome h2 {
   font-family: "Urbanist", sans-serif;
@@ -1453,6 +1498,7 @@ form.wysiwyg-form p {
   text-decoration: none;
   margin: 0;
   padding: var(--xxs);
+  font-size: var(--md);
 }
 .session-container .session-item .session-notes-direction button:hover {
   text-decoration: none;
@@ -1487,6 +1533,7 @@ form.wysiwyg-form p {
   min-width: var(--lg);
   height: max-content;
   padding: var(--xxs);
+  font-size: var(--md);
 }
 .session-container .edit-note:not(.active):hover {
   text-decoration: none;

@@ -2,28 +2,28 @@
 {% block content %}
 {% from "macros/render_field.html" import render_field %}
 <script src="{{ url_for('static', filename='js/joining.js') }}"></script>
-
-<div class="container">
-    <div class="form-container">
-        <img src="{{game.image}}">
-        {% if my_characters %}
-            <form method='POST'>
-                <h1>Add Character From Your Characters</h1>
-                {{ addform.hidden_tag() }}
-                {{ render_field(addform.character) }}
-                {{ render_field(addform.submit) }}
+<div class="game-container" style="background-image: url({{ game.image }});">
+    <div class="container">
+        <div class="form-container">
+            {% if my_characters %}
+                <form method='POST'>
+                    <h1>Add Character From Your Characters</h1>
+                    {{ addform.hidden_tag() }}
+                    {{ render_field(addform.character) }}
+                    {{ render_field(addform.submit, class='button primary') }}
+                </form>
+                <h1>or</h1>
+            {% endif %}
+            
+            <form enctype="multipart/form-data" method='POST'>
+                <h1>Create a New Character!</h1>
+                {{ charform.hidden_tag() }}
+                {{ render_field(charform.name) }}
+                {{ render_field(charform.img) }}
+                {{ render_field(charform.bio) }}
+                {{ render_field(charform.submit, class='button primary') }}
             </form>
-            <h1>or</h1>
-        {% endif %}
-        
-        <form enctype="multipart/form-data" method='POST'>
-            <h1>Create a New Character!</h1>
-            {{ charform.hidden_tag() }}
-            {{ render_field(charform.name) }}
-            {{ render_field(charform.img) }}
-            {{ render_field(charform.bio) }}
-            {{ render_field(charform.submit) }}
-        </form>
+        </div>
     </div>
 </div>
 

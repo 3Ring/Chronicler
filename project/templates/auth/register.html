@@ -29,7 +29,7 @@
             {{ render_field(form.password) }}
             {{ render_field(form.confirm) }}
             {{ render_field(form.reveal, check=true) }}
-            {{ render_field(form.usersubmit) }}
+            {{ render_field(form.usersubmit, class='button primary') }}
             <h6>Already Registered? <a href="{{ url_for('auth.login') }}">Sign-in!</a></h6>
         </form>
     </div>

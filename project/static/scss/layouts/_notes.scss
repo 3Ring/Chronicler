@@ -288,6 +288,7 @@ form.wysiwyg-form {
                 text-decoration: none;
                 margin: 0;
                 padding: var(--xxs);
+                font-size: var(--md);
 
                 &:hover {
                     text-decoration: none;
@@ -336,6 +337,7 @@ form.wysiwyg-form {
         min-width: var(--lg);
         height: max-content;
         padding: var(--xxs);
+        font-size: var(--md);
         &:not(.active) {
             &:hover {
                 text-decoration: none;

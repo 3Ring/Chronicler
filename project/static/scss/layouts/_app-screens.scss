@@ -72,13 +72,6 @@
                     align-items: center;
                     justify-content: flex-start;
 
-                    @include size-3();
-                    font-family: $display;
-                    color: var(--copyColor);
-                    font-weight: 900;
-
-                    
-
                     &:hover {
                         text-decoration: none;
                     }
@@ -86,6 +79,30 @@
                     img {
                         max-height: var(--xl);
                         margin: 0 var(--sm) 0 0;
+                    }
+
+                    span {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+
+                        h6 {
+                           @include size-5();
+                            font-family: $med;
+                            color: var(--accentColor);
+
+                            i {
+                                font-style: normal;
+                            } 
+                        }
+
+                        h3 {
+                            @include size-3();
+                            font-family: $display;
+                            color: var(--copyColor);
+                            font-weight: 900;
+                            
+                        }
                     }
                 }
             }
