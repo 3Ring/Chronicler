@@ -55,10 +55,14 @@ form {
         @include size-5();
     }
 
-    p {
+    p, ul, ol {
         @include size-5();
         color: var(--copyColor);
         margin: 0;
+        
+    }
+
+    p {
         text-align: center;
     }
 

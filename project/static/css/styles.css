@@ -144,7 +144,7 @@ input[type=submit], .button {
   /** Inputs **/
   --formBackground: #6dc6af;
   --inputTextColor: #455264;
-  --inputPlaceholder: #dadce0;
+  --inputPlaceholder: #8f97a2;
   --inputBackground: white;
   --inputBorderColor: white;
   --inputFocusBorder: #45aa90;
@@ -410,7 +410,7 @@ form h6 b em {
   font-weight: 700;
   font-style: italic;
 }
-form p {
+form p, form ul, form ol {
   font-family: "Urbanist", sans-serif;
   color: var(--copyColor);
   font-weight: 500;
@@ -420,21 +420,31 @@ form p {
   line-height: 1.333;
   color: var(--copyColor);
   margin: 0;
-  text-align: center;
 }
 form p b,
-form p strong {
+form p strong, form ul b,
+form ul strong, form ol b,
+form ol strong {
   font-weight: 700;
 }
-form p em, form p i {
+form p em, form p i, form ul em, form ul i, form ol em, form ol i {
   font-style: italic;
 }
 form p strong i,
 form p strong em,
 form p b i,
-form p b em {
+form p b em, form ul strong i,
+form ul strong em,
+form ul b i,
+form ul b em, form ol strong i,
+form ol strong em,
+form ol b i,
+form ol b em {
   font-weight: 700;
   font-style: italic;
+}
+form p {
+  text-align: center;
 }
 form a {
   color: var(--linkColor);
