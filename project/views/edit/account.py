@@ -1,6 +1,6 @@
-from sys import prefix
 from flask import render_template, redirect, url_for, flash
 from flask_login import current_user, logout_user
+from werkzeug.security import generate_password_hash
 
 from project.helpers.db_session import db_session
 from project.forms.edit_user import (
@@ -47,13 +47,13 @@ def account_post():
         email_form = UserEditEmail(prefix="email")
         pass_form = UserEditPassword(prefix="pass")
         del_form = UserDelete(prefix="del")
-        user = Users.query.get(current_user.id)
+        user = current_user
         if name_form.submit.data and name_form.validate():
             user.name = name_form.name.data
         elif email_form.submit.data and email_form.validate():
             user.email = email_form.email.data
         elif pass_form.submit.data and pass_form.validate():
-            user.password = pass_form.password.data
+            user.hashed_password = generate_password_hash(pass_form.password.data, method="sha256")
         elif del_form.submit.data and del_form.validate():
             return redirect(url_for("edit.delete"))
         return render_template(

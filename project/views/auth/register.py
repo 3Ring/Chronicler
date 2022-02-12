@@ -7,23 +7,23 @@ from project.forms.register import Register
 
 
 def register_get():
-    '''
+    """
     GET request function for "auth/register.html"
 
     A page to register new users.
     :return: A rendered template with a form.
-    '''
+    """
     form = Register()
     return render_template("auth/register.html", form=form)
 
 
 def register_post():
-    '''
+    """
     POST request function for "auth/register.html"
 
     Create a new user and add them to the database
     :return: Redirect to the login page.
-    '''
+    """
     form = Register()
     if not form.validate_on_submit():
         return render_template("auth/register.html", form=form)
