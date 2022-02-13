@@ -15,4 +15,4 @@ class Login(FlaskForm):
         v.password_compare(form, field)
 
     remember = BooleanField("Remember Me")
-    login_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")

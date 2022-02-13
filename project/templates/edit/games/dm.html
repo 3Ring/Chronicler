@@ -11,9 +11,10 @@
     const game_name = "{{ game.name }}";
     const error_target = {{ error_target|tojson }};
     let players = false;
-    if ({{ form_players.players.choices|length }} > 0) {
-        players = true;
-    }
+    {% if form_players.players.choices %}
+    players = true;
+    {% endif %}
+    
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
 integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
@@ -40,7 +41,7 @@ crossorigin="anonymous"></script>
         <a href="#" data-reveal="name" class="button primary">Change Name</a>
         {{ render_field(form_edit.name, cls_dv="row hidden", flag_dv="name") }}
         <a href="#" data-reveal="img" class="button primary">Change Image</a>
-        {{ render_field(form_edit.img, cls_dv="row hidden", flag_dv="img") }}
+        {{ render_field(form_edit.img, data_img="", cls_dv="row hidden", flag_dv="img") }}
         {{ render_field(form_edit.submit) }}
     </form>
 </div>
@@ -48,7 +49,7 @@ crossorigin="anonymous"></script>
 <div data-form="del_game">
     <a href="#" data-reveal="confirm" class="button primary">Delete Game</a>
     <form method='POST' class="hidden" data-form="del_game" data-cancel="" data-remove="" data-flag="confirm">
-        {{ form_edit.hidden_tag() }}
+        {{ form_delete.hidden_tag() }}
         {{ form_delete.game_name (value=game.name) }}
         {{ render_field(form_delete.confirm, placeholder="Confirm Deletion", autofill=false) }}
         <p>This will delete all Notes and Sessions associated with the game.</p>
@@ -57,7 +58,7 @@ crossorigin="anonymous"></script>
         <a href="#" class="button primary" data-cancel="cancel">Cancel</a>
     </form>
 </div>
-{% if form_players.players.choices and form_players.players.choices|length > 0 %}
+{% if form_players.players.choices %}
 <div data-form="rm_player">
     <a href="#" class="button primary" data-reveal="rm_player">Remove Player</a>
     <form method="POST" class="hidden" data-form="rm_player" data-cancel="" data-remove="submit" data-flag="rm_player">
@@ -77,7 +78,7 @@ crossorigin="anonymous"></script>
     </form>
 </div>
 
-    {% if form_characters.characters.choices and form_characters.characters.choices|length > 0 %}
+    {% if form_characters.characters.choices %}
     <div data-form="rm_character">
         <a href="#" class="button primary" data-reveal="rm_character">Remove Character</a>
         <form method="POST" class="hidden" data-form="rm_character" data-cancel="" data-remove="submit" data-flag="rm_character">
