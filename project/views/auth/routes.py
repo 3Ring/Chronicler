@@ -9,7 +9,7 @@ from project.views.auth.reauth import reauth_get, reauth_post
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return login_get()
