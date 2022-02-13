@@ -6,7 +6,7 @@ from project.views.index.index import index_get
 index = Blueprint("index", __name__)
 
 
-@index.route("/", methods=["GET"])
+@index.route("/index", methods=["GET"])
 @login_required
 def page():
     return index_get()

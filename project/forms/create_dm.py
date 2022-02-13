@@ -22,4 +22,4 @@ class DMCreate(FlaskForm):
             FileAllowed(["jpg", "jpeg", "png"], "Images only!"),
         ],
     )
-    dm_char_submit = SubmitField("Submit")
+    submit = SubmitField("Submit")

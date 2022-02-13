@@ -1,5 +1,4 @@
-from sys import prefix
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, session
 from project.forms.edit_dm_game import (
     Edit,
     Delete,
@@ -46,41 +45,42 @@ def game_dm_post(game):
     error_target = None
     form_edit = Edit(prefix="edit")
     form_delete = Delete(prefix="del")
+    form_delete.game_name.data = game.name
     form_players = RemovePlayer(prefix="rm_player", choices=Games.get_player_list_from_id(game.id))
     form_characters = RemoveCharacter(prefix="rm_character", choices=Games.get_PCs(game.id))
-    with db_session(autocommit=False) as sess:
-        if form_edit.submit.data:
-            if form_edit.validate():
+    
+    if form_edit.submit.data:
+        if form_edit.validate():
+            with db_session():
                 edit_game_details(game, form_edit)
-                sess.commit()
                 return render(game)
-        elif form_delete.game_delete_submit.data:
-            if form_delete.validate():
+    elif form_delete.submit.data:
+        if form_delete.validate():
+            with db_session():
                 delete_game_and_assets(game)
-                sess.commit()
                 flash(f"{game.name} and all assets deleted successfully")
                 return redirect(url_for("index.page"))
-            error_target = "del_game"
-        elif form_players.players.data:
-            if form_players.validate():
+        error_target = "del_game"
+    elif form_players.players.data:
+        if form_players.validate():
+            with db_session():
                 remove_player(game, form_players)
-                sess.commit()
                 return render(game)
-            error_target = "rm_player"
-        elif form_characters.characters.data:
-            if form_characters.validate():
+        error_target = "rm_player"
+    elif form_characters.characters.data:
+        if form_characters.validate():
+            with db_session():
                 remove_character(game, form_characters)
-                sess.commit()
                 return render(game)
-            error_target = "rm_character"
-        return render(
-            game,
-            form_edit=form_edit,
-            form_delete=form_delete,
-            form_players=form_players,
-            form_characters=form_characters,
-            error_target=error_target,
-        )
+        error_target = "rm_character"
+    return render(
+        game,
+        form_edit=form_edit,
+        form_delete=form_delete,
+        form_players=form_players,
+        form_characters=form_characters,
+        error_target=error_target,
+    )
 
 
 def render(
@@ -105,6 +105,7 @@ def render(
         form_edit = Edit(prefix="edit")
     if form_delete is None:
         form_delete = Delete(prefix="del")
+        form_delete.game_name.data = game.name
     if form_players is None:
         form_players = RemovePlayer(prefix="rm_player", choices=Games.get_player_list_from_id(game.id))
     if form_characters is None:

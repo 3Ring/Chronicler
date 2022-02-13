@@ -4,10 +4,8 @@ functions to reveal/hide forms
 */
 document.addEventListener("DOMContentLoaded", () => {
   reveal_form_if_errors();
-  if (players) {
-    document.querySelectorAll(`div[data-form]`).forEach((form) => reveal(form));
-    final_confirmation_listeners();
-  }
+  document.querySelectorAll(`div[data-form]`).forEach((form) => reveal(form));
+  final_confirmation_listeners();
 });
 
 /**
