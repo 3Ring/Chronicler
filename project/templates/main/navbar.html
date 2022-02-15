@@ -10,7 +10,7 @@
         <li><a class="nav-link" href="{{ url_for('admin.index') }}"><span class="far fa-user-circle"></span> Admin</a></li>
         {% endif %}
         <li><a class="nav-link" href="{{ url_for('profile.dashboard') }}"><span class="far fa-user-circle"></span> Profile</a></li>
-        <li><a class="nav-link" href="{{ url_for('bugs.bugs_page') }}"><span class="fas fa-sign-out-alt"></span> Bug Reports</a></li>
+        <li><a class="nav-link" href="{{ url_for('bugs.bugs_page') }}"><span class="fas fa-bug"></span> Report Bugs</a></li>
         <li><a class="nav-link" href="{{ url_for('auth.logout') }}"><span class="fas fa-sign-out-alt"></span> Logout</a></li>
     </ul>
     {% else %}

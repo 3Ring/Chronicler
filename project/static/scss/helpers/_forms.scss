@@ -7,7 +7,6 @@
 form {
     display: flex;
     flex-direction: column;
-    gap: var(--md);
     background: var(--formBackground);
     padding: var(--lg) var(--lg);
     border-radius: var(--boxBorderRadius);
@@ -20,6 +19,7 @@ form {
         flex-wrap: wrap;
         width: 100%;
         flex-grow: 1;
+        margin-top: var(--md);
 
         &.checkbox,
         &.radio,
@@ -50,9 +50,16 @@ form {
         text-align: center;
     }
 
+    h3 {
+        text-align: center;
+        @include size-3();
+        color: var(--copyColor);
+    }
+
     h6 {
         text-align: center;
         @include size-5();
+        color: var(--copyColor);
     }
 
     p, ul, ol {
@@ -69,6 +76,25 @@ form {
     a {
         color: var(--linkColor);
         font-weight: 700;
+    }
+
+    .errors {
+        color: var(--errorColor);
+    }
+
+    .error, &[error] {
+        outline: 2px solid var(--errorColor);
+    }
+}
+.form-box {
+    @extend form;
+
+    form {
+        padding: var(--sm);
+        margin: var(--md) 0;
+        background: rgba(0,0,0,0.2);
+        border-radius: var(--xxs);
+        box-shadow: none;
     }
 }
 
@@ -93,6 +119,7 @@ textarea {
 label {
     display: block;
     @include size-5();
+    color: var(--labelColor);
 }
 
 button,

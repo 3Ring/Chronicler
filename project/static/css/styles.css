@@ -1,7 +1,7 @@
 button,
 input[type=button],
 input[type=reset],
-input[type=submit], .button {
+input[type=submit], .button, a.button {
   font-family: "Grenze Gotisch", cursive;
   font-size: 1.7em;
   line-height: 1.3;
@@ -47,7 +47,7 @@ input[type=submit]:active, .button:active {
   button,
 input[type=button],
 input[type=reset],
-input[type=submit], .button {
+input[type=submit], .button, a.button {
     display: none !important;
   }
 }
@@ -133,7 +133,7 @@ input[type=submit], .button {
   --reverse: #8f97a2;
   /** Alerts, disabled, and errors **/
   --disabled: #2e3a49;
-  --error: red;
+  --errorColor: red;
   --accentColor: #9e5e48;
   --alertCopy: white;
   /** Borders **/
@@ -142,24 +142,25 @@ input[type=submit], .button {
   --border3: #455264;
   --accentBorder: transparent;
   /** Inputs **/
-  --formBackground: #6dc6af;
-  --inputTextColor: #455264;
-  --inputPlaceholder: #8f97a2;
-  --inputBackground: white;
-  --inputBorderColor: white;
+  --formBackground: #455264;
+  --inputTextColor: black;
+  --inputPlaceholder: white;
+  --inputBackground: #8f97a2;
+  --inputBorderColor: #2e3a49;
   --inputFocusBorder: #45aa90;
+  --labelColor: #b5bac1;
   /** Buttons **/
   --buttonBorderRadius: var(--xs) / var(--xxs);
   --primaryButtonBg: #45aa90;
   --primaryButtonBorder: #45aa90;
-  --primaryButtonText: white;
+  --primaryButtonText: white !important;
   --primaryButtonHoverBg: black;
   --primaryButtonHoverBorder: #45aa90;
   --primaryButtonHoverText: #45aa90;
   --secondaryButtonBg: #455264;
-  --secondaryButtonBorder: #455264;
+  --secondaryButtonBorder: white;
   --secondaryButtonText: white;
-  --secondaryButtonHoverBg: #dadce0;
+  --secondaryButtonHoverBg: black;
   --secondaryButtonHoverBorder: #45aa90;
   --secondaryButtonHoverText: #45aa90;
   /** Layout Regions **/
@@ -235,7 +236,7 @@ del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
+fieldset, form, .form-box, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
@@ -269,8 +270,11 @@ a,
 a:link,
 a:visited {
   transition: all 0.3s ease;
-  color: var(--linkColor);
   text-decoration: none;
+}
+
+a:not(.button) {
+  color: var(--linkColor);
 }
 
 a:active,
@@ -329,33 +333,33 @@ ul li {
   display: none;
 }
 
-form {
+form, .form-box {
   display: flex;
   flex-direction: column;
-  gap: var(--md);
   background: var(--formBackground);
   padding: var(--lg) var(--lg);
   border-radius: var(--boxBorderRadius);
   -webkit-box-shadow: var(--boxShadow);
   box-shadow: var(--boxShadow);
 }
-form .row {
+form .row, .form-box .row {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
   flex-grow: 1;
+  margin-top: var(--md);
 }
-form .row.checkbox, form .row.radio, form .row.button-row, form .row.submit {
+form .row.checkbox, .form-box .row.checkbox, form .row.radio, .form-box .row.radio, form .row.button-row, .form-box .row.button-row, form .row.submit, .form-box .row.submit {
   flex-direction: row;
   align-items: center;
   justify-content: center;
   flex-wrap: nowrap;
 }
-form.wysiwyg-form .row.checkbox, form.wysiwyg-form .row.radio, form.wysiwyg-form .row.button-row, form.wysiwyg-form .row.submit {
+form.wysiwyg-form .row.checkbox, .wysiwyg-form.form-box .row.checkbox, form.wysiwyg-form .row.radio, .wysiwyg-form.form-box .row.radio, form.wysiwyg-form .row.button-row, .wysiwyg-form.form-box .row.button-row, form.wysiwyg-form .row.submit, .wysiwyg-form.form-box .row.submit {
   justify-content: flex-start;
 }
-form h1 {
+form h1, .form-box h1 {
   font-family: "Urbanist", sans-serif;
   font-weight: 500;
   font-stretch: normal;
@@ -368,25 +372,58 @@ form h1 {
   text-align: center;
 }
 @media screen and (min-width: 31.25em) {
-  form h1 {
+  form h1, .form-box h1 {
     font-size: 2.54em;
   }
 }
-form h1 b,
-form h1 strong {
+form h1 b, .form-box h1 b,
+form h1 strong,
+.form-box h1 strong {
   font-weight: 700;
 }
-form h1 em, form h1 i {
+form h1 em, .form-box h1 em, form h1 i, .form-box h1 i {
   font-style: italic;
 }
-form h1 strong i,
+form h1 strong i, .form-box h1 strong i,
 form h1 strong em,
+.form-box h1 strong em,
 form h1 b i,
-form h1 b em {
+.form-box h1 b i,
+form h1 b em,
+.form-box h1 b em {
   font-weight: 700;
   font-style: italic;
 }
-form h6 {
+form h3, .form-box h3 {
+  text-align: center;
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  color: var(--headlineColor);
+  color: var(--copyColor);
+}
+form h3 b, .form-box h3 b,
+form h3 strong,
+.form-box h3 strong {
+  font-weight: 700;
+}
+form h3 em, .form-box h3 em, form h3 i, .form-box h3 i {
+  font-style: italic;
+}
+form h3 strong i, .form-box h3 strong i,
+form h3 strong em,
+.form-box h3 strong em,
+form h3 b i,
+.form-box h3 b i,
+form h3 b em,
+.form-box h3 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+form h6, .form-box h6 {
   text-align: center;
   font-family: "Urbanist", sans-serif;
   color: var(--copyColor);
@@ -395,22 +432,27 @@ form h6 {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
+  color: var(--copyColor);
 }
-form h6 b,
-form h6 strong {
+form h6 b, .form-box h6 b,
+form h6 strong,
+.form-box h6 strong {
   font-weight: 700;
 }
-form h6 em, form h6 i {
+form h6 em, .form-box h6 em, form h6 i, .form-box h6 i {
   font-style: italic;
 }
-form h6 strong i,
+form h6 strong i, .form-box h6 strong i,
 form h6 strong em,
+.form-box h6 strong em,
 form h6 b i,
-form h6 b em {
+.form-box h6 b i,
+form h6 b em,
+.form-box h6 b em {
   font-weight: 700;
   font-style: italic;
 }
-form p, form ul, form ol {
+form p, .form-box p, form ul, .form-box ul, form ol, .form-box ol {
   font-family: "Urbanist", sans-serif;
   color: var(--copyColor);
   font-weight: 500;
@@ -421,34 +463,60 @@ form p, form ul, form ol {
   color: var(--copyColor);
   margin: 0;
 }
-form p b,
-form p strong, form ul b,
-form ul strong, form ol b,
-form ol strong {
+form p b, .form-box p b,
+form p strong,
+.form-box p strong, form ul b, .form-box ul b,
+form ul strong,
+.form-box ul strong, form ol b, .form-box ol b,
+form ol strong,
+.form-box ol strong {
   font-weight: 700;
 }
-form p em, form p i, form ul em, form ul i, form ol em, form ol i {
+form p em, .form-box p em, form p i, .form-box p i, form ul em, .form-box ul em, form ul i, .form-box ul i, form ol em, .form-box ol em, form ol i, .form-box ol i {
   font-style: italic;
 }
-form p strong i,
+form p strong i, .form-box p strong i,
 form p strong em,
+.form-box p strong em,
 form p b i,
-form p b em, form ul strong i,
+.form-box p b i,
+form p b em,
+.form-box p b em, form ul strong i, .form-box ul strong i,
 form ul strong em,
+.form-box ul strong em,
 form ul b i,
-form ul b em, form ol strong i,
+.form-box ul b i,
+form ul b em,
+.form-box ul b em, form ol strong i, .form-box ol strong i,
 form ol strong em,
+.form-box ol strong em,
 form ol b i,
-form ol b em {
+.form-box ol b i,
+form ol b em,
+.form-box ol b em {
   font-weight: 700;
   font-style: italic;
 }
-form p {
+form p, .form-box p {
   text-align: center;
 }
-form a {
+form a, .form-box a {
   color: var(--linkColor);
   font-weight: 700;
+}
+form .errors, .form-box .errors {
+  color: var(--errorColor);
+}
+form .error, .form-box .error, form[error], [error].form-box {
+  outline: 2px solid var(--errorColor);
+}
+
+.form-box form, .form-box .form-box {
+  padding: var(--sm);
+  margin: var(--md) 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--xxs);
+  box-shadow: none;
 }
 
 /* ------------------- */
@@ -476,6 +544,7 @@ label {
   font-size: 1em;
   letter-spacing: 0;
   line-height: 1.333;
+  color: var(--labelColor);
 }
 label b,
 label strong {
@@ -839,6 +908,11 @@ nav ul:last-child li:first-child a {
     margin: 0 0 var(--sm) 0;
   }
 }
+.app-container .games .game .admin-list {
+  display: flex;
+  gap: var(--sm);
+  padding: var(--md) 0;
+}
 .app-container .games .game ul {
   display: flex;
   width: 100%;
@@ -1002,6 +1076,91 @@ nav ul:last-child li:first-child a {
 .app-container a.new-game:hover {
   color: #6dc6af;
 }
+.app-container .characters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(35ch, 1fr));
+  grid-auto-flow: row;
+  grid-gap: var(--sm) var(--sm);
+}
+@media screen and (max-width: 31.188em) {
+  .app-container .characters {
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin: 0;
+  }
+}
+.app-container .characters .character {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+@media screen and (max-width: 31.188em) {
+  .app-container .characters .character {
+    height: auto;
+  }
+}
+.app-container .characters .character .image-container {
+  margin: 0 0 1rem;
+  margin: 0 0 var(--xs);
+  width: 100%;
+  max-width: none;
+  display: block;
+}
+.app-container .characters .character .image-container img {
+  width: 100%;
+}
+.app-container .characters .character h2 {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1.763em;
+  letter-spacing: -0.019em;
+  line-height: 1.085;
+  color: var(--headlineColor);
+  margin: 0 0 var(--sm);
+}
+.app-container .characters .character h2 b,
+.app-container .characters .character h2 strong {
+  font-weight: 700;
+}
+.app-container .characters .character h2 em, .app-container .characters .character h2 i {
+  font-style: italic;
+}
+.app-container .characters .character h2 strong i,
+.app-container .characters .character h2 strong em,
+.app-container .characters .character h2 b i,
+.app-container .characters .character h2 b em {
+  font-weight: 700;
+  font-style: italic;
+}
+.app-container .characters .character h2 a {
+  font-size: 1rem;
+}
+.app-container .characters .character p {
+  font-family: "Urbanist", sans-serif;
+  color: var(--copyColor);
+  font-weight: 500;
+  font-stretch: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+  line-height: 1.333;
+  margin: 0 0 var(--sm);
+}
+.app-container .characters .character p b,
+.app-container .characters .character p strong {
+  font-weight: 700;
+}
+.app-container .characters .character p em, .app-container .characters .character p i {
+  font-style: italic;
+}
+.app-container .characters .character p strong i,
+.app-container .characters .character p strong em,
+.app-container .characters .character p b i,
+.app-container .characters .character p b em {
+  font-weight: 700;
+  font-style: italic;
+}
 
 .alert {
   width: max-content;
@@ -1132,7 +1291,7 @@ nav ul:last-child li:first-child a {
 .modal .content a {
   color: var(--copyColor);
 }
-.modal form {
+.modal form, .modal .form-box {
   box-shadow: none;
 }
 .modal .button-row {
@@ -1398,7 +1557,7 @@ nav ul:last-child li:first-child a {
   margin: 0 var(--lg) var(--sm) var(--lg);
 }
 
-form.wysiwyg-form {
+form.wysiwyg-form, .wysiwyg-form.form-box {
   box-shadow: none;
   border: none;
   padding: 0;
@@ -1407,53 +1566,54 @@ form.wysiwyg-form {
   width: 100%;
   margin: 0;
 }
-form.wysiwyg-form .character-select label {
+form.wysiwyg-form .character-select label, .wysiwyg-form.form-box .character-select label {
   display: flex;
   align-items: center;
   margin-bottom: var(--sm);
 }
-form.wysiwyg-form .character-select select {
+form.wysiwyg-form .character-select select, .wysiwyg-form.form-box .character-select select {
   background: var(--reverse);
   margin: 0 0 0 var(--sm);
 }
-form.wysiwyg-form:not(.hidden) {
+form.wysiwyg-form:not(.hidden), .wysiwyg-form.form-box:not(.hidden) {
   display: grid;
 }
 @media screen and (min-width: 31.25em) {
-  form.wysiwyg-form {
+  form.wysiwyg-form, .wysiwyg-form.form-box {
     grid-template-columns: 2fr 1fr;
   }
 }
-form.wysiwyg-form .ql-container.ql-snow,
-form.wysiwyg-form .ql-toolbar.ql-snow {
+form.wysiwyg-form .ql-container.ql-snow, .wysiwyg-form.form-box .ql-container.ql-snow,
+form.wysiwyg-form .ql-toolbar.ql-snow,
+.wysiwyg-form.form-box .ql-toolbar.ql-snow {
   border: 1px solid var(--border3);
 }
-form.wysiwyg-form .ql-editor.ql-blank::before {
+form.wysiwyg-form .ql-editor.ql-blank::before, .wysiwyg-form.form-box .ql-editor.ql-blank::before {
   color: var(--inputPlaceholder);
 }
-form.wysiwyg-form .ql-toolbar {
+form.wysiwyg-form .ql-toolbar, .wysiwyg-form.form-box .ql-toolbar {
   background: var(--reverse);
 }
-form.wysiwyg-form .ql-container {
+form.wysiwyg-form .ql-container, .wysiwyg-form.form-box .ql-container {
   background: var(--boxBackground);
 }
-form.wysiwyg-form .form-group {
+form.wysiwyg-form .form-group, .wysiwyg-form.form-box .form-group {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-form.wysiwyg-form .ql-toolbar {
+form.wysiwyg-form .ql-toolbar, .wysiwyg-form.form-box .ql-toolbar {
   display: flex;
   align-items: baseline;
 }
-form.wysiwyg-form .ql-toolbar button {
+form.wysiwyg-form .ql-toolbar button, .wysiwyg-form.form-box .ql-toolbar button {
   margin: 0;
   padding: 0;
 }
-form.wysiwyg-form .ql-container {
+form.wysiwyg-form .ql-container, .wysiwyg-form.form-box .ql-container {
   height: var(--xxxl);
 }
-form.wysiwyg-form p {
+form.wysiwyg-form p, .wysiwyg-form.form-box p {
   text-align: left;
 }
 
@@ -1566,7 +1726,7 @@ form.wysiwyg-form p {
 .note_list .span_cont:hover .edit-note .note_edit_button {
   display: flex;
 }
-.note_list .span_cont form.wysiwyg-form {
+.note_list .span_cont form.wysiwyg-form, .note_list .span_cont .wysiwyg-form.form-box {
   width: auto;
   margin: 0 var(--sm) 0 var(--xxxl);
   background: none;

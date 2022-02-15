@@ -10,14 +10,14 @@
         <img style="height: 200px;" src="{{character.image}}")>
         {{ render_field(editform.img) }} 
         {{ render_field(editform.bio) }}
-        {{ render_field(editform.submit) }}
+        {{ render_field(editform.submit, class='button primary') }}
     </form>
     <form method='POST' action='/edit/character/{{character.id}}' autocomplete="off">
         <h1>Delete {{character.name}}</h1>
         {{ delform.hidden_tag() }}
         {{ delform.char_name(value=character.name) }}
         {{ render_field(delform.confirm, placeholder="Confirm") }}
-        {{ render_field(delform.submit) }}
+        {{ render_field(delform.submit, class='button primary') }}
     </form>
 </div>
 {% endblock %}

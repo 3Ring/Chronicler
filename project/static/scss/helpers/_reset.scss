@@ -68,9 +68,13 @@ a:link,
 a:visited {
   @include trans();
 
-  color: var(--linkColor);
+  
   
   text-decoration: none;
+}
+
+a:not(.button) {
+  color: var(--linkColor);
 }
 
 a:active,
