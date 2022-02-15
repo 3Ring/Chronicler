@@ -5,15 +5,21 @@
     <div class="app-container">
         <h1>Edit Games</h1>
         <div class="games">
-        <a class="new-game button primary" href="{{ url_for('profile.dm') }}">
-            <span class="fas fa-search-location"></span> Dm
-        </a>
-        <a class="new-game button primary" href="{{ url_for('profile.player_landing') }}">
-            <span class="fas fa-search-location"></span> Player
-        </a>  
-        <a class="new-game button primary" href="{{ url_for('profile.dashboard') }}">
-            <span class="fas fa-search-location"></span> Back
-        </a>   
+            <div class="game">
+                <h2>Game Management</h2>
+                    <p>Manage the games you're running and the games you're playing.</p>
+                    <div class="admin-list">
+                        <a class="new-game button primary" href="{{ url_for('profile.dm') }}">
+                            DM
+                        </a>
+                        <a class="new-game button primary" href="{{ url_for('profile.player_landing') }}">
+                            Player
+                        </a>
+                    </div>
+                <a class="" href="{{ url_for('profile.dashboard') }}"><span class="fa fa-solid fa-arrow-left"></span> Back to profile
+                </a>   
+            </div>
+                
     </div>  
 </div>
 

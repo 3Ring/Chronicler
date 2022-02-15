@@ -70,7 +70,7 @@
 //  Buttons extended to classes
 //
 /* ************************************ */
-.button {
+.button, a.button {
 	@extend %button;
 
 	&.primary {

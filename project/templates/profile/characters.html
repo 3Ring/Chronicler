@@ -1,21 +1,36 @@
 {% extends "main/base.html" %}
 {% block content %}
 <div class="container">
-    <div>
-    <a href="{{ url_for('create.character') }}"><h1>Create a new character:</h1></a>
+    <div class="app-container">
+        {% if my_characters %}
+        <h1>Your Characters</h1>
+        <div class="characters">
+            {% for character in my_characters %}
+
+            <div class="character">
+                
+                <div class="image-container">
+                    <img src="{{ character.image }}">
+                </div>
+                
+                <h2>{{ character.name }} <a href="{{ url_for('edit.character', character_id = character.id) }}">Edit</a></h2>
+                <p>{{ character.bio }}</p>
+            </div>
+
+            {% endfor %}
+        </div>
+
+        {% else %}
+            <p>You don't appear to have created any characters yet.</p>
+            <a href="{{ url_for('create.character') }}"><h1>Create a new character:</h1></a>
+        {% endif %}
+        <a class="new-game button primary" href="{{ url_for('create.character') }}">
+            <span class="far fa-plus-square"></span> Create a new character:
+        </a>
     </div>
-    {% if my_characters %}
-    <h1>Your Characters</h1>
-    <div>
-        {% for character in my_characters %}
-        <h1>{{ character.name }}</h1>
-        <a href="{{ url_for('edit.character', character_id = character.id) }}">Edit {{ character.name }}</a>
-        <h2>Image: </h2>
-        <img style="height: 180px;" src="{{ character.image }}">
-        <h2>Bio:</h2>
-        <p>{{ character.bio }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
+    
 </div>
 {% endblock %}
+
+
+

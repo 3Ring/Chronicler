@@ -31,56 +31,60 @@
     </style>
 
 <div class="container">
-    <h1>Change Account info:</h1>
-    <div>
-        <h2>
-            Name:
-        </h2>
-        <h3>{{ current_user.name }}</h3>
-        <a href="#" data-edit="name">edit</a>
-    </div>
-    <div class="form-container hidden" data-reveal="name">
-        <form method='POST'>
-            {{ name_form.hidden_tag() }}
-            {{ render_field(name_form.name, value=current_user.name) }}
-            {{ render_field(name_form.submit) }}
-        </form>
-    </div>
-    <div>
-        <h2>
-            Email:
-        </h2>
-        <h3>{{ current_user.email }}</h3>
-        <a href="#" data-edit="email">edit</a>
-    </div>
-    <div class="form-container hidden" data-reveal="email">
-        <form method='POST'>
-            {{ email_form.hidden_tag() }}
-            {{ render_field(email_form.email, value=current_user.email) }}
-            {{ render_field(email_form.submit) }}
-        </form>
-    </div>
-    <div>
-        <h2>
-            <a href="#" data-edit="pass">Change Password</a>
-        </h2>
-    </div>
-    <div class="form-container hidden" data-reveal="pass">
-        <form method='POST'>
-            {{ pass_form.hidden_tag() }}
-            {{ render_field(pass_form.password, data_revealed="pass", autocomplete="new-password") }}
-            {{ render_field(pass_form.confirm, data_revealed="pass", autocomplete="new-password") }}
-            {{ render_field(pass_form.reveal, check=true, data_reveal="pass") }}
-            {{ render_field(pass_form.submit) }}
-        </form>
-    </div>
     <div class="form-container">
+        
+        <div class="form-box">
+            
+       
+            <h1>Change Account info:</h1>
+            <div class="row">
+                <label>
+                    Name: {{ current_user.name }} <a href="#" data-edit="name">edit</a>
+                </label>
+            </div>
+            <div class="hidden" data-reveal="name">
+                <form method='POST'>
+                    {{ name_form.hidden_tag() }}
+                    {{ render_field(name_form.name, value=current_user.name) }}
+                    {{ render_field(name_form.submit, class='button primary') }}
+                </form>
+            </div>
+        <div class="row">
+            <label>
+                Email: {{ current_user.email }} <a href="#" data-edit="email">edit</a>
+            </label>
+        </div>
+
+        <div class="hidden" data-reveal="email">
+            <form method='POST'>
+                {{ email_form.hidden_tag() }}
+                {{ render_field(email_form.email, value=current_user.email) }}
+                {{ render_field(email_form.submit, class='button primary') }}
+            </form>
+        </div>
+        <div class="row">
+            <label>
+                <a href="#" data-edit="pass">Change Password</a>
+            </label>
+        </div>
+        <div class="hidden" data-reveal="pass">
+            <form method='POST'>
+                {{ pass_form.hidden_tag() }}
+                {{ render_field(pass_form.password, data_revealed="pass", autocomplete="new-password") }}
+                {{ render_field(pass_form.confirm, data_revealed="pass", autocomplete="new-password") }}
+                {{ render_field(pass_form.reveal, check=true, data_reveal="pass") }}
+                {{ render_field(pass_form.submit, class='button primary') }}
+            </form>
+        </div>
         <form method='POST'>
-            <h1>Delete Account:</h1>
-            <h2>This will take you to another page to confirm and delegate assets</h2>
+            <h3>Delete Account:</h3>
+            
+            <p>This will take you to another page to confirm and delegate assets</p>
             {{ del_form.hidden_tag() }}
-            {{ render_field(del_form.submit) }}
+            {{ render_field(del_form.submit, class='button primary') }}
         </form>
     </div>
+</div>
+    
 </div>
 {% endblock %}

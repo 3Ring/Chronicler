@@ -2,19 +2,36 @@
 {% block content %}
 <div class="container">
     <div class="app-container">
-            <h1>Your Stuff</h1>
-            <h1>This is an early alpha. We'll make this area look better soon!</h1>
+        <h1>Your Stuff</h1>
         <div class="games">
-            <a class="new-game button primary" href="{{ url_for('profile.account') }}">
-                <span class="fas fa-search-location"></span> Account
-            </a>
-            <a class="new-game button primary" href="{{ url_for('profile.characters') }}">
-                <span class="fas fa-search-location"></span> Characters
-            </a>
-            <a class="new-game button primary" href="{{ url_for('profile.games') }}">
-                <span class="fas fa-search-location"></span> Games
-            </a>
+            <div class="game">
+                <h2>Game Management</h2>
+                <p>Manage the games you're running and the characters you're playing.</p>
+                <div class="admin-list">
+                    <a class="button primary" href="{{ url_for('profile.games') }}">
+                        Manage Games
+                    </a>
+               
+                    <a class="button primary" href="{{ url_for('profile.characters') }}">
+                        Manage Characters
+                    </a>
+                </div>
+            </div>
+            <div class="game">
+                <h2>Account Management</h2>
+                <p>Manage the details of your Chronicler account.</p>
+                <div class="admin-list">
+                    <a class="button primary" href="{{ url_for('profile.account') }}">
+                        Manage Account
+                    </a>
+                </div>
+                        
+
+            </div>
         </div>
+            
+            
+            
     </div>
 </div>
 

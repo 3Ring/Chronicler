@@ -2,11 +2,20 @@
 {% block content %}
 
 <div class="container">
-    <h1>Account Details:</h1>
-    <h2>Name:</h2>
-    <h3>{{user.name}}</h3>
-    <h2>Email:</h2>
-    <h3>{{user.email}}</h3>
-    <a href="{{url_for('edit.account') }}">Edit/delete account</a>
+    <div class="form-container">
+        <form action="">
+            <h1>Account Details:</h1>
+            <div class="row">
+                <label>Name: {{user.name}}</label>
+            </div>
+            <div class="row">
+                <label>Email: {{user.email}}</label>
+            </div>
+            <div class="row">
+                <a href="{{url_for('edit.account') }}">Edit/delete account</a>
+            </div>
+            
+        </form>
+    </div>   
 </div>
 {% endblock %}

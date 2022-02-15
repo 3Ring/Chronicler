@@ -85,7 +85,7 @@
 
         /** Alerts, disabled, and errors **/
         --disabled: #{$gray_darker};
-        --error: red;
+        --errorColor: red;
         --accentColor: #{$accent_dark};
         --alertCopy: #{$max};
 
@@ -96,12 +96,13 @@
         --accentBorder: transparent;
 
         /** Inputs **/
-        --formBackground: #{$brand};
-        --inputTextColor: #{$gray_dark};
-        --inputPlaceholder: #{$gray_light};
-        --inputBackground: #{$max};
-        --inputBorderColor: #{$max};
+        --formBackground: #{$gray_dark};
+        --inputTextColor: #{$min};
+        --inputPlaceholder: #{$max};
+        --inputBackground: #{$gray_light};
+        --inputBorderColor: #{$gray_darker};
         --inputFocusBorder: #{$brand_dark};
+        --labelColor: #{$gray_lighter};
 
         /** Buttons **/
 
@@ -109,17 +110,18 @@
 
         --primaryButtonBg: #{$brand_dark};
         --primaryButtonBorder: #{$brand_dark};
-        --primaryButtonText: #{$max};
+        --primaryButtonText: #{$max} !important;
         --primaryButtonHoverBg: #{$min};
         --primaryButtonHoverBorder: #{$brand_dark};
         --primaryButtonHoverText: #{$brand_dark};
 
         --secondaryButtonBg: #{$gray_dark};
-        --secondaryButtonBorder: #{$gray_dark};
+        --secondaryButtonBorder: #{$max};
         --secondaryButtonText: #{$max};
-        --secondaryButtonHoverBg: #{$gray_lightest};
+        --secondaryButtonHoverBg:  #{$min};
         --secondaryButtonHoverBorder: #{$brand_dark};
         --secondaryButtonHoverText: #{$brand_dark};
+
 
         /** Layout Regions **/
 
