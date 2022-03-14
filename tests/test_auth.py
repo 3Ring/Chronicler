@@ -78,6 +78,8 @@ def logout_success(responses, email):
         if response in url_logins:
             return True
     return False
+
+
 def test_login_logout(client, auth):
     """Using admin account: Make sure login and logout works."""
 

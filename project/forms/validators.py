@@ -128,7 +128,7 @@ def delete_account_confirm(form, field):
     :param form: The form that is currently being processed.
     :param field: The field to validate.
     """
-    if form.char_name.data != field.data:
+    if form.email.data != field.data:
         raise ValidationError("Email does not match")
 
 

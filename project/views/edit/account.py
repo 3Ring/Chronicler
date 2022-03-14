@@ -54,7 +54,7 @@ def account_post():
             user.email = email_form.email.data
         elif pass_form.submit.data and pass_form.validate():
             user.hashed_password = generate_password_hash(pass_form.password.data, method="sha256")
-        elif del_form.submit.data and del_form.validate():
+        elif del_form.submit.data:
             return redirect(url_for("edit.delete"))
         return render_template(
             "edit/account/account.html",
@@ -73,7 +73,7 @@ def delete_get():
     :return: The rendered delete.html template.
     """
     form = UserDelete()
-    return render_template("edit/delete.html", form=form)
+    return render_template("edit/account/delete.html", form=form)
 
 
 def delete_post():
@@ -85,7 +85,7 @@ def delete_post():
     """
     form = UserDelete()
     if not form.validate_on_submit():
-        return render_template("edit/delete.html", form=form)
+        return render_template("edit/account/delete.html", form=form)
     user = Users.query.get(current_user.id)
     logout_user()
     with db_session():

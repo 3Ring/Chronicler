@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from flask_login import current_user
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, HiddenField
 from wtforms.validators import DataRequired, Length, Email
 from project.forms import validators as v
 
@@ -39,4 +40,10 @@ class UserEditPassword(FlaskForm):
 
 class UserDelete(FlaskForm):
     confirm = StringField("Confirm here", validators=[v.delete_account_confirm])
+    email = HiddenField()
     submit = SubmitField("Delete")
+
+    def __init__(self, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self.email.data = current_user.email
+
