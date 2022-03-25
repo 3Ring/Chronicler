@@ -12,7 +12,7 @@ def reauth_get():
     :return: The rendered login.html template.
     """
     form = Login()
-    return render_template("auth/login.html", form=form)
+    return render_template("auth/reauth.html", form=form)
 
 
 def reauth_post():
@@ -23,6 +23,6 @@ def reauth_post():
     """
     form = Login()
     if not form.validate_on_submit():
-        return render_template("auth/login.html", form=form)
+        return render_template("auth/reauth.html", form=form)
     confirm_login()
     return redirect(request.args.get("next"))

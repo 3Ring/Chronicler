@@ -1,3 +1,4 @@
+from string import ascii_letters, digits
 from wtforms.validators import ValidationError
 from werkzeug.security import check_password_hash
 from flask_login import current_user
@@ -25,6 +26,8 @@ def password_param(form, field):
     :param form: The form that is currently being processed.
     :param field: The field to validate.
     """
+    if type(field.data) is not str:
+        raise ValidationError("data is invalid or corrupted")
     if len(field.data) < 8:
         raise ValidationError("Password must be at least 8 characters long")
     elif len(field.data) > 100:
@@ -142,3 +145,11 @@ def delete_character_confirm(form, field):
 
     if form.char_name.data != field.data:
         raise ValidationError("Name does not match")
+
+def is_ascii(form, field):
+    if type(field.data) is not str:
+        raise ValidationError(f"{field.name} only accepts ascii characters")
+    for letter in field.data:
+        print(f'field.data: {field.data}')
+        if letter not in ascii_letters + digits:
+            raise ValidationError(f"{letter} is not a valid input. {field.name} only accepts ascii characters")

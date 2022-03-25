@@ -1,19 +1,18 @@
 
 version: "3.8"
-
 services: 
-    chronicler_host:
+    chronicler_host: 
         image: postgres:13.4
         # image: postgres:9.6.23
         container_name: chronicler_host
         # docker cp latest.dump.1 chronicler_host:/var/lib/postgresql/data/latest.dump
-        # pg_restore -U postgres --no-privileges --no-owner -d chronicler_db /var/lib/postgresql/data/latest.dump
+        # pg_restore -U postgres --no-privileges --no-owner -d c hronicler_db /var/lib/postgresql/data/latest.dump
         # healthcheck:
         #     test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
         #     timeout: 45s
         #     interval: 10s
         #     retries: 10
-        restart: always
+        restart: on-failure
         volumes: 
             - chronicler_volume:/var/lib/postgresql/data
         environment:
@@ -28,7 +27,7 @@ services:
         build: 
             context: .
         container_name: rest-server
-        restart: always
+        restart: on-failure
         # depends_on:
         #     chronicler_host:
         #         condition: service_healthy
@@ -41,11 +40,12 @@ services:
             - ADMIN_ID=${ADMIN_ID:-123}
             - ORPHANAGE_ID=${ORPHANAGE_ID:-321}
             - ORPHAN_EMAIL=${ORPHAN_EMAIL:-orphanage@email.com}
+            - COMPOSE_PROJECT_NAME=chronicler
 
         ports:
             - 5000:5000
         volumes:
-            - ./:/app
+            - ./:/chronicler
 volumes:
     chronicler_volume:
         name: chronicler_volume

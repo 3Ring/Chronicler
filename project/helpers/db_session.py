@@ -1,5 +1,6 @@
 from contextlib import contextmanager
-from project.__init__ import db
+
+from project.extensions.sql_alchemy import db
 
 @contextmanager
 def db_session(autocommit=True):
@@ -12,4 +13,10 @@ def db_session(autocommit=True):
         raise
     finally:
         db.session.remove()
-        
+
+@contextmanager
+def db_test_session(autocommit=True):
+    yield db.session
+    if autocommit:
+        db.session.commit()
+    db.session.remove()

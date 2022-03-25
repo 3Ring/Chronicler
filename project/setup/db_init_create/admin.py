@@ -1,6 +1,6 @@
 class CreateAdmins:
     from project import models
-    from project.setup_ import defaults as d
+    from project.setup import defaults as d
 
     @classmethod
     def users(cls):

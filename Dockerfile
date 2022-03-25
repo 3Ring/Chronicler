@@ -2,7 +2,7 @@
 FROM python:3.8-slim-buster
 # FROM python:3.9.6-slim-buster
 
-WORKDIR /app
+WORKDIR /chronicler
 COPY setup.py .
 RUN pip install -e .
 COPY requirements.txt .
@@ -16,4 +16,4 @@ RUN pip3 install -r requirements.txt && \
     pip install wtforms[email] && \
     pip install WTForms-SQLAlchemy
 COPY . .
-CMD [ "gunicorn", "--reload", "-b", "0.0.0.0:5000", "--worker-class", "eventlet", "-w", "1", "app:app" ]
+CMD [ "gunicorn", "--reload", "-b", "0.0.0.0:5000", "--worker-class", "eventlet", "-w", "1", "local:dev" ]

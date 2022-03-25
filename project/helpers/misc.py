@@ -9,7 +9,7 @@ def set_heroku():
     return heroku
 
 
-def private_convert(priv):
+def bool_convert(priv):
     if type(priv) is bool:
         return priv
     if type(priv) is str and priv.lower() == "true":

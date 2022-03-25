@@ -1,3 +1,4 @@
+from string import ascii_letters
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, Email
@@ -15,6 +16,7 @@ class Register(FlaskForm):
                 max=20,
                 message=f"Game name must be between %(min)d and %(max)d characters",
             ),
+            v.is_ascii,
         ],
     )
     email = StringField(

@@ -1,6 +1,6 @@
 from flask_socketio import emit
 from project.helpers.db_session import db_session
-from project.__init__ import socketio
+from project.extensions.socketio import socketio
 from project.models import Sessions, Notes
 
 

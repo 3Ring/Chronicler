@@ -13,8 +13,7 @@ def login_get():
     If the user is already logged in, redirect to the index page. Otherwise, display the login form
     :return: The login.html template.
     '''
-    if current_user.is_active:
-        return redirect(url_for("index.page"))
+
     form = Login()
     return render_template("auth/login.html", form=form)
 

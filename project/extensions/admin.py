@@ -1,5 +1,9 @@
+from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import inspect
+
+admin = Admin(name="Chronicler", template_mode="bootstrap3")
+
 
 # from project.setup import defaults as d
 

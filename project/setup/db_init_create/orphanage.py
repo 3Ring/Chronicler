@@ -1,6 +1,6 @@
 class CreateOrphanage:
     from project import models
-    from project.setup_ import defaults as d
+    from project.setup import defaults as d
 
     @classmethod
     def users(cls):
@@ -74,7 +74,7 @@ class CreateOrphanage:
 
         this is used as the fkey when a primary key Session is removed
         """
-        cls.models.Sessions(
+        cls.models.Sessions.create(
             id=cls.d.SessionOrphanage.id,
             removed=cls.d.SessionOrphanage.removed,
             number=cls.d.SessionOrphanage.number,

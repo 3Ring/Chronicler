@@ -12,7 +12,7 @@ from project.models import (
     Notes,
     NPCs,
 )
-from project.setup_ import defaults as d
+from project.setup import defaults as d
 
 
 def notes_get(game_id):

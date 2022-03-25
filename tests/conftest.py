@@ -1,79 +1,59 @@
-import os
+import inspect
+import pytest
 import tempfile
 
-from flask import url_for
-from werkzeug.utils import redirect
-from project.__init__ import create_app, db
-from flask_migrate import init, migrate, upgrade
-from project.models import Users
-import pytest
+from tests.fixtures.unit_test.app import *  # noqa
+from tests.fixtures.unit_test.helpers import *  # noqa
+from tests.fixtures.integration.server import *  # noqa
+from tests.fixtures.integration.browser import *  # noqa
 
-from factory_helpers.factory_helpers import add_admin_to_db
 
-admin_pass = os.environ.get("ADMIN_PASS")
-def db_init_for_tests(app, path):
-    """Progrmatically create the db and add the admin/Tutorial"""
-    init(directory=path)
-    migrate(directory=path)
-    upgrade(directory=path)
-    add_admin_to_db(app, Users)
+# def pytest_collection_modifyitems(config, items):
+#     for item in items:
+#         if inspect.iscoroutinefunction(item.function):
+#             item.add_marker(pytest.mark.asyncio)
 
-@pytest.fixture
-def app(test_email=None):
+import asyncio
+import pytest_asyncio
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
-    _app = create_app({
-        'TESTING': True
-        ,'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:' 
-        # ,'SQLALCHEMY_ECHO': True
-    })
+thread_local = threading.local()
+def pytest_addoption(parser):
+    parser.addoption("--no-tear-down", action="store")
+    parser.addoption("--workers", action="store")
 
-    with _app.app_context():
-        with tempfile.TemporaryDirectory() as tdp:
-            db_init_for_tests(_app, tdp)
-        yield _app
+@pytest.fixture(scope="session")
+def temp_dir():
+    print(f'temp_dir called')
+    with tempfile.TemporaryDirectory() as tdp:
+        yield tdp
 
-@pytest.fixture
-def client(app):
-    """A test client for the app."""
-    return app.test_client()
 
-@pytest.fixture
-def runner(app):
-    """A test runner for the app's Click commands."""
-    return app.test_cli_runner()
+@pytest.fixture(scope="session")
+def inc(temp_dir):
+    print(f'inc called')
+    with open(os.path.join(temp_dir, "inc"), "x+") as fp:
+        fp.write(str(0))
+        yield fp
 
-class AuthActions:
-    
-    email_user = "register_test_email@chronicler.gg"
-    email_admin = "app@chronicler.gg"
-    password_user = "test123"
-    name_user = "test_user"
-    password_admin = admin_pass
-    
-    def __init__(self, client):
-        self._client = client
+@pytest.fixture(scope="session", params=["chrome"])
+# @pytest.fixture(scope="session", params=["chrome", "firefox", "edge"])
+def brand(server, request):
+    print(f'brand called')
+    print(f'starting tests on {request.param}..')
+    yield request.param
 
 
 
-    def login(self, model=None, email=email_user, password=password_user):
-        if model != None:
-            email = model.email
-            password = model.hashed_password
-        return self._client.post(
-            url_for('auth.login'), data={"email": email, "password": password}, follow_redirects=True
-        )
-    
-    def register(self, model, confirm=None):
-        if confirm == None:
-            confirm = model.hashed_password
-        return self._client.post(
-            "http://localhost/register", data={"name": model.name, "email": model.email, "password": model.hashed_password, "confirm": confirm}, follow_redirects=True
-        )
-
-    def logout(self):
-        return self._client.get('/logout') 
-
-
-@pytest.fixture
-def auth(client):
-    return AuthActions(client)
+@pytest.fixture(scope="session")
+def threads(request):
+    print(f'threads called')
+    amount = int(request.config.getoption("--workers"))
+    print(f'amount: {amount}')
+    with ThreadPoolExecutor(max_workers=amount) as executor:
+        yield executor
+# @pytest.fixture(scope="module")
+# def event_loop():
+#     """A module-scoped event loop."""
+#     return asyncio.new_event_loop()

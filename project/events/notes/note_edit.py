@@ -1,8 +1,9 @@
 from flask_socketio import emit
 from flask_login import current_user
-from project.__init__ import db, socketio
+from project.extensions.sql_alchemy import db
+from project.extensions.socketio import socketio
 from project.models import Characters, Notes, Users
-from project.helpers.misc import private_convert
+from project.helpers.misc import bool_convert
 from project.helpers.translate_jinja.translate_jinja import TranslateJinja
 from project.helpers.db_session import db_session
 
@@ -13,8 +14,8 @@ def edit_note(text, is_private, to_dm, character_id, dm_id, game_id, user_id, no
     if character_id == "bugs":
         character_id = Users.get_avatar(current_user.id).id
     # !end bugs page code
-    _to_dm = private_convert(to_dm)
-    _private = private_convert(is_private)
+    _to_dm = bool_convert(to_dm)
+    _private = bool_convert(is_private)
 
     note = Notes.query.filter_by(id=note_id).first()
     if note.private != _private or note.to_dm != _to_dm:

@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for
 
-from project.__init__ import db
+from project.extensions.sql_alchemy import db
 from project.helpers.db_session import db_session
 from project.models import Users, Characters, Games
 from project.forms.register import Register
@@ -13,6 +13,7 @@ def register_get():
     A page to register new users.
     :return: A rendered template with a form.
     """
+    print("get")
     form = Register()
     return render_template("auth/register.html", form=form)
 
@@ -24,6 +25,9 @@ def register_post():
     Create a new user and add them to the database
     :return: Redirect to the login page.
     """
+    
+    from flask import request
+    print(f'request: {request.get_data()}')
     form = Register()
     if not form.validate_on_submit():
         return render_template("auth/register.html", form=form)

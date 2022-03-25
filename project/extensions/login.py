@@ -2,7 +2,6 @@ from flask_login import LoginManager
 
 login_manager = LoginManager()
 
-
 def config():
     login_manager.login_view = "auth.login"
     login_manager.refresh_view = "auth.reauth"

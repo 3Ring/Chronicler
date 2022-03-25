@@ -8,8 +8,8 @@ from flask_login import current_user
 
 # from project.form_validators import Character
 
-from project.__init__ import db
-from project.setup_ import defaults as d
+from project.extensions.sql_alchemy import db
+from project.setup import defaults as d
 
 
 #######################################
@@ -171,9 +171,7 @@ class Users(SAAdmin, SABaseMixin, UserMixin, db.Model):
 
     @classmethod
     def get_avatar(cls, user_id):
-        for char in Characters.get_list_from_user(user_id, include_avatar=True):
-            if char.avatar:
-                return char
+        return Characters.query.filter_by(avatar=True, user_id=user_id).first()
 
     @classmethod
     def get_player_list(cls, game_id: int) -> list:

@@ -7,7 +7,7 @@ from flask_login import current_user
 
 admin_ = Blueprint("admin_", __name__)
 
-from project.setup_ import defaults as d
+from project.setup import defaults as d
 
 class AdminIndex(AdminIndexView):
     @expose('/')

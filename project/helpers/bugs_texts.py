@@ -1,4 +1,4 @@
-from project.setup_ import defaults as d
+from project.setup import defaults as d
 from project.models import Characters
 
 

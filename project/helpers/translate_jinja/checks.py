@@ -1,5 +1,5 @@
-from project.setup_ import defaults as d
-from project.helpers.misc import private_convert
+from project.setup import defaults as d
+from project.helpers.misc import bool_convert
 
 
 class Checks:
@@ -81,7 +81,7 @@ class Checks:
         for item in con[1:]:
             item = item.strip().lower()
             if item == "true" or item == "false":
-                generic_list.append(private_convert(item))
+                generic_list.append(bool_convert(item))
             elif item == "current_user.id":
                 generic_list.append(self.target_user)
             elif item == "tutorial_id":
