@@ -5,7 +5,7 @@ import pytest
 import os
 from flask_migrate import init, migrate, upgrade
 
-from tests.helpers import build
+from tests.helpers.unit import build
 # from project.utils.populate import create_default_groups, create_default_settings
 
 @pytest.fixture(scope="session")
