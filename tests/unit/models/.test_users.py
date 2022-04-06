@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from tests.helpers.unit import create_user
 from tests.helpers.all import generate_user, make_id
-from tests.helpers.integration import run_parallel
+from tests.helpers.all import run_parallel
 
 
 @pytest.mark.asyncio

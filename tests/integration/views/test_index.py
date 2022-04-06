@@ -1,24 +1,67 @@
 import pytest
-from tests.helpers.integration import run_parallel, run_sequence
+from tests.helpers.all import (
+    chron_url,
+    generate_game,
+)
+from tests.helpers._async import run_parallel, run_sequence
+from tests.helpers.worker import worker
 from tests.integration.startup.mockuser import Mock
+from io import TextIOWrapper
+import asyncio
+from selenium.webdriver.common.by import By
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_one(mocks: list[Mock]):
-    print(f"1")
-    print(f'mock: {mocks}')
+async def test_index(mocks: list[Mock], fp: TextIOWrapper):
+    test_queue = asyncio.Queue()
+    browser_queue = asyncio.Queue()
+    for mock in mocks:
+        await browser_queue.put(mock)
+    for task in [
+        page_assets,
+        # my_dm_games_are_visible,
+        # my_pc_games_exist,
+        # user_must_be_logged_in,
+    ]:
+        await test_queue.put(task)
+    await run_parallel(
+        *(
+            asyncio.create_task(worker(test_queue, browser_queue, fp))
+            for _ in range(len(mocks))
+        )
+    )
+
+
+async def page_assets(mock: Mock):
+    print("page_assets")
+    await run_sequence(
+        mock.register(),
+        mock.login(),
+    )
+    await run_parallel(
+        mock.get_element((By.XPATH, "//a[@href='/create/game']")),
+        mock.get_element((By.XPATH, "//a[@href='/join']")),
+        mock.auth_nav(),
+    )
+
+
+async def my_dm_games_are_visible(mock: Mock):
+    print("TODO: my_dm_games_are_visible")
+
+
+async def my_pc_games_exist(mock: Mock):
+    print("TODO: my_pc_games_exist")
+
+
+async def user_must_be_logged_in(mock: Mock):
+    print("user_must_be_logged_in")
+    await mock.nav(url=chron_url("/index"), next=chron_url("/", next="/index"))
 
 
 async def populate(user: Mock) -> Mock:
+    from tests.conftest import fp
+    game = generate_game(fp)
     await user.register()
-    return user
-
-@pytest.mark.parametrize("mocks", [3], indirect=True)
-@pytest.mark.asyncio
-async def test_two(mocks: list[Mock]):
-    print(f'mocks: {mocks}')
-    populated = await run_parallel(*(populate(m) for m in mocks))
-    print(f"2")
-    print(f"start_up: {populated}")
-    [print(f'populated.current_url: {p.browser.current_url}') for p in populated]
+    await user.login()
+    await user.create_game(game)
+    return game

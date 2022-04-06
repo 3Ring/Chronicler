@@ -35,9 +35,11 @@ class Mock(BrowserStories):
         super().__init__(
             brand=brand, browser=browser
         )
+        self.template = user
         self.id = user.id
         self.name = user.name
         self.email = user.email
         self.password = user.password
         self.confirm = user.confirm
+        self.games = list()
 

@@ -1,27 +1,51 @@
 import pytest
+import asyncio
 from selenium.webdriver.common.by import By
 
-from tests.integration.browser.brands import Browsers
 from io import TextIOWrapper
-from tests.helpers.all import chron_url, generate_user, alter_dict
-from tests.helpers.integration import make_mock, run_parallel, run_sequence
+from tests.helpers._async import run_parallel, run_sequence
+from tests.helpers.all import chron_url
 from tests.integration.startup.mockuser import Mock
-
-# def test_register_assets(browsers: list[BrowserActions]):
-# def preflight(fp: TextIOWrapper, browser: dict[Browsers, str]):
-#     browser, brand = browser["driver"], browser["brand"]
-#     return make_mock(fp=fp, browser=browser, brand=brand)
+from tests.helpers.worker import worker
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_register_assets(mocks: list[Mock]):
-    print("test_register_assets")
-    mock = mocks[0]
-    print("TAUTH1.1")
-    await mock.nav(chron_url("/register"))
-    print("TAUTH1.2")
+async def test_auth(mocks: list[Mock], fp: TextIOWrapper):
+    test_queue = asyncio.Queue()
+    browser_queue = asyncio.Queue()
+    for mock in mocks:
+        await browser_queue.put(mock)
+    for task in [
+        register_assets,
+        show_passwords,
+        register_link_to_login,
+        login_link_to_register,
+        anonymous_user_redirected_to_login,
+        register_bad_user_names,
+        register_bad_emails,
+        register_bad_passwords,
+        can_register,
+        bad_logins,
+        fresh_user_is_redirected_to_index_from_reauth,
+        login_remember_me,
+        user_can_reauth,
+        can_logout,
+    ]:
+        await test_queue.put(task)
+
     await run_parallel(
+        *(
+            asyncio.create_task(worker(test_queue, browser_queue, fp))
+            for _ in range(len(mocks))
+        )
+    )
+
+
+async def register_assets(mock: Mock):
+    print("register_assets")
+    await mock.nav(chron_url("/register"))
+    await run_parallel(
+        mock.anon_nav(),
         mock.get_element((By.XPATH, "//input[@name='name']")),
         mock.get_element((By.XPATH, "//input[@name='email']")),
         mock.get_element((By.XPATH, "//input[@name='password']")),
@@ -29,89 +53,49 @@ async def test_register_assets(mocks: list[Mock]):
         mock.get_element((By.XPATH, "//input[@name='reveal']")),
         mock.get_element((By.XPATH, "//input[@name='usersubmit']")),
     )
-    print("TAUTH1.3")
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_show_passwords(mocks: list[Mock]):
-    print("test_show_passwords")
-    print("TAUTH2.1")
-    mock = mocks[0]
-    print("TAUTH2.2")
+async def show_passwords(mock: Mock):
+    print("show_passwords")
     await mock.nav(chron_url("/register"))
-    print("TAUTH2.3")
     password, confirm, reveal = await run_parallel(
         mock.get_element((By.XPATH, "//input[@name='password']")),
         mock.get_element((By.XPATH, "//input[@name='confirm']")),
         mock.get_element((By.XPATH, "//input[@name='reveal']")),
     )
-    print("TAUTH2.4")
     await run_parallel(
-        mock.input(password, "test_password"),
-        mock.input(confirm, "test_confirm"),
+        mock.input(password, "password"),
+        mock.input(confirm, "confirm"),
     )
-    print("TAUTH2.5")
     mock.click(reveal)
-    print("TAUTH2.6")
     revealed_pw = await mock.get_element((By.XPATH, "//input[@name='password']"))
-    print("TAUTH2.7")
     assert revealed_pw.get_attribute("type") == "text"
     revealed_confirm = await mock.get_element((By.XPATH, "//input[@name='confirm']"))
-    print("TAUTH2.8")
     assert revealed_confirm.get_attribute("type") == "text"
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_register_link_to_login(mocks: list[Mock]):
-    print("test_register_link_to_login")
-    print("TAUTH3.1")
-    mock = mocks[0]
-    print("TAUTH3.2")
+async def register_link_to_login(mock: Mock):
+    print("register_link_to_login")
     await mock.nav(chron_url("/register"))
-    print("TAUTH3.3")
     link = await mock.get_element((By.XPATH, "//a[@href='/']"))
-    print("TAUTH3.4")
     await mock.submit(link, next=chron_url())
-    print("TAUTH3.5")
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_login_link_to_register(mocks: list[Mock]):
-    print("test_login_link_to_register")
-    print("TAUTH4.1")
-    mock = mocks[0]
-    print("TAUTH4.2")
+async def login_link_to_register(mock: Mock):
+    print("login_link_to_register")
     await mock.nav(chron_url("/"))
-    print("TAUTH4.3")
     link = await mock.get_element((By.XPATH, "//a[@href='/register']"))
-    print("TAUTH4.4")
     await mock.submit(link, next=chron_url("/register"))
-    print("TAUTH4.5")
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_anonymous_user_redirected_to_login(mocks: list[Mock]):
-    print("test_anonymous_user_redirected_to_login")
-    print("TAUTH5.1")
-    mock = mocks[0]
-    print("TAUTH5.2")
+async def anonymous_user_redirected_to_login(mock: Mock):
+    print("anonymous_user_redirected_to_login")
     await mock.nav(chron_url("/logout"), next=chron_url("/", next="/logout"))
-    print("TAUTH5.3")
     await mock.nav(chron_url("/reauth"), next=chron_url("/", next="/reauth"))
-    print("TAUTH5.4")
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_register_bad_user_names(mocks: list[Mock]):
-    print("test_register_bad_user_names")
-    print("TAUTH6.1")
-    mock = mocks[0]
-    print("TAUTH6.2")
+async def register_bad_user_names(mock: Mock):
+    print("register_bad_user_names")
     bad_names = [
         "",
         " ",
@@ -121,10 +105,8 @@ async def test_register_bad_user_names(mocks: list[Mock]):
         "試験",
         "test" + "!@#$%^&*()-=./,'\"",
     ]
-    print("TAUTH6.3")
     for name in bad_names:
         try:
-            print("TAUTH6.4")
             mock.name = name
             await mock.register(fail=True)
         except Exception as e:
@@ -132,11 +114,8 @@ async def test_register_bad_user_names(mocks: list[Mock]):
             raise e
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_register_bad_emails(mocks: list[Mock]):
-    print("test_register_bad_emails")
-    mock = mocks[0]
+async def register_bad_emails(mock: Mock):
+    print("register_bad_emails")
     bad_emails = [
         "@gmail.com",
         "test",
@@ -144,16 +123,15 @@ async def test_register_bad_emails(mocks: list[Mock]):
         ("test" * (120 // 3)) + "@gmail.com",
         "t@p.c",
     ]
+    i = 3
     for email in bad_emails:
         mock.email = email
+        i += 1
         await mock.register(fail=True)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_register_bad_passwords(mocks: list[Mock]):
-    print("test_register_bad_passwords")
-    mock = mocks[0]
+async def register_bad_passwords(mock: Mock):
+    print("register_bad_passwords")
     bad_passwords = [
         ("", ""),
         ("         ", "         "),
@@ -162,24 +140,20 @@ async def test_register_bad_passwords(mocks: list[Mock]):
         ("test" * (100 // 3), "test" * (100 // 3)),
         ("testtest", "testtest1"),
     ]
+    i = 3
     for pw, confirm in bad_passwords:
         mock.password, mock.confirm = pw, confirm
         await mock.register(fail=True)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_can_register(mocks: list[Mock]):
-    print("test_can_register")
-    mock = mocks[0]
+async def can_register(mock: Mock):
+    print("can_register")
     await mock.register()
+    await mock.anon_nav()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_bad_logins(mocks: list[Mock]):
-    print("test_bad_logins")
-    mock = mocks[0]
+async def bad_logins(mock: Mock):
+    print("bad_logins")
     await mock.register()
     bad_logins = [
         ("", ""),
@@ -194,47 +168,37 @@ async def test_bad_logins(mocks: list[Mock]):
         (mock.email.lower(), mock.password.upper()),
         (mock.email.upper(), mock.password.lower()),
     ]
+    i = 4
     for email, password in bad_logins:
+        i += 1
         await mock.login(email=email, password=password, fail=True)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_fresh_user_is_redirected_to_index_from_reauth(mocks: list[Mock]):
-    print("test_fresh_user_is_redirected_to_index_from_reauth")
-    mock = mocks[0]
+async def fresh_user_is_redirected_to_index_from_reauth(mock: Mock):
+    print("fresh_user_is_redirected_to_index_from_reauth")
     await mock.register()
     await mock.login()
     await mock.nav(chron_url("/reauth"), next=chron_url("/index"))
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_login_remember_me(mocks: list[Mock]):
-    print("test_login_remember_me")
-    mock = mocks[0]
+async def login_remember_me(mock: Mock):
+    print("login_remember_me")
     await mock.register()
     await mock.login()
-    await mock.reset()
+    mock.browser.delete_all_cookies()
     await mock.nav(chron_url("/", next=chron_url("/index")))
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_user_can_reauth(mocks: list[Mock]):
-    print("test_user_can_reauth")
-    mock = mocks[0]
+async def user_can_reauth(mock: Mock):
+    print("user_can_reauth")
     await mock.register()
     await mock.login()
     restricted = await mock.forced_to_reauth()
     await mock.reauth(restricted)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("mocks", [1], indirect=True)
-async def test_can_logout(mocks: list[Mock]):
-    print("test_can_logout")
-    mock = mocks[0]
+async def can_logout(mock: Mock):
+    print("can_logout")
     await mock.register()
     await mock.login()
     await mock.logout()

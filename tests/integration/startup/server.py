@@ -16,6 +16,7 @@ class Server:
     async def launch_server(self):
         cmd = "docker-compose -f docker-compose_testing.yml -p chronicler_testing up -d"
         up = await self.command(cmd)
+        print(f'up: {up}')
         assert up.returncode == 0
         assert await self._check_if_server_is_up()
 

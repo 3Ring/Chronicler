@@ -3,17 +3,25 @@ import pytest
 import pytest_asyncio
 import asyncio
 from tempfile import TemporaryDirectory
+from io import TextIOWrapper
+from tests.helpers._async import run_parallel, run_sequence
+from tests.helpers.all import make_id
+from tests.integration.startup.mockuser import Mock, MockUser
 
 # from tests.fixtures.unit_test.app import *  # noqa
 # from tests.fixtures.unit_test.helpers import *
 from tests.integration.startup.server import Server
 from tests.integration.browser.brands import Browsers
-from tests.helpers.integration import run_parallel, make_mock
 
 
 def pytest_addoption(parser):
     parser.addoption("--no-tear-down", action="store")
     parser.addoption("--workers", action="store")
+
+
+def make_mock(fp: TextIOWrapper):
+    _id = make_id(fp=fp)
+    return MockUser(_id)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -49,25 +57,22 @@ def event_loop():
 
 
 # @pytest_asyncio.fixture(scope="module", params=["chrome", "chrome", "chrome"])
-# @pytest_asyncio.fixture(scope="module", params=["chrome", "firefox", "edge"])
-@pytest_asyncio.fixture(scope="session", params=["chrome"])
+# @pytest_asyncio.fixture(scope="session", params=["chrome"])
+@pytest_asyncio.fixture(scope="session", params=["chrome", "firefox", "edge"])
 async def browsers(request, start_up):
     print(f"brand called")
     print(f"starting tests on {request.param}..")
     brand = Browsers(request.param)
-    amount = 3
-    _browsers = await run_parallel(*(brand.get() for _ in range(amount)))
+    amount = int(request.config.getoption("--workers"))
+    _browsers = await run_parallel(
+        *(asyncio.to_thread(brand.get) for _ in range(amount))
+    )
     yield _browsers
-    await run_parallel(*(asyncio.to_thread(b["driver"].close) for b in _browsers))
+    await run_parallel(*(asyncio.to_thread(b["driver"].quit) for b in _browsers))
 
 
-@pytest_asyncio.fixture(scope="function")
-async def mocks(fp, browsers, request):
-    print(f'mocks called')
-    mocks = [
-        make_mock(fp=fp, browser=b["driver"], brand=b["brand"])
-        for _, b in zip(range(request.param), browsers)
-    ]
+@pytest_asyncio.fixture(scope="module")
+async def mocks(fp, browsers):
+    print(f"mocks called")
+    mocks = [Mock(user=make_mock(fp=fp), browser=b["driver"], brand=b["brand"]) for b in browsers]
     yield mocks
-    await run_parallel(*(m.reset()for m in mocks))
-        

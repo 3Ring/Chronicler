@@ -16,9 +16,6 @@ from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
 
-import asyncio
-
-
 class Browsers:
     supported = ["chrome", "firefox", "edge"]
 
@@ -29,41 +26,29 @@ class Browsers:
             )
         self.brand = brand
 
-    async def get(self) -> webdriver.Chrome:
-        return await getattr(self, self.brand)()
+    def get(self) -> webdriver.Chrome:
+        return getattr(self, self.brand)()
 
-    async def chrome(self) -> webdriver.Chrome:
-        options = await asyncio.to_thread(ChromeOptions)
+    def chrome(self) -> webdriver.Chrome:
+        options = ChromeOptions()
         options.headless = True
-        a = await asyncio.to_thread(ChromeDriverManager)
-        b = await asyncio.to_thread(a.install)
-        service = await asyncio.to_thread(ChromeService, b)
-        driver = await asyncio.to_thread(
-            webdriver.Chrome, options=options, service=service
-        )
+        service = ChromeService(ChromeDriverManager().install())
+        driver = webdriver.Chrome(options=options, service=service)
         assert driver is not None
         return {"driver": driver, "brand": "chrome"}
 
-    async def firefox(self) -> webdriver.Firefox:
-        options = await asyncio.to_thread(FirefoxOptions)
+    def firefox(self) -> webdriver.Firefox:
+        options = FirefoxOptions()
         options.headless = True
-        a = await asyncio.to_thread(GeckoDriverManager)
-        b = await asyncio.to_thread(a.install)
-        service = await asyncio.to_thread(FirefoxService, b)
-        driver = await asyncio.to_thread(
-            webdriver.Firefox, options=options, service=service
-        )
+        service = FirefoxService(GeckoDriverManager().install(), log_path=None)
+        driver = webdriver.Firefox(options=options, service=service)
         assert driver is not None
         return {"driver": driver, "brand": "firefox"}
 
-    async def edge(self) -> webdriver.Edge:
-        options = await asyncio.to_thread(EdgeOptions)
+    def edge(self) -> webdriver.Edge:
+        options = EdgeOptions()
         options.headless = True
-        a = await asyncio.to_thread(EdgeChromiumDriverManager)
-        b = await asyncio.to_thread(a.install)
-        service = await asyncio.to_thread(EdgeService, b)
-        driver = await asyncio.to_thread(
-            webdriver.Edge, options=options, service=service
-        )
+        service = EdgeService(EdgeChromiumDriverManager().install())
+        driver = webdriver.Edge(options=options, service=service)
         assert driver is not None
         return {"driver": driver, "brand": "edge"}

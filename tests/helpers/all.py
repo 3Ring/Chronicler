@@ -1,12 +1,16 @@
 from io import TextIOWrapper
-from asyncio import SelectorEventLoop
 import asyncio
+from typing import Any, Awaitable
+
 
 # async def make_id(fp: TextIOWrapper, loop: SelectorEventLoop) -> int:
 #     future = asyncio.run_coroutine_threadsafe(
 #         asyncio.to_thread(get_and_increment, fp), loop
 #     )
 #     return await asyncio.wrap_future(future, loop=loop)
+
+
+
 def make_id(fp: TextIOWrapper) -> int:
     return get_and_increment(fp)
 
@@ -95,3 +99,5 @@ def chron_url(url="/", **kw):
     else:
         qstr = ""
     return "http://localhost:5001" + url + qstr
+
+

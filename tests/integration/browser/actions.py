@@ -1,4 +1,6 @@
 from typing import Tuple
+import pytest
+from selenium.common.exceptions import TimeoutException
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -10,9 +12,9 @@ from selenium.webdriver.support import expected_conditions
 
 from selenium.webdriver.common.by import By
 
+from tests.helpers._async import run_parallel, run_sequence
 
 class BrowserActions:
-
     def __init__(self, brand: str, browser: webdriver.Chrome) -> None:
         self.brand = brand
         self.browser = browser
@@ -42,9 +44,7 @@ class BrowserActions:
                     expected_conditions.url_to_be(url)
                 )
         except Exception as e:
-            print(
-                f"currrent url is: {self.browser.current_url}. expected is: {url}"
-            )
+            print(f"currrent url is: {self.browser.current_url}. expected is: {url}")
             raise e
 
     async def get_element(
@@ -78,5 +78,28 @@ class BrowserActions:
         else:
             await self._confirm_nav(current, partial_url=partial_url)
 
+    async def anon_nav(self):
 
+        await self._nav_exists()
+        await run_parallel(
+            self.get_element((By.XPATH, "//a[@href='/']")),
+            self.get_element((By.XPATH, "//a[@href='/register']")),
+        )
 
+    async def auth_nav(self):
+
+        await self._nav_exists()
+        await run_parallel(
+            self.get_element((By.XPATH, "//a[@href='/logout']")),
+            self.get_element((By.XPATH, "//a[@href='/profile']")),
+            self.get_element((By.XPATH, "//a[@href='/bugs']")),
+        )
+
+    async def _nav_exists(self):
+
+        await run_parallel(
+            self.get_element((By.TAG_NAME, "nav")),
+            self.get_element((By.XPATH, "//a[@href='/index']")),
+        )
+        with pytest.raises(TimeoutException):
+            await self.get_element((By.XPATH, "//a[@href='/admin']"), timeout=0.2)
