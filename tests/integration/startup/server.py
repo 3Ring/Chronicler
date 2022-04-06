@@ -20,13 +20,12 @@ class Server:
         """It launches the test server from the docker-compose_testing.yml file."""
         cmd = "docker-compose -f docker-compose_testing.yml -p chronicler_testing up -d"
         up = await self.command(cmd)
-        print(f"up: {up}")
         assert up.returncode == 0
         assert await self._check_if_server_is_up()
 
     async def teardown_server(self) -> None:
         """If the server is up, stop the server and delete the volume."""
-        if self.skip is not False and await self._check_if_server_is_up() is True:
+        if self.skip is False and await self._check_if_server_is_up() is True:
             await self.stop_server()
             await self.delete_volume()
         else:

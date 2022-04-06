@@ -168,9 +168,7 @@ async def bad_logins(mock: Mock):
         (mock.email.lower(), mock.password.upper()),
         (mock.email.upper(), mock.password.lower()),
     ]
-    i = 4
     for email, password in bad_logins:
-        i += 1
         await mock.login(email=email, password=password, fail=True)
 
 

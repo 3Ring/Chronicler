@@ -36,7 +36,7 @@ class BrowserStories(BrowserActions):
         password = password if password is not None else self.password
         confirm = confirm if confirm is not None else self.confirm
         await self.nav(chron_url("/register"))
-        (reg_name, reg_email, reg_password, reg_confirm,) = await run_parallel(
+        reg_name, reg_email, reg_password, reg_confirm = await run_parallel(
             self.get_element((By.XPATH, "//input[@name='name']")),
             self.get_element((By.XPATH, "//input[@name='email']")),
             self.get_element((By.XPATH, "//input[@name='password']")),
