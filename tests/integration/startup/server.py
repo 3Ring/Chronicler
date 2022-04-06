@@ -5,29 +5,37 @@ import asyncio
 
 
 class Server:
-    def __init__(self, skip) -> None:
+    """helper class that is used to launch and teardown the Chronicler test server with docker"""
+
+    def __init__(self, skip: bool) -> None:
         self.skip = skip
 
     async def start_server(self) -> None:
+        """Check if the server is up, if not launch the server"""
         print(f"in server")
         if not await self._check_if_server_is_up():
             await self.launch_server()
 
-    async def launch_server(self):
+    async def launch_server(self) -> None:
+        """It launches the test server from the docker-compose_testing.yml file."""
         cmd = "docker-compose -f docker-compose_testing.yml -p chronicler_testing up -d"
         up = await self.command(cmd)
-        print(f'up: {up}')
+        print(f"up: {up}")
         assert up.returncode == 0
         assert await self._check_if_server_is_up()
 
     async def teardown_server(self) -> None:
+        """If the server is up, stop the server and delete the volume."""
         if self.skip is not False and await self._check_if_server_is_up() is True:
             await self.stop_server()
             await self.delete_volume()
         else:
             print(f"skipping tear down..")
 
-    async def stop_server(self):
+    async def stop_server(self) -> None:
+        """This function is used to stop the docker-compose testing server. It's pretty simple, it just runs
+        the docker-compose down command
+        """
         down = await self.command(
             "docker-compose -f docker-compose_testing.yml -p chronicler_testing down"
         )
@@ -35,6 +43,7 @@ class Server:
         assert not await self._check_if_server_is_up()
 
     async def delete_volume(self):
+        """It deletes the volume. clearing the server"""
         delete = await self.command("docker volume rm chronicler_volume_test")
         assert delete.returncode == 0
         assert not await self._check_if_volume_exists()

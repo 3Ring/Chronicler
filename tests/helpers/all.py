@@ -1,24 +1,24 @@
+import urllib.parse
 from io import TextIOWrapper
-import asyncio
-from typing import Any, Awaitable
-
-
-# async def make_id(fp: TextIOWrapper, loop: SelectorEventLoop) -> int:
-#     future = asyncio.run_coroutine_threadsafe(
-#         asyncio.to_thread(get_and_increment, fp), loop
-#     )
-#     return await asyncio.wrap_future(future, loop=loop)
-
 
 
 def make_id(fp: TextIOWrapper) -> int:
+    """
+    It reads the current value of the counter from the file and increments it.
+    this is superfluous and should be removed
+    
+    :return: The id of the question.
+    """
     return get_and_increment(fp)
+
 
 def generate_user(_id, confirm_field: bool = True) -> dict:
     """
-    Generate a user dictionary with the following unique keys: name, email, and password.
+    Generate a dictionary of user data.
+    
+    :param _id: The unique id of the user
+    :param confirm_field: If True, the confirm field will be present in the user data, defaults to True
 
-    :param fp: The file pointer to the file that stores the current value of the counter
     :return: A dictionary with the user's name, email, and password.
     """
 
@@ -40,6 +40,14 @@ def generate_user(_id, confirm_field: bool = True) -> dict:
 
 
 def generate_game(_id, publish: bool = True) -> dict:
+    """
+    Generate a game object
+
+    :param _id: The id of the game
+    :param publish: If True, the game will be published on server. If False, the game will be private,
+    defaults to True
+    :return: A dictionary with the name of the game and whether or not it is published.
+    """
 
     game = {
         "name": f"Game{_id}",
@@ -47,13 +55,6 @@ def generate_game(_id, publish: bool = True) -> dict:
     }
 
     return game
-
-
-def alter_dict(item: dict, **kw) -> dict:
-    altered = item.copy()
-    for k, v in kw.items():
-        altered[k] = v
-    return altered
 
 
 def get_and_increment(fp: TextIOWrapper) -> int:
@@ -72,11 +73,11 @@ def get_and_increment(fp: TextIOWrapper) -> int:
     return it
 
 
-def get_root(file):
+def get_root(file: str):
     """
     Get the root directory of the Chronicler package
 
-    :param file: The file to be loaded
+    :param file: The chronicler subdirectory
     :return: The root directory of the chronicler repository.
     """
     import os
@@ -92,12 +93,16 @@ def get_root(file):
 
 
 def chron_url(url="/", **kw):
-    import urllib.parse
+    """
+    appends the given subdirectory to the chronicler test server root.
+
+    :param **kw: takes the kw as a dict and parses it as a query_string to be appended to the url
+    :param url: The Chronicler subdirectory , defaults to / (optional)
+    :return: A string.
+    """
 
     if kw:
         qstr = "?" + urllib.parse.urlencode(kw)
     else:
         qstr = ""
     return "http://localhost:5001" + url + qstr
-
-

@@ -1,21 +1,19 @@
-
-import tempfile
-
 import pytest
 import os
 from flask_migrate import init, migrate, upgrade
 
 from tests.helpers.unit import build
-# from project.utils.populate import create_default_groups, create_default_settings
+
 
 @pytest.fixture(scope="session")
 def ut_app():
     """application"""
     from unit_test import test as chronicler
-    # chronicler = test
+
     assert chronicler.config["SQLALCHEMY_DATABASE_URI"] == "sqlite:///:memory:"
     assert chronicler.config["TESTING"] == True
     yield chronicler
+
 
 @pytest.fixture(scope="session")
 def ut_client(ut_app):
@@ -32,5 +30,4 @@ def ut_set_database(temp_dir, ut_app):
     migrate(directory=os.path.join(temp_dir, "migrations"))
     upgrade(directory=os.path.join(temp_dir, "migrations"))
     build(ut_app)
-    yield 
-
+    yield

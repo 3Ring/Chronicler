@@ -4,15 +4,13 @@ import pytest_asyncio
 import asyncio
 from tempfile import TemporaryDirectory
 from io import TextIOWrapper
-from tests.helpers._async import run_parallel, run_sequence
+
+from tests.helpers._async import run_parallel
 from tests.helpers.all import make_id
 from tests.integration.startup.mockuser import Mock, MockUser
-
-# from tests.fixtures.unit_test.app import *  # noqa
-# from tests.fixtures.unit_test.helpers import *
 from tests.integration.startup.server import Server
 from tests.integration.browser.brands import Browsers
-
+from project.helpers.misc import bool_convert
 
 def pytest_addoption(parser):
     parser.addoption("--no-tear-down", action="store")
@@ -41,7 +39,7 @@ def fp(temp_dir: TemporaryDirectory):
 
 @pytest_asyncio.fixture(scope="session")
 async def start_up(request):
-    server = Server(request.config.getoption("--no-tear-down"))
+    server = Server(bool_convert(request.config.getoption("--no-tear-down")))
     await server.start_server()
     yield
     print(f"tearing down")

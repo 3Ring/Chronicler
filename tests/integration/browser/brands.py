@@ -17,6 +17,7 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 
 
 class Browsers:
+    """This is a factory class that creates a webdriver object based on the brand of browser."""
     supported = ["chrome", "firefox", "edge"]
 
     def __init__(self, brand) -> None:
@@ -27,9 +28,14 @@ class Browsers:
         self.brand = brand
 
     def get(self) -> webdriver.Chrome:
+        """returns a webdriver object."""
         return getattr(self, self.brand)()
 
     def chrome(self) -> webdriver.Chrome:
+        """
+        Create a Chrome webdriver with headless options
+        :return: A dictionary with the driver and the brand of the browser.
+        """
         options = ChromeOptions()
         options.headless = True
         service = ChromeService(ChromeDriverManager().install())
@@ -38,6 +44,10 @@ class Browsers:
         return {"driver": driver, "brand": "chrome"}
 
     def firefox(self) -> webdriver.Firefox:
+        """
+        Create a Firefox webdriver with headless options
+        :return: A dictionary with the driver and the brand of the browser.
+        """
         options = FirefoxOptions()
         options.headless = True
         service = FirefoxService(GeckoDriverManager().install(), log_path=None)
@@ -46,6 +56,10 @@ class Browsers:
         return {"driver": driver, "brand": "firefox"}
 
     def edge(self) -> webdriver.Edge:
+        """
+        Create an Edge webdriver with headless options
+        :return: A dictionary with the driver and the brand of the browser.
+        """
         options = EdgeOptions()
         options.headless = True
         service = EdgeService(EdgeChromiumDriverManager().install())

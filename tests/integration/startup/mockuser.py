@@ -3,6 +3,7 @@ from selenium import webdriver
 
 
 class MockUser:
+    """A class used to create mock users for testing purposes."""
 
     games: list
 
@@ -26,15 +27,15 @@ class MockUser:
 
 
 class Mock(BrowserStories):
+    """A testing interface with MockUser attributes and a browser for testing purposes."""
+
     def __init__(
         self,
         brand: str,
         browser: webdriver.Chrome,
         user: MockUser,
     ) -> None:
-        super().__init__(
-            brand=brand, browser=browser
-        )
+        super().__init__(brand=brand, browser=browser)
         self.template = user
         self.id = user.id
         self.name = user.name
@@ -42,4 +43,3 @@ class Mock(BrowserStories):
         self.password = user.password
         self.confirm = user.confirm
         self.games = list()
-

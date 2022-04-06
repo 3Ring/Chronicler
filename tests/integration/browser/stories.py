@@ -1,15 +1,16 @@
-import asyncio
+from io import TextIOWrapper
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
 from tests.integration.browser.actions import BrowserActions
 from tests.helpers.all import chron_url
-from io import TextIOWrapper
-from tests.helpers.all import generate_game
 from project.helpers.misc import bool_convert
 from tests.helpers._async import run_parallel
 
 
 class BrowserStories(BrowserActions):
+    """A class containing all high level methods for navigating around the test server"""
+
     def __init__(self, brand: str, browser: webdriver.Chrome) -> None:
         super().__init__(brand=brand, browser=browser)
 
@@ -21,12 +22,19 @@ class BrowserStories(BrowserActions):
         confirm: str = None,
         fail: bool = False,
     ):
+        """
+        registers a user.
 
+        :param name: The name to register with
+        :param email: The email address to register with
+        :param password: The password to use for the registration
+        :param confirm: The password confirmation
+        :param fail: If True, the registration will fail. Otherwise, it will succeed, defaults to False
+        """
         name = name if name is not None else self.name
         email = email if email is not None else self.email
         password = password if password is not None else self.password
         confirm = confirm if confirm is not None else self.confirm
-
         await self.nav(chron_url("/register"))
         (reg_name, reg_email, reg_password, reg_confirm,) = await run_parallel(
             self.get_element((By.XPATH, "//input[@name='name']")),
@@ -40,7 +48,6 @@ class BrowserStories(BrowserActions):
             self.input(reg_password, password),
             self.input(reg_confirm, confirm),
         )
-
         reg_form_submit = await self.get_element((By.ID, "usersubmit"))
         if fail:
             await self.submit(reg_form_submit, next=chron_url("/register"))
@@ -54,7 +61,14 @@ class BrowserStories(BrowserActions):
         fail: bool = False,
         remember: bool = True,
     ):
+        """
+        logs in the user. (Will fail if not registered first)
 
+        :param email: The email to use for logging in
+        :param password: The password to user for loggin in
+        :param fail: If True, the login will fail. If False, the login will succeed, defaults to False
+        :param remember: If True, the login form will have a checkbox to "remember me", defaults to True
+        """
         email = email if email is not None else self.email
         password = password if password is not None else self.password
 
@@ -77,6 +91,7 @@ class BrowserStories(BrowserActions):
             await self.submit(login_submit, next=chron_url("/index"))
 
     def reset(self, fp: TextIOWrapper) -> None:
+        """Reset the browser to the initial state with new user information"""
         from tests.conftest import make_mock
 
         self.browser.delete_all_cookies()
@@ -89,6 +104,11 @@ class BrowserStories(BrowserActions):
         self.confirm = user.confirm
 
     async def create_game(self, game: dict, dm_name: bool = None) -> None:
+        """Create a game and a DM for it
+
+        :param game: the game parameters
+        :param dm_name: The name of the DM
+        """
 
         dm_name = dm_name if dm_name is not None else f"DM{self.name}"
         game["dm_name"] = dm_name
@@ -108,6 +128,11 @@ class BrowserStories(BrowserActions):
         await self.create_dm(game, dm_name)
 
     async def create_dm(self, dm_name: bool = None) -> None:
+        """
+        Create DM for new game. (Used for DM creation upon initial game creation)
+
+        :param dm_name: The name of the DM you want to create
+        """
 
         name, dm_submit = await run_parallel(
             self.get_element((By.XPATH, "//input[@name='name']")),
@@ -118,9 +143,14 @@ class BrowserStories(BrowserActions):
         await self.submit(dm_submit, next=chron_url("/notes"), partial_url=True)
 
     async def logout(self):
+        """Logout the user by navigating to the logout page"""
         await self.nav(chron_url("/logout"), next=chron_url())
 
     async def reauth(self, restricted: str):
+        """re-authenticates the user.
+
+        :param restricted: the URL of the page expected to redirect to
+        """
 
         email, password, submit = await run_parallel(
             self.get_element((By.XPATH, "//input[@name='email']")),
@@ -134,16 +164,10 @@ class BrowserStories(BrowserActions):
         await self.submit(submit, next=chron_url(restricted))
 
     async def forced_to_reauth(self):
+        """force a stale session state and navigate the user to /edit/account which will force a re-authorization"""
         restricted = "/edit/account"
         self.browser.delete_cookie("session")
         await self.nav(chron_url("/profile/account", next=restricted))
         edit = await self.get_element((By.XPATH, "//a[@href='/edit/account']"))
         await self.submit(edit, next=chron_url("/reauth", next=restricted))
         return restricted
-
-    # async def login_with_game(self, games: list[dict] = None):
-    #     games = games if games is not None else [generate_game(self.fp)]
-    #     await asyncio.create_task(self.register())
-    #     await asyncio.create_task(self.login())
-    #     for game in games:
-    #         await asyncio.create_task(self.create_game(game))

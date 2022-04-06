@@ -1,4 +1,7 @@
 from project.setup.db_init_create.base_items import Base_items
+from project.setup import defaults as d
+from project.extensions.sql_alchemy import db
+from project.helpers.db_session import db_session
 from project.models import (
     Users,
     Images,
@@ -34,9 +37,7 @@ models = [
     BridgeGameNPCs,
     BridgeGameItems,
 ]
-from project.setup import defaults as d
-from project.extensions.sql_alchemy import db
-from project.helpers.db_session import db_session
+
 
 def build(app):
     """
@@ -55,6 +56,7 @@ def build(app):
     for m in models:
         assert m.query.get(d.Orphanage.id) is not None
 
+
 def _reset_empty():
     """
     Reset the database to an empty state
@@ -65,7 +67,3 @@ def _reset_empty():
     for m in models:
         assert len(m.query.all()) == 0
 
-def create_user(user):
-    with db_session():
-        Users.create(**user)
-    assert Users.query.filter_by(email=user["email"]).first() is not None
