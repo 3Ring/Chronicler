@@ -3,6 +3,8 @@ project/node_modules/
 project/test.py
 test.py
 test2.py
+test3.py
+*testing/
 project/ignored
 project/templates/test.html
 project/templates/notes/test.html
@@ -25,3 +27,5 @@ project/litechronicler.db
 notes.txt
 latest.dump
 notes.py
+
+project/chronicler.code-workspace
