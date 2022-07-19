@@ -1,7 +1,9 @@
 {% extends 'main/base.html' %}
 {% block content %}
 {% from "macros/render_field.html" import render_field %}
-            
+
+<script src="{{ url_for('static', filename='js/edit/game_dm/image_update.js') }}"></script>
+
 <div class="container">
     <div class="form-container">
         <form  enctype="multipart/form-data" method='POST'>
@@ -9,7 +11,8 @@
             <h1>Create your game!</h1>
             {{ gameform.hidden_tag() }}
             {{ render_field(gameform.name) }}
-            {{ render_field(gameform.img) }}
+            {{ render_field(gameform.img, data_img="image_change_listener") }}
+            <img data-flag="changing_image" src="/static/images/default_game.jpg">
             {{ render_field(gameform.published, check=true) }}
             {{ render_field(gameform.gamesubmit, class='button primary') }}
         </form>

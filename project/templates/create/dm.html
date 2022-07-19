@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% block content %}
 {% from "macros/render_field.html" import render_field %}
+<script src="{{ url_for('static', filename='js/edit/game_dm/image_update.js') }}"></script>
 <div class="game-container" style="background-image: url({{ game.image }});">
     <div class="container">
         <div class="form-container">
@@ -9,8 +10,8 @@
                 <h1>Personalize your "DM" avatar</h1>
                 {{ form.hidden_tag() }}
                 {{ render_field(form.name, value="DM") }}
-                {{ render_field(form.img) }}  
-                <img src="{{dm_default_image}}">
+                {{ render_field(form.img, data_img="image_change_listener")}}  
+                <img data-flag="changing_image" data-flag="dm_img" src="{{dm_default_image}}">
                 {{ render_field(form.submit, class='button primary') }}
             </form>
         </div>

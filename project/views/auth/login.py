@@ -7,12 +7,12 @@ from project.forms.login import Login
 
 
 def login_get():
-    '''
+    """
     GET request function for "auth/login.html"
 
     If the user is already logged in, redirect to the index page. Otherwise, display the login form
     :return: The login.html template.
-    '''
+    """
 
     form = Login()
     return render_template("auth/login.html", form=form)
@@ -21,7 +21,7 @@ def login_get():
 def login_post():
     """
     POST request function for "auth/login.html"
-    
+
     checks data and logs in user if correct
     redirects user to index if they are already logged in
     """
@@ -30,7 +30,6 @@ def login_post():
         return render_template("auth/login.html", form=form)
 
     user = Users.query.filter_by(email=form.email.data).first()
-    
+
     login_user(user, remember=form.remember.data)
     return redirect(url_for("index.page"))
-

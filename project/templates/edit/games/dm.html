@@ -32,7 +32,7 @@ crossorigin="anonymous"></script>
 
     <div data-form="edit_game">
         <form enctype="multipart/form-data" method='POST'>
-            <img data-flag="game_img" src="{{game.image}}">
+            <img data-flag="changing_image" src="{{game.image}}">
             <h1>{{game.name}}:</h1>
             {{ form_edit.hidden_tag() }}
             {{ render_field(form_edit.published, data_published=game.published|string) }}
@@ -44,7 +44,7 @@ crossorigin="anonymous"></script>
             <a href="#" data-reveal="name" class="button primary">Change Name</a>
             {{ render_field(form_edit.name, cls_dv="row hidden", flag_dv="name") }}
             <a href="#" data-reveal="img" class="button primary">Change Image</a>
-            {{ render_field(form_edit.img, data_img="", cls_dv="row hidden", flag_dv="img") }}
+            {{ render_field(form_edit.img, data_img="image_change_listener", cls_dv="row hidden", flag_dv="img") }}
             {{ render_field(form_edit.submit, class='button primary') }}
         </form>
     </div>

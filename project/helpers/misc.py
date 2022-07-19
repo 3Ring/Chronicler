@@ -8,7 +8,6 @@ def set_heroku():
         heroku = True
     return heroku
 
-
 def bool_convert(priv):
     if type(priv) is bool:
         return priv

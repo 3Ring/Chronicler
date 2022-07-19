@@ -38,11 +38,11 @@ class Build(Init, Helpers):
         :param filename: The name of the jinja template file to be used
         :return: the file as a string.
         """
+        from flask import current_app
 
-        templates_path = "templates/notes"
-        root_dir = os.path.abspath("/app/project")
-        templates_dir = os.path.join(root_dir, templates_path)
-        src = os.path.join(templates_dir, filename)
+        src = os.path.join(
+            current_app.root_path, current_app.template_folder, "notes", filename
+        )
         return open(src).read()
 
     def read(self, html_list: list) -> list:

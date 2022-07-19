@@ -150,6 +150,5 @@ def is_ascii(form, field):
     if type(field.data) is not str:
         raise ValidationError(f"{field.name} only accepts ascii characters")
     for letter in field.data:
-        print(f'field.data: {field.data}')
-        if letter not in ascii_letters + digits:
-            raise ValidationError(f"{letter} is not a valid input. {field.name} only accepts ascii characters")
+        if not letter.isalnum() and not letter.isspace():
+            raise ValidationError(f'"{letter}" is not a valid input. {field.name} only accepts ascii characters')

@@ -10,12 +10,10 @@
         <div class="games">
             <div class="game">
                 <p>Choose a game to get started</p>
-                <ul>\
+                <ul>
                     {% for game in games %}
                     <li id="selectGame_{{game.id}}" class="select_game">
-                        <a><img class="index_game_image" src="{{game.image}}">
-                            {{game.name}}
-                        </a>
+                        <a><img class="index_game_image" src="{{game.image}}">{{game.name}}</a>
                     </li>
                     {% endfor %}
                 </ul>
