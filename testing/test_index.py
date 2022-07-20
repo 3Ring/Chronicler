@@ -13,7 +13,7 @@ def test_index_redirects_anon_user_to_login(mock: Mock):
 
 def test_index_page_assets(mock: Mock):
     with mock.test_manager(test_index_page_assets):
-        mock.actions.register_and_login()
+        mock.user.register_and_login(mock)
         mock.check.confirm_url(env.URL_INDEX)
         mock.check.nav_is_authenticated()
         mock.ui.get_element(

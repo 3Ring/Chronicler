@@ -1,16 +1,16 @@
+from __future__ import annotations
+
+
 from dataclasses import dataclass, field
 from typing import Callable
 from contextlib import contextmanager
 import logging
 
 
-from end_to_end.browser.actions.auth_actions import AuthActions
-from end_to_end.browser.actions.create_actions import CreateActions
-from end_to_end.browser.actions.check_actions import CheckActions
-from end_to_end.browser.actions.story_actions import StoryActions
+
+from end_to_end.browser.checks import CheckActions
 from end_to_end.browser.ui import BrowserUI
-from end_to_end.browser.actions.edit_actions import EditActions
-from end_to_end.assets import User
+from end_to_end.models.users import Users
 import env
 
 from _logging import Logger
@@ -20,13 +20,9 @@ from _logging import Logger
 class Mock:
     ui: BrowserUI
     logger: Logger
-    user: User
-    actions: StoryActions
+    user: Users
     check: CheckActions
-    auth: AuthActions
-    create: CreateActions
-    edit: EditActions
-    extra_users: list[User] = field(default_factory=list)
+    extra_users: list[Users] = field(default_factory=list)
 
     def reset(self):
         self.user.reset()
@@ -45,7 +41,7 @@ class Mock:
         """creates new user to self.user.
         saves appends previous user to self.extra_users
         """
-        saved = User(
+        saved = Users(
             self.user.name,
             self.user.email,
             self.user.password,

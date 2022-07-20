@@ -25,7 +25,7 @@ class CharCreate(FlaskForm):
         validators=[
             Optional(),
             FileAllowed(["jpg", "jpeg", "png"], "Images only!"),
-            FileSize(500000, message="Image must be smaller than five megabytes"),
+            FileSize(5_000_000, message="Image must be smaller than five megabytes"),
         ],
     )
     bio = TextAreaField(

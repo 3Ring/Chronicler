@@ -11,11 +11,11 @@ def test_join_redirects_anon_user(mock: Mock):
 
 def test_join_assets(mock: Mock):
     with mock.test_manager(test_join_assets):
-        mock.actions.register_and_login()
-        game = mock.actions.create_game_and_dm()
-        mock.auth.logout()
+        mock.user.register_and_login(mock)
+        game = mock.user.create_game_and_dm(mock)
+        mock.user.auth_logout(mock)
         mock.add_user()
-        mock.actions.register_and_login()
+        mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_JOIN)
         mock.check.nav_is_authenticated()
         header = mock.ui.get_element((By.CSS_SELECTOR, 'div.app-container h1'))

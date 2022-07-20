@@ -72,7 +72,7 @@ def test_register_bad_user_names(mock: Mock):
         ]
         for name in bad_names:
             mock.user.name = name
-            mock.auth.register(fail=True)
+            mock.user.auth_register(mock, fail=True)
 
 
 def test_register_bad_emails(mock: Mock):
@@ -107,12 +107,12 @@ def test_register_bad_passwords(mock: Mock):
 
 def test_can_register(mock: Mock):
     with mock.test_manager(test_can_register):
-        mock.auth.register()
+        mock.user.auth_register(mock)
 
 
 def test_register_does_not_login_user(mock: Mock):
     with mock.test_manager(test_register_does_not_login_user):
-        mock.auth.register()
+        mock.user.auth_register(mock)
         mock.check.nav_is_anon()
 
 
@@ -121,7 +121,7 @@ def test_bad_logins(mock: Mock):
         email: str
         pw: str
         email, pw = mock.user.email, mock.user.password
-        mock.auth.register()
+        mock.user.auth_register(mock)
         for email, password in [
             ("", ""),
             ("", pw),
@@ -137,23 +137,23 @@ def test_bad_logins(mock: Mock):
         ]:
             mock.user.email = email
             mock.user.password = password
-            mock.auth.login(fail=True)
+            mock.user.auth_login(mock, fail=True)
 
 def test_user_can_login(mock: Mock):
     with mock.test_manager(test_user_can_login):
-        mock.actions.register_and_login()
+        mock.user.register_and_login(mock)
         mock.check.confirm_url(env.URL_INDEX)
 
 def test_fresh_user_is_redirected_to_index_from_reauth(mock: Mock):
     with mock.test_manager(test_fresh_user_is_redirected_to_index_from_reauth):
-        mock.actions.register_and_login()
+        mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_AUTH_REAUTH)
         mock.check.confirm_url(env.URL_INDEX)
 
 
 def test_login_remember_me(mock: Mock):
     with mock.test_manager(test_login_remember_me):
-        mock.actions.register_and_login()
+        mock.user.register_and_login(mock)
         mock.ui.make_session_stale()
         mock.ui.nav(env.URL_AUTH_LOGIN)
         mock.check.confirm_url(env.URL_INDEX)
@@ -161,13 +161,13 @@ def test_login_remember_me(mock: Mock):
 
 def test_user_can_reauth(mock: Mock):
     with mock.test_manager(test_user_can_reauth):
-        mock.actions.register_and_login()
-        url = mock.actions.forced_to_reauth()
-        mock.auth.reauth(url)
+        mock.user.register_and_login(mock)
+        url = mock.user.forced_to_reauth(mock)
+        mock.user.auth_reauth(mock, url)
 
 
 def test_can_logout(mock: Mock):
     with mock.test_manager(test_can_logout):
-        mock.actions.register_and_login()
-        mock.auth.logout()
-        mock.auth.login()
+        mock.user.register_and_login(mock)
+        mock.user.auth_logout(mock)
+        mock.user.auth_login(mock)

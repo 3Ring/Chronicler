@@ -1,5 +1,8 @@
 import os
 from dotenv import load_dotenv
+from itertools import count
+
+ITERATOR = count()
 
 WINDOW_SIZE = (1920, 1080)
 WINDOW_SIZES_LARGE = [(3840, 2160), (7680, 4320)]
@@ -18,6 +21,7 @@ URL_PROFILE_CHARACTERS = "/profile/characters"
 URL_PROFILE_ACCOUNT = "/profile/account"
 URL_EDIT_ACCOUNT = "/edit/account"
 URL_EDIT_ACCOUNT_DELETE = "/edit/account/delete"
+URL_EDIT_CHARACTERS_PRE = "/edit/character/"
 
 ADDOPT_HELP = {
     "--timeout": "same as `--timeout` except this used when you expect the test to fail",

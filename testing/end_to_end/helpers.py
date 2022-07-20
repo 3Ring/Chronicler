@@ -21,8 +21,9 @@ def redirect(intended_url: str, redirect_url: str) -> str:
     return redirect_url + query_string_convert(next=intended_url)
 
 
-def bad_images_path():
-    path = os.path.abspath(os.path.join(os.environ.get("TEST_IMAGES_PATH"), "fail"))
+def images_path(fail=False):
+    directory = "pass" if not fail else "fail"
+    path = os.path.abspath(os.path.join(os.environ.get("TEST_IMAGES_PATH"), directory))
     _, _, files = next(os.walk(path))
     return [os.path.abspath(os.path.join(path, file)) for file in files]
 

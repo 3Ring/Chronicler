@@ -1,5 +1,8 @@
+from __future__ import annotations
+
+
+
 from dataclasses import dataclass
-import os
 from typing import Tuple
 
 import pytest
@@ -9,7 +12,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import url_contains, url_to_be
 
 from end_to_end.browser.ui import BrowserUI
-from end_to_end.helpers import redirect, url_convert
+from end_to_end.helpers import url_convert
 from _logging import Logger
 
 
@@ -89,12 +92,16 @@ class CheckActions:
         self.ui.click(element)
         self.confirm_url(destination, partial_url=partial_url)
 
-    def click_link_and_confirm(self, link: WebElement, url: None) -> None:
+    def click_link_and_confirm(
+        self, link: WebElement, url: str = None, partial_url: bool = False
+    ) -> None:
         """
         > Click a link and confirm that the URL you are directed to is correct
 
         :param link: WebElement - the link to click
         :param url: The URL that you want to confirm
         """
+        if url is None:
+            url = self.ui.browser.current_url
         self.ui.click(link)
-        self.confirm_url(url)
+        self.confirm_url(url, partial_url=partial_url)

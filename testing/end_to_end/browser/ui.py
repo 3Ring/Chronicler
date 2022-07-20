@@ -83,8 +83,10 @@ class BrowserUI:
             return self.browser.fail_wait.until(expected_elements)
         return self.browser.wait.until(expected_elements)
 
-    def input_text(self, element: WebElement, text: str) -> WebElement:
-        element.clear()
+    def input_text(self, element: WebElement, text: str, no_clear: bool = False) -> WebElement:
+        """clears the current text and sends new text"""
+        if not no_clear:
+            element.clear()
         element.send_keys(text)
 
     @contextmanager
