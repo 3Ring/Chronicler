@@ -8,13 +8,13 @@ import pytest
 from _pytest.fixtures import SubRequest
 from pytest import Parser, Metafunc
 
-from end_to_end import init
-from env import ADDOPT_HELP, _load_env
-from end_to_end.mock import Mock
-from end_to_end import server as _server
-from _logging import Logger
+from testing.end_to_end import init
+from testing.globals import ADDOPT_HELP
+from testing.end_to_end.mock import Mock
+from testing.end_to_end import server as _server
+from testing.logger import Logger
+from testing.globals import LOGGER
 
-_load_env()
 
 def pytest_addoption(parser: Parser):
     parser.addoption(
@@ -56,7 +56,7 @@ def browser_params(arg_list: str) -> list:
 
 def pytest_generate_tests(metafunc: Metafunc):
     os.environ.update({"LOG_LEVEL": metafunc.config.getoption("--log")})
-    # TODO fix this so that it's not reinstalling the browser every test
+    # TODO fix this so that it's not reinstalling the browser every test when used
     # if "mock" in metafunc.fixturenames:
     #     params = browser_params(metafunc.config.getoption("--browser_types"))
     #     metafunc.parametrize("mock", params, indirect=True, scope="session")
@@ -66,17 +66,17 @@ def pytest_generate_tests(metafunc: Metafunc):
 def logger():
     start = time.time()
     with TemporaryDirectory() as tmp:
-        logger_ = Logger(tmp)
+        LOGGER.init_logger(tmp)
         try:
-            yield logger_
+            yield LOGGER
         finally:
             finish = time.time()
-            logger_.info(f"tests took {finish - start} seconds")
-            for handler in logger_.file.handlers:
+            LOGGER.info(f"tests took {finish - start} seconds")
+            for handler in LOGGER.file.handlers:
                 handler.close()
-            for handler in logger_.console.handlers:
+            for handler in LOGGER.console.handlers:
                 handler.close()
-            logger_.commit(tmp)
+            LOGGER.commit(tmp)
 
 
 

@@ -1,30 +1,57 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from testing.end_to_end.browser.browsers import TestsBrowser
+
 import logging
 from time import time
 import shutil
 import os
 from tempfile import TemporaryDirectory
-from pytest import TempdirFactory
 import pytz
 from datetime import datetime
-from end_to_end.browser.browsers import TestsBrowser
 
 
 class Logger:
-    def __init__(self, tmpdir: TempdirFactory):
+    create_dump: bool
+    dir_path: str
+    paths: dict
+    file: Logger
+    console: Logger
+    level: int = logging.WARNING
+
+    def __init__(self, dir_path: str = None) -> None:
         self.create_dump = False
-        self._paths = self.paths(tmpdir)
-        self.file = self.create_file_logger(tmpdir)
+        if dir_path is None:
+            return
+        self.dir_path = dir_path
+        self.paths = self.paths(self.dir_path)
+        self.file = self.create_file_logger(self.dir_path)
         self.console = self.create_console_logger()
         self.level = self.file.level
 
-    def create_file_logger(self, tmpdir) -> logging.Logger:
+    def init_logger(self, dir_path: str) -> None:
+        """used when the initiation needs to be delayed
+        typically due to global variables not being set yet"""
+        print(f"type(tmpdir): {type(dir_path)}")
+        self.dir_path = dir_path
+        self.paths = self.paths(self.dir_path)
+        self.file = self.create_file_logger(self.dir_path)
+        self.console = self.create_console_logger()
+        self.level = self.file.level
+
+    def create_file_logger(self, dir_path: str) -> logging.Logger:
+        """
+        creates a logger that writes to a file in the temporary directory
+
+        :param tmpdir: The directory where the log file will be created
+        """
         logger = logging.getLogger("FILE")
         logger.setLevel(os.environ.get("LOG_LEVEL"))
-        path = os.path.join(tmpdir, "dump.log")
+        path = os.path.join(dir_path, "dump.log")
         handler = logging.FileHandler(path, "a")
-        format = logging.Formatter(
-            "[%(levelname)s]%(message)s"
-        )
+        format = logging.Formatter("[%(levelname)s]%(message)s")
         handler.setFormatter(format)
         logger.addHandler(handler)
         return logger
@@ -39,10 +66,10 @@ class Logger:
         return logger
 
     def make_paths(self) -> None:
-        if not os.path.exists(self._paths["logs"]):
-            os.makedirs(self._paths["logs"])
-        if not os.path.exists(self._paths["dir_date"]):
-            os.makedirs(self._paths["dir_date"])
+        if not os.path.exists(self.paths["logs"]):
+            os.makedirs(self.paths["logs"])
+        if not os.path.exists(self.paths["dir_date"]):
+            os.makedirs(self.paths["dir_date"])
 
     def set_create_dump(self, level: int) -> None:
         if self.create_dump is False and not self.level > level:
@@ -170,7 +197,7 @@ class Logger:
         :param img_name: The filename the image will be saved under
         :param folder: The folder to save the screenshot in. this will be appended to the root path
         """
-        path = self._paths["tmp_screenshots"]
+        path = self.paths["tmp_screenshots"]
         if folder != "":
             path = os.path.join(path, folder)
         if not os.path.exists(os.path.abspath(path)):
@@ -212,7 +239,7 @@ class Logger:
         """
         if self.create_dump is True:
             self.make_paths()
-            shutil.copytree(tmpdir, self._paths["dir_time"])
+            shutil.copytree(tmpdir, self.paths["dir_time"])
 
     @staticmethod
     def paths(tmpdir: TemporaryDirectory) -> dict:

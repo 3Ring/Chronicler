@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
 
-from end_to_end.mock import Mock
-from end_to_end.helpers import images_path
-from end_to_end.models import DMs, Games 
+from testing.end_to_end.mock import Mock
+from testing.end_to_end.helpers import images_path
+from testing.end_to_end.models import DMs, Games 
 
 
 def test_create_dm_page_assets(mock: Mock):

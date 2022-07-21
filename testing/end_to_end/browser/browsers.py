@@ -18,7 +18,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
-from env import WINDOW_SIZE
+from testing.globals import WINDOW_SIZE
 
 
 class TestsBrowser(WebDriver):

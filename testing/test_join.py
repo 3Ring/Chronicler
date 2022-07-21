@@ -1,13 +1,13 @@
 from selenium.webdriver.common.by import By
 
-from end_to_end.helpers import redirect
-from end_to_end.mock import Mock
-import env
+from testing.end_to_end.helpers import redirect
+from testing.end_to_end.mock import Mock
+from testing import globals
 
 def test_join_redirects_anon_user(mock: Mock):
     with mock.test_manager(test_join_redirects_anon_user):
-        mock.check.ui.nav(env.URL_JOIN)
-        mock.check.confirm_url(redirect(env.URL_JOIN, env.URL_AUTH_LOGIN))
+        mock.check.ui.nav(globals.URL_JOIN)
+        mock.check.confirm_url(redirect(globals.URL_JOIN, globals.URL_AUTH_LOGIN))
 
 def test_join_assets(mock: Mock):
     with mock.test_manager(test_join_assets):
@@ -16,7 +16,7 @@ def test_join_assets(mock: Mock):
         mock.user.auth_logout(mock)
         mock.add_user()
         mock.user.register_and_login(mock)
-        mock.ui.nav(env.URL_JOIN)
+        mock.ui.nav(globals.URL_JOIN)
         mock.check.nav_is_authenticated()
         header = mock.ui.get_element((By.CSS_SELECTOR, 'div.app-container h1'))
         assert header.text == "Public Games"

@@ -5,7 +5,8 @@ if TYPE_CHECKING:
     from end_to_end.mock import Mock
 
 from dataclasses import dataclass, field
-import env
+
+from testing import globals
 
 @dataclass
 class Games:
@@ -17,7 +18,7 @@ class Games:
     players: list[Users] = field(default_factory=list)
 
     def __post_init__(self):
-        self.id = next(env.ITERATOR)
+        self.id = next(globals.ITERATOR)
         if self.name is None:
             self.name = self.default_name(self.id)
         if self.dm:

@@ -7,22 +7,21 @@ from contextlib import contextmanager
 import logging
 
 
+from testing.end_to_end.browser.checks import CheckActions
+from testing.end_to_end.browser.ui import BrowserUI
+from testing.end_to_end.models.users import Users
+from testing.globals import LOGGER
 
-from end_to_end.browser.checks import CheckActions
-from end_to_end.browser.ui import BrowserUI
-from end_to_end.models.users import Users
-import env
-
-from _logging import Logger
+from testing.logger import Logger
 
 
 @dataclass
 class Mock:
     ui: BrowserUI
-    logger: Logger
     user: Users
     check: CheckActions
     extra_users: list[Users] = field(default_factory=list)
+    logger: Logger = field(init=False, default=LOGGER)
 
     def reset(self):
         self.user.reset()

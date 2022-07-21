@@ -11,9 +11,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import url_contains, url_to_be
 
-from end_to_end.browser.ui import BrowserUI
-from end_to_end.helpers import url_convert
-from _logging import Logger
+from testing.end_to_end.browser.ui import BrowserUI
+from testing.end_to_end.helpers import url_convert
+from testing.logger import Logger
 
 
 @dataclass

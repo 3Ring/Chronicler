@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
-from end_to_end.mock import Mock
-import env
+from testing.end_to_end.mock import Mock
+from testing import globals
 
 
 def test_edit_account_name(mock: Mock):
@@ -9,7 +9,7 @@ def test_edit_account_name(mock: Mock):
         mock.user.register_and_login(mock)
         mock.user.name = f"changed_{mock.user.id}"
         mock.user.edit_name(mock, mock.user.name)
-        mock.ui.nav(env.URL_PROFILE_ACCOUNT)
+        mock.ui.nav(globals.URL_PROFILE_ACCOUNT)
         labels = mock.ui.get_all_elements((By.TAG_NAME, "label"))
         assert f"Name: {mock.user.name}" in [label.text for label in labels]
 
@@ -19,7 +19,7 @@ def test_edit_account_email(mock: Mock):
         mock.user.register_and_login(mock)
         mock.user.email = f"changed{mock.user.id}@gmail.com"
         mock.user.edit_email(mock, mock.user.email)
-        mock.ui.nav(env.URL_PROFILE_ACCOUNT)
+        mock.ui.nav(globals.URL_PROFILE_ACCOUNT)
         labels = mock.ui.get_all_elements((By.TAG_NAME, "label"))
         assert f"Email: {mock.user.email}" in [label.text for label in labels]
         mock.user.auth_logout(mock)
