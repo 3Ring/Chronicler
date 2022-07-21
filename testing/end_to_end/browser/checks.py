@@ -1,9 +1,9 @@
 from __future__ import annotations
-
-
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from testing.end_to_end.browser import BrowserUI
 
 from dataclasses import dataclass
-from typing import Tuple
 
 import pytest
 from selenium.common.exceptions import TimeoutException
@@ -11,7 +11,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import url_contains, url_to_be
 
-from testing.end_to_end.browser.ui import BrowserUI
 from testing.end_to_end.helpers import url_convert
 from testing.globals import LOGGER
 

@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from testing import globals as env
-from testing.end_to_end.mock import Mock
+from testing.end_to_end import Mock
 from testing.end_to_end.models import Games
 from testing.end_to_end.helpers import images_path
 

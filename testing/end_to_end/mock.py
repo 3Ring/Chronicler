@@ -5,9 +5,8 @@ from dataclasses import dataclass, field
 from contextlib import contextmanager
 import logging
 
-from testing.end_to_end.browser.checks import CheckActions
-from testing.end_to_end.browser.ui import BrowserUI
-from testing.end_to_end.models.users import Users
+from testing.end_to_end.browser import CheckActions, BrowserUI
+from testing.end_to_end.models import Users
 from testing.globals import LOGGER
 
 

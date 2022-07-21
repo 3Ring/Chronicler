@@ -2,15 +2,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from testing.end_to_end.browser.browsers import TestsBrowser
+    from testing.end_to_end.browser import TestsBrowser
 
-import logging
-from time import time
-import shutil
 import os
-from tempfile import TemporaryDirectory
+import shutil
+import logging
 import pytz
+from time import time
 from datetime import datetime
+from tempfile import TemporaryDirectory
 
 
 class Logger:

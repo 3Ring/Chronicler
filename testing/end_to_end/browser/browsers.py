@@ -1,4 +1,3 @@
-import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -18,7 +17,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
-from testing.globals import WINDOW_SIZE
+from testing import globals as env
 
 
 class TestsBrowser(WebDriver):
@@ -138,7 +137,7 @@ class BrowserInitializer:
         driver = TestsChrome(
             wait=wait, fail_wait=fail_wait, options=options, service=service
         )
-        driver.set_window_size(*(w for w in WINDOW_SIZE))
+        driver.set_window_size(*(w for w in env.WINDOW_SIZE))
         driver.wait._driver = driver
         driver.fail_wait._driver = driver
         assert driver is not None
@@ -159,7 +158,7 @@ class BrowserInitializer:
         driver = TestsFirefox(
             wait=wait, fail_wait=fail_wait, options=options, service=service
         )
-        driver.set_window_size(*(w for w in WINDOW_SIZE))
+        driver.set_window_size(*(w for w in env.WINDOW_SIZE))
         driver.wait._driver = driver
         driver.fail_wait._driver = driver
         assert driver is not None
@@ -185,7 +184,7 @@ class BrowserInitializer:
             options=options,
             service=service,
         )
-        driver.set_window_size(*(w for w in WINDOW_SIZE))
+        driver.set_window_size(*(w for w in env.WINDOW_SIZE))
         driver.wait._driver = driver
         driver.fail_wait._driver = driver
         assert driver is not None

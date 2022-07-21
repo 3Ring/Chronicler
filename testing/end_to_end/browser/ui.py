@@ -1,4 +1,8 @@
-from typing import Tuple
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from testing.end_to_end.browser import TestsBrowser
+
 from contextlib import contextmanager
 
 from selenium.webdriver.remote.webelement import WebElement
@@ -15,7 +19,6 @@ from selenium.common.exceptions import (
 )
 
 from testing.end_to_end.helpers import url_convert
-from testing.end_to_end.browser.browsers import TestsBrowser
 from testing import globals as env
 from testing.globals import LOGGER
 

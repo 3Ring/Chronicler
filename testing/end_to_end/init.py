@@ -8,12 +8,9 @@ from selenium import webdriver
 from _pytest.fixtures import SubRequest
 from selenium.webdriver.support.ui import WebDriverWait
 
-from testing.end_to_end.browser.ui import BrowserUI
-from testing.end_to_end.browser.browsers import BrowserInitializer
-from testing.end_to_end.browser.checks import CheckActions
-from testing.end_to_end.mock import Mock
-from testing.end_to_end.models.users import Users
-from testing.logger import Logger
+from testing.end_to_end.browser import BrowserUI, BrowserInitializer, CheckActions
+from testing.end_to_end import Mock
+from testing.end_to_end.models import Users
 
 
 def create_browser(request: SubRequest, log_level: int):

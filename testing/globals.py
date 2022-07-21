@@ -1,6 +1,5 @@
 from itertools import count
-from testing.logger import Logger
-
+from testing import Logger
 
 LOGGER = Logger()
 ITERATOR = count()

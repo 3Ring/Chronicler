@@ -4,9 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from testing import globals as env
-from testing.end_to_end.mock import Mock
-from testing.end_to_end.models.characters import Characters
+from testing.end_to_end import Mock
 from testing.end_to_end import exceptions as ex
+from testing.end_to_end.models import Characters
 
 
 def test_can_edit_name(mock: Mock):

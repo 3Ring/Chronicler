@@ -22,3 +22,4 @@ def load_env():
     os.environ.update(
         {"TEST_IMAGES_PATH": get_test_images_path(os.environ.get("ROOT_DIR_PATH"))}
     )
+

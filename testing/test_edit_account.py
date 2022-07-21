@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from testing.end_to_end.mock import Mock
+from testing.end_to_end import Mock
 from testing import globals as env
 
 

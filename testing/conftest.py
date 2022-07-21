@@ -9,11 +9,10 @@ from _pytest.fixtures import SubRequest
 from pytest import Parser, Metafunc
 
 from testing.end_to_end import init
-from testing.globals import ADDOPT_HELP
-from testing.end_to_end.mock import Mock
-from testing.end_to_end import server as _server
-from testing.logger import Logger
-from testing.globals import LOGGER
+from testing.end_to_end import Mock
+from testing.end_to_end import server as server_
+from testing import Logger
+from testing.globals import LOGGER, ADDOPT_HELP
 
 
 def pytest_addoption(parser: Parser):
@@ -83,14 +82,14 @@ def logger():
 @pytest.fixture(scope="session", autouse=True)
 def server(logger: Logger):
     try:
-        _server.start_up()
+        server_.start_up()
     except Exception:
         logger.error("server exception", exc_info=True)
         raise
     else:
         yield
     finally:
-        _server.tear_down()
+        server_.tear_down()
 
 @pytest.fixture(scope="session", params=browser_params("chrome"))
 def mock(request: SubRequest, logger: Logger):
