@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 
 from testing.end_to_end.helpers import url_convert
 from testing.end_to_end.browser.browsers import TestsBrowser
-from testing import globals
+from testing import globals as env
 from testing.globals import LOGGER
 
 
@@ -47,7 +47,7 @@ class BrowserUI:
         return False
 
     def _adjust_size(self, element: WebElement) -> bool:
-        for size in globals.WINDOW_SIZES_LARGE:
+        for size in env.WINDOW_SIZES_LARGE:
             LOGGER.debug(f"changing window size to {size}")
             self.browser.set_window_size(*(w for w in size))
             try:
@@ -57,7 +57,7 @@ class BrowserUI:
             except (ElementClickInterceptedException, ElementNotInteractableException):
                 LOGGER.debug(f"click failure by adjusting size to {size}")
         LOGGER.info("click failure by adjusting size")
-        self.browser.set_window_size(*(w for w in globals.WINDOW_SIZE))
+        self.browser.set_window_size(*(w for w in env.WINDOW_SIZE))
         return False
 
     def nav(self, url: str = None, full_url=False, force=False) -> None:

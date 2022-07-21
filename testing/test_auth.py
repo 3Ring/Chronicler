@@ -2,11 +2,11 @@ from selenium.webdriver.common.by import By
 
 from testing.end_to_end.helpers import redirect
 from testing.end_to_end.mock import Mock
-from testing import globals
+from testing import globals as env
 
 def test_register_assets(mock: Mock):
     with mock.test_manager(test_register_assets):
-        mock.ui.nav(globals.URL_AUTH_REGISTER)
+        mock.ui.nav(env.URL_AUTH_REGISTER)
         mock.check.nav_is_anon(),
         mock.ui.get_element((By.CSS_SELECTOR, "input[name='name']"))
         mock.ui.get_element((By.CSS_SELECTOR, "input[name='email']"))
@@ -18,7 +18,7 @@ def test_register_assets(mock: Mock):
 
 def test_show_passwords(mock: Mock):
     with mock.test_manager(test_show_passwords):
-        mock.ui.nav(globals.URL_AUTH_REGISTER)
+        mock.ui.nav(env.URL_AUTH_REGISTER)
         password = mock.ui.get_element((By.CSS_SELECTOR, "input[name='password']"))
         confirm = mock.ui.get_element((By.CSS_SELECTOR, "input[name='confirm']"))
         reveal = mock.ui.get_element((By.CSS_SELECTOR, "input[name='reveal']"))
@@ -39,24 +39,24 @@ def test_show_passwords(mock: Mock):
 
 def test_register_link_to_login(mock: Mock):
     with mock.test_manager(test_register_link_to_login):
-        mock.ui.nav(globals.URL_AUTH_REGISTER)
-        link = mock.ui.get_element((By.CSS_SELECTOR, f"form a[href='{globals.URL_AUTH_LOGIN}']"))
+        mock.ui.nav(env.URL_AUTH_REGISTER)
+        link = mock.ui.get_element((By.CSS_SELECTOR, f"form a[href='{env.URL_AUTH_LOGIN}']"))
         assert link.text == "Sign-in!"
-        mock.check.click_link_and_confirm(link, globals.URL_AUTH_LOGIN)
+        mock.check.click_link_and_confirm(link, env.URL_AUTH_LOGIN)
 
 
 def test_login_link_to_register(mock: Mock):
     with mock.test_manager(test_login_link_to_register):
-        mock.ui.nav(globals.URL_AUTH_LOGIN)
-        link = mock.ui.get_element((By.CSS_SELECTOR, f"a[href='{globals.URL_AUTH_REGISTER}']"))
-        mock.check.click_link_and_confirm(link, globals.URL_AUTH_REGISTER)
+        mock.ui.nav(env.URL_AUTH_LOGIN)
+        link = mock.ui.get_element((By.CSS_SELECTOR, f"a[href='{env.URL_AUTH_REGISTER}']"))
+        mock.check.click_link_and_confirm(link, env.URL_AUTH_REGISTER)
 
 
 def test_anonymous_user_redirected_to_login(mock: Mock):
     with mock.test_manager(test_anonymous_user_redirected_to_login):
-        for url in [globals.URL_AUTH_LOGOUT, globals.URL_AUTH_REAUTH]:
+        for url in [env.URL_AUTH_LOGOUT, env.URL_AUTH_REAUTH]:
             mock.ui.nav(url)
-            redirected = redirect(url, globals.URL_AUTH_LOGIN)
+            redirected = redirect(url, env.URL_AUTH_LOGIN)
             mock.check.confirm_url(redirected)
 
 
@@ -142,21 +142,21 @@ def test_bad_logins(mock: Mock):
 def test_user_can_login(mock: Mock):
     with mock.test_manager(test_user_can_login):
         mock.user.register_and_login(mock)
-        mock.check.confirm_url(globals.URL_INDEX)
+        mock.check.confirm_url(env.URL_INDEX)
 
 def test_fresh_user_is_redirected_to_index_from_reauth(mock: Mock):
     with mock.test_manager(test_fresh_user_is_redirected_to_index_from_reauth):
         mock.user.register_and_login(mock)
-        mock.ui.nav(globals.URL_AUTH_REAUTH)
-        mock.check.confirm_url(globals.URL_INDEX)
+        mock.ui.nav(env.URL_AUTH_REAUTH)
+        mock.check.confirm_url(env.URL_INDEX)
 
 
 def test_login_remember_me(mock: Mock):
     with mock.test_manager(test_login_remember_me):
         mock.user.register_and_login(mock)
         mock.ui.make_session_stale()
-        mock.ui.nav(globals.URL_AUTH_LOGIN)
-        mock.check.confirm_url(globals.URL_INDEX)
+        mock.ui.nav(env.URL_AUTH_LOGIN)
+        mock.check.confirm_url(env.URL_INDEX)
 
 
 def test_user_can_reauth(mock: Mock):

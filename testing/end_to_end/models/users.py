@@ -11,8 +11,8 @@ from selenium.common.exceptions import TimeoutException
 
 from testing.end_to_end.models import Games, Characters, DMs
 from testing.end_to_end.helpers import query_string_convert
-from testing import globals
-
+from testing import globals as env
+from testing.globals import LOGGER
 
 @dataclass
 class Users:
@@ -71,7 +71,7 @@ class Users:
         will create a basic character if one is not provided"""
         if character is None:
             character = Characters(player=self)
-        mock.ui.nav(globals.URL_CREATE_CHARACTER)
+        mock.ui.nav(env.URL_CREATE_CHARACTER)
         form_name = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='name'][type='text']")
         )
@@ -86,14 +86,14 @@ class Users:
             )
             form_image.send_keys(character.image_path)
 
-        url = globals.URL_CREATE_CHARACTER if fail else globals.URL_PROFILE_CHARACTERS
+        url = env.URL_CREATE_CHARACTER if fail else env.URL_PROFILE_CHARACTERS
         try:
             mock.check.submit_and_check(form_submit, url)
             self.player_games.append(character)
             return character
         except TimeoutException:
             if not fail:
-                mock.logger.error(f'failing character: "{character}"')
+                LOGGER.error(f'failing character: "{character}"')
             raise
 
     def create_dm(
@@ -117,20 +117,20 @@ class Users:
             mock.ui.input_text(form_name, dm.name)
         if dm.image_path:
             form_image.send_keys(dm.image_path)
-        url = globals.URL_CREATE_DM if fail else globals.URL_NOTES
+        url = env.URL_CREATE_DM if fail else env.URL_NOTES
         try:
             mock.check.submit_and_check(form_submit, url, partial_url=True)
             game.dm = dm
             return dm
         except TimeoutException:
             if not fail:
-                mock.logger.error(f'failing dm: "{dm}"')
+                LOGGER.error(f'failing dm: "{dm}"')
             raise
 
     def create_game(self, mock: Mock, game: Games = None, fail: bool = False) -> Games:
         if not game:
             game = Games()
-        mock.ui.nav(globals.URL_CREATE_GAME)
+        mock.ui.nav(env.URL_CREATE_GAME)
         form_name = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[type='text'][name='name']")
         )
@@ -143,13 +143,13 @@ class Users:
             form_image.send_keys(game.image_path)
         if game.publish:
             mock.ui.click(form_publish)
-        url = globals.URL_CREATE_GAME if fail else globals.URL_CREATE_DM
+        url = env.URL_CREATE_GAME if fail else env.URL_CREATE_DM
         try:
             mock.check.submit_and_check(form_submit, url, partial_url=True)
             self.dm_games.append(game)
         except TimeoutException:
             if not fail:
-                mock.logger.error(f'failing game: "{game}"')
+                LOGGER.error(f'failing game: "{game}"')
             raise
         return game
 
@@ -167,10 +167,10 @@ class Users:
 
     def edit_name(self, mock: Mock, new: str):
         """navigate to account edit page and change name"""
-        mock.ui.nav(globals.URL_EDIT_ACCOUNT)
+        mock.ui.nav(env.URL_EDIT_ACCOUNT)
         if new is None:
             return
-        mock.logger.debug(f"changing name to {new}")
+        LOGGER.debug(f"changing name to {new}")
         name = mock.ui.get_element(
             (By.CSS_SELECTOR, 'input[name="name-name"][type="text"]')
         )
@@ -182,11 +182,11 @@ class Users:
             (By.CSS_SELECTOR, 'input[type="submit"][name="name-submit"]')
         )
         mock.ui.click(submit)
-        mock.logger.screencap(mock.ui.browser, "account_name")
+        # LOGGER.screencap(mock.ui.browser, "account_name")
 
     def edit_email(self, mock: Mock, new: str):
         """navigate to account edit page and change email"""
-        mock.ui.nav(globals.URL_EDIT_ACCOUNT)
+        mock.ui.nav(env.URL_EDIT_ACCOUNT)
         if new is None:
             return
         email = mock.ui.get_element(
@@ -205,7 +205,7 @@ class Users:
 
     def edit_password(self, mock: Mock, new: str, confirm: str = None):
         """navigate to account edit page and change password"""
-        mock.ui.nav(globals.URL_EDIT_ACCOUNT)
+        mock.ui.nav(env.URL_EDIT_ACCOUNT)
         if new is None:
             return
         if confirm is None:
@@ -230,14 +230,14 @@ class Users:
 
     def delete(self, mock: Mock, confirm_email: str = None, fail: bool = False):
         """navigate to account delete page and delete"""
-        mock.ui.nav(globals.URL_EDIT_ACCOUNT_DELETE)
+        mock.ui.nav(env.URL_EDIT_ACCOUNT_DELETE)
         if confirm_email is None:
             confirm_email = self.email
         confirm = mock.ui.get_element(
             (By.CSS_SELECTOR, 'input[name="confirm"][type="text"]')
         )
         mock.ui.input_text(confirm, confirm_email)
-        url = globals.URL_EDIT_ACCOUNT_DELETE if fail else globals.URL_AUTH_LOGIN
+        url = env.URL_EDIT_ACCOUNT_DELETE if fail else env.URL_AUTH_LOGIN
         submit = mock.ui.get_element((By.CSS_SELECTOR, 'input[type="submit"]'))
         mock.check.submit_and_check(submit, url)
 
@@ -248,7 +248,7 @@ class Users:
         password: str = None,
         different_confirm: str = None,
     ):
-        self.id = next(globals.ITERATOR)
+        self.id = next(env.ITERATOR)
         self.name = self.default_name(self.id) if name is None else name
         self.email = self.default_email(self.id) if email is None else email
         self.password = self.default_password(self.id) if password is None else password
@@ -275,8 +275,8 @@ class Users:
         registers the Mock user.
         :param fail: set to `True` if the registration will fail. Defaults to False
         """
-        mock.logger.debug(f"registering: {self}")
-        mock.ui.nav(globals.URL_AUTH_REGISTER)
+        LOGGER.debug(f"registering: {self}")
+        mock.ui.nav(env.URL_AUTH_REGISTER)
         form_name = mock.ui.get_element((By.CSS_SELECTOR, "input[name='name']"))
         form_email = mock.ui.get_element((By.CSS_SELECTOR, "input[name='email']"))
         form_password = mock.ui.get_element((By.CSS_SELECTOR, "input[name='password']"))
@@ -288,7 +288,7 @@ class Users:
         mock.ui.input_text(form_confirm, self.different_confirm)
 
         form_submit = mock.ui.get_element((By.ID, "usersubmit"))
-        url_after_submit = globals.URL_AUTH_REGISTER if fail else globals.URL_AUTH_LOGIN
+        url_after_submit = env.URL_AUTH_REGISTER if fail else env.URL_AUTH_LOGIN
         mock.check.submit_and_check(form_submit, url_after_submit)
 
     def auth_login(self, mock: Mock, remember: bool = True, fail: bool = False):
@@ -297,7 +297,7 @@ class Users:
         :param remember: If True, the login form will have a checkbox to "remember me", defaults to True
         """
 
-        mock.ui.nav(globals.URL_AUTH_LOGIN)
+        mock.ui.nav(env.URL_AUTH_LOGIN)
 
         form_email = mock.ui.get_element((By.CSS_SELECTOR, "input[name='email']"))
         form_password = mock.ui.get_element((By.CSS_SELECTOR, "input[name='password']"))
@@ -310,7 +310,7 @@ class Users:
         mock.ui.input_text(form_email, self.email)
         mock.ui.input_text(form_password, self.password)
 
-        url_after_submit = globals.URL_AUTH_LOGIN if fail else globals.URL_INDEX
+        url_after_submit = env.URL_AUTH_LOGIN if fail else env.URL_INDEX
         mock.check.submit_and_check(form_submit, url_after_submit)
 
     def auth_reauth(self, mock: Mock, url: str):
@@ -327,13 +327,13 @@ class Users:
 
     def auth_logout(self, mock: Mock):
         """Logout the user by navigating to the logout page"""
-        mock.ui.nav(globals.URL_AUTH_LOGOUT)
+        mock.ui.nav(env.URL_AUTH_LOGOUT)
 
     def reset(self):
         self._set_attrs(reset=True)
 
     def _set_attrs(self, reset=False):
-        self.id = next(globals.ITERATOR)
+        self.id = next(env.ITERATOR)
         if self.name is None or reset:
             self.name = self.default_name(self.id)
         if self.email is None or reset:

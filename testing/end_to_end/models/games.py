@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 
 from dataclasses import dataclass, field
 
-from testing import globals
+from testing import globals as env
 
 @dataclass
 class Games:
@@ -18,7 +18,7 @@ class Games:
     players: list[Users] = field(default_factory=list)
 
     def __post_init__(self):
-        self.id = next(globals.ITERATOR)
+        self.id = next(env.ITERATOR)
         if self.name is None:
             self.name = self.default_name(self.id)
         if self.dm:
