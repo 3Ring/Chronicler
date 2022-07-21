@@ -2,9 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from end_to_end.mock import Mock
-    from end_to_end.models.users import Users
-    from end_to_end.models.games import Games
+    from testing.end_to_end import Mock
+    from testing.end_to_end.models import Users, Games
 
 from dataclasses import dataclass, field
 
@@ -42,6 +41,7 @@ class Characters:
 
     def delete(self, mock: Mock, fail=False):
         pass
+
     def edit(self, mock: Mock, name: str = None, image_path=None, bio: str = None):
         if not any((name, image_path, bio)):
             return

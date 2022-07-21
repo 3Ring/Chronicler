@@ -1,5 +1,7 @@
+import pytest
 from selenium.webdriver.common.by import By
 
+from testing import ExpectedException
 from testing.end_to_end import Mock
 from testing import globals as env
 
@@ -61,10 +63,10 @@ def test_register_bad_user_names(mock: Mock):
             mock.user.name = name
             mock.user.auth_register(mock, fail=True)
 
-
+@pytest.mark.xfail
 def test_register_bad_emails_TODO(mock: Mock):
     with mock.test_manager(test_register_bad_emails_TODO):
-        pass
+        raise ExpectedException()
         # TODO impliment email validation
         # for email in [
         #     "@gmail.com",

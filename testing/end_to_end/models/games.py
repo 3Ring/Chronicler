@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from end_to_end.models import Users, DMs
-    from end_to_end.mock import Mock
+    from testing.end_to_end.models import Users, DMs
+    from testing.end_to_end.mock import Mock
 
 from dataclasses import dataclass, field
 

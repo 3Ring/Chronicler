@@ -1,13 +1,19 @@
 import os
 
+import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from testing import ExpectedException
 from testing import globals as env
 from testing.end_to_end import Mock
 from testing.end_to_end import exceptions as ex
 from testing.end_to_end.models import Characters
 
+@pytest.mark.xfail
+def test_edit_character_redirects_anon_user(mock: Mock):
+    with mock.test_manager(test_edit_character_redirects_anon_user):
+        raise ExpectedException()
 
 def test_can_edit_name(mock: Mock):
     with mock.test_manager(test_can_edit_name):
@@ -39,6 +45,11 @@ def test_can_edit_bio(mock: Mock):
         mock.ui.nav(env.URL_PROFILE_CHARACTERS)
         Ps = mock.ui.get_all_elements((By.TAG_NAME, "p"))
         assert 0 in [el.text.find(new_bio) for el in Ps]
+
+@pytest.mark.xfail
+def test_removing_character_removes_them_from_all_gamesTODO(mock: Mock):
+    with mock.test_manager(test_removing_character_removes_them_from_all_gamesTODO):
+        raise ExpectedException()
 
 
 def _character_creation(mock: Mock) -> Characters:

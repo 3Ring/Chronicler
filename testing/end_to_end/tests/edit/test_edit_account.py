@@ -1,7 +1,14 @@
+import pytest
 from selenium.webdriver.common.by import By
 
 from testing.end_to_end import Mock
 from testing import globals as env
+from testing import ExpectedException
+
+@pytest.mark.xfail
+def test_edit_account_redirects_anon_user(mock: Mock):
+    with mock.test_manager(test_edit_account_redirects_anon_user):
+        raise ExpectedException()
 
 
 def test_edit_account_name(mock: Mock):

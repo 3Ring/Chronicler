@@ -7,6 +7,7 @@ import logging
 
 from testing.end_to_end.browser import CheckActions, BrowserUI
 from testing.end_to_end.models import Users
+from testing import ExpectedException
 from testing.globals import LOGGER
 
 
@@ -48,6 +49,9 @@ class Mock:
         try:
             LOGGER.info(f"[[{func.__name__}]]: starting ")
             yield
+        except ExpectedException:
+            msg = f"[[{func.__name__}]]: failed successfully."
+            LOGGER.info(msg + "\n" + ("=" * (len(msg) + 15)))
         except Exception:
             LOGGER.set_create_dump(logging.ERROR)
             LOGGER.console.error(f"[[{func.__name__}]] failed. See logs for details")
