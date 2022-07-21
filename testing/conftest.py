@@ -96,7 +96,7 @@ def server(logger: Logger):
 def mock(request: SubRequest, logger: Logger):
     try:
         browser = init.create_browser(request, logger.level)
-        mock_: Mock = init.mock(browser, logger)
+        mock_: Mock = init.mock(browser)
     except Exception:
         logger.error("unable to init mocks", exc_info=True)
         raise

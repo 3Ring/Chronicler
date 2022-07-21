@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-
-from dataclasses import dataclass, field
 from typing import Callable
+from dataclasses import dataclass, field
 from contextlib import contextmanager
 import logging
-
 
 from testing.end_to_end.browser.checks import CheckActions
 from testing.end_to_end.browser.ui import BrowserUI
 from testing.end_to_end.models.users import Users
 from testing.globals import LOGGER
-
-from testing.logger import Logger
 
 
 @dataclass
@@ -21,12 +17,11 @@ class Mock:
     user: Users
     check: CheckActions
     extra_users: list[Users] = field(default_factory=list)
-    logger: Logger = field(init=False, default=LOGGER)
 
     def reset(self):
         self.user.reset()
         self.extra_users.clear()
-        self.logger.debug(f"new user information: {self.user}")
+        LOGGER.debug(f"new user information: {self.user}")
         self.ui.browser.delete_all_cookies()
         self.ui.browser.refresh()
 
@@ -52,15 +47,13 @@ class Mock:
     @contextmanager
     def test_manager(self, func: Callable):
         try:
-            self.logger.info(f"[[{func.__name__}]]: starting ")
+            LOGGER.info(f"[[{func.__name__}]]: starting ")
             yield
         except Exception:
-            self.logger.set_create_dump(logging.ERROR)
-            self.logger.console.error(
-                f"[[{func.__name__}]] failed. See logs for details"
-            )
-            self.logger.screencap(self.ui.browser, func.__name__, self.ui.browser.name)
-            self.logger.file.error(
+            LOGGER.set_create_dump(logging.ERROR)
+            LOGGER.console.error(f"[[{func.__name__}]] failed. See logs for details")
+            LOGGER.screencap(self.ui.browser, func.__name__, self.ui.browser.name)
+            LOGGER.file.error(
                 f"\n-Failing test: {func.__name__}\n"
                 + f"-browser type: {self.ui.browser.name}\n"
                 + f"-mock.user: {self.user}\n"
@@ -70,6 +63,6 @@ class Mock:
             raise
         else:
             msg = f"[[{func.__name__}]]: passed successfully."
-            self.logger.info(msg + "\n" + ("=" * (len(msg) + 15)))
+            LOGGER.info(msg + "\n" + ("=" * (len(msg) + 15)))
         finally:
             self.reset()

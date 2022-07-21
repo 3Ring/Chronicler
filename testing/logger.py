@@ -34,7 +34,6 @@ class Logger:
     def init_logger(self, dir_path: str) -> None:
         """used when the initiation needs to be delayed
         typically due to global variables not being set yet"""
-        print(f"type(tmpdir): {type(dir_path)}")
         self.dir_path = dir_path
         self.paths = self.paths(self.dir_path)
         self.file = self.create_file_logger(self.dir_path)
@@ -87,10 +86,13 @@ class Logger:
         Logs with the given level
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Message to be printed to the console (optional) or `True`
+            if `True` :param message: will be sent to console as well
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
+        if to_console is True:
+            to_console = message
         self.set_create_dump(level)
         self._to_file(message, level, exc_info)
         if to_console is not None or exc_to_console:

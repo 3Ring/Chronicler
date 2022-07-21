@@ -32,8 +32,8 @@ def create_browser(request: SubRequest, log_level: int):
     return launcher(wait, fail_wait, log_level)
 
 
-def mock(browser: webdriver, logger: Logger) -> Mock:
-    ui = BrowserUI(browser, logger)
+def mock(browser: webdriver) -> Mock:
+    ui = BrowserUI(browser)
     user = Users()
-    check = CheckActions(ui, logger)
+    check = CheckActions(ui)
     return Mock(ui, user, check)

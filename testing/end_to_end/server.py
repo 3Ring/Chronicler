@@ -3,6 +3,7 @@ import subprocess
 from asyncio.subprocess import PIPE, STDOUT
 from subprocess import CompletedProcess
 
+from testing.globals import LOGGER
 
 def command(cmd: str) -> CompletedProcess:
     """
@@ -18,7 +19,7 @@ def command(cmd: str) -> CompletedProcess:
     )
 
 def start() -> CompletedProcess:
-    print("starting server")
+    LOGGER.info("starting server", to_console=True)
     return command(os.environ.get("CMD_SERVER_START"))
 
 def quit() -> CompletedProcess:
@@ -50,16 +51,16 @@ def start_up() -> bool:
 
 def tear_down() -> bool:
     if not server_and_db_are_running():
-        print("skipping teardown due to server not running")
+        LOGGER.info("skipping teardown due to server not running")
         return
-    print("stopping server..")
+    LOGGER.info("stopping server..", to_console=True)
     quit()
-    print("server stopped successfully")
+    LOGGER.info("server stopped successfully", to_console=True)
     if volume_exists():
-        print("deleting volume..")
+        LOGGER.info("deleting volume..", to_console=True)
         volume_delete()
         assert not volume_exists()
-        print("deleted")
+        LOGGER.info("volume deleted", to_console=True)
     return not all(
         [server_and_db_are_running(), volume_exists()]
     )

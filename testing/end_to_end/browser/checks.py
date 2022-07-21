@@ -13,13 +13,11 @@ from selenium.webdriver.support.expected_conditions import url_contains, url_to_
 
 from testing.end_to_end.browser.ui import BrowserUI
 from testing.end_to_end.helpers import url_convert
-from testing.logger import Logger
-
+from testing.globals import LOGGER
 
 @dataclass
 class CheckActions:
     ui: BrowserUI
-    logger: Logger
 
     def confirm_url(self, url: str, partial_url: bool = False, full_url: bool = False):
         if not full_url:
@@ -30,7 +28,7 @@ class CheckActions:
             return self.ui.browser.wait.until(url_to_be(url))
 
         except TimeoutException:
-            self.logger.file.error(
+            LOGGER.file.error(
                 "Originating in actions/check_actions/CheckActions.confirm_url:\n"
                 + f"-intended url: {url}\n"
                 + f"-current_url is: {self.ui.browser.current_url}\n"

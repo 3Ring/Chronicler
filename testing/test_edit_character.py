@@ -26,7 +26,6 @@ def test_can_edit_image(mock: Mock):
         old_image = _get_image(mock, character.name)
         assert old_image == _get_image(mock, character.name)
         new_path = os.path.abspath("test_images\pass\\1280x720.jpg")
-        print(f"new_image: {new_path}")
         character.edit(mock, image_path=new_path)
         mock.ui.nav(globals.URL_PROFILE_CHARACTERS)
         assert _get_image(mock, character.name) != old_image

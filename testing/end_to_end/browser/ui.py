@@ -16,48 +16,47 @@ from selenium.common.exceptions import (
 
 from testing.end_to_end.helpers import url_convert
 from testing.end_to_end.browser.browsers import TestsBrowser
-from testing.logger import Logger
 from testing import globals
+from testing.globals import LOGGER
 
 
 class BrowserUI:
-    def __init__(self, browser: TestsBrowser, logger: Logger) -> None:
+    def __init__(self, browser: TestsBrowser) -> None:
         self.browser = browser
-        self.logger = logger
 
     def _click_error_retries(self, element: WebElement, ex: Exception):
-        self.logger.info(
+        LOGGER.info(
             f"{ex.__class__}: {ex.msg}\nAttempting fix by adjusting position"
         )
         if self._adjust_position(element):
             return True
-        self.logger.info("Attempting fix by adjusting size")
+        LOGGER.info("Attempting fix by adjusting size")
         return self._adjust_size(element)
 
     def _adjust_position(self, element: WebElement) -> bool:
         for i in range(20, 100, 20):
-            self.logger.debug(f"adjusting page position by {-i}")
+            LOGGER.debug(f"adjusting page position by {-i}")
             self.browser.set_window_position(0, -i)
             try:
                 element.click()
-                self.logger.info(f"click successful by adjusting position by {-i}")
+                LOGGER.info(f"click successful by adjusting position by {-i}")
                 return True
             except (ElementClickInterceptedException, ElementNotInteractableException):
-                self.logger.debug(f"click failure by adjusting position {-i}")
-        self.logger.info("click failure by adjusting position")
+                LOGGER.debug(f"click failure by adjusting position {-i}")
+        LOGGER.info("click failure by adjusting position")
         return False
 
     def _adjust_size(self, element: WebElement) -> bool:
         for size in globals.WINDOW_SIZES_LARGE:
-            self.logger.debug(f"changing window size to {size}")
+            LOGGER.debug(f"changing window size to {size}")
             self.browser.set_window_size(*(w for w in size))
             try:
                 element.click()
-                self.logger.info(f"click successful by changing size to: {size}")
+                LOGGER.info(f"click successful by changing size to: {size}")
                 return True
             except (ElementClickInterceptedException, ElementNotInteractableException):
-                self.logger.debug(f"click failure by adjusting size to {size}")
-        self.logger.info("click failure by adjusting size")
+                LOGGER.debug(f"click failure by adjusting size to {size}")
+        LOGGER.info("click failure by adjusting size")
         self.browser.set_window_size(*(w for w in globals.WINDOW_SIZE))
         return False
 
@@ -65,9 +64,9 @@ class BrowserUI:
         if not full_url:
             url = url_convert(url)
         if self.browser.current_url != url or force:
-            self.logger.debug(f"Navigating to: {url}")
+            LOGGER.debug(f"Navigating to: {url}")
             return self.browser.get(url)
-        self.logger.debug(
+        LOGGER.debug(
             f"skipping navigation to {url} due to the browser already being there"
         )
 
