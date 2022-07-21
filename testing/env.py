@@ -16,7 +16,6 @@ def get_test_images_path(start_path: str) -> str:
 def load_env():
     dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".test_env"))
     load_dotenv(verbose=True, dotenv_path=dotenv_path)
-    print(f'os.environ.get("ROOT_DIR_NAME"): {os.environ.get("ROOT_DIR_NAME")}')
     ROOT_DIR_PATH = _get_root(__file__, os.environ.get("ROOT_DIR_NAME"))
     os.environ.update({"ROOT_DIR_PATH": ROOT_DIR_PATH})
     os.environ.update(
