@@ -32,7 +32,8 @@ def join_game_post(game):
         addform = CharAdd(prefix="add", game_id=game.id, choices=my_characters)
         charform = CharCreate(prefix="create")
         if addform.submit.data and addform.validate():
-            Characters.add_character_to_game(addform.character.data, game.id)
+            for character_id in addform.character.data:
+                Characters.add_character_to_game(character_id, game.id)
             return redirect(url_for("notes.game", game_id=game.id))
         elif charform.submit.data and charform.validate():
             char = Characters.create(
@@ -64,4 +65,5 @@ def render(game, charform=None, addform=None):
         addform=addform,
         my_characters=my_characters,
         game=game,
+        size=len(my_characters)
     )

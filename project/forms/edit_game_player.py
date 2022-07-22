@@ -1,13 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, HiddenField
-from wtforms.validators import InputRequired, ValidationError, DataRequired
-from project.models import BridgeGameCharacters
+from wtforms import StringField, SubmitField, HiddenField, SelectMultipleField
+from wtforms.validators import InputRequired, DataRequired
 from project.forms import validators as v
+from wtforms import widgets
 
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 class CharAdd(FlaskForm):
 
-    character = SelectField(
+    character = MultiCheckboxField(
         "Your Characters", coerce=int, validators=[DataRequired(), v.add_character]
     )
     # used for form validation

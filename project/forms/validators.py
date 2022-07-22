@@ -94,10 +94,11 @@ def add_character(form, field):
     :param form: The form that is currently being processed.
     :param field: The field to validate.
     """
-    if BridgeGameCharacters.query.filter_by(
-        character_id=field.data, game_id=form.game_id.data
-    ).first():
-        raise ValidationError("Character Already in Game")
+    for character_id in field.data:
+        if BridgeGameCharacters.query.filter_by(
+            character_id=character_id, game_id=form.game_id.data
+        ).first():
+            raise ValidationError("Character Already in Game")
 
 
 def remove_character(form, field):

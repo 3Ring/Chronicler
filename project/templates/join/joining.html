@@ -9,7 +9,7 @@
                 <form method='POST'>
                     <h1>Add Character From Your Characters</h1>
                     {{ addform.hidden_tag() }}
-                    {{ render_field(addform.character) }}
+                    {{ render_field(addform.character, size=size) }}
                     {{ render_field(addform.submit, class='button primary') }}
                 </form>
                 <h1>or</h1>
