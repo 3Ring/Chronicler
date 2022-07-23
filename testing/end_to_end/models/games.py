@@ -16,6 +16,7 @@ class Games:
     name: str = None
     publish: bool = True
     image_path: str = None
+    url: str = None
     players: List[Users] = field(default_factory=list)
     characters: List[Characters] = field(default_factory=list)
 

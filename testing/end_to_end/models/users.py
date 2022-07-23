@@ -140,6 +140,7 @@ class Users:
         try:
             mock.ui.submit_and_check(form_submit, url, partial_url=True)
             game.dm = dm
+            game.url = mock.ui.chronicler_url()
             return dm
         except TimeoutException:
             if not fail:
@@ -353,12 +354,12 @@ class Users:
         game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.games a"))
         for link in game_links:
             if link.text.find(game.name) != -1:
-                
+
                 mock.ui.click(link)
         confirms = mock.ui.get_all_elements((By.CSS_SELECTOR, "a.game_confirm"))
         for confirm in confirms:
             if confirm.get_attribute("href").find(f"game_name={game.name.replace(' ', '+')}") != -1:
-                return mock.check.click_link_and_confirm(
+                return mock.ui.click_link_and_confirm(
                     confirm, env.URL_JOINING_PRE, partial_url=True
                 )
         raise ex.GameNotFoundError(
@@ -395,28 +396,30 @@ class Users:
         character.games.append(game)
 
     def join_game_with_characters(
-        self, mock: Mock, game: Games, characters: List[Characters]
+        self, mock: Mock, game: Games, characters: List[Characters], add_to_game_object=True
     ):
+        """navigates to join page, adds characters, and submits form 
+        appends characters to game if not already there"""
+        print(f'game before: {game}')
         self.join_game_page(mock, game)
-        add_select = mock.ui.get_element(
-            (By.CSS_SELECTOR, "select[name='add-character']")
+        print(f'game after: {game}')  
+        labels = mock.ui.get_all_elements(
+            (By.TAG_NAME, "label")
         )
-        mock.check.ui.click(add_select)
-        add_options = mock.ui.get_all_elements((By.TAG_NAME, "option"))
-        to_add_lc = [
-            [option for option in c if option.text.find(c.name) != 1]
-            for c in characters
-        ]
-        print(f"to_add_lc: {to_add_lc}")
         for character in characters:
-            for option in add_options:
+            for option in labels:
                 if option.text.find(character.name) != -1:
                     mock.ui.click(option)
+                    break
         add_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[name='add-submit']"))
-        mock.check.click_link_and_confirm(add_submit)
+        print(f'game.url: {game.url}')
+        mock.ui.click_link_and_confirm(add_submit, game.url)
+        if not add_to_game_object:
+            return
         for character in characters:
-            character.games.append(game)
-            game.characters.append(character)
+            if character not in game.characters:
+                character.games.append(game)
+                game.characters.append(character)
 
     def reset(self):
         self._set_attrs(reset=True)

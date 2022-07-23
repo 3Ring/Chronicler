@@ -42,13 +42,25 @@ class Characters:
     def delete(self, mock: Mock, fail=False):
         pass
 
+    def character_in_game(self, mock: Mock, game: Games) -> bool:
+        """returns True if character is an option in the notes page"""
+        mock.ui.nav(game.url, confirm=True)
+        options = mock.ui.get_all_elements((By.CSS_SELECTOR, "select[name='speaking_as'] option"))
+        return True in [(o.text.find(self.name) != -1) for o in options]
+
+    def character_in_profile(self, mock: Mock) -> bool:
+        """returns True if character is listed in profile of logged in user"""
+        mock.ui.nav(env.URL_PROFILE_CHARACTERS)
+        headers = mock.ui.get_all_elements((By.TAG_NAME, "h2"))
+        return True in [(h.text.find(self.name) != -1) for h in headers]
+
     def edit(self, mock: Mock, name: str = None, image_path=None, bio: str = None):
         if not any((name, image_path, bio)):
             return
         mock.ui.nav(env.URL_PROFILE_CHARACTERS)
         edit_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "h2"))
         edit_anchor = self._get_edit_anchor_element(edit_links)
-        mock.check.click_link_and_confirm(
+        mock.ui.click_link_and_confirm(
             edit_anchor, env.URL_EDIT_CHARACTERS_PRE, partial_url=True
         )
 
@@ -70,7 +82,7 @@ class Characters:
             mock.ui.input_text(form_bio, self.bio)
 
         form_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[type='submit']"))
-        mock.check.click_link_and_confirm(form_submit, env.URL_PROFILE_CHARACTERS)
+        mock.ui.click_link_and_confirm(form_submit, env.URL_PROFILE_CHARACTERS)
 
     def _get_edit_anchor_element(self, elements: list[WebElement]) -> WebElement:
         """find and return characters webelement or raise exception if missing"""

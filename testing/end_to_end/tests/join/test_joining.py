@@ -8,15 +8,16 @@ from testing.end_to_end.helpers import redirect
 from testing.end_to_end import Mock
 from testing import globals as env
 
-from .join_helpers import joining_primer
+from testing.end_to_end.tests.join.join_helpers import joining_primer
+
 
 
 def test_anon_user_is_redirected_to_login(mock: Mock):
     with mock.test_manager(test_anon_user_is_redirected_to_login):
-        joining_primer(mock)
+        game = joining_primer(mock)
+        mock.user.join_game_page(mock, game)
         url = mock.ui.browser.current_url
         mock.user.auth_logout(mock)
-        print(f'url: {url}')
         mock.ui.nav(url, full_url=True)
         redirected = redirect(
             url[len(os.environ.get("ROOT_URL")) :], env.URL_AUTH_LOGIN
@@ -27,9 +28,9 @@ def test_anon_user_is_redirected_to_login(mock: Mock):
 def test_joining_assests_with_characters(mock: Mock):
     character_amount = 3
     with mock.test_manager(test_joining_assests_with_characters):
-        joining_primer(mock)
+        game = joining_primer(mock)
+        mock.user.join_game_page(mock, game)
         url = mock.ui.browser.current_url
-        print(f'url: {url}')
         characters = mock.user.create_characters(mock, amount=character_amount)
         mock.ui.nav(url, full_url=True)
         joining_forms(mock, 2)
@@ -39,15 +40,15 @@ def test_joining_assests_with_characters(mock: Mock):
 
 def test_joining_assests_without_characters(mock: Mock):
     with mock.test_manager(test_joining_assests_without_characters):
-        joining_primer(mock)
+        game = joining_primer(mock)
+        mock.user.join_game_page(mock, game)
         joining_forms(mock, 1)
         create_form(mock)
-        
-# 
+
+
+#
 # Helpers
-# 
-
-
+#
 def joining_forms(mock: Mock, amount: int):
     forms = mock.ui.get_all_elements((By.TAG_NAME, "form"))
     assert len(forms) == amount

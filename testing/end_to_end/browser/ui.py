@@ -36,7 +36,7 @@ class BrowserUI:
     def _click_error_retries(self, element: WebElement, ex: Exception):
         LOGGER.info(f"{ex.__class__}: {ex.msg}\nAttempting fix by adjusting position")
         if self._adjust_position(element):
-            return True  
+            return True
         LOGGER.info("Attempting fix by adjusting size")
         return self._adjust_size(element)
 
@@ -87,6 +87,15 @@ class BrowserUI:
         if confirm:
             self.confirm_url(url, full_url=True)
 
+    def chronicler_url(self, url: str = None) -> str:
+        """gets releative url with domain striped away
+        if url is none: use current url
+        """
+        if url is None:
+            url = self.browser.current_url
+        if url.find(os.environ.get("ROOT_URL")) != -1:
+            return url[len(os.environ.get("ROOT_URL")) :]
+        return url
 
     def get_element(self, locator: Tuple[By, str], fail=False) -> WebElement:
         """gets element from current page. raises exception if not found"""
