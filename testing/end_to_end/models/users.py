@@ -1,18 +1,22 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
+
+from testing import exceptions as ex
 
 if TYPE_CHECKING:
     from testing.end_to_end import Mock
+
 
 from dataclasses import dataclass, field
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
-from testing.end_to_end.models import Games, Characters, DMs
+from testing.end_to_end.models import Games, Characters, DMs, characters
 from testing.end_to_end.helpers import query_string_convert
 from testing import globals as env
 from testing.globals import LOGGER
+
 
 @dataclass
 class Users:
@@ -24,7 +28,6 @@ class Users:
     player_games: list = field(default_factory=list)
     dm_games: list = field(default_factory=list)
     characters: list = field(default_factory=list)
-
 
     def __post_init__(self):
         self._set_attrs()
@@ -95,6 +98,22 @@ class Users:
             if not fail:
                 LOGGER.error(f'failing character: "{character}"')
             raise
+
+    def create_characters(
+        self, mock: Mock, amount: int = 1, characters: List[Characters] = []
+    ) -> List[Characters]:
+        """add multiple characters to mock and append them to self"""
+        if characters:
+            for character in characters:
+                self.create_character(mock, character=character)
+                self.characters.append(character)
+        else:
+            out = []
+            for _ in range(amount):
+                character = self.create_character(mock)
+                out.append(character)
+                self.characters.append(character)
+            return out
 
     def create_dm(
         self,
@@ -328,6 +347,76 @@ class Users:
     def auth_logout(self, mock: Mock):
         """Logout the user by navigating to the logout page"""
         mock.ui.nav(env.URL_AUTH_LOGOUT)
+
+    def join_game_page(self, mock: Mock, game: Games) -> None:
+        mock.ui.nav(env.URL_JOIN)
+        game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.games a"))
+        for link in game_links:
+            if link.text.find(game.name) != -1:
+                
+                mock.ui.click(link)
+        confirms = mock.ui.get_all_elements((By.CSS_SELECTOR, "a.game_confirm"))
+        for confirm in confirms:
+            if confirm.get_attribute("href").find(f"game_name={game.name.replace(' ', '+')}") != -1:
+                return mock.check.click_link_and_confirm(
+                    confirm, env.URL_JOINING_PRE, partial_url=True
+                )
+        raise ex.GameNotFoundError(
+            f"game: {game.name} not found in elements href: {[el.get_attribute('href') for el in confirms]}"
+        )
+
+    def join_game_with_create(
+        self, mock: Mock, game: Games, character: Characters = None
+    ):
+        self.join_game_page(mock, game)
+        create_name = mock.ui.get_element(
+            (By.CSS_SELECTOR, "input[name='create-name']")
+        )
+        mock.ui.input_text(create_name, character.name)
+        if character is None:
+            character = Characters(self)
+        if character.bio is not None:
+            create_bio = mock.ui.get_element(
+                (By.CSS_SELECTOR, "textarea[name='create-bio']")
+            )
+            mock.ui.input_text(create_bio, character.bio)
+        if character.image_path is not None:
+            create_image = mock.ui.get_element(
+                (By.CSS_SELECTOR, "input[name='create-img']")
+            )
+            create_image.send_keys(character.image_path)
+        create_submit = mock.ui.get_element(
+            (By.CSS_SELECTOR, "input[name='create-submit']")
+        )
+        mock.check.click_link_and_confirm(
+            create_submit, env.URL_NOTES, partial_url=True
+        )
+        game.characters.append(character)
+        character.games.append(game)
+
+    def join_game_with_characters(
+        self, mock: Mock, game: Games, characters: List[Characters]
+    ):
+        self.join_game_page(mock, game)
+        add_select = mock.ui.get_element(
+            (By.CSS_SELECTOR, "select[name='add-character']")
+        )
+        mock.check.ui.click(add_select)
+        add_options = mock.ui.get_all_elements((By.TAG_NAME, "option"))
+        to_add_lc = [
+            [option for option in c if option.text.find(c.name) != 1]
+            for c in characters
+        ]
+        print(f"to_add_lc: {to_add_lc}")
+        for character in characters:
+            for option in add_options:
+                if option.text.find(character.name) != -1:
+                    mock.ui.click(option)
+        add_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[name='add-submit']"))
+        mock.check.click_link_and_confirm(add_submit)
+        for character in characters:
+            character.games.append(game)
+            game.characters.append(character)
 
     def reset(self):
         self._set_attrs(reset=True)

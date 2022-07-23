@@ -1,19 +1,12 @@
 import pytest
 
+from testing.end_to_end.helpers import redirect
 from testing import ExpectedException
 from testing.end_to_end import Mock
+from testing import globals as env
 
 
-@pytest.mark.xfail
-def test_anon_user_is_redirected_to_loginTODO(mock: Mock):
-    with mock.test_manager(test_anon_user_is_redirected_to_loginTODO):
-        raise ExpectedException()
 
-
-@pytest.mark.xfail
-def test_joining_assestsTODO(mock: Mock):
-    with mock.test_manager(test_joining_assestsTODO):
-        raise ExpectedException()
 
 
 @pytest.mark.xfail
