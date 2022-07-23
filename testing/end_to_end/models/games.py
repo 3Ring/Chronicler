@@ -32,4 +32,8 @@ class Games:
         return f"GAME {id}"
 
     def delete(self, mock: Mock, fail=False):
-        pass
+        """deletes game from mock then deletes object"""
+        # TODO add deleting of character in mock
+        if fail:
+            return
+        del self

@@ -39,13 +39,18 @@ class Characters:
     def default_name(name: str, id: int):
         return f"CHARACTER {name} {id}"
 
-    def delete(self, mock: Mock, fail=False):
-        pass
+    def delete(self, mock: Mock, fail: bool = False, delete_self: bool = True):
+        """deletes character from mock, then deletes object"""
+        if fail or not delete_self:
+            return
+        del self
 
     def character_in_game(self, mock: Mock, game: Games) -> bool:
         """returns True if character is an option in the notes page"""
         mock.ui.nav(game.url, confirm=True)
-        options = mock.ui.get_all_elements((By.CSS_SELECTOR, "select[name='speaking_as'] option"))
+        options = mock.ui.get_all_elements(
+            (By.CSS_SELECTOR, "select[name='speaking_as'] option")
+        )
         return True in [(o.text.find(self.name) != -1) for o in options]
 
     def character_in_profile(self, mock: Mock) -> bool:

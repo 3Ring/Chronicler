@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable
+from collections import deque
+from typing import Callable, Deque
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 import logging
@@ -15,33 +16,43 @@ from testing.globals import LOGGER
 class Mock:
     ui: BrowserUI
     user: Users
-    extra_users: list[Users] = field(default_factory=list)
+    extra_users: Deque[Users] = field(default_factory=deque)
 
-    def reset(self):
-        self.user.reset()
+    def test_reset(self):
+        self.user.delete_attached(self)
+        for user in self.extra_users:
+            user.delete_attached(self)
+            del user
         self.extra_users.clear()
+        self.user = Users()
+        self.clean_session()
+
+    def clean_session(self):
         LOGGER.debug(f"new user information: {self.user}")
         self.ui.browser.delete_all_cookies()
         self.ui.browser.refresh()
 
     def add_user(
         self,
-        name: str = None,
-        email: str = None,
-        password: str = None,
-        different_confirm: str = None,
+        user: Users = None,
+        rotate: bool = True,
     ):
         """creates new user to self.user.
         saves appends previous user to self.extra_users
         """
-        saved = Users(
-            self.user.name,
-            self.user.email,
-            self.user.password,
-            self.user.different_confirm,
-        )
-        self.extra_users.append(saved)
-        self.user.new(name, email, password, different_confirm)
+        if user is None:
+            user = Users()
+        self.extra_users.appendleft(user)
+        if rotate:
+            self.rotate_user()
+
+    def rotate_user(self):
+        """appends current user to the end of the deque
+        and places front of deque in self.user"""
+        self.extra_users.append(self.user)
+        self.user = self.extra_users.popleft()
+        self.clean_session()
+
 
     @contextmanager
     def test_manager(self, func: Callable):
@@ -67,4 +78,4 @@ class Mock:
             msg = f"[[{func.__name__}]]: passed successfully."
             LOGGER.info(msg + "\n" + ("=" * (len(msg) + 15)))
         finally:
-            self.reset()
+            self.test_reset()

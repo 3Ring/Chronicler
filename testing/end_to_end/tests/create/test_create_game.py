@@ -50,7 +50,7 @@ def test_game_is_displayed_when_published(mock: Mock):
     with mock.test_manager(test_game_is_displayed_when_published):
         mock.user.register_and_login(mock)
         game = mock.user.create_game_and_dm(mock, game_name="is_displayed_when_published")
-        mock.reset()
+        mock.add_user()
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_JOIN)
         game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.games a"))
@@ -62,10 +62,10 @@ def test_game_is_hidden_when_not_published(mock: Mock):
         game = mock.user.create_game_and_dm(
             mock, game_name="not_displayed_when_unpublished", publish=False
         )
-        mock.reset()
+        mock.add_user()
         mock.user.register_and_login(mock)
         mock.user.create_game_and_dm(mock)
-        mock.reset()
+        mock.add_user()
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_JOIN)
         game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.games a"))

@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
-from testing.end_to_end.models import Games, Characters, DMs, characters
+from testing.end_to_end.models import Games, Characters, DMs
 from testing.end_to_end.helpers import query_string_convert
 from testing import globals as env
 from testing.globals import LOGGER
@@ -25,12 +25,20 @@ class Users:
     email: str = None
     password: str = None
     different_confirm: str = None
-    player_games: list = field(default_factory=list)
-    dm_games: list = field(default_factory=list)
-    characters: list = field(default_factory=list)
+    player_games: List[Games] = field(default_factory=list)
+    dm_games: List[Games] = field(default_factory=list)
+    characters: List[Characters] = field(default_factory=list)
 
     def __post_init__(self):
-        self._set_attrs()
+        self.id = next(env.ITERATOR)
+        if self.name is None:
+            self.name = self.default_name(self.id)
+        if self.email is None:
+            self.email = self.default_email(self.id)
+        if self.password is None:
+            self.password = self.default_password(self.id)
+        if self.different_confirm is None:
+            self.different_confirm = self.password
 
     @staticmethod
     def default_email(id: int):
@@ -261,21 +269,6 @@ class Users:
         submit = mock.ui.get_element((By.CSS_SELECTOR, 'input[type="submit"]'))
         mock.ui.submit_and_check(submit, url)
 
-    def new(
-        self,
-        name: str = None,
-        email: str = None,
-        password: str = None,
-        different_confirm: str = None,
-    ):
-        self.id = next(env.ITERATOR)
-        self.name = self.default_name(self.id) if name is None else name
-        self.email = self.default_email(self.id) if email is None else email
-        self.password = self.default_password(self.id) if password is None else password
-        self.different_confirm = (
-            self.password if different_confirm is None else different_confirm
-        )
-
     def forced_to_reauth(self, mock: Mock):
         """force a stale session state and navigate the user to /edit/account which will force a re-authorization"""
         url = "/edit/account"
@@ -358,7 +351,12 @@ class Users:
                 mock.ui.click(link)
         confirms = mock.ui.get_all_elements((By.CSS_SELECTOR, "a.game_confirm"))
         for confirm in confirms:
-            if confirm.get_attribute("href").find(f"game_name={game.name.replace(' ', '+')}") != -1:
+            if (
+                confirm.get_attribute("href").find(
+                    f"game_name={game.name.replace(' ', '+')}"
+                )
+                != -1
+            ):
                 return mock.ui.click_link_and_confirm(
                     confirm, env.URL_JOINING_PRE, partial_url=True
                 )
@@ -389,30 +387,27 @@ class Users:
         create_submit = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='create-submit']")
         )
-        mock.ui.click_link_and_confirm(
-            create_submit, env.URL_NOTES, partial_url=True
-        )
+        mock.ui.click_link_and_confirm(create_submit, env.URL_NOTES, partial_url=True)
         game.characters.append(character)
         character.games.append(game)
 
     def join_game_with_characters(
-        self, mock: Mock, game: Games, characters: List[Characters], add_to_game_object=True
+        self,
+        mock: Mock,
+        game: Games,
+        characters: List[Characters],
+        add_to_game_object=True,
     ):
-        """navigates to join page, adds characters, and submits form 
+        """navigates to join page, adds characters, and submits form
         appends characters to game if not already there"""
-        print(f'game before: {game}')
         self.join_game_page(mock, game)
-        print(f'game after: {game}')  
-        labels = mock.ui.get_all_elements(
-            (By.TAG_NAME, "label")
-        )
+        labels = mock.ui.get_all_elements((By.TAG_NAME, "label"))
         for character in characters:
             for option in labels:
                 if option.text.find(character.name) != -1:
                     mock.ui.click(option)
                     break
         add_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[name='add-submit']"))
-        print(f'game.url: {game.url}')
         mock.ui.click_link_and_confirm(add_submit, game.url)
         if not add_to_game_object:
             return
@@ -421,16 +416,11 @@ class Users:
                 character.games.append(game)
                 game.characters.append(character)
 
-    def reset(self):
-        self._set_attrs(reset=True)
-
-    def _set_attrs(self, reset=False):
-        self.id = next(env.ITERATOR)
-        if self.name is None or reset:
-            self.name = self.default_name(self.id)
-        if self.email is None or reset:
-            self.email = self.default_email(self.id)
-        if self.password is None or reset:
-            self.password = self.default_password(self.id)
-        if self.different_confirm is None or reset:
-            self.different_confirm = self.password
+    def delete_attached(self, mock: Mock):
+        for character in self.characters:
+            character.delete(mock)
+        for game in self.dm_games:
+            game.delete(mock)
+        self.characters.clear()
+        self.dm_games.clear()
+        self.player_games.clear()
