@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from contextlib import contextmanager
 import logging
 
-from testing.end_to_end.browser import CheckActions, BrowserUI
+from testing.end_to_end.browser import BrowserUI
 from testing.end_to_end.models import Users
 from testing import ExpectedException
 from testing.globals import LOGGER
@@ -15,7 +15,6 @@ from testing.globals import LOGGER
 class Mock:
     ui: BrowserUI
     user: Users
-    check: CheckActions
     extra_users: list[Users] = field(default_factory=list)
 
     def reset(self):

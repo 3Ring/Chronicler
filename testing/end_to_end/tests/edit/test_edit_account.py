@@ -8,7 +8,7 @@ def test_edit_account_redirects_anon_user(mock: Mock):
     with mock.test_manager(test_edit_account_redirects_anon_user):
         mock.ui.nav(env.URL_EDIT_ACCOUNT)
         redirected = redirect(env.URL_EDIT_ACCOUNT, env.URL_AUTH_LOGIN)
-        mock.check.confirm_url(redirected)
+        mock.ui.confirm_url(redirected)
 
 
 def test_edit_account_name(mock: Mock):

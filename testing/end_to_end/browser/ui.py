@@ -4,8 +4,10 @@ from typing import TYPE_CHECKING, Tuple, List
 if TYPE_CHECKING:
     from testing.end_to_end.browser import TestsBrowser
 
+import os
 from contextlib import contextmanager
 
+import pytest
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -13,10 +15,13 @@ from selenium.webdriver.support.expected_conditions import (
     presence_of_all_elements_located,
     presence_of_element_located,
     element_to_be_clickable,
+    url_contains,
+    url_to_be,
 )
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
+    TimeoutException,
 )
 
 from testing.end_to_end.helpers import url_convert
@@ -62,7 +67,7 @@ class BrowserUI:
         self.browser.set_window_size(*(w for w in env.WINDOW_SIZE))
         return False
 
-    def nav(self, url: str, full_url=False, force=False) -> None:
+    def nav(self, url: str, full_url=False, force=False, confirm=False) -> None:
         """
         If the browser is not already at the url, navigate to the url
 
@@ -121,3 +126,91 @@ class BrowserUI:
         self,
     ) -> None:  # used primarily to to test the 'remember me' setting
         self.browser.delete_cookie("session")
+
+    #
+    # checks
+    #
+    def confirm_url(self, url: str, partial_url: bool = False, full_url: bool = False):
+        if not full_url:
+            url = url_convert(url)
+        try:
+            if partial_url:
+                return self.browser.wait.until(url_contains(url))
+            return self.browser.wait.until(url_to_be(url))
+
+        except TimeoutException:
+            LOGGER.file.error(
+                "Originating in actions/check_actions/CheckActions.confirm_url:\n"
+                + f"-intended url: {url}\n"
+                + f"-current_url is: {self.browser.current_url}\n"
+                + f"-partial url: {partial_url}\n"
+                + f"-full url: {full_url}"
+            )
+            raise
+
+    def nav_is_anon(self):
+        """confirms that the nav bar exists and contains the correct links for an anonymous user"""
+        self._nav_exists()
+
+        self.get_element((By.CSS_SELECTOR, "a[href='/']"))
+        self.get_element((By.CSS_SELECTOR, "a[href='/register']"))
+        for selector in ["a[href='/logout']", "a[href='/profile']", "a[href='/bugs']"]:
+            with pytest.raises(TimeoutException):
+                self.get_element((By.CSS_SELECTOR, selector), fail=True)
+
+    def nav_is_authenticated(self):
+        """confirms that the nav bar exists and contains the correct links for a logged-in user"""
+        self._nav_exists()
+        self.get_element((By.CSS_SELECTOR, "a[href='/logout']"))
+        self.get_element((By.CSS_SELECTOR, "a[href='/profile']"))
+        self.get_element((By.CSS_SELECTOR, "a[href='/bugs']"))
+
+    def _nav_exists(self):
+        """confirms that the nav bar exists and contains the base items"""
+        self.get_element((By.TAG_NAME, "nav"))
+        self.get_element((By.CSS_SELECTOR, "a[href='/index']"))
+        with pytest.raises(TimeoutException):
+            self.get_element((By.CSS_SELECTOR, "[href='/admin']"), fail=True)
+
+    def has_attributes(self, element: WebElement, attrs: dict) -> None:
+        """
+        confirms element has attribute key/value pairs
+
+        Set value to be "_any" if any value should pass.
+        ex: self.assert_attributes(element, data_flag="_any") will only check that the attribute is present
+
+        :param element: Webelement element to check
+        :param attrs: dict containing the key/value pairs to check
+        """
+        for attr_name, value in attrs.items():
+            attr_value = element.get_attribute(attr_name)
+            if value == "_any":
+                assert attr_value is not None
+            else:
+                assert attr_value == value
+
+    def element_exists(self, locator: Tuple[By, str]) -> None:
+        assert self.get_element(locator)
+
+    def submit_and_check(
+        self,
+        element: WebElement,
+        destination: str,
+        partial_url: bool = False,
+    ) -> None:
+        self.click(element)
+        self.confirm_url(destination, partial_url=partial_url)
+
+    def click_link_and_confirm(
+        self, link: WebElement, url: str = None, partial_url: bool = False
+    ) -> None:
+        """
+        > Click a link and confirm that the URL you are directed to is correct
+
+        :param link: WebElement - the link to click
+        :param url: The URL that you want to confirm
+        """
+        if url is None:
+            url = self.chronicler_url(self.browser.current_url)
+        self.click(link)
+        self.confirm_url(url, partial_url=partial_url)

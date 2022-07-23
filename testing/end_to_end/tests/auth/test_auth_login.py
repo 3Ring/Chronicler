@@ -8,7 +8,7 @@ def test_login_link_to_register(mock: Mock):
     with mock.test_manager(test_login_link_to_register):
         mock.ui.nav(env.URL_AUTH_LOGIN)
         link = mock.ui.get_element((By.CSS_SELECTOR, f"a[href='{env.URL_AUTH_REGISTER}']"))
-        mock.check.click_link_and_confirm(link, env.URL_AUTH_REGISTER)
+        mock.ui.click_link_and_confirm(link, env.URL_AUTH_REGISTER)
 
 def test_bad_logins(mock: Mock):
     with mock.test_manager(test_bad_logins):
@@ -37,7 +37,7 @@ def test_bad_logins(mock: Mock):
 def test_user_can_login(mock: Mock):
     with mock.test_manager(test_user_can_login):
         mock.user.register_and_login(mock)
-        mock.check.confirm_url(env.URL_INDEX)
+        mock.ui.confirm_url(env.URL_INDEX)
 
 
 def test_login_remember_me(mock: Mock):
@@ -45,4 +45,4 @@ def test_login_remember_me(mock: Mock):
         mock.user.register_and_login(mock)
         mock.ui.make_session_stale()
         mock.ui.nav(env.URL_AUTH_LOGIN)
-        mock.check.confirm_url(env.URL_INDEX)
+        mock.ui.confirm_url(env.URL_INDEX)

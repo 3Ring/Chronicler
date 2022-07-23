@@ -8,4 +8,4 @@ def test_anonymous_user_redirected_to_login(mock: Mock):
         for url in [env.URL_AUTH_LOGOUT, env.URL_AUTH_REAUTH]:
             mock.ui.nav(url)
             redirected = redirect(url, env.URL_AUTH_LOGIN)
-            mock.check.confirm_url(redirected)
+            mock.ui.confirm_url(redirected)

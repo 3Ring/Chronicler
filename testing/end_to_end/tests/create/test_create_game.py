@@ -10,7 +10,7 @@ def test_create_game_page_assets(mock: Mock):
     with mock.test_manager(test_create_game_page_assets):
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_CREATE_GAME)
-        mock.check.nav_is_authenticated()
+        mock.ui.nav_is_authenticated()
         mock.ui.get_element((By.ID, "csrf_token")),
         mock.ui.get_element((By.CSS_SELECTOR, "input[type='text']"))
         mock.ui.get_element((By.CSS_SELECTOR, "input[type='file']"))

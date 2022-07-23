@@ -7,8 +7,8 @@ from testing import globals as env
 
 def test_join_redirects_anon_user(mock: Mock):
     with mock.test_manager(test_join_redirects_anon_user):
-        mock.check.ui.nav(env.URL_JOIN)
-        mock.check.confirm_url(redirect(env.URL_JOIN, env.URL_AUTH_LOGIN))
+        mock.ui.nav(env.URL_JOIN)
+        mock.ui.confirm_url(redirect(env.URL_JOIN, env.URL_AUTH_LOGIN))
 
 
 def test_join_assets(mock: Mock):
@@ -19,7 +19,7 @@ def test_join_assets(mock: Mock):
         mock.add_user()
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_JOIN)
-        mock.check.nav_is_authenticated()
+        mock.ui.nav_is_authenticated()
         header = mock.ui.get_element((By.CSS_SELECTOR, "div.app-container h1"))
         assert header.text == "Public Games"
         game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.game a"))

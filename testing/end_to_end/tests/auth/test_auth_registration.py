@@ -9,7 +9,7 @@ from testing import globals as env
 def test_register_assets(mock: Mock):
     with mock.test_manager(test_register_assets):
         mock.ui.nav(env.URL_AUTH_REGISTER)
-        mock.check.nav_is_anon(),
+        mock.ui.nav_is_anon(),
         mock.ui.get_element((By.CSS_SELECTOR, "input[name='name']"))
         mock.ui.get_element((By.CSS_SELECTOR, "input[name='email']"))
         mock.ui.get_element((By.CSS_SELECTOR, "input[name='password']"))
@@ -46,7 +46,7 @@ def test_register_link_to_login(mock: Mock):
             (By.CSS_SELECTOR, f"form a[href='{env.URL_AUTH_LOGIN}']")
         )
         assert link.text == "Sign-in!"
-        mock.check.click_link_and_confirm(link, env.URL_AUTH_LOGIN)
+        mock.ui.click_link_and_confirm(link, env.URL_AUTH_LOGIN)
 
 
 def test_register_bad_user_names(mock: Mock):
@@ -102,4 +102,4 @@ def test_can_register(mock: Mock):
 def test_register_does_not_login_user(mock: Mock):
     with mock.test_manager(test_register_does_not_login_user):
         mock.user.auth_register(mock)
-        mock.check.nav_is_anon()
+        mock.ui.nav_is_anon()

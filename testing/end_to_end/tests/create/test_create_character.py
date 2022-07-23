@@ -10,14 +10,14 @@ def test_anon_user_is_redirected_from_create_character(mock: Mock):
     with mock.test_manager(test_anon_user_is_redirected_from_create_character):
         mock.ui.nav(env.URL_CREATE_CHARACTER)
         redirected_url = redirect(env.URL_CREATE_CHARACTER, env.URL_AUTH_LOGIN)
-        mock.check.confirm_url(redirected_url)
+        mock.ui.confirm_url(redirected_url)
 
 
 def test_create_character_assets(mock: Mock):
     with mock.test_manager(test_create_character_assets):
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_CREATE_CHARACTER)
-        mock.check.nav_is_authenticated()
+        mock.ui.nav_is_authenticated()
         mock.ui.get_element((By.TAG_NAME, "form"))
         headers = mock.ui.get_all_elements((By.CSS_SELECTOR, "form h1"))
         found = False

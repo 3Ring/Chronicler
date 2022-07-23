@@ -13,7 +13,6 @@ def register_get():
     A page to register new users.
     :return: A rendered template with a form.
     """
-    print("get")
     form = Register()
     return render_template("auth/register.html", form=form)
 
@@ -26,8 +25,6 @@ def register_post():
     :return: Redirect to the login page.
     """
     
-    from flask import request
-    print(f'request: {request.get_data()}')
     form = Register()
     if not form.validate_on_submit():
         return render_template("auth/register.html", form=form)

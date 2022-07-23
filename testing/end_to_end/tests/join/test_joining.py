@@ -21,7 +21,7 @@ def test_anon_user_is_redirected_to_login(mock: Mock):
         redirected = redirect(
             url[len(os.environ.get("ROOT_URL")) :], env.URL_AUTH_LOGIN
         )
-        mock.check.confirm_url(redirected)
+        mock.ui.confirm_url(redirected)
 
 
 def test_joining_assests_with_characters(mock: Mock):

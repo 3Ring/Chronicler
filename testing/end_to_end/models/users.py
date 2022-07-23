@@ -91,7 +91,7 @@ class Users:
 
         url = env.URL_CREATE_CHARACTER if fail else env.URL_PROFILE_CHARACTERS
         try:
-            mock.check.submit_and_check(form_submit, url)
+            mock.ui.submit_and_check(form_submit, url)
             self.player_games.append(character)
             return character
         except TimeoutException:
@@ -138,7 +138,7 @@ class Users:
             form_image.send_keys(dm.image_path)
         url = env.URL_CREATE_DM if fail else env.URL_NOTES
         try:
-            mock.check.submit_and_check(form_submit, url, partial_url=True)
+            mock.ui.submit_and_check(form_submit, url, partial_url=True)
             game.dm = dm
             return dm
         except TimeoutException:
@@ -164,7 +164,7 @@ class Users:
             mock.ui.click(form_publish)
         url = env.URL_CREATE_GAME if fail else env.URL_CREATE_DM
         try:
-            mock.check.submit_and_check(form_submit, url, partial_url=True)
+            mock.ui.submit_and_check(form_submit, url, partial_url=True)
             self.dm_games.append(game)
         except TimeoutException:
             if not fail:
@@ -258,7 +258,7 @@ class Users:
         mock.ui.input_text(confirm, confirm_email)
         url = env.URL_EDIT_ACCOUNT_DELETE if fail else env.URL_AUTH_LOGIN
         submit = mock.ui.get_element((By.CSS_SELECTOR, 'input[type="submit"]'))
-        mock.check.submit_and_check(submit, url)
+        mock.ui.submit_and_check(submit, url)
 
     def new(
         self,
@@ -282,7 +282,7 @@ class Users:
         mock.ui.nav("/profile/account")
         account_link = mock.ui.get_element((By.CSS_SELECTOR, f"a[href='{url}']"))
         redirect_url = "/reauth" + query_string_convert(next="/edit/account")
-        mock.check.submit_and_check(account_link, destination=redirect_url)
+        mock.ui.submit_and_check(account_link, destination=redirect_url)
         return url
 
     def register_and_login(self, mock: Mock):
@@ -308,7 +308,7 @@ class Users:
 
         form_submit = mock.ui.get_element((By.ID, "usersubmit"))
         url_after_submit = env.URL_AUTH_REGISTER if fail else env.URL_AUTH_LOGIN
-        mock.check.submit_and_check(form_submit, url_after_submit)
+        mock.ui.submit_and_check(form_submit, url_after_submit)
 
     def auth_login(self, mock: Mock, remember: bool = True, fail: bool = False):
         """
@@ -330,7 +330,7 @@ class Users:
         mock.ui.input_text(form_password, self.password)
 
         url_after_submit = env.URL_AUTH_LOGIN if fail else env.URL_INDEX
-        mock.check.submit_and_check(form_submit, url_after_submit)
+        mock.ui.submit_and_check(form_submit, url_after_submit)
 
     def auth_reauth(self, mock: Mock, url: str):
         """re-authenticates the user.
@@ -342,7 +342,7 @@ class Users:
         form_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[name='submit']"))
         mock.ui.input_text(form_email, self.email)
         mock.ui.input_text(form_password, self.password)
-        mock.check.submit_and_check(form_submit, url)
+        mock.ui.submit_and_check(form_submit, url)
 
     def auth_logout(self, mock: Mock):
         """Logout the user by navigating to the logout page"""
@@ -388,7 +388,7 @@ class Users:
         create_submit = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='create-submit']")
         )
-        mock.check.click_link_and_confirm(
+        mock.ui.click_link_and_confirm(
             create_submit, env.URL_NOTES, partial_url=True
         )
         game.characters.append(character)

@@ -8,7 +8,7 @@ from selenium import webdriver
 from _pytest.fixtures import SubRequest
 from selenium.webdriver.support.ui import WebDriverWait
 
-from testing.end_to_end.browser import BrowserUI, BrowserInitializer, CheckActions
+from testing.end_to_end.browser import BrowserUI, BrowserInitializer
 from testing.end_to_end import Mock
 from testing.end_to_end.models import Users
 
@@ -32,5 +32,4 @@ def create_browser(request: SubRequest, log_level: int):
 def mock(browser: webdriver) -> Mock:
     ui = BrowserUI(browser)
     user = Users()
-    check = CheckActions(ui)
-    return Mock(ui, user, check)
+    return Mock(ui, user)
