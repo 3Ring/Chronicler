@@ -343,6 +343,7 @@ class Users:
         mock.ui.nav(env.URL_AUTH_LOGOUT)
 
     def join_game_page(self, mock: Mock, game: Games) -> None:
+        """navigate to a game's joining page"""
         mock.ui.nav(env.URL_JOIN)
         game_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "div.games a"))
         for link in game_links:
@@ -365,9 +366,16 @@ class Users:
         )
 
     def join_game_with_create(
-        self, mock: Mock, game: Games, character: Characters = None
+        self,
+        mock: Mock,
+        game: Games,
+        character: Characters = None,
+        from_joining=False,
+        fail=False,
     ):
-        self.join_game_page(mock, game)
+        """navigate to game's joining page and join by creating a new character"""
+        if not from_joining:
+            self.join_game_page(mock, game)
         create_name = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='create-name']")
         )
@@ -387,9 +395,11 @@ class Users:
         create_submit = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='create-submit']")
         )
-        mock.ui.click_link_and_confirm(create_submit, env.URL_NOTES, partial_url=True)
-        game.characters.append(character)
-        character.games.append(game)
+        url = env.URL_NOTES if not fail else env.URL_JOINING_PRE
+        mock.ui.click_link_and_confirm(create_submit, url, partial_url=True)
+        if not fail:
+            game.characters.append(character)
+            character.games.append(game)
 
     def join_game_with_characters(
         self,
