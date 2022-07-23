@@ -84,6 +84,9 @@ class BrowserUI:
         LOGGER.debug(
             f"skipping navigation to {url} due to the browser already being there"
         )
+        if confirm:
+            self.confirm_url(url, full_url=True)
+
 
     def get_element(self, locator: Tuple[By, str], fail=False) -> WebElement:
         """gets element from current page. raises exception if not found"""
