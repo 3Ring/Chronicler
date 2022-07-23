@@ -5,7 +5,7 @@ LOGGER = Logger()
 ITERATOR = count()
 
 WINDOW_SIZE = (1920, 1080)
-WINDOW_SIZES_LARGE = [(3840, 2160), (7680, 4320)]
+WINDOW_DEBUG_SIZES = [(3840, 2160), (7680, 4320), (375, 812), (750, 1624), (1080, 1920)]
 
 URL_AUTH_REGISTER = "/register"
 URL_AUTH_LOGIN = "/"
@@ -17,6 +17,7 @@ URL_CREATE_DM = "/create/dm"
 URL_CREATE_CHARACTER = "/create/character"
 URL_NOTES = "/notes"
 URL_JOIN = "/join"
+URL_JOINING_PRE = "/joining/"
 URL_PROFILE_CHARACTERS = "/profile/characters"
 URL_PROFILE_ACCOUNT = "/profile/account"
 URL_EDIT_ACCOUNT = "/edit/account"

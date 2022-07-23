@@ -18,6 +18,7 @@ def url_convert(url: str = None) -> str:
 
 
 def redirect(intended_url: str, redirect_url: str) -> str:
+    """creates redirect url from relative urls"""
     return redirect_url + query_string_convert(next=intended_url)
 
 

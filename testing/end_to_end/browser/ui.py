@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, List
+
 if TYPE_CHECKING:
     from testing.end_to_end.browser import TestsBrowser
 
@@ -28,17 +29,15 @@ class BrowserUI:
         self.browser = browser
 
     def _click_error_retries(self, element: WebElement, ex: Exception):
-        LOGGER.info(
-            f"{ex.__class__}: {ex.msg}\nAttempting fix by adjusting position"
-        )
+        LOGGER.info(f"{ex.__class__}: {ex.msg}\nAttempting fix by adjusting position")
         if self._adjust_position(element):
-            return True
+            return True  
         LOGGER.info("Attempting fix by adjusting size")
         return self._adjust_size(element)
 
     def _adjust_position(self, element: WebElement) -> bool:
-        for i in range(20, 100, 20):
-            LOGGER.debug(f"adjusting page position by {-i}")
+        for index, i in enumerate(([20] * 5)):
+            LOGGER.debug(f"adjusting page position by {-index}")
             self.browser.set_window_position(0, -i)
             try:
                 element.click()
@@ -50,11 +49,11 @@ class BrowserUI:
         return False
 
     def _adjust_size(self, element: WebElement) -> bool:
-        for size in env.WINDOW_SIZES_LARGE:
+        for size in env.WINDOW_DEBUG_SIZES:
             LOGGER.debug(f"changing window size to {size}")
             self.browser.set_window_size(*(w for w in size))
             try:
-                element.click()
+                self._adjust_position(element)
                 LOGGER.info(f"click successful by changing size to: {size}")
                 return True
             except (ElementClickInterceptedException, ElementNotInteractableException):
@@ -63,7 +62,15 @@ class BrowserUI:
         self.browser.set_window_size(*(w for w in env.WINDOW_SIZE))
         return False
 
-    def nav(self, url: str = None, full_url=False, force=False) -> None:
+    def nav(self, url: str, full_url=False, force=False) -> None:
+        """
+        If the browser is not already at the url, navigate to the url
+
+        :param url: sub-domain or full-url being navigated to
+        :param full_url: set to True if not a sub-domain. defaults to False
+        :param force: If True, will force the browser to navigate to the url even if it's already there,
+        defaults to False
+        """
         if not full_url:
             url = url_convert(url)
         if self.browser.current_url != url or force:
@@ -74,18 +81,21 @@ class BrowserUI:
         )
 
     def get_element(self, locator: Tuple[By, str], fail=False) -> WebElement:
+        """gets element from current page. raises exception if not found"""
         expected_element = presence_of_element_located(locator)
         if fail:
             return self.browser.fail_wait.until(expected_element)
         return self.browser.wait.until(expected_element)
 
-    def get_all_elements(self, locator: Tuple[By, str], fail=False) -> list[WebElement]:
+    def get_all_elements(self, locator: Tuple[By, str], fail=False) -> List[WebElement]:
         expected_elements = presence_of_all_elements_located(locator)
         if fail:
             return self.browser.fail_wait.until(expected_elements)
         return self.browser.wait.until(expected_elements)
 
-    def input_text(self, element: WebElement, text: str, no_clear: bool = False) -> WebElement:
+    def input_text(
+        self, element: WebElement, text: str, no_clear: bool = False
+    ) -> WebElement:
         """clears the current text and sends new text"""
         if not no_clear:
             element.clear()

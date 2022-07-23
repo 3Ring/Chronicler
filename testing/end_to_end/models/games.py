@@ -1,7 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
+
 if TYPE_CHECKING:
-    from testing.end_to_end.models import Users, DMs
+    from testing.end_to_end.models import Users, DMs, Characters
     from testing.end_to_end.mock import Mock
 
 from dataclasses import dataclass, field
@@ -15,7 +16,8 @@ class Games:
     name: str = None
     publish: bool = True
     image_path: str = None
-    players: list[Users] = field(default_factory=list)
+    players: List[Users] = field(default_factory=list)
+    characters: List[Characters] = field(default_factory=list)
 
     def __post_init__(self):
         self.id = next(env.ITERATOR)
