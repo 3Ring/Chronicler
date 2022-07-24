@@ -59,16 +59,20 @@ class Characters:
         headers = mock.ui.get_all_elements((By.TAG_NAME, "h2"))
         return True in [(h.text.find(self.name) != -1) for h in headers]
 
-    def edit(self, mock: Mock, name: str = None, image_path=None, bio: str = None):
-        if not any((name, image_path, bio)):
-            return
+    def get_edit_url(self, mock: Mock) -> str:
+        """navigates to edit page for this character and returns relative url"""
         mock.ui.nav(env.URL_PROFILE_CHARACTERS)
         edit_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "h2"))
         edit_anchor = self._get_edit_anchor_element(edit_links)
         mock.ui.click_link_and_confirm(
             edit_anchor, env.URL_EDIT_CHARACTERS_PRE, partial_url=True
         )
+        return mock.ui.chronicler_url()
 
+    def edit(self, mock: Mock, name: str = None, image_path=None, bio: str = None):
+        if not any((name, image_path, bio)):
+            return
+        mock.ui.nav(self.get_edit_url(mock))
         if name is not None:
             form_name = mock.ui.get_element(
                 (By.CSS_SELECTOR, f"input[value='{self.name}']")

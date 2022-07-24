@@ -4,18 +4,27 @@ from testing import globals as env
 from testing.end_to_end import Mock
 from testing.end_to_end.models import Games
 from testing.end_to_end.helpers import images_path
-
+from testing.end_to_end.tests.asset_helpers import (
+    asset_validator_by_tag,
+    asset_validator_by_css,
+    asset_validator_by_id,
+)
 
 def test_create_game_page_assets(mock: Mock):
     with mock.test_manager(test_create_game_page_assets):
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_CREATE_GAME)
         mock.ui.nav_is_authenticated()
-        mock.ui.get_element((By.ID, "csrf_token")),
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='text']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='file']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='checkbox']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='submit'"))
+        asset_validator_by_id(mock, "csrf_token", hidden=True)
+        asset_validator_by_tag(mock, "form")
+        asset_validator_by_tag(mock, "h1", text_to_check="Create your game!")
+        asset_validator_by_tag(mock, "label", text_to_check="Name of your game")
+        asset_validator_by_tag(mock, "label", text_to_check="(Optional) Game Image")
+        asset_validator_by_tag(mock, "label", text_to_check="Publish? (Allow game to be searchable)")
+        asset_validator_by_css(mock, "input[type='text']")
+        asset_validator_by_css(mock, "input[type='file']")
+        asset_validator_by_css(mock, "input[type='checkbox']")
+        asset_validator_by_css(mock, "input[type='submit'")
 
 
 def test_bad_game_names(mock: Mock):

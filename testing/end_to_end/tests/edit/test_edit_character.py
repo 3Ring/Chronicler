@@ -4,16 +4,68 @@ import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from testing.end_to_end.helpers import redirect, images_path
 from testing import ExpectedException
 from testing import globals as env
 from testing.end_to_end import Mock
 from testing.end_to_end import exceptions as ex
 from testing.end_to_end.models import Characters
+from testing.end_to_end.tests.asset_helpers import (
+    assets_validator_by_tag,
+    asset_validator_by_tag,
+    asset_validator_by_css,
+    asset_validator_by_id,
+)
 
-@pytest.mark.xfail
+
+def test_edit_character_assets(mock: Mock):
+    with mock.test_manager(test_edit_character_assets):
+        for image in images_path():
+            img_path = image
+            break
+        character = Characters(
+            mock.user, name="CharEditAssets", bio="CharEditBio", image_path=img_path
+        )
+        character = _character_creation(mock, character=character)
+        url = character.get_edit_url(mock)
+        mock.ui.nav(url)
+        asset_validator_by_id(mock, "a-csrf_token", hidden=True)
+        assets_validator_by_tag(mock, 2, "form")
+        assets_validator_by_tag(mock, 2, "h1", character.name)
+        asset_validator_by_tag(mock, "label", text_to_check="Name")
+        name = asset_validator_by_css(mock, "input[name='a-name'][type='text']")
+        assert name.get_attribute("value") == character.name
+        # TODO character image validation
+        # asset_validator_by_tag(mock, "img")
+        asset_validator_by_tag(
+            mock, "label", text_to_check="(Optional) Character Image"
+        )
+        asset_validator_by_css(mock, "input[type='file'][name='a-img']")
+        asset_validator_by_tag(mock, "label", text_to_check="Bio")
+        bio = asset_validator_by_css(mock, "textarea[name='a-bio']")
+        assert bio.get_attribute("value") == character.bio
+        asset_validator_by_css(mock, "input[name='a-submit'][type='submit']")
+
+
 def test_edit_character_redirects_anon_user(mock: Mock):
     with mock.test_manager(test_edit_character_redirects_anon_user):
-        raise ExpectedException()
+        character = _character_creation(mock)
+        url = character.get_edit_url(mock)
+        mock.user.auth_logout(mock)
+        mock.ui.nav(url)
+        current = redirect(url, env.URL_AUTH_LOGIN)
+        mock.ui.confirm_url(current)
+
+
+def test_different_user_cannot_access_char_edit(mock: Mock):
+    with mock.test_manager(test_different_user_cannot_access_char_edit):
+        character = _character_creation(mock)
+        url = character.get_edit_url(mock)
+        mock.add_user()
+        mock.user.register_and_login(mock)
+        mock.ui.nav(url)
+        mock.ui.redirected(url, env.URL_INDEX)
+
 
 def test_can_edit_name(mock: Mock):
     with mock.test_manager(test_can_edit_name):
@@ -46,15 +98,16 @@ def test_can_edit_bio(mock: Mock):
         Ps = mock.ui.get_all_elements((By.TAG_NAME, "p"))
         assert 0 in [el.text.find(new_bio) for el in Ps]
 
+
 @pytest.mark.xfail
 def test_removing_character_removes_them_from_all_gamesTODO(mock: Mock):
     with mock.test_manager(test_removing_character_removes_them_from_all_gamesTODO):
         raise ExpectedException()
 
 
-def _character_creation(mock: Mock) -> Characters:
+def _character_creation(mock: Mock, character: Characters = None) -> Characters:
     mock.user.register_and_login(mock)
-    return mock.user.create_character(mock)
+    return mock.user.create_character(mock, character)
 
 
 def _get_image(mock: Mock, name: str) -> str:

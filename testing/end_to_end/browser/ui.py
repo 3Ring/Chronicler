@@ -68,6 +68,17 @@ class BrowserUI:
         self.browser.set_window_size(*(w for w in env.WINDOW_SIZE))
         return False
 
+    def redirected(self, url: str, root_url_redirected_to: str = None, full_url=False) -> None:
+        """used when expecting to be redirected"""
+        if root_url_redirected_to is None:
+            root_url_redirected_to = self.chronicler_url()
+        query_url = redirect(url, root_url_redirected_to)
+        self.nav(url, full_url=full_url)
+        try:
+            self.confirm_url(query_url)
+        except ex.DifferentURLError:
+            self.confirm_url(root_url_redirected_to)
+
     def nav(self, url: str, full_url=False, force=False, confirm=False) -> None:
         """
         If the browser is not already at the url, navigate to the url
@@ -101,10 +112,10 @@ class BrowserUI:
     def get_element(self, locator: Tuple[By, str], fail=False) -> WebElement:
         """gets element from current page. raises exception if not found"""
         try:
-        expected_element = presence_of_element_located(locator)
-        if fail:
-            return self.browser.fail_wait.until(expected_element)
-        return self.browser.wait.until(expected_element)
+            expected_element = presence_of_element_located(locator)
+            if fail:
+                return self.browser.fail_wait.until(expected_element)
+            return self.browser.wait.until(expected_element)
         except TimeoutException:
             raise ex.ElementNotFoundError(
                 f"unable to find elements by locator: {locator} on {self.browser.current_url}"
@@ -112,10 +123,10 @@ class BrowserUI:
 
     def get_all_elements(self, locator: Tuple[By, str], fail=False) -> List[WebElement]:
         try:
-        expected_elements = presence_of_all_elements_located(locator)
-        if fail:
-            return self.browser.fail_wait.until(expected_elements)
-        return self.browser.wait.until(expected_elements)
+            expected_elements = presence_of_all_elements_located(locator)
+            if fail:
+                return self.browser.fail_wait.until(expected_elements)
+            return self.browser.wait.until(expected_elements)
         except TimeoutException:
             raise ex.ElementNotFoundError(
                 f"unable to find elements by locator: {locator} on {self.browser.current_url}"

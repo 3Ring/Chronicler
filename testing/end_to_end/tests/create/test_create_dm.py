@@ -3,28 +3,28 @@ from selenium.webdriver.common.by import By
 from testing.end_to_end import Mock
 from testing.end_to_end.helpers import images_path
 from testing.end_to_end.models import DMs, Games 
+from testing.end_to_end.tests.asset_helpers import (
+    asset_validator_by_tag,
+    asset_validator_by_css,
+    asset_validator_by_id,
+)
 
 
 def test_create_dm_page_assets(mock: Mock):
     with mock.test_manager(test_create_dm_page_assets):
         mock.user.register_and_login(mock)
         game = mock.user.create_game(mock)
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='file']"))
-        mock.ui.get_element(
-            (By.CSS_SELECTOR, "img[src='/static/images/default_dm.jpg']")
-        )
-        mock.ui.get_element((By.CSS_SELECTOR, "input[type='submit']"))
-
-        headers = mock.ui.get_all_elements((By.TAG_NAME, "h1"))
-        dm_name_input = mock.ui.get_element(
-            (By.CSS_SELECTOR, "input[type='text'][name='name']")
-        )
-
-        found = False
-        for header in headers:
-            if header.text.find(game.name) != -1:
-                found = True
-        assert found
+        mock.ui.nav_is_authenticated()
+        asset_validator_by_id(mock, "csrf_token", hidden=True)
+        asset_validator_by_tag(mock, "form")
+        asset_validator_by_tag(mock, "h1", text_to_check='Personalize your "DM" avatar')
+        asset_validator_by_tag(mock, "label", text_to_check='(Optional) Name different than default of "DM"')
+        asset_validator_by_tag(mock, "label", text_to_check="(Optional) personalized DM Image")
+        asset_validator_by_css(mock, "input[type='file']")
+        asset_validator_by_css(mock, "img[src='/static/images/default_dm.jpg']")
+        asset_validator_by_css(mock, "input[type='submit']")
+        asset_validator_by_tag(mock, "h1", text_to_check=game.name)
+        dm_name_input = asset_validator_by_css(mock, "input[type='text'][name='name']")
         assert dm_name_input.get_attribute("value") == "DM"
 
 

@@ -3,8 +3,9 @@ from selenium.webdriver.common.by import By
 from testing.end_to_end import Mock
 from testing import globals as env
 from testing.end_to_end.tests.asset_helpers import (
-    assets_by_css_validator,
-    assets_by_tag_validator,
+    asset_validator_by_tag,
+    asset_validator_by_css,
+    asset_validator_by_id,
 )
 
 
@@ -12,17 +13,18 @@ def test_login_assets(mock: Mock):
     with mock.test_manager(test_login_assets):
         mock.ui.nav(env.URL_AUTH_LOGIN)
         mock.ui.nav_is_anon()
-        assets_by_tag_validator(mock, 1, "h1", text_to_check="Log in")
-        assets_by_tag_validator(mock, 1, "form")
-        assets_by_tag_validator(mock, 1, "label", text_to_check="Email")
-        assets_by_css_validator(mock, 1, "input[name='email'][type='text']")
-        assets_by_tag_validator(mock, 1, "label", text_to_check="Password")
-        assets_by_css_validator(mock, 1, "input[name='password'][type='password']")
-        assets_by_tag_validator(mock, 1, "label", text_to_check="Remember Me")
-        assets_by_css_validator(mock, 1, "input[name='remember'][type='checkbox']")
-        assets_by_css_validator(mock, 1, "input[type='submit']")
-        assets_by_tag_validator(mock, 1, "h6", text_to_check="Don't have an account?")
-        assets_by_tag_validator(mock, 1, "a", text_to_check="Create One")
+        asset_validator_by_id(mock, "csrf_token", hidden=True)
+        asset_validator_by_tag(mock, "h1", text_to_check="Log in")
+        asset_validator_by_tag(mock, "form")
+        asset_validator_by_tag(mock, "label", text_to_check="Email")
+        asset_validator_by_css(mock, "input[name='email'][type='text']")
+        asset_validator_by_tag(mock, "label", text_to_check="Password")
+        asset_validator_by_css(mock, "input[name='password'][type='password']")
+        asset_validator_by_tag(mock, "label", text_to_check="Remember Me")
+        asset_validator_by_css(mock, "input[name='remember'][type='checkbox']")
+        asset_validator_by_css(mock, "input[type='submit']")
+        asset_validator_by_tag(mock, "h6", text_to_check="Don't have an account?")
+        asset_validator_by_tag(mock, "a", text_to_check="Create One")
 
 
 def test_login_link_to_register(mock: Mock):

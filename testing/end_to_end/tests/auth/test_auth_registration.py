@@ -4,18 +4,22 @@ from selenium.webdriver.common.by import By
 from testing import ExpectedException
 from testing.end_to_end import Mock
 from testing import globals as env
-
+from testing.end_to_end.tests.asset_helpers import (
+    asset_validator_by_tag,
+    asset_validator_by_css,
+)
 
 def test_register_assets(mock: Mock):
     with mock.test_manager(test_register_assets):
         mock.ui.nav(env.URL_AUTH_REGISTER)
         mock.ui.nav_is_anon(),
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='name']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='email']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='password']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='confirm']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='reveal']"))
-        mock.ui.get_element((By.CSS_SELECTOR, "input[name='usersubmit']"))
+        asset_validator_by_css(mock, "input[name='name']")
+        asset_validator_by_css(mock, "input[name='name']")
+        asset_validator_by_css(mock, "input[name='email']")
+        asset_validator_by_css(mock, "input[name='password']")
+        asset_validator_by_css(mock, "input[name='confirm']")
+        asset_validator_by_css(mock, "input[name='reveal']")
+        asset_validator_by_css(mock, "input[name='usersubmit']")
 
 
 def test_show_passwords(mock: Mock):
