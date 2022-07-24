@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, HiddenField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, Email
 from project.forms import validators as v
 
@@ -21,7 +22,7 @@ class UserEditName(FlaskForm):
 
 
 class UserEditEmail(FlaskForm):
-    email = StringField("Change Email", validators=[DataRequired(), Email()])
+    email = EmailField("Change Email", validators=[DataRequired(), Email()])
     submit = SubmitField("Submit")
 
 
