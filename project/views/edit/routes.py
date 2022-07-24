@@ -37,7 +37,7 @@ def delete():
 @edit.route("/edit/character/<int:character_id>", methods=["GET", "POST"])
 @fresh_login_required
 def character(character_id):
-    character = Characters.query.get(character_id)
+    character: Characters = Characters.query.get(character_id)
     if character.user_id != current_user.id:
         return not_authorized()
     if request.method == "GET":
