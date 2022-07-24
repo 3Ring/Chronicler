@@ -1,16 +1,17 @@
-from typing import List, Literal
+from typing import List, Tuple
 
 from functools import partial
 
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 from testing import exceptions as ex
 from testing.end_to_end import Mock
 
 
 def _get_assets(
-    by: Literal,
+    by: str,
     mock: Mock,
     amount: int,
     selector: str,
@@ -18,7 +19,7 @@ def _get_assets(
     hidden: bool = False,
 ) -> List[WebElement]:
     elements = mock.ui.get_all_elements((by, selector))
-    return _validate_list(elements, amount, hidden, text_to_check)
+    return validate_list(elements, amount, hidden, text_to_check)
 
 
 assets_validator_by_tag = partial(_get_assets, By.TAG_NAME)
@@ -46,11 +47,24 @@ def asset_validator_by_css(
     mock: Mock, css_selector: str, text_to_check: str = None, hidden: bool = False
 ) -> WebElement:
     return assets_validator_by_css(
-        mock=mock, selector=css_selector, amount=1, text_to_check=text_to_check, hidden=hidden
+        mock=mock,
+        selector=css_selector,
+        amount=1,
+        text_to_check=text_to_check,
+        hidden=hidden,
     )[0]
 
 
-def _validate_list(
+def get_nested_element(element: WebElement, locator: Tuple[By, str]) -> WebElement:
+    try:
+        return element.find_element(*(arg for arg in locator))
+    except NoSuchElementException:
+        raise ex.ElementNotFoundError(
+            f"unable to find element by locator {locator} nested inside {element}"
+        )
+
+
+def validate_list(
     elements: List[WebElement],
     amount: int,
     hidden: bool,

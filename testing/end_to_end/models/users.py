@@ -58,15 +58,14 @@ class Users:
     def create_game_and_dm(
         self,
         mock: Mock,
-        game_name: str = None,
-        publish: bool = True,
-        dm_image_path: str = None,
-        dm_name: str = None,
-        game_image_path: str = None,
+        game: Games = None,
+        dm: DMs = None,
         default_dm_name: bool = False,
     ) -> Games:
-        game = Games(name=game_name, publish=publish, image_path=game_image_path)
-        dm = DMs(user=mock.user, game=game, name=dm_name, image_path=dm_image_path)
+        if not game:
+            game = Games()
+        if not dm:
+            dm = DMs(user=mock.user, game=game)
         self.create_game(mock, game)
         self.create_dm(mock, game, dm=dm, default_dm_name=default_dm_name)
         return game
@@ -374,12 +373,12 @@ class Users:
         """navigate to game's joining page and join by creating a new character"""
         if not from_joining:
             self.join_game_page(mock, game)
+        if character is None:
+            character = Characters(player=self)
         create_name = mock.ui.get_element(
             (By.CSS_SELECTOR, "input[name='create-name']")
         )
         mock.ui.input_text(create_name, character.name)
-        if character is None:
-            character = Characters(self)
         if character.bio is not None:
             create_bio = mock.ui.get_element(
                 (By.CSS_SELECTOR, "textarea[name='create-bio']")

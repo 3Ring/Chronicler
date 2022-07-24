@@ -58,7 +58,8 @@ def test_user_can_create_game(mock: Mock):
 def test_game_is_displayed_when_published(mock: Mock):
     with mock.test_manager(test_game_is_displayed_when_published):
         mock.user.register_and_login(mock)
-        game = mock.user.create_game_and_dm(mock, game_name="is_displayed_when_published")
+        game = Games(name="is_displayed_when_published")
+        game = mock.user.create_game_and_dm(mock, game=game)
         mock.add_user()
         mock.user.register_and_login(mock)
         mock.ui.nav(env.URL_JOIN)
@@ -68,9 +69,8 @@ def test_game_is_displayed_when_published(mock: Mock):
 def test_game_is_hidden_when_not_published(mock: Mock):
     with mock.test_manager(test_game_is_hidden_when_not_published):
         mock.user.register_and_login(mock)
-        game = mock.user.create_game_and_dm(
-            mock, game_name="not_displayed_when_unpublished", publish=False
-        )
+        game = Games(name="not_displayed_when_unpublished", publish=False)
+        mock.user.create_game_and_dm(mock, game=game)
         mock.add_user()
         mock.user.register_and_login(mock)
         mock.user.create_game_and_dm(mock)
