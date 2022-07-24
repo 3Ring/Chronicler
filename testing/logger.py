@@ -78,7 +78,7 @@ class Logger:
         self,
         level: int,
         message: str,
-        to_console: str,
+        to_console: bool,
         exc_info: bool,
         exc_to_console: bool,
     ):
@@ -86,17 +86,14 @@ class Logger:
         Logs with the given level
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional) or `True`
-            if `True` :param message: will be sent to console as well
+        :param to_console: if `True` :param message: will be sent to console as well
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
-        if to_console is True:
-            to_console = message
         self.set_create_dump(level)
         self._to_file(message, level, exc_info)
-        if to_console is not None or exc_to_console:
-            self._to_console(to_console, level, exc_to_console)
+        if to_console is True:
+            self._to_console(message, level, exc_to_console)
 
     def _to_file(self, message: str, level: int, exc_info: bool = False):
         self.set_create_dump(level)
@@ -108,7 +105,7 @@ class Logger:
     def debug(
         self,
         message: str,
-        to_console: str = None,
+        to_console: bool = False,
         exc_info: bool = False,
         exc_to_console: bool = False,
     ):
@@ -116,7 +113,7 @@ class Logger:
         Logs with the level DEBUG
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Set to `True` to send message to console
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
@@ -125,7 +122,7 @@ class Logger:
     def info(
         self,
         message: str,
-        to_console: str = None,
+        to_console: bool = False,
         exc_info: bool = False,
         exc_to_console: bool = False,
     ):
@@ -133,7 +130,7 @@ class Logger:
         Logs with the level INFO
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Set to `True` to send message to console
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
@@ -142,7 +139,7 @@ class Logger:
     def warning(
         self,
         message: str,
-        to_console: str = None,
+        to_console: bool = False,
         exc_info: bool = False,
         exc_to_console: bool = False,
     ):
@@ -150,7 +147,7 @@ class Logger:
         Logs with the level WARNING
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Set to `True` to send message to console
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
@@ -159,7 +156,7 @@ class Logger:
     def error(
         self,
         message: str,
-        to_console: str = None,
+        to_console: bool = False,
         exc_info: bool = False,
         exc_to_console: bool = False,
     ):
@@ -168,7 +165,7 @@ class Logger:
         Logs with the level ERROR
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Set to `True` to send message to console
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
@@ -177,7 +174,7 @@ class Logger:
     def critical(
         self,
         message: str,
-        to_console: str = None,
+        to_console: bool = False,
         exc_info: bool = False,
         exc_to_console: bool = False,
     ):
@@ -185,7 +182,7 @@ class Logger:
         Logs with the level CRITICAL
 
         :param message: The message to log
-        :param to_console: Message to be printed to the console (optional)
+        :param to_console: Set to `True` to send message to console
         :param exc_info: If True, Exception info is added to the logging message, defaults to False
         :param exc_to_console: If True, the exception will be printed to the console, defaults to False
         """
