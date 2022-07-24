@@ -24,9 +24,10 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
-from testing.end_to_end.helpers import url_convert
+from testing.end_to_end.helpers import redirect, url_convert
 from testing import globals as env
 from testing.globals import LOGGER
+from testing import exceptions as ex
 
 
 class BrowserUI:
@@ -99,16 +100,26 @@ class BrowserUI:
 
     def get_element(self, locator: Tuple[By, str], fail=False) -> WebElement:
         """gets element from current page. raises exception if not found"""
+        try:
         expected_element = presence_of_element_located(locator)
         if fail:
             return self.browser.fail_wait.until(expected_element)
         return self.browser.wait.until(expected_element)
+        except TimeoutException:
+            raise ex.ElementNotFoundError(
+                f"unable to find elements by locator: {locator} on {self.browser.current_url}"
+            )
 
     def get_all_elements(self, locator: Tuple[By, str], fail=False) -> List[WebElement]:
+        try:
         expected_elements = presence_of_all_elements_located(locator)
         if fail:
             return self.browser.fail_wait.until(expected_elements)
         return self.browser.wait.until(expected_elements)
+        except TimeoutException:
+            raise ex.ElementNotFoundError(
+                f"unable to find elements by locator: {locator} on {self.browser.current_url}"
+            )
 
     def input_text(
         self, element: WebElement, text: str, no_clear: bool = False
@@ -158,7 +169,9 @@ class BrowserUI:
                 + f"-partial url: {partial_url}\n"
                 + f"-full url: {full_url}"
             )
-            raise
+            raise ex.DifferentURLError(
+                f"current url: {self.browser.current_url} is not {url}"
+            )
 
     def nav_is_anon(self):
         """confirms that the nav bar exists and contains the correct links for an anonymous user"""
@@ -167,7 +180,7 @@ class BrowserUI:
         self.get_element((By.CSS_SELECTOR, "a[href='/']"))
         self.get_element((By.CSS_SELECTOR, "a[href='/register']"))
         for selector in ["a[href='/logout']", "a[href='/profile']", "a[href='/bugs']"]:
-            with pytest.raises(TimeoutException):
+            with pytest.raises(ex.ElementNotFoundError):
                 self.get_element((By.CSS_SELECTOR, selector), fail=True)
 
     def nav_is_authenticated(self):
@@ -181,7 +194,7 @@ class BrowserUI:
         """confirms that the nav bar exists and contains the base items"""
         self.get_element((By.TAG_NAME, "nav"))
         self.get_element((By.CSS_SELECTOR, "a[href='/index']"))
-        with pytest.raises(TimeoutException):
+        with pytest.raises(ex.ElementNotFoundError):
             self.get_element((By.CSS_SELECTOR, "[href='/admin']"), fail=True)
 
     def has_attributes(self, element: WebElement, attrs: dict) -> None:

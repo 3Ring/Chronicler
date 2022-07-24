@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 from dataclasses import dataclass, field
 
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
 
 from testing.end_to_end.models import Games, Characters, DMs
 from testing.end_to_end.helpers import query_string_convert
@@ -102,7 +101,7 @@ class Users:
             mock.ui.submit_and_check(form_submit, url)
             self.player_games.append(character)
             return character
-        except TimeoutException:
+        except ex.DifferentURLError:
             if not fail:
                 LOGGER.error(f'failing character: "{character}"')
             raise
@@ -150,7 +149,7 @@ class Users:
             game.dm = dm
             game.url = mock.ui.chronicler_url()
             return dm
-        except TimeoutException:
+        except ex.DifferentURLError:
             if not fail:
                 LOGGER.error(f'failing dm: "{dm}"')
             raise
@@ -175,7 +174,7 @@ class Users:
         try:
             mock.ui.submit_and_check(form_submit, url, partial_url=True)
             self.dm_games.append(game)
-        except TimeoutException:
+        except ex.DifferentURLError:
             if not fail:
                 LOGGER.error(f'failing game: "{game}"')
             raise
@@ -210,7 +209,6 @@ class Users:
             (By.CSS_SELECTOR, 'input[type="submit"][name="name-submit"]')
         )
         mock.ui.click(submit)
-        # LOGGER.screencap(mock.ui.browser, "account_name")
 
     def edit_email(self, mock: Mock, new: str):
         """navigate to account edit page and change email"""
@@ -218,7 +216,7 @@ class Users:
         if new is None:
             return
         email = mock.ui.get_element(
-            (By.CSS_SELECTOR, 'input[name="email-email"][type="text"]')
+            (By.CSS_SELECTOR, 'input[name="email-email"][type="email"]')
         )
         if not email.is_displayed():
             reveal_email = mock.ui.get_element(
