@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from testing import globals as env
-import testing.end_to_end.exceptions as ex
+import testing.exceptions as ex
 
 
 @dataclass
@@ -22,6 +22,7 @@ class Characters:
     bio: str = None
     image_path: str = None
     games: list[Games] = field(default_factory=list)
+    edit_url: str = field(default=None, init=False)
 
     def __post_init__(self):
         self.id = next(env.ITERATOR)
@@ -61,13 +62,16 @@ class Characters:
 
     def get_edit_url(self, mock: Mock) -> str:
         """navigates to edit page for this character and returns relative url"""
+        if self.edit_url is not None:
+            return self.edit_url
         mock.ui.nav(env.URL_PROFILE_CHARACTERS)
         edit_links = mock.ui.get_all_elements((By.CSS_SELECTOR, "h2"))
         edit_anchor = self._get_edit_anchor_element(edit_links)
         mock.ui.click_link_and_confirm(
             edit_anchor, env.URL_EDIT_CHARACTERS_PRE, partial_url=True
         )
-        return mock.ui.chronicler_url()
+        self.edit_url = mock.ui.chronicler_url()
+        return self.edit_url
 
     def edit(self, mock: Mock, name: str = None, image_path=None, bio: str = None):
         if not any((name, image_path, bio)):
@@ -92,6 +96,22 @@ class Characters:
 
         form_submit = mock.ui.get_element((By.CSS_SELECTOR, "input[type='submit']"))
         mock.ui.click_link_and_confirm(form_submit, env.URL_PROFILE_CHARACTERS)
+
+    def leave_game(self, mock: Mock, game: Games) -> None:
+        """navigate to character edit and remove character from game"""
+        mock.ui.nav(self.get_edit_url(mock))
+        mock.ui.asset_validator_by_css(mock, "")
+
+    def find_game_anchor(self, mock: Mock, game: Games) -> WebElement:
+        """while on game profile find game link"""
+        anchors = mock.ui.get_all_elements((By.TAG_NAME, "a"))
+        found_names = []
+        for a in anchors:
+            name: WebElement = a.find_element((By.TAG_NAME, "h3"))
+            found_names.append(name.text)
+            if name.text.find(game.name) != -1: 
+                return a
+        raise ex.GameNotFoundError(f"unable to find {game.name} in {found_names}")
 
     def _get_edit_anchor_element(self, elements: list[WebElement]) -> WebElement:
         """find and return characters webelement or raise exception if missing"""

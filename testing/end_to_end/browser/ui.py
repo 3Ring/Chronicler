@@ -6,6 +6,7 @@ if TYPE_CHECKING:
 
 import os
 from contextlib import contextmanager
+from functools import partial
 
 import pytest
 from selenium.webdriver.remote.webelement import WebElement
@@ -22,6 +23,7 @@ from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
     TimeoutException,
+    NoSuchElementException,
 )
 
 from testing.end_to_end.helpers import redirect, url_convert
@@ -68,7 +70,9 @@ class BrowserUI:
         self.browser.set_window_size(*(w for w in env.WINDOW_SIZE))
         return False
 
-    def redirected(self, url: str, root_url_redirected_to: str = None, full_url=False) -> None:
+    def redirected(
+        self, url: str, root_url_redirected_to: str = None, full_url=False
+    ) -> None:
         """used when expecting to be redirected"""
         if root_url_redirected_to is None:
             root_url_redirected_to = self.chronicler_url()
@@ -250,3 +254,82 @@ class BrowserUI:
             url = self.chronicler_url(self.browser.current_url)
         self.click(link)
         self.confirm_url(url, partial_url=partial_url)
+
+    def _get_assets(
+        self,
+        by: str,
+        amount: int,
+        selector: str,
+        text_to_check: str = None,
+        hidden: bool = False,
+    ) -> List[WebElement]:
+        elements = self.get_all_elements((by, selector))
+        return self.validate_list(elements, amount, hidden, text_to_check)
+
+    assets_validator_by_tag = partial(_get_assets, By.TAG_NAME)
+    assets_validator_by_id = partial(_get_assets, By.ID)
+    assets_validator_by_css = partial(_get_assets, By.CSS_SELECTOR)
+
+    def asset_validator_by_id(
+        self, id: str, text_to_check: str = None, hidden: bool = False
+    ) -> WebElement:
+        return self.assets_validator_by_id(
+            selector=id,
+            amount=1,
+            text_to_check=text_to_check,
+            hidden=hidden,
+        )[0]
+
+    def asset_validator_by_tag(
+        self, tag: str, text_to_check: str = None, hidden: bool = False
+    ) -> WebElement:
+        return self.assets_validator_by_tag(
+            selector=tag, amount=1, text_to_check=text_to_check, hidden=hidden
+        )[0]
+
+    def asset_validator_by_css(
+        self, css_selector: str, text_to_check: str = None, hidden: bool = False
+    ) -> WebElement:
+        return self.assets_validator_by_css(
+            selector=css_selector,
+            amount=1,
+            text_to_check=text_to_check,
+            hidden=hidden,
+        )[0]
+
+    def get_nested_element(
+        self, element: WebElement, locator: Tuple[By, str]
+    ) -> WebElement:
+        try:
+            return element.find_element(*(arg for arg in locator))
+        except NoSuchElementException:
+            raise ex.ElementNotFoundError(
+                f"unable to find element by locator {locator} nested inside {element}"
+            )
+
+    def validate_list(
+        elements: List[WebElement],
+        amount: int,
+        hidden: bool,
+        text_to_check: str = None,
+    ) -> List[WebElement]:
+        if text_to_check is None:
+            filtered = elements
+        else:
+            filtered = []
+            for el in elements:
+                if el.text.find(text_to_check) != -1:
+                    filtered.append(el)
+        try:
+            assert len(filtered) == amount
+        except AssertionError:
+            if text_to_check is not None:
+                raise ex.ExpectedTextNotFoundError(
+                    f"{text_to_check}, of amount: {amount}, not found in {[e.text for e in elements]}"
+                )
+            raise ex.ExpectedAmountError(
+                f"amount: {amount} != len(filtered): {len(filtered)}"
+            )
+        for el in filtered:
+            assert el.is_displayed() if not hidden else not el.is_displayed()
+        return filtered

@@ -100,9 +100,25 @@ def test_can_edit_bio(mock: Mock):
 
 
 @pytest.mark.xfail
-def test_removing_character_removes_them_from_all_gamesTODO(mock: Mock):
-    with mock.test_manager(test_removing_character_removes_them_from_all_gamesTODO):
-        raise ExpectedException()
+def test_removing_character_removes_them_from_all_games(mock: Mock):
+    with mock.test_manager(test_removing_character_removes_them_from_all_games):
+        try:
+            mock.user.register_and_login(mock)
+            game1 = mock.user.create_game_and_dm(mock)
+            game2 = mock.user.create_game_and_dm(mock)
+            mock.add_user()
+            mock.user.register_and_login(mock)
+            game1_chars = mock.user.create_characters(mock, amount=3)
+            game2_chars = [game1_chars[-1]]
+            game2_chars.extend(mock.user.create_characters(mock, amount=2))
+            mock.user.join_game_with_characters(mock, game1, game1_chars)
+            mock.user.join_game_with_characters(mock, game2, game2_chars)
+            for game in [game1, game2]:
+                for i in range(1, len(game.characters)):
+                    game.characters[i].get_edit_url(mock)
+                    game.characters[i].leave_game(mock)
+        except Exception:
+            raise ExpectedException()
 
 
 def _character_creation(mock: Mock, character: Characters = None) -> Characters:

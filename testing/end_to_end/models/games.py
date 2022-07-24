@@ -19,6 +19,7 @@ class Games:
     url: str = None
     players: List[Users] = field(default_factory=list)
     characters: List[Characters] = field(default_factory=list)
+    player_edit_url: str = field(default=None, init=False)
 
     def __post_init__(self):
         self.id = next(env.ITERATOR)
@@ -31,6 +32,11 @@ class Games:
     def default_name(id: int):
         return f"GAME {id}"
 
+    def get_player_edit_url(self, mock: Mock):
+        if self.player_edit_url is not None:
+            return self.player_edit_url
+        mock.ui.nav(env.URL_PROFILE_GAMES_PLAYER)
+        
     def delete(self, mock: Mock, fail=False):
         """deletes game from mock then deletes object"""
         # TODO add deleting of character in mock
